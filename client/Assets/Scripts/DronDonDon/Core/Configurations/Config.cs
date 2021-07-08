@@ -47,6 +47,11 @@ namespace DronDonDon.Core.Configurations
         public static bool Production
         {
             get { return Instance.GetBoolean("production"); }
+        }  
+        [UsedImplicitly]
+        public static bool ShowConsole
+        {
+            get { return Instance.GetBoolean("showConsole", true); }
         }
         
         public static string ApiUrl

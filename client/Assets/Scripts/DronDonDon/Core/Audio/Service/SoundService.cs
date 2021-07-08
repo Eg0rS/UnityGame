@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Adept.Logger;
 using AgkCommons.CodeStyle;
 using AgkCommons.Resources;
+using DronDonDon.Core.Audio.Model;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -13,7 +15,6 @@ namespace DronDonDon.Core.Audio.Service
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<SoundService>();
 
-        private const string EMBEDED_NAME = "embeded";
 
         [Inject]
         private readonly ResourceService _resourceService;
@@ -21,6 +22,7 @@ namespace DronDonDon.Core.Audio.Service
         private readonly AudioService _audioService;
 
         private readonly IDictionary<string, AudioClip> _soundClips = new Dictionary<string, AudioClip>();
+        private List<Sound> _sounds = new List<Sound>();
 
         private void Start()
         {
@@ -28,57 +30,77 @@ namespace DronDonDon.Core.Audio.Service
         }
 
         [PublicAPI]
-        public void PlaySound(string soundName, bool loop = false)
+        public void PlaySound(Sound sound)
         {
-           
-            string actualSoundName = soundName.ToLower();
+            string actualSoundName = sound.SoundName;
 
             if (!_soundClips.ContainsKey(actualSoundName)) {
                 _logger.Warn("Sound not found: name=" + actualSoundName);
                 return;
             }
-            
+            if (IsClipPlaying(sound.SoundName)) {
+                return;
+            }
             AudioClip clip = _soundClips[actualSoundName];
-            _audioService.PlaySound(clip, loop);
+            
+            _sounds.Add(sound);
+            _audioService.PlaySound(clip, sound.Track, sound.Looped);
         }
-    
+
         [PublicAPI]
-        public void StopSound()
+        public void StopSound(Sound sound)
         {
-            _audioService.StopSound();
+            if (!IsClipPlaying(sound.SoundName)) {
+                _logger.Debug("Can't play sound. It Doesnt exists ");
+                return;
+            }
+            Sound playingSound = _sounds.FirstOrDefault(p => p.SoundName == sound.SoundName);
+            _audioService.StopSound(playingSound.Track);
+            _sounds.Remove(playingSound);
         }
+
         [PublicAPI]
         public void PauseSound()
         {
             _audioService.PauseSound();
         }
+
         [PublicAPI]
         public void ResumeSound()
         {
             _audioService.ResumeSound();
         }
+
         [PublicAPI]
-        public void RemoveSound()
+        public void StopAllSounds()
         {
-            _audioService.RemoveSound();
+            _sounds.Clear();
+            _audioService.StopAllSounds();
         }
+
+        private bool IsClipPlaying(string name)
+        {
+            return _sounds.FirstOrDefault(p => p.SoundName == name) != null;
+        }
+
         private void LoadEmbededSounds()
         {
-            List<string> embededSounds = new List<string> {
-                    /*SoundPrefabs.PLAYER_HEARTBEAT,
-                    SoundPrefabs.PLAYER_FREQUENT_BREATHING,*/
+            List<Sound> embededSounds = new List<Sound> {
+                    
             };
-            foreach (string assetPath in embededSounds) {
-                string soundName = assetPath.ToLower();
-                string prefab = soundName + "@" + EMBEDED_NAME;
-                _resourceService.LoadAudioClip(prefab, (loadedClip, loadedParams) => {
+            foreach (Sound sound in embededSounds) {
+                string soundName = sound.SoundName;
+              
+                _resourceService.LoadAudioClip(sound.SoundPath, (loadedClip, loadedParams) => {
                     if (loadedClip == null) {
-                        _logger.Warn("Sound not loaded: prefab=" + prefab);
+                        _logger.Warn("Sound not loaded: prefab=" + sound.SoundPath);
                         return;
                     }
-                    if (!_soundClips.ContainsKey(soundName)) {
-                        _soundClips.Add(soundName, loadedClip);
+                    if (_soundClips.ContainsKey(soundName)) {
+                        return;
                     }
+                    loadedClip.name = soundName;
+                    _soundClips.Add(soundName, loadedClip);
                 });
             }
         }

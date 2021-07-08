@@ -53,8 +53,9 @@ namespace DronDonDon
         {
             AppFilterChain filterChain = gameObject.AddComponent<AppFilterChain>();
             filterChain.AddFilter(new IoCFilter());
-            filterChain.AddFilter(new ConsoleFilter());
+            filterChain.AddFilter(new InitScreenFilter());
             filterChain.AddFilter(new ConfigLoadFilter());
+            filterChain.AddFilter(new ConsoleFilter());
             filterChain.AddFilter(new ConfigureServiceFilter());
             filterChain.AddFilter(new AppSettingsFilter());
             filterChain.AddFilter(new StartGameFilter());

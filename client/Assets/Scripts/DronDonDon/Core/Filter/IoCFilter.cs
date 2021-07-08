@@ -1,5 +1,6 @@
 using Adept.Logger;
 using AgkCommons.IoC;
+using DronDonDon.Console.IoC;
 using DronDonDon.Core.Audio.IoC;
 using DronDonDon.Core.IoC;
 using DronDonDon.Core.UI.IoC;
@@ -28,7 +29,8 @@ namespace DronDonDon.Core.Filter
         private void Configure(IIoCContainer context)
         {
             context.RegisterModule(new AgkCommonsModule());
-            context.RegisterModule(new GameKitModule());
+            context.RegisterModule(new GameKitModule());     
+            context.RegisterModule(new ConsoleModule());
             context.RegisterModule(new AudioModule());
             context.RegisterModule(new UIModule());
             context.RegisterModule(new CoreModule());

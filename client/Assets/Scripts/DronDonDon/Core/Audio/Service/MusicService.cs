@@ -1,34 +1,51 @@
-﻿using System.Collections.Generic;
-using Adept.Logger;
+﻿using Adept.Logger;
 using AgkCommons.CodeStyle;
 using AgkCommons.Resources;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using UnityEngine;
-using Random = System.Random;
 
 namespace DronDonDon.Core.Audio.Service
-{    
+{
     [Injectable]
     public class MusicService : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MusicService>();
-
-        private string _lastMusicPrefab;
 
         [Inject]
         private ResourceService _resourceService;
         [Inject]
         private AudioService _audioService;
 
+        private string _lastMusicPrefab;
+        private bool _musicEnabled;
+
         [PublicAPI]
         public void PlayMusic(string prefab)
         {
+            _resourceService.LoadResource<AudioClip>(prefab, OnMusicLoaded, prefab);
             _lastMusicPrefab = prefab;
-            _resourceService.LoadResource<AudioClip>(_lastMusicPrefab, MusicPrefabLoaded, _lastMusicPrefab);
         }
-
-        private void MusicPrefabLoaded(AudioClip loadedObject, object[] loadParameters)
+        [PublicAPI]
+        public void StopMusic()
+        {
+            _audioService.StopMusic();
+        }
+        [PublicAPI]
+        public void PauseMusic()
+        {
+            _audioService.PauseMusic();
+        }
+        
+        [PublicAPI]
+        public void ResumeMusic()
+        {
+            if (string.IsNullOrEmpty(_lastMusicPrefab)) {
+                return;
+            }
+            PlayMusic(_lastMusicPrefab);
+        }
+        private void OnMusicLoaded(AudioClip loadedObject, object[] loadParameters)
         {
             string prefabName = loadParameters[0] as string;
             if (loadedObject == null) {
@@ -43,34 +60,20 @@ namespace DronDonDon.Core.Audio.Service
             _audioService.PlayMusic(loadedObject);
         }
 
-        [PublicAPI]
-        public void PlayList(List<string> tracks, bool shuffle = true)
+        public bool MusicEnabled
         {
-            if (tracks.Count == 0) {
-                FadeAndStop();
-                return;
+            set
+            {
+                if (_musicEnabled == value) {
+                    return;
+                }
+                _musicEnabled = value;
+                if (_musicEnabled) {
+                    ResumeMusic();
+                } else {
+                    StopMusic();
+                }
             }
-
-            if (tracks.Count == 1 || !shuffle) {
-                PlayMusic(tracks[0]);
-                return;
-            }
-
-            Random rnd = new Random();
-            int index = rnd.Next(tracks.Count);
-            PlayMusic(tracks[index]);
-        }
-
-
-        [PublicAPI]
-        public void StopMusic()
-        {
-            _audioService.StopMusic();
-        }
-        
-        public void FadeAndStop()
-        {
-            _audioService.FadeAndStopMusic();
         }
     }
 }

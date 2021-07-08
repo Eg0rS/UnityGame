@@ -1,3 +1,4 @@
+using DronDonDon.Core.Configurations;
 using IngameDebugConsole.Console.Service;
 using IoC.Attribute;
 using IoC.Util;
@@ -11,8 +12,9 @@ namespace DronDonDon.Core.Filter
 
         public void Run(AppFilterChain chain)
         {
-            //todo flag need console
-            _console.Require().Create();
+            if (Config.ShowConsole) {
+                _console.Require().Create();
+            }
             chain.Next();
         }
     }

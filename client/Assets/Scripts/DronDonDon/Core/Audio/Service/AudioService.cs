@@ -1,23 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using AgkCommons.CodeStyle;
-using AgkCommons.Resources;
-using IoC.Attribute;
-using IoC.Extension;
 using JetBrains.Annotations;
 using UnityEngine;
-using Random = System.Random;
 
 namespace DronDonDon.Core.Audio.Service
 {
     [Injectable]
     public class AudioService : MonoBehaviour
     {
-        private readonly List<string> _pathMusic = new List<string> {
-       
-        };
-        private const int START_POSITION = 0;
         [SerializeField]
         private AudioSource _music1Source;
 
@@ -28,118 +19,77 @@ namespace DronDonDon.Core.Audio.Service
         [SerializeField]
         [Range(1, 10)]
         private float _musicCrossFadeRate = 3f;
+        
+        private Dictionary<int, AudioSource> _tracks = new Dictionary<int, AudioSource>();
 
-        [SerializeField]
-        private AudioSource _soundSource;
-
-        [Inject]
-        private ResourceService _resourceService;
-
-        private List<AudioClip> _availableAudioClips;
-        private List<int> _playList;
         private AudioSource _activeMusic;
         private AudioSource _inactiveMusic;
 
         private bool _musicCrossFading;
-
+        private Coroutine _crossFadingCoroutine;
         private bool _musicMute;
         private bool _sound3D;
 
         private bool _soundMute;
-        private bool _isPlaying;
-        private int _currentAudioClip;
 
         private void Awake()
         {
-            this.InjectAll();
-            InitClipList();
-            _playList = new List<int>();
             _activeMusic = _music1Source;
             _inactiveMusic = _music2Source;
         }
 
-        private void InitClipList()
+        public void PlaySound(AudioClip clip, int track = 0, bool loop = false)
         {
-            _availableAudioClips = new List<AudioClip>();
-            foreach (string s in _pathMusic) {
-                _resourceService.LoadResource<AudioClip>(s).Then(ac => _availableAudioClips.Add(ac)).Done();
+            if (!_tracks.ContainsKey(track)) {
+                GameObject audioSourceObject = new GameObject(clip.name);
+                audioSourceObject.transform.SetParent(gameObject.transform);
+                AudioSource audioSource = audioSourceObject.AddComponent<AudioSource>();
+                _tracks.Add(track, audioSource);
             }
-        }
-
-        private void Update()
-        {
-            if (_soundSource.isPlaying) {
-                return;
-            }
-            PlayDefaultList();
-        }
-
-        private void PlayDefaultList()
-        {
-            if (_playList.Count == 0) {
-                _playList = GetRandomPlayList(_availableAudioClips.Count);
-            }
-            _currentAudioClip = _playList[START_POSITION];
-            _playList.RemoveAt(START_POSITION);
-            PlaySound(_availableAudioClips[_currentAudioClip]);
-        }
-
-        private List<int> GetRandomPlayList(int numberOfElement)
-        {
-            Random random = new Random();
-            HashSet<int> numbers = new HashSet<int>();
-            while (numbers.Count < numberOfElement)
-            {
-                numbers.Add(random.Next(0, numberOfElement));
-            }
-            return numbers.ToList();
-        }
-
-        public void PlaySound(AudioClip clip, bool loop = false)
-        {
-            // ReSharper disable once MergeSequentialChecks
-            if (ReferenceEquals(_soundSource, null) || ReferenceEquals(_soundSource.gameObject, null)) {
-                return;
-            }
-            _soundSource.clip = clip;
+            _tracks[track].clip = clip;
+            
             if (!loop) {
-                _soundSource.PlayOneShot(clip);
+                _tracks[track].PlayOneShot(clip);
                 return;
             }
-            _soundSource.loop = true;
-            _soundSource.Play();
+            _tracks[track].loop = true;
+            _tracks[track].Play();
         }
 
-        public void RemoveSound()
+
+        public void StopSound(int trackNumber = 0)
         {
-            _soundSource.clip = null;
+            if (!_tracks.ContainsKey(trackNumber)) {
+                return;
+            }
+            _tracks[trackNumber].Stop();
+            Destroy(_tracks[trackNumber].gameObject);
+            _tracks.Remove(trackNumber);
         }
 
         public void PauseSound()
         {
-            _soundSource.Pause();
+            foreach (KeyValuePair<int, AudioSource> audioSourceKeyValue in _tracks) {
+                audioSourceKeyValue.Value.Pause();
+            }
         }
 
         public void ResumeSound()
         {
-            _soundSource.UnPause();
+            foreach (KeyValuePair<int, AudioSource> audioSourceKeyValue in _tracks) {
+                audioSourceKeyValue.Value.UnPause();
+            }
         }
 
         public void PlayMusic(AudioClip clip, float offset = 0f)
         {
             if (_musicCrossFading) {
-                return;
+                StopCoroutine(_crossFadingCoroutine);
             }
-            StartCoroutine(CrossFadeMusic(clip, offset));
+            _crossFadingCoroutine = StartCoroutine(CrossFadeMusic(clip, offset));
         }
 
-        /*public void PlayDefaultMusic()
-        {
-            if (_activeMusic.clip == null) {
-                return;
-            }
-            _activeMusic.PlayOneShot(_activeMusic.clip);
-        }*/
+
         [PublicAPI]
         public void EnableMenuAudioListener()
         {
@@ -152,6 +102,20 @@ namespace DronDonDon.Core.Audio.Service
             _menuAudioListener.gameObject.SetActive(false);
         }
 
+        [PublicAPI]
+        public void PauseMusic()
+        {
+            _inactiveMusic.Pause();
+            _activeMusic.Pause();
+            _musicCrossFading = false;
+        }
+
+        [PublicAPI]
+        public void ResumeMusic()
+        {
+            _inactiveMusic.UnPause();
+            _activeMusic.UnPause();
+        }
         [PublicAPI]
         public void UnMute()
         {
@@ -169,12 +133,20 @@ namespace DronDonDon.Core.Audio.Service
         {
             _activeMusic.Stop();
             _inactiveMusic.Stop();
+            if (_crossFadingCoroutine != null) {
+                StopCoroutine(_crossFadingCoroutine);
+            }
+            _musicCrossFading = false;
         }
 
         [PublicAPI]
-        public void StopSound()
+        public void StopAllSounds()
         {
-            _soundSource.Stop();
+            foreach (KeyValuePair<int, AudioSource> audioSourceKeyValue in _tracks) {
+                audioSourceKeyValue.Value.Stop();
+                Destroy(audioSourceKeyValue.Value.gameObject);
+            }
+            _tracks.Clear();
         }
 
         public void FadeAndStopMusic()
@@ -213,7 +185,7 @@ namespace DronDonDon.Core.Audio.Service
                 _activeMusic.volume -= scaleRate * Time.deltaTime;
                 _inactiveMusic.volume += scaleRate * Time.deltaTime;
 
-                yield return null;
+                yield return new WaitForSecondsRealtime(0.0001f);
             }
 
             AudioSource temp = _activeMusic;
@@ -233,8 +205,11 @@ namespace DronDonDon.Core.Audio.Service
             set
             {
                 _soundMute = value;
-                if (_soundSource != null) {
-                    _soundSource.mute = _soundMute;
+                if (_tracks.Count == 0) {
+                    return;
+                }
+                foreach (KeyValuePair<int, AudioSource> audioSource in _tracks) {
+                    audioSource.Value.mute = _soundMute;
                 }
             }
         }
