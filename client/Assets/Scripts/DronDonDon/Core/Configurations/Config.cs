@@ -36,16 +36,7 @@ namespace DronDonDon.Core.Configurations
         {
             get { return Instance.GetString("windowsAppId", ""); }
         }
-        [UsedImplicitly]
-        public static string GooglePlayAppId
-        {
-            get { return Instance.GetString("googlePlayAppId", ""); }
-        }
-        [UsedImplicitly]
-        public static string AppStoreAppId
-        {
-            get { return Instance.GetString("appStoreAppId", ""); }
-        }
+        
         [UsedImplicitly]
         public static string Version
         {

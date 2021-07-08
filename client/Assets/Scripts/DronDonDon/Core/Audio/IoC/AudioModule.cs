@@ -1,11 +1,11 @@
 ﻿using System;
-using ChatStories.Core.Audio.Service;
+using DronDonDon.Core.Audio.Service;
 using IoC;
 using IoC.Api;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ChatStories.Core.Audio.IoC
+namespace DronDonDon.Core.Audio.IoC
 {
     public class AudioModule : IIoCModule
     {

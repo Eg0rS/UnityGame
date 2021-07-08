@@ -1,6 +1,6 @@
 using Adept.Logger;
 using AgkCommons.IoC;
-using ChatStories.Core.Audio.IoC;
+using DronDonDon.Core.Audio.IoC;
 using DronDonDon.Core.IoC;
 using DronDonDon.Core.UI.IoC;
 using DronDonDon.Descriptor.IoC;

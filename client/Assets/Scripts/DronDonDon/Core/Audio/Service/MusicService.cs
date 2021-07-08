@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Random = System.Random;
 
-namespace ChatStories.Core.Audio.Service
+namespace DronDonDon.Core.Audio.Service
 {    
     [Injectable]
     public class MusicService : MonoBehaviour

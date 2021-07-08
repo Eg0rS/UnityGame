@@ -1,4 +1,5 @@
 using AgkUI.Screens.Service;
+using DronDonDon.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -13,7 +14,7 @@ namespace DronDonDon.Core.Filter
         public void Run(AppFilterChain chain)
         {
             _overlayManager.Require().ShowPreloader();
-          //  _screenManager.LoadScreen<LibraryScreen>();
+            _screenManager.LoadScreen<MainMenuScreen>();
             chain.Next();
         }
     }

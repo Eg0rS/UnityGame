@@ -6,7 +6,7 @@ using IoC.Attribute;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace ChatStories.Core.Audio.Service
+namespace DronDonDon.Core.Audio.Service
 {
     [Injectable]
     public class SoundService : MonoBehaviour

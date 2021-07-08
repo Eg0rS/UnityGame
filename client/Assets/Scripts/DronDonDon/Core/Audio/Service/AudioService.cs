@@ -9,16 +9,13 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Random = System.Random;
 
-namespace ChatStories.Core.Audio.Service
+namespace DronDonDon.Core.Audio.Service
 {
     [Injectable]
     public class AudioService : MonoBehaviour
     {
         private readonly List<string> _pathMusic = new List<string> {
-                "Music/track1@embeded",
-                "Music/Track2@embeded",
-                "Music/Track3@embeded",
-                "Music/Track4@embeded"
+       
         };
         private const int START_POSITION = 0;
         [SerializeField]
