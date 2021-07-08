@@ -1,11 +1,12 @@
 ﻿using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
-using AgkUI.Binding.Field;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
+using DronDonDon.Core.UI.Dialog.Service;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
 
 namespace DronDonDon.Core.UI.Dialog
@@ -16,17 +17,17 @@ namespace DronDonDon.Core.UI.Dialog
     {
         public delegate void ConfirmDelegate(ConfirmResult result);
 
-        [UITextBinding("TitleText")]
-        private TextBinding _title;
+        [UIComponentBinding("TitleText")]
+        private TextMeshProUGUI _title;
 
-        [UITextBinding("MessageText")]
-        private TextBinding _message;
+        [UIComponentBinding("MessageText")]
+        private TextMeshProUGUI _message;
 
-        [UITextBinding("YesButtonTitle")]
-        private TextBinding _yesButtonTitle;
+        [UIComponentBinding("YesButtonTitle")]
+        private TextMeshProUGUI _yesButtonTitle;
 
-        [UITextBinding("NoButtonTitle")]
-        private TextBinding _noButtonTitle;
+        [UIComponentBinding("NoButtonTitle")]
+        private TextMeshProUGUI _noButtonTitle;
 
         [CanBeNull]
         private ConfirmDelegate _callback;
@@ -47,37 +48,35 @@ namespace DronDonDon.Core.UI.Dialog
         [UIOnClick("YesButton")]
         private void OnYesClick()
         {
+            _dialogProvider.Require().Hide(this);
             _callback?.Invoke(ConfirmResult.YES);
-            _dialogProvider.Require()
-                           .Hide(this);
         }
 
         [UIOnClick("NoButton")]
         private void OnNoClick()
         {
+            _dialogProvider.Require().Hide(this);
             _callback?.Invoke(ConfirmResult.NO);
-            _dialogProvider.Require()
-                           .Hide(this);
         }
 
         private string Title
         {
-            set { _title.Text = value; }
+            set { _title.text = value; }
         }
 
         private string Message
         {
-            set { _message.Text = value; }
+            set { _message.text = value; }
         }
 
         private string YesButtonTitle
         {
-            set { _yesButtonTitle.Text = value; }
+            set { _yesButtonTitle.text = value; }
         }
 
         private string NoButtonTitle
         {
-            set { _noButtonTitle.Text = value; }
+            set { _noButtonTitle.text = value; }
         }
 
         public enum ConfirmResult

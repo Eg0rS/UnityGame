@@ -1,7 +1,7 @@
 ﻿using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using AgkUI.Screens.Ui;
-using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Core.UI.Dialog.Service;
 using IoC;
 using IoC.Api;
 using IoC.Scope;

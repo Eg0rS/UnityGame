@@ -1,11 +1,12 @@
 ﻿using System;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
-using AgkUI.Binding.Field;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
+using DronDonDon.Core.UI.Dialog.Service;
 using IoC.Attribute;
 using IoC.Util;
+using TMPro;
 using UnityEngine;
 
 namespace DronDonDon.Core.UI.Dialog
@@ -14,12 +15,11 @@ namespace DronDonDon.Core.UI.Dialog
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class AlertDialog : MonoBehaviour
     {
-        [UITextBinding("TitleText")]
-        private TextBinding _title;
+        [UIComponentBinding("TitleText")]
+        private TextMeshProUGUI _title;
 
-        [UITextBinding("MessageText")]
-        private TextBinding _message;
-
+        [UIComponentBinding("MessageText")]
+        private TextMeshProUGUI _message;
         [Inject]
         private IoCProvider<DialogManager> _dialogProvider;
 
@@ -37,19 +37,18 @@ namespace DronDonDon.Core.UI.Dialog
         [UIOnClick("OkButton")]
         private void OnOkButtonClick()
         {
-            _dialogProvider.Require()
-                           .Hide(this);
+            _dialogProvider.Require().Hide(this);
             _callback?.Invoke();
         }
 
         private string Title
         {
-            set { _title.Text = value; }
+            set { _title.text = value; }
         }
 
         private string Message
         {
-            set { _message.Text = value; }
+            set { _message.text = value; }
         }
     }
 }

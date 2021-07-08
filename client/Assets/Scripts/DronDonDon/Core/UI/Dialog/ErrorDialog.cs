@@ -2,6 +2,7 @@
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
+using DronDonDon.Core.UI.Dialog.Service;
 using IoC.Attribute;
 using IoC.Util;
 using TMPro;
@@ -37,9 +38,8 @@ namespace DronDonDon.Core.UI.Dialog
         [UIOnClick("OkButton")]
         private void OnOkButtonClick()
         {
+            _dialogProvider.Require().Hide(this);
             _callback?.Invoke();
-            _dialogProvider.Require()
-                           .Hide(this);
         }
 
         private string Title
