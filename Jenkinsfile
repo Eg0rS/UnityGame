@@ -91,7 +91,8 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error('Aborted wip')
                     }
-               fillActiveBuilds()
+                     BuildContext.awxService = createAwxService("http://awx.tortu.ga", "ava3d-stage-runner")
+                     fillActiveBuilds()
                 }
             }
         }
