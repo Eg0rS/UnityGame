@@ -262,7 +262,7 @@ def buildAppClient(def context, PlatformType type, forceBuildLib = false) {
                     .param('buildName', buildName)
                     .param('unityUser', unityUser)
                     .param('unityPass', unityPass)
-                    .param("production", prod ? "true" : "false")
+                    .param("production", "false" )
                     .run()
         }
         fileOperations([fileCopyOperation(excludes: '', flattenFiles: true, includes: "target/*.zip",
