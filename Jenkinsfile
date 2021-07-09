@@ -24,7 +24,6 @@ class BuildContext {
     static unityVersion
 
     static Map activeBuilds = [
-            'server' : false,
             'windows': false,
             'android': false,
             'ios'    : false
@@ -45,7 +44,6 @@ pipeline {
         booleanParam(name: 'iosBuild', defaultValue: true, description: 'build ios')
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
         booleanParam(name: 'windowsBuild', defaultValue: false, description: 'build windows')
-        booleanParam(name: 'serverBuild', defaultValue: true, description: 'build server')
     }
 
     options {
@@ -196,7 +194,6 @@ pipeline {
 }
 
 private void fillActiveBuilds() {
-    BuildContext.activeBuilds['server'] = params.serverBuild
     BuildContext.activeBuilds['android'] = params.androidBuild
     BuildContext.activeBuilds['windows'] = params.windowsBuild
     BuildContext.activeBuilds['ios'] = params.iosBuild
