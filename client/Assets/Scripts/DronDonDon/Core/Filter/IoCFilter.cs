@@ -5,6 +5,7 @@ using DronDonDon.Core.Audio.IoC;
 using DronDonDon.Core.IoC;
 using DronDonDon.Core.UI.IoC;
 using DronDonDon.Descriptor.IoC;
+using DronDonDon.Location.IoC;
 using IoC;
 using IoC.Api;
 using IoC.Extension;
@@ -34,7 +35,8 @@ namespace DronDonDon.Core.Filter
             context.RegisterModule(new AudioModule());
             context.RegisterModule(new UIModule());
             context.RegisterModule(new CoreModule());
-            context.RegisterModule(new DescriptorModule());
+            context.RegisterModule(new DescriptorModule());    
+            context.RegisterModule(new LocationModule());
         }
     }
 }
