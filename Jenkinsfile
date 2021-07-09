@@ -43,7 +43,7 @@ pipeline {
 
         booleanParam(name: 'iosBuild', defaultValue: true, description: 'build ios')
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
-        booleanParam(name: 'windowsBuild', defaultValue: false, description: 'build windows')
+        booleanParam(name: 'windowsBuild', defaultValue: true, description: 'build windows')
     }
 
     options {
@@ -176,7 +176,9 @@ pipeline {
                         }
                     }
                 }
-
+            }
+        }
+    }
 
     post {
         failure {
