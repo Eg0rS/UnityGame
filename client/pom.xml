@@ -11,6 +11,7 @@
     <properties>
         <buildVersion>0.0.1</buildVersion>
         <platform>windows</platform>
+        <production>false</production>
         <skipReplace>false</skipReplace>
         <buildName>dronDonDon-${version}-${platform}</buildName>
         <finalName>${artifactId}-${version}-${platform}</finalName>
@@ -21,7 +22,7 @@
         <resources>false</resources>
         <skipTest>true</skipTest>
         <profiler>false</profiler>
-        <projectName>dronDonDon-stage</projectName>
+        <projectName>dronDonDon</projectName>
         <client>true</client>
         <useResolver>false</useResolver>
         <androidWebClientId>344286988292-rjhr5idbirvi3fglciaocrin9lv1dr9v.apps.googleusercontent.com</androidWebClientId>
@@ -81,6 +82,10 @@
                                     <token><![CDATA[<param name=\\"buildName\\".*>]]></token>
                                     <value><![CDATA[<param name=\\"buildName\\" value=\\"${buildName}\\" />]]></value>
                                 </replacement>
+                                <replacement>
+                                    <token><![CDATA[<param name=\\"production\\".*>]]></token>
+                                    <value><![CDATA[<param name=\\"production\\" value=\\"${production}\\" />]]></value>
+                                </replacement>
                             </replacements>
                         </configuration>
                     </execution>
@@ -129,7 +134,6 @@
                                     <includes>
                                         <include>Android/**</include>
                                         <include>UnityChannel/**</include>
-                                        <include>UnityPurchasing/**</include>
                                         <include>Parse/**</include>
                                         <include>Parse.meta</include>
                                         <include>iOS/**</include>
@@ -258,7 +262,7 @@
                             <keystorePassword>NcDvq1Io</keystorePassword>
                             <keyAliasPassword>NcDvq1Io</keyAliasPassword>
                             <scenesToBuild>${scenes}</scenesToBuild>
-                            <facebookSDK>true</facebookSDK>
+                            <facebookSDK>false</facebookSDK>
                             <androidWebClientId>${androidWebClientId}</androidWebClientId>
                         </configuration>
                     </execution>
