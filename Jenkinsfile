@@ -41,7 +41,7 @@ pipeline {
         booleanParam(name: 'cleanPods', defaultValue: false, description: 'clear pods cache in ios')
         booleanParam(name: 'recreate', defaultValue: false, description: 'delete workspace and recreate it from develop')
 
-        booleanParam(name: 'iosBuild', defaultValue: true, description: 'build ios')
+        booleanParam(name: 'iosBuild', defaultValue: false, description: 'build ios')
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
         booleanParam(name: 'windowsBuild', defaultValue: true, description: 'build windows')
     }
