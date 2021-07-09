@@ -26,7 +26,6 @@ class BuildContext {
     static Map activeBuilds = [
             'windows': false,
             'android': false,
-            'ios'    : false
     ]
    
     static def isProduction() {
@@ -38,10 +37,8 @@ pipeline {
     agent any
     parameters {
         booleanParam(name: 'forceBuildLib', defaultValue: false, description: 'use cache lib')
-        booleanParam(name: 'cleanPods', defaultValue: false, description: 'clear pods cache in ios')
         booleanParam(name: 'recreate', defaultValue: false, description: 'delete workspace and recreate it from develop')
 
-        booleanParam(name: 'iosBuild', defaultValue: false, description: 'build ios')
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
         booleanParam(name: 'windowsBuild', defaultValue: true, description: 'build windows')
     }
@@ -155,27 +152,6 @@ pipeline {
                         }
                     }
                 }
-
-                stage('ios') {
-                    when {
-                        equals expected: true, actual: checkBuild("ios")
-                    }
-                    stages {            
-                        stage("build-client") {
-                            steps {
-                                buildAppClient(BuildContext, PlatformType.IOS, params.forceBuildLib)
-                            }
-                        }
-
-                        stage("deploy-client") {
-                            steps {
-                                script {
-                                    deployClient(PlatformType.IOS)
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -198,7 +174,6 @@ pipeline {
 private void fillActiveBuilds() {
     BuildContext.activeBuilds['android'] = params.androidBuild
     BuildContext.activeBuilds['windows'] = params.windowsBuild
-    BuildContext.activeBuilds['ios'] = params.iosBuild
 }
 
 private static boolean checkBuild(String type) {
