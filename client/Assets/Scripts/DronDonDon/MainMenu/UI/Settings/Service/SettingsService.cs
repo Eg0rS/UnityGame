@@ -6,13 +6,14 @@ namespace DronDonDon.MainMenu.UI.Settings.Service
 {
     public class SettingsService
     {
-       [Inject]
+        [Inject]
         private SettingsRepository _settingsRepository;
         
         public void UpdateSettings()
         {
             SettingsModel settingsModel = RequireSettingsModel();
             SetMusicMute(settingsModel.IsMusicMute);
+            SetSoundMute(settingsModel.IsSoundMute);
         }
 
         public bool HasSettingsModel()
@@ -22,10 +23,14 @@ namespace DronDonDon.MainMenu.UI.Settings.Service
 
         public SettingsModel RequireSettingsModel()
         {
+            SettingsModel model = _settingsRepository.Get();
+            if (model == null)
+            {
+                InitSettings();
+            }
             return _settingsRepository.Require();
         }
-
-        [UICreated]
+        
         public void InitSettings()
         {
             if (!HasSettingsModel()) {
