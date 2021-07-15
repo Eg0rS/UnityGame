@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace DronDonDon.MainMenu.UI.Settings.UI
 {
-    [UIController("UI/Dialog/pfSettingsPanel@embeded")]
+    [UIController("UI/Dialog/pfSettingsDialog@embeded")]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class GameSettingsDialog : MonoBehaviour
     {
