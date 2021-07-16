@@ -1,6 +1,8 @@
-﻿using Adept.Logger;
+﻿using DronDonDon.MainMenu.UI.Settings.UI;
+using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
+using AgkUI.Dialog.Service;
 using DronDonDon.Core;
 using IoC.Attribute;
 using IoC.Util;
@@ -18,7 +20,10 @@ namespace DronDonDon.MainMenu.UI.Panel
         private IoCProvider<OverlayManager> _overlayManager;       
         [Inject]
         private LocationService _locationService;
-    
+
+        [Inject] 
+        private IoCProvider<DialogManager> _dialogManager;
+
         [UICreated]
         public void Init()
         {
@@ -34,13 +39,15 @@ namespace DronDonDon.MainMenu.UI.Panel
 
         [UIOnClick("DroneStoreButton")]
         private void OnDroneStore()
-        {
+        { 
             _logger.Debug("Click on store");
         }
         [UIOnClick("SettingsPanel")]
         private void OnSettingsPanel()
         {
+            _dialogManager.Require().Show<GameSettingsDialog>();
             _logger.Debug("Click on settings");
+            
         }
         [UIOnClick("CreditsPanel")]
         private void OnCreditsPanel()
