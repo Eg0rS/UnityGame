@@ -1,13 +1,18 @@
 ﻿using AgkUI.Binding.Attributes;
-using DronDonDon.MainMenu.UI.Settings.Model;
+using DronDonDon.Settings.Model;
+using DronDonDon.Billing.Service;
+
 using IoC.Attribute;
 
-namespace DronDonDon.MainMenu.UI.Settings.Service
+namespace DronDonDon.Settings.Service
 {
     public class SettingsService
     {
         [Inject]
         private SettingsRepository _settingsRepository;
+        
+        [Inject] 
+        private BillingService _billingService;
         
         public void UpdateSettings()
         {
@@ -39,7 +44,6 @@ namespace DronDonDon.MainMenu.UI.Settings.Service
                 settingsModel.IsSoundMute = true;
                 _settingsRepository.Set(settingsModel);
             }
-
             UpdateSettings();
         }
         
@@ -67,6 +71,11 @@ namespace DronDonDon.MainMenu.UI.Settings.Service
             SettingsModel settingsModel = RequireSettingsModel();
             settingsModel.IsSoundMute = isMute;
             _settingsRepository.Set(settingsModel);
+        }
+
+        public void ResetAllProgress()
+        {
+            _billingService.SetCreditsCount(0);
         }
     }
 }
