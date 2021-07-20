@@ -13,7 +13,7 @@ namespace DronDonDon.Billing.Service
         public void UpdateSettings()
         {
             BillingModel billingModel = RequireCreditShopModel();
-            SetCreditsCount(billingModel.CreditsCount);
+            SetCreditsCount(billingModel.creditsCount);
         }
         
         public BillingModel RequireCreditShopModel()
@@ -34,7 +34,7 @@ namespace DronDonDon.Billing.Service
         {
             if (!HasCreditShopModel()) {
                 BillingModel billingModel = new BillingModel();
-                billingModel.CreditsCount = 0;
+                billingModel.creditsCount = 0;
                 _creditShopRepository.Set(billingModel);
                 
                 
@@ -44,13 +44,13 @@ namespace DronDonDon.Billing.Service
         public void SetCreditsCount(int count)
         {
             BillingModel creditShopModel = RequireCreditShopModel();
-            creditShopModel.CreditsCount = count;
+            creditShopModel.creditsCount = count;
             _creditShopRepository.Set(creditShopModel);
             Dispatch(new BillingEvent(BillingEvent.UPDATED));
         }
         public int GetCreditsCount()
         {
-            return RequireCreditShopModel().CreditsCount;
+            return RequireCreditShopModel().creditsCount;
         }
     }
 }
