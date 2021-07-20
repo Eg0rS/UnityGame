@@ -50,5 +50,10 @@ namespace DronDonDon.Billing.Service
         {
             return RequirePlayerResourceModel().creditsCount;
         }
+
+        public void AddCredits(int count)
+        {
+            SetCreditsCount(GetCreditsCount()+count);
+        }
     }
 }

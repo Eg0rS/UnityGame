@@ -48,7 +48,7 @@ namespace DronDonDon.MainMenu.UI.Panel
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
         
-        private void OnResourceUpdated(BillingEvent moneyEvent)
+        private void OnResourceUpdated(BillingEvent resourceEvent)
         {
             UpdateCredits();
         }

@@ -3,6 +3,7 @@ using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Billing.Event;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
@@ -29,48 +30,56 @@ namespace DronDonDon.Billing.UI
         [UICreated]
         public void Init()
         {
+            _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+            UpdateCredits();
+        }
+
+        private void UpdateCredits()
+        {
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
-        
+
+        private void OnResourceUpdated(BillingEvent resourceEvent)
+        {
+            UpdateCredits();
+        }
+
         [UIOnClick("CloseButton")]
         private void CloseButton()
         {
             _dialogManager.Require()
                 .Hide(gameObject);
+            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
-        
+
         [UIOnClick("BlueButton")]
         private void On32ChipsButton()
         {
             _logger.Debug("+10Chips");
-            _billingService.SetCreditsCount(_billingService.GetCreditsCount()+10);
-            _countChips.text = _billingService.GetCreditsCount().ToString();
-            _logger.Debug(_billingService.GetCreditsCount().ToString());
+            _billingService.AddCredits(10);
         }
         
         [UIOnClick("GreenButton")]
         private void On64ChipsButton()
         {
             _logger.Debug("+50Chips");
-            _billingService.SetCreditsCount(_billingService.GetCreditsCount()+50);
-            _countChips.text = _billingService.GetCreditsCount().ToString();
+            _billingService.AddCredits(50);
         }
         
-        [UIOnClick("GreenButton")]
+        [UIOnClick("YellowButton")]
         private void On128ChipsButton()
         {
-            _logger.Debug("+100");
-            _billingService.SetCreditsCount(_billingService.GetCreditsCount()+100);
-            _countChips.text = _billingService.GetCreditsCount().ToString();
+            _logger.Debug("+100Chips");
+            _billingService.AddCredits(100);
         }
         
         [UIOnClick("RedButton")]
         private void On256ChipsButton()
         {
-            _logger.Debug("+500");
-            _billingService.SetCreditsCount(_billingService.GetCreditsCount()+500);
-            _countChips.text = _billingService.GetCreditsCount().ToString();
+            _logger.Debug("+500Chips");
+            _billingService.AddCredits(500);
         }
+        
         [UIOnClick("DroneShopButton")]
         private void OnDroneShopButton()
         {
