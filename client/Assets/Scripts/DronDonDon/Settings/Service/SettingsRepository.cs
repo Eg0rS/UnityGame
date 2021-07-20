@@ -1,7 +1,7 @@
 ﻿using DronDonDon.Core.Repository;
-using DronDonDon.MainMenu.UI.Settings.Model;
+using DronDonDon.Settings.Model;
 
-namespace DronDonDon.MainMenu.UI.Settings.Service
+namespace DronDonDon.Settings.Service
 {
     public class SettingsRepository : LocalPrefsSingleRepository<SettingsModel>
     {

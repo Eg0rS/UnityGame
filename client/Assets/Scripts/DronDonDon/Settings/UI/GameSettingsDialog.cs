@@ -7,11 +7,11 @@ using DronDonDon.Core.UI.Dialog;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
-using DronDonDon.MainMenu.UI.Settings.Service;
+using DronDonDon.Settings.Service;
 using UnityEngine;
 
 
-namespace DronDonDon.MainMenu.UI.Settings.UI
+namespace DronDonDon.Settings.UI
 {
     [UIController("UI/Dialog/pfSettingsDialog@embeded")]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
@@ -62,7 +62,7 @@ namespace DronDonDon.MainMenu.UI.Settings.UI
         private void OnResetButton()
         {
             _logger.Debug("Reset");
-            // add reset progress
+            _settingsService.ResetAllProgress();
         }
     }
 }

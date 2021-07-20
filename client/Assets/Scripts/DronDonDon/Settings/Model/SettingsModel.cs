@@ -1,4 +1,4 @@
-﻿namespace DronDonDon.MainMenu.UI.Settings.Model
+﻿namespace DronDonDon.Settings.Model
 {
     public class SettingsModel
     {

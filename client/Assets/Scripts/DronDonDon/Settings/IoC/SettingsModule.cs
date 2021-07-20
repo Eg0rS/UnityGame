@@ -1,7 +1,7 @@
-﻿using DronDonDon.MainMenu.UI.Settings.Service;
+﻿using DronDonDon.Settings.Service;
 using IoC.Api;
 
-namespace DronDonDon.MainMenu.UI.Settings.IoC
+namespace DronDonDon.Settings.IoC
 {
     public class SettingsModule: IIoCModule
     {
