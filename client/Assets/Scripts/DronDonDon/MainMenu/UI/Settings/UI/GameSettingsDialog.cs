@@ -61,8 +61,8 @@ namespace DronDonDon.MainMenu.UI.Settings.UI
         [UIOnClick("ResetButton")]
         private void OnResetButton()
         {
+            _logger.Debug("Reset");
             // add reset progress
         }
-        
     }
 }
