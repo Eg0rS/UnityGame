@@ -18,7 +18,6 @@ namespace DronDonDon.Billing.UI
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreditShopDialog>();
         
-        
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
 
@@ -71,7 +70,6 @@ namespace DronDonDon.Billing.UI
             _billingService.SetCreditsCount(_billingService.GetCreditsCount()+500);
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
-        
         [UIOnClick("DroneShopButton")]
         private void OnDroneShopButton()
         {

@@ -4,7 +4,7 @@
     {
         private int _credits;
         
-        public int IsCreditsCount
+        public int CreditsCount
         {
             get { return _credits; }
             set { _credits = value; }
