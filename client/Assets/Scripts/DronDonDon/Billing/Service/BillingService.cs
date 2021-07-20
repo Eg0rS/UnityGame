@@ -36,8 +36,6 @@ namespace DronDonDon.Billing.Service
                 BillingModel billingModel = new BillingModel();
                 billingModel.creditsCount = 0;
                 _creditShopRepository.Set(billingModel);
-                
-                
             }
             UpdateSettings();
         }

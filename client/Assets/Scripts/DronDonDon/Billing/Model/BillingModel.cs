@@ -9,6 +9,5 @@
             get { return _credits; }
             set { _credits = value; }
         }
-        
     }
 }

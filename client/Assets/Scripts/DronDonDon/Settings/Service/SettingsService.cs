@@ -44,7 +44,6 @@ namespace DronDonDon.Settings.Service
                 settingsModel.IsSoundMute = true;
                 _settingsRepository.Set(settingsModel);
             }
-
             UpdateSettings();
         }
         

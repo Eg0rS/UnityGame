@@ -34,7 +34,6 @@ namespace DronDonDon.Settings.UI
         {
             _toggleMusicButton.IsOn = _settingsService.GetMusicMute();
             _toggleSoundButton.IsOn = _settingsService.GetSoundMute();
-            
         }
         
         [UIOnClick("CloseButton")]

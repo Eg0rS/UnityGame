@@ -28,7 +28,6 @@ namespace DronDonDon.Billing.UI
         private IoCProvider<DialogManager> _dialogManager;
         
         [UICreated]
-        
         public void Init()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
@@ -49,6 +48,7 @@ namespace DronDonDon.Billing.UI
             _countChips.text = _billingService.GetCreditsCount().ToString();
             _logger.Debug(_billingService.GetCreditsCount().ToString());
         }
+        
         [UIOnClick("GreenButton")]
         private void On64ChipsButton()
         {
@@ -56,6 +56,7 @@ namespace DronDonDon.Billing.UI
             _billingService.SetCreditsCount(_billingService.GetCreditsCount()+50);
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
+        
         [UIOnClick("GreenButton")]
         private void On128ChipsButton()
         {
@@ -63,6 +64,7 @@ namespace DronDonDon.Billing.UI
             _billingService.SetCreditsCount(_billingService.GetCreditsCount()+100);
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
+        
         [UIOnClick("RedButton")]
         private void On256ChipsButton()
         {
@@ -75,7 +77,6 @@ namespace DronDonDon.Billing.UI
         {
             _dialogManager.Require()
                 .Hide(gameObject);
-            
             //_dialogManager.Require().Show<DroneShopDialog>();
         }
     }
