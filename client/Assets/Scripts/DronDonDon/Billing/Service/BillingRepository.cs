@@ -3,7 +3,7 @@ using DronDonDon.Core.Repository;
 
 namespace DronDonDon.Billing.Service
 {
-    public class BillingRepository: LocalPrefsSingleRepository<BillingModel>
+    public class BillingRepository: LocalPrefsSingleRepository<PlayerResourceModel>
     {
         public BillingRepository() : base("creditShopRepository")    
         {

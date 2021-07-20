@@ -37,20 +37,20 @@ namespace DronDonDon.MainMenu.UI.Panel
         [UICreated]
         public void Init()
         {
-            _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnMoneyUpdate);
+            _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             _overlayManager.Require().HideLoadingOverlay(true);
-            InitCredits();
+            UpdateCredits();
             _logger.Debug("MainMenuPanel start init");
         }
         
-        private void InitCredits()
+        private void UpdateCredits()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
         
-        private void OnMoneyUpdate(BillingEvent moneyEvent)
+        private void OnResourceUpdated(BillingEvent moneyEvent)
         {
-            InitCredits();
+            UpdateCredits();
         }
         
         [UIOnClick("StartGameButton")]

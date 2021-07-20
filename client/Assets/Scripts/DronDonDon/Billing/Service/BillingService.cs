@@ -12,13 +12,13 @@ namespace DronDonDon.Billing.Service
         
         public void UpdateSettings()
         {
-            BillingModel billingModel = RequireCreditShopModel();
-            SetCreditsCount(billingModel.creditsCount);
+            PlayerResourceModel playerResourceModel = RequirePlayerResourceModel();
+            SetCreditsCount(playerResourceModel.creditsCount);
         }
         
-        public BillingModel RequireCreditShopModel()
+        public PlayerResourceModel RequirePlayerResourceModel()
         {
-            BillingModel model = _creditShopRepository.Get();
+            PlayerResourceModel model = _creditShopRepository.Get();
             if (model == null)
             {
                 InitCreditsCount();
@@ -33,22 +33,22 @@ namespace DronDonDon.Billing.Service
         public void InitCreditsCount()
         {
             if (!HasCreditShopModel()) {
-                BillingModel billingModel = new BillingModel();
-                billingModel.creditsCount = 0;
-                _creditShopRepository.Set(billingModel);
+                PlayerResourceModel playerResourceModel = new PlayerResourceModel();
+                playerResourceModel.creditsCount = 0;
+                _creditShopRepository.Set(playerResourceModel);
             }
             UpdateSettings();
         }
         public void SetCreditsCount(int count)
         {
-            BillingModel creditShopModel = RequireCreditShopModel();
-            creditShopModel.creditsCount = count;
-            _creditShopRepository.Set(creditShopModel);
+            PlayerResourceModel playerResourceModel = RequirePlayerResourceModel();
+            playerResourceModel.creditsCount = count;
+            _creditShopRepository.Set(playerResourceModel);
             Dispatch(new BillingEvent(BillingEvent.UPDATED));
         }
         public int GetCreditsCount()
         {
-            return RequireCreditShopModel().creditsCount;
+            return RequirePlayerResourceModel().creditsCount;
         }
     }
 }

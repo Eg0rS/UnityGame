@@ -17,7 +17,6 @@ namespace DronDonDon.Billing.UI
     public class CreditShopDialog : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreditShopDialog>();
-        
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
 

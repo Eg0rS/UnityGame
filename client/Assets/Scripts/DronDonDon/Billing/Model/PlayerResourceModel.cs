@@ -1,6 +1,6 @@
 ﻿namespace DronDonDon.Billing.Model
 {
-    public class BillingModel
+    public class PlayerResourceModel
     {
         private int _credits;
         
