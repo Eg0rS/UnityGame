@@ -37,19 +37,19 @@ namespace DronDonDon.MainMenu.UI.Panel
             _locationService.StartGame();
         }
 
-        [UIOnClick("DroneStoreButton")]
+        [UIOnClick("DronShop")]
         private void OnDroneStore()
         { 
             _logger.Debug("Click on store");
         }
-        [UIOnClick("SettingsPanel")]
+        [UIOnClick("SettingsButton")]
         private void OnSettingsPanel()
         {
             _dialogManager.Require().Show<GameSettingsDialog>();
             _logger.Debug("Click on settings");
             
         }
-        [UIOnClick("CreditsPanel")]
+        [UIOnClick("StoreChipsButton")]
         private void OnCreditsPanel()
         {
             _logger.Debug("Click on credits");
