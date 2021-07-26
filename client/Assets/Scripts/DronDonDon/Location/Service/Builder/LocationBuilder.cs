@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using AgkCommons.Resources;
 using DronDonDon.World;
 using RSG;
 using UnityEngine;
+using DronDonDon.Location.Model.BaseModel;
+using Adept.Logger;
 
 namespace DronDonDon.Location.Service.Builder
 {
@@ -9,20 +12,23 @@ namespace DronDonDon.Location.Service.Builder
     {
         private const string WORLD_NAME = "location";
 
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
+        private readonly CreateObjectService _createCreateService;
         private readonly ResourceService _resourceService;
         
         private Promise _promise;
         private string _prefab;
         private Transform _container;
 
-        private LocationBuilder(ResourceService resourceService)
+        private LocationBuilder(ResourceService resourceService, CreateObjectService createService)
         {
             _resourceService = resourceService;
+            _createCreateService = createService;
         }
 
-        public static LocationBuilder Create(ResourceService resourceService)
+        public static LocationBuilder Create(ResourceService resourceService, CreateObjectService createService)
         {
-            return new LocationBuilder(resourceService);
+            return new LocationBuilder(resourceService, createService);
         }
 
         public LocationBuilder Prefab(string prefab)
@@ -50,9 +56,10 @@ namespace DronDonDon.Location.Service.Builder
             
             GameWorld gameWorld = loadedObject.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
-
+            
             InitControllers(gameWorld);
             InitService();
+            
             _promise.Resolve();
         }
 
@@ -62,6 +69,11 @@ namespace DronDonDon.Location.Service.Builder
 
         private void InitControllers(GameWorld gameWorld)
         {
+            List<PrefabModel> objectComponents = gameWorld.GetObjectComponents<PrefabModel>();
+            foreach (PrefabModel prefabModel in objectComponents) {
+                _logger.Debug("attach");
+                _createCreateService.AttachController(prefabModel);
+            }
         }
     }
 }
