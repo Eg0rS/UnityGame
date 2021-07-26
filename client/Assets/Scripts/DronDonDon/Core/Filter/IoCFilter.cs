@@ -5,6 +5,7 @@ using DronDonDon.Core.Audio.IoC;
 using DronDonDon.Core.IoC;
 using DronDonDon.Core.UI.IoC;
 using DronDonDon.Descriptor.IoC;
+using DronDonDon.Game.Levels.Module;
 using DronDonDon.Location.IoC;
 using DronDonDon.MainMenu.UI.Settings.IoC;
 using IoC;
@@ -39,6 +40,7 @@ namespace DronDonDon.Core.Filter
             context.RegisterModule(new DescriptorModule());    
             context.RegisterModule(new LocationModule());
             context.RegisterModule(new SettingsModule());
+            context.RegisterModule(new LevelsModule());
         }
     }
 }

@@ -47,5 +47,11 @@ namespace DronDonDon.Core.Configurations
                 PlayerPrefs.DeleteKey(pref);
             }
         }
+        
+        // public static string Levels
+        // {
+        //     get { return PlayerPrefs.GetString("levels", null); }
+        //     set { PlayerPrefs.SetString("levels", value); }
+        // }
     }
 }
