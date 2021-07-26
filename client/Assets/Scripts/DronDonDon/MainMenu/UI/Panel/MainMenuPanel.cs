@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using DronDonDon.MainMenu.UI.Settings.UI;
 using Adept.Logger;
 using AgkCommons.Input.Gesture.Model.Gestures;
@@ -8,7 +7,7 @@ using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using DronDonDon.Core;
-using DronDonDon.Dron.Model;
+using DronDonDon.Dron.Controller;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -19,6 +18,8 @@ namespace DronDonDon.MainMenu.UI.Panel
     [UIController(PREFAB)]
     public class MainMenuPanel : MonoBehaviour
     {
+        private DronController dc = new DronController();
+
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
         private const string PREFAB = "UI/Panel/pfMainScreenPanel@embeded";
         [Inject]
@@ -44,54 +45,23 @@ namespace DronDonDon.MainMenu.UI.Panel
         
         private void OnSwiped(Swipe swipe)
         {
-            Vector2 swipeStartPoint;
+            dc.ShiftVirtualPosition(SwipeToSector(swipe));
+        }
+
+        private int SwipeToSector(Swipe swipe)
+        {
             Vector2 swipeEndPoint;
             Vector2 swipeVector;
-            String movement = "";
+            int angle;
+            int result;
 
-            swipeStartPoint = swipe.Position;
             swipeEndPoint = (Vector2) typeof(Swipe).GetField("_endPoint", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(swipe);
+            swipeVector = swipeEndPoint - swipe.Position;
+            angle = (int) Vector2.Angle(Vector2.up, swipeVector.normalized);
             
-            swipeVector = new Vector2(swipeEndPoint.x - swipeStartPoint.x, swipeEndPoint.y - swipeStartPoint.y);
-            swipeVector.Normalize();
-            
-            // Вверх 
-            if ( swipeVector.y > 0 && swipeVector.x > -0.5f && swipeVector.x < 0.5f ) {
-                movement = SwipeType.UP.ToString();
-            }
-            // Вниз
-            else if ( swipeVector.y < 0 && swipeVector.x > -0.5f && swipeVector.x < 0.5f ) {
-                movement = SwipeType.DOWN.ToString();
-            }
-            // Влево
-            else if ( swipeVector.x < 0 && swipeVector.y > -0.5f && swipeVector.y < 0.5f ) {
-                movement = SwipeType.LEFT.ToString();
-            }
-            // Вправо
-            else if ( swipeVector.x > 0 && swipeVector.y > -0.5f && swipeVector.y < 0.5f ) {
-                movement = SwipeType.RIGHT.ToString();
-            }
-            // Вверх влево
-            else if ( swipeVector.y > 0 && swipeVector.x < 0 ) {
-                movement = SwipeType.UP_LEFT.ToString();
-            }
-            // Вверх вправо
-            else if ( swipeVector.y > 0 && swipeVector.x > 0 ) {
-                movement = SwipeType.UP_RIGHT.ToString();
-            }
-            // Вниз влево
-            else if ( swipeVector.y < 0 && swipeVector.x < 0 ) {
-                movement = SwipeType.DOWN_LEFT.ToString();
-                
-            // Вниз вправо
-            } else if ( swipeVector.y < 0 && swipeVector.x > 0 )
-            {
-                movement = SwipeType.DOWN_RIGHT.ToString();
-            }
-            _logger.Debug("Тип свайпа: " + movement);
+            result = Vector2.Angle(Vector2.right, swipeVector.normalized) > 90 ? 360 - angle : angle;
+            return (int) Mathf.Round(result / 45f) % 8;
         }
-        
-        
 
         [UIOnClick("MiddlePanel")]
         private void OnMiddleClick()
