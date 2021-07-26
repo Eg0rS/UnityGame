@@ -8,12 +8,11 @@ using IoC.Extension;
 
 namespace DronDonDon.Location.World.Object
 {
-    public class ObjectController : MonoBehaviour,  IWorldObjectController<PrefabModel>
+    public class ObjectController : MonoBehaviour,  IWorldObjectController<ObjectModel >
     {
         public WorldObjectType ObjectType { get; private set; }
-        public void Init(PrefabModel model)
+        public void Init(ObjectModel  model)
         {
-            this.InjectComponents();
             ObjectType = model.ObjectType;
         }
     }
