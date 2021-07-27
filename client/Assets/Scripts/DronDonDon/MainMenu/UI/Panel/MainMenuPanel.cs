@@ -1,13 +1,9 @@
-﻿using System.Reflection;
-using DronDonDon.MainMenu.UI.Settings.UI;
+﻿using DronDonDon.MainMenu.UI.Settings.UI;
 using Adept.Logger;
-using AgkCommons.Input.Gesture.Model.Gestures;
-using AgkCommons.Input.Gesture.Service;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using DronDonDon.Core;
-using DronDonDon.Dron.Controller;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -28,20 +24,11 @@ namespace DronDonDon.MainMenu.UI.Panel
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
         
-        [Inject]
-        private IGestureService _gestureService;
-
         [UICreated]
         public void Init()
         {
             _overlayManager.Require().HideLoadingOverlay(true);
             _logger.Debug("MainMenuPanel start init");
-        }
-
-        [UIOnClick("MiddlePanel")]
-        private void OnMiddleClick()
-        {
-            _logger.Debug("OnMiddleClick");
         }
         
         [UIOnClick("StartGameButton")]
