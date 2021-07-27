@@ -36,9 +36,9 @@ namespace DronDonDon.Location.Service
         {
            // _controllers[DRON] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
             _controllers[OBSTACLE] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-          //  _controllers[BONUSCHIPS] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-          //  _controllers[SPEEDBUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-           // _controllers[SHIELDBUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
+          //  _controllers[BONUS_CHIPS] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
+          //  _controllers[SPEED_BUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
+           // _controllers[SHIELD_BUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
           //  _controllers[START] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
           //  _controllers[FINISH] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
         }

@@ -7,9 +7,9 @@ namespace DronDonDon.Location.Model
         NONE,
         DRON,
         OBSTACLE,
-        BONUSCHIPS,
-        SPEEDBUSTER,
-        SHIELDBUSTER,
+        BONUS_CHIPS,
+        SPEED_BUSTER,
+        SHIELD_BUSTER,
         START,
         FINISH
     }

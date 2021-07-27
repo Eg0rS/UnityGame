@@ -23,7 +23,6 @@ namespace DronDonDon.Location.Service
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld();
-            
         }
         private void CreatedWorld()
         {
