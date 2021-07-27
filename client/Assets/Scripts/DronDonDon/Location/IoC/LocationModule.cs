@@ -10,6 +10,7 @@ namespace DronDonDon.Location.IoC
         {
             container.RegisterSingleton<LocationService>();      
             container.RegisterSingleton<LocationBuilderManager>();
+            container.RegisterSingleton<CreateObjectService>();
         }
     }
 }
