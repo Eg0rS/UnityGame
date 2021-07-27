@@ -45,7 +45,7 @@ namespace DronDonDon.MainMenu.UI.Panel
         
         private void OnSwiped(Swipe swipe)
         {
-            dc.ShiftVirtualPosition(SwipeToSector(swipe));
+            dc.MoveDron(SwipeToSector(swipe));
         }
 
         private int SwipeToSector(Swipe swipe)

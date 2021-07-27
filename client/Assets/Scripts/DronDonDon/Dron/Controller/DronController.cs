@@ -44,14 +44,22 @@ namespace DronDonDon.Dron.Controller
             };
         }
 
-        public void ShiftVirtualPosition(int sector)
+        private void ShiftVirtualPosition(int sector)
         {
             if (!ValidateVirtualPosition(sector))
                 return;
             _virtualPosition += virtualVectors[sector];
         }
-        
-        
-        
+
+        private void ShiftRealPosition()
+        {
+            _containerPosition = _virtualPosition * _containerCoefficient;
+        }
+
+        public void MoveDron(int sector)
+        {
+            ShiftVirtualPosition(sector);
+            ShiftRealPosition();
+        }
     }
 }
