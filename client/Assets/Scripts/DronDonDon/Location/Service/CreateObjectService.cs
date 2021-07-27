@@ -5,6 +5,7 @@ using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using AgkCommons.Resources;
+using DronDonDon.Location.World.Dron;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
@@ -14,6 +15,7 @@ using UnityEngine.AI;
 using DronDonDon.Location.Model;
 using static DronDonDon.Location.Model.WorldObjectType;
 using DronDonDon.Location.Model.BaseModel;
+using DronDonDon.Location.Model.Dron;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
 using DronDonDon.Location.World.Object;
@@ -34,7 +36,7 @@ namespace DronDonDon.Location.Service
         
         public CreateObjectService()
         {
-           // _controllers[DRON] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
+           _controllers[DRON] = new ControllerData(typeof(DronController), InitController<DronController, DronModel>);
             _controllers[OBSTACLE] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
           //  _controllers[BONUS_CHIPS] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
           //  _controllers[SPEED_BUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);

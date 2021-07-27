@@ -1,18 +1,57 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
+using DronDonDon.Location.Model.Dron;
 using UnityEngine;
+using DronDonDon.Location.Model;
+using DronDonDon.Location.Model.Object;
+using AgkCommons.Event;
+using AgkCommons.Input.Gesture.Model.Gestures;
+using DronDonDon.Location.Model.BaseModel;
+using IoC.Attribute;
+using IoC.Extension;
+using AgkCommons.Input.Gesture.Service;
 
-namespace DronDonDon.Dron.Controller
+namespace DronDonDon.Location.World.Dron
 {
-    public class DronController
+    public class DronController: MonoBehaviour,  IWorldObjectController<DronModel>
     {
-        private Vector2 _virtualPosition;
-        private Vector2 _containerPosition;
-        private float _containerCoefficient;
-
-        public DronController()
+        private Vector2 _virtualPosition=Vector2.zero;
+        private Vector2 _containerPosition =Vector2.zero;
+        private float _containerCoefficient=9;
+        
+        [Inject]
+        private IGestureService _gestureService;
+        
+        public WorldObjectType ObjectType { get; private set; }
+        public void Init(DronModel  model)
         {
-            _containerCoefficient = 1;
-            _virtualPosition = Vector2.zero;
+            ObjectType = model.ObjectType;
+            _gestureService.AddSwipeHandler(OnSwiped,false);
+        }
+
+        public void Update()
+        {
+           
+        }
+        
+        private void OnSwiped(Swipe swipe)
+        {
+            MoveDron(SwipeToSector(swipe));
+        }
+        
+        private int SwipeToSector(Swipe swipe)
+        {
+            Vector2 swipeEndPoint;
+            Vector2 swipeVector;
+            int angle;
+            int result;
+            
+            swipeEndPoint = (Vector2) typeof(Swipe).GetField("_endPoint", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(swipe);
+            swipeVector = swipeEndPoint - swipe.Position;
+            angle = (int) Vector2.Angle(Vector2.up, swipeVector.normalized);
+            
+            result = Vector2.Angle(Vector2.right, swipeVector.normalized) > 90 ? 360 - angle : angle;
+            return (int) Mathf.Round(result / 45f) % 8;
         }
 
         private Dictionary<int, Vector2> virtualVectors = new Dictionary<int, Vector2>(8)
@@ -67,6 +106,7 @@ namespace DronDonDon.Dron.Controller
         {
             ShiftVirtualPosition(sector);
             ShiftContainerPosition();
+            gameObject.transform.localPosition = _containerPosition;
         }
     }
 }
