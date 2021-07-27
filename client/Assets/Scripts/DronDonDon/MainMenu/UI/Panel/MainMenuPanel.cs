@@ -23,7 +23,7 @@ namespace DronDonDon.MainMenu.UI.Panel
 
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
-        
+
         [UICreated]
         public void Init()
         {
