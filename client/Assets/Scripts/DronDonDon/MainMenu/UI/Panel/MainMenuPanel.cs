@@ -2,8 +2,11 @@
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
+using AgkUI.Core.Model;
+using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
 using DronDonDon.Core;
+using DronDonDon.Game.Levels.UI;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -20,15 +23,21 @@ namespace DronDonDon.MainMenu.UI.Panel
         private IoCProvider<OverlayManager> _overlayManager;       
         [Inject]
         private LocationService _locationService;
+        
+        [Inject]
+        private UIService _uiService;
 
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
+        
+        [UIObjectBinding("MiddlePanel")]
+        private GameObject _middlePanel;
 
-        [UICreated]
         public void Init()
         {
             _overlayManager.Require().HideLoadingOverlay(true);
             _logger.Debug("MainMenuPanel start init");
+            _uiService.Create<ProgressMapController>(UiModel.Create<ProgressMapController>().Container(_middlePanel)).Done();
         }
         
         [UIOnClick("StartGameButton")]

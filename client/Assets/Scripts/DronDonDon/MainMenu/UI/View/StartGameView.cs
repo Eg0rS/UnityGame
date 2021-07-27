@@ -2,6 +2,7 @@ using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using DronDonDon.Core.UI.Builder;
 using DronDonDon.Core.UI.View;
+using DronDonDon.Game.Levels.UI;
 using DronDonDon.MainMenu.UI.Panel;
 
 // ReSharper disable NotAccessedField.Local
@@ -13,9 +14,8 @@ namespace DronDonDon.MainMenu.UI.View
     public class StartGameView : ExpandedView
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<StartGameView>();
-  
-        private const string PREFAB = "StartGameView";
 
+        private const string PREFAB = "StartGameView";
 
         private MainMenuPanel _mainMenuPanel;
 
