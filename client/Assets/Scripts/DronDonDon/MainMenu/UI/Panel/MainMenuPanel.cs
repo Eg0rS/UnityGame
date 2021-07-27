@@ -18,8 +18,6 @@ namespace DronDonDon.MainMenu.UI.Panel
     [UIController(PREFAB)]
     public class MainMenuPanel : MonoBehaviour
     {
-        private DronController dc = new DronController();
-
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
         private const string PREFAB = "UI/Panel/pfMainScreenPanel@embeded";
         [Inject]
@@ -38,29 +36,6 @@ namespace DronDonDon.MainMenu.UI.Panel
         {
             _overlayManager.Require().HideLoadingOverlay(true);
             _logger.Debug("MainMenuPanel start init");
-            
-            _gestureService.AddSwipeHandler(OnSwiped, false);
-        }
-
-        
-        private void OnSwiped(Swipe swipe)
-        {
-            dc.MoveDron(SwipeToSector(swipe));
-        }
-
-        private int SwipeToSector(Swipe swipe)
-        {
-            Vector2 swipeEndPoint;
-            Vector2 swipeVector;
-            int angle;
-            int result;
-
-            swipeEndPoint = (Vector2) typeof(Swipe).GetField("_endPoint", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(swipe);
-            swipeVector = swipeEndPoint - swipe.Position;
-            angle = (int) Vector2.Angle(Vector2.up, swipeVector.normalized);
-            
-            result = Vector2.Angle(Vector2.right, swipeVector.normalized) > 90 ? 360 - angle : angle;
-            return (int) Mathf.Round(result / 45f) % 8;
         }
 
         [UIOnClick("MiddlePanel")]

@@ -28,38 +28,45 @@ namespace DronDonDon.Dron.Controller
         };
 
         // Может ли дрон совершить манёвр, находясь в текущей позиции (столбце/строке/ячейке)
-        private bool ValidateVirtualPosition(int sector)
+        private bool ValidateMovement(int sector)
         {
+            Vector2Int fakePosition = Vector2Int.RoundToInt(_virtualPosition); 
             return sector switch
             {
-                0 => (int)_virtualPosition.y != 1,
-                1 => (int)_virtualPosition.x != 1 && (int)_virtualPosition.y != 1,
-                2 => (int)_virtualPosition.x != 1,
-                3 => (int)_virtualPosition.x != 1 && (int)_virtualPosition.y != -1,
-                4 => (int)_virtualPosition.y != -1,
-                5 => (int)_virtualPosition.x != -1 && (int)_virtualPosition.y != -1,
-                6 => (int)_virtualPosition.x != -1,
-                7 => (int)_virtualPosition.x != -1 && (int)_virtualPosition.y != 1,
+                0 => fakePosition.y != 1,
+                1 => fakePosition.x != 1 && fakePosition.y != 1,
+                2 => fakePosition.x != 1,
+                3 => fakePosition.x != 1 && fakePosition.y != -1,
+                4 => fakePosition.y != -1,
+                5 => fakePosition.x != -1 && fakePosition.y != -1,
+                6 => fakePosition.x != -1,
+                7 => fakePosition.x != -1 && fakePosition.y != 1,
                 _ => false
             };
         }
 
         private void ShiftVirtualPosition(int sector)
         {
-            if (!ValidateVirtualPosition(sector))
+            if (!ValidateMovement(sector))
+            {
+                Debug.Log("[Swipe] Невозможно переместиться из текущей ячейки по этому свайпу");
                 return;
+            }
+            Debug.Log("[Swipe] Старые координаты ячейки: " + _virtualPosition);
             _virtualPosition += virtualVectors[sector];
+            Debug.Log("[Swipe] Новые координаты ячейки: " + _virtualPosition);
         }
 
-        private void ShiftRealPosition()
+        private void ShiftContainerPosition()
         {
             _containerPosition = _virtualPosition * _containerCoefficient;
+            Debug.Log("[Swipe] Координаты в контейнере: " + _containerPosition);
         }
 
         public void MoveDron(int sector)
         {
             ShiftVirtualPosition(sector);
-            ShiftRealPosition();
+            ShiftContainerPosition();
         }
     }
 }
