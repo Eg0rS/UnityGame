@@ -6,6 +6,7 @@ namespace DronDonDon.Dron.Controller
     public class DronController
     {
         private Vector2 _virtualPosition;
+        private Vector2 _containerPosition;
         private float _containerCoefficient;
 
         public DronController()
@@ -45,10 +46,12 @@ namespace DronDonDon.Dron.Controller
 
         public void ShiftVirtualPosition(int sector)
         {
-            if (ValidateVirtualPosition(sector))
-            {
-                _virtualPosition += virtualVectors[sector];
-            }
+            if (!ValidateVirtualPosition(sector))
+                return;
+            _virtualPosition += virtualVectors[sector];
         }
+        
+        
+        
     }
 }
