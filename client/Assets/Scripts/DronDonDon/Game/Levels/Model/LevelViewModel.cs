@@ -1,4 +1,5 @@
-﻿using DronDonDon.Game.Levels.IoC;
+﻿using DronDonDon.Game.Levels.Descriptor;
+using DronDonDon.Game.Levels.IoC;
 
 namespace DronDonDon.Game.Levels.Model
 {

@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
-using DronDonDon.Game.Levels.Model;
-using IoC.Attribute;
-using NUnit.Framework;
 
-namespace DronDonDon.Game.Levels
+namespace DronDonDon.Game.Levels.Model
 {
     public class PlayerProgressModel
     {

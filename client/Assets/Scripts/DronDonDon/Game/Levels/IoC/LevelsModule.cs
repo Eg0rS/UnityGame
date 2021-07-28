@@ -1,7 +1,7 @@
 ﻿using DronDonDon.Game.Levels.Service;
 using IoC.Api;
 
-namespace DronDonDon.Game.Levels.Module
+namespace DronDonDon.Game.Levels.IoC
 {
     public class LevelsModule : IIoCModule
     {
