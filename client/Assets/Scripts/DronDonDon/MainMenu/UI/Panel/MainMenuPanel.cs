@@ -11,7 +11,7 @@ using DronDonDon.Core;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using LocationService = DronDonDon.Location.Service.LocationService;
+using LocationService = Assets.Scripts.DronDonDon.Location.Service.LocationService;
 
 namespace DronDonDon.MainMenu.UI.Panel
 {
