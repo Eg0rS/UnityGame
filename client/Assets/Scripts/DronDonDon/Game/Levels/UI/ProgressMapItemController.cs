@@ -59,6 +59,7 @@ namespace DronDonDon.Game.Levels.UI
             }
             if (isCurrentLevel)
             {
+                ProgressMapController.AddSelectedLevel(_selectedLevel);
                 _selectedLevel.SetActive(true);
                 _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
                 SetProgressImage(NEXT_NAME_IMAGE);
@@ -75,7 +76,7 @@ namespace DronDonDon.Game.Levels.UI
         {
             if (_isCurrentLevel || _isCompleted)
             {
-                ProgressMapController.UnEnableSelectedLevel(_selectedLevel);
+                ProgressMapController.UnEnableSelectedLevel();
                 _selectedLevel.SetActive(true);
                 ProgressMapController.AddSelectedLevel(_selectedLevel);
                 _locationService.NameSelectedLevel = _levelDescriptor.Prefab;

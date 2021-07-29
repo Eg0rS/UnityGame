@@ -23,11 +23,11 @@ namespace DronDonDon.Game.Levels.UI
         
         private List<LevelViewModel> _levelViewModels;
 
-        private static List<GameObject> _itemControllers = new List<GameObject>();
-
+        private static List<GameObject> _selectedOutline = new List<GameObject>();
         [UICreated]
         public void Init()
         {
+           // _levelService.DeletePlayerProgress(); // удаление прогресса 1-3 уровней, которые сейчас активны
             CreateSpots();
         }
         
@@ -64,16 +64,17 @@ namespace DronDonDon.Game.Levels.UI
 
         public static void AddSelectedLevel(GameObject item)
         {
-            _itemControllers.Add(item);
+            _selectedOutline.Add(item);
+           
         }
         
-        public static void UnEnableSelectedLevel(GameObject select)
+        public static void UnEnableSelectedLevel()
         {
-            foreach (GameObject item in _itemControllers)
-            {
-                item.SetActive(false);
-            }
-            _itemControllers = new List<GameObject>();
+            foreach (GameObject item in _selectedOutline)
+             {
+                 item.SetActive(false);
+             }
+             _selectedOutline = new List<GameObject>();
         }
     }
 }
