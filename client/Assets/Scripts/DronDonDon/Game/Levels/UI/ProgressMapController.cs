@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Core.Service;
 using DronDonDon.Game.Levels.IoC;
@@ -7,6 +8,7 @@ using DronDonDon.Game.Levels.Service;
 using IoC.Attribute;
 using UnityEngine;
 using AgkUI.Core.Model;
+using NUnit.Framework;
 
 namespace DronDonDon.Game.Levels.UI
 {
@@ -20,6 +22,8 @@ namespace DronDonDon.Game.Levels.UI
         private UIService _uiService;
         
         private List<LevelViewModel> _levelViewModels;
+
+        private static List<GameObject> _itemControllers = new List<GameObject>();
 
         [UICreated]
         public void Init()
@@ -56,6 +60,20 @@ namespace DronDonDon.Game.Levels.UI
                             .Done();
                 }
             }
+        }
+
+        public static void AddSelectedLevel(GameObject item)
+        {
+            _itemControllers.Add(item);
+        }
+        
+        public static void UnEnableSelectedLevel(GameObject select)
+        {
+            foreach (GameObject item in _itemControllers)
+            {
+                item.SetActive(false);
+            }
+            _itemControllers = new List<GameObject>();
         }
     }
 }

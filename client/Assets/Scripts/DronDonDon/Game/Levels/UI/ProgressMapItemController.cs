@@ -36,6 +36,9 @@ namespace DronDonDon.Game.Levels.UI
         
         [UIObjectBinding("LevelNumber")] 
         private GameObject _levelNumber;
+        
+        [UIObjectBinding("Selected")] 
+        private GameObject _selectedLevel;
 
         private LevelDescriptor _levelDescriptor;
         private bool _isCurrentLevel;
@@ -56,6 +59,7 @@ namespace DronDonDon.Game.Levels.UI
             }
             if (isCurrentLevel)
             {
+                _selectedLevel.SetActive(true);
                 _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
                 SetProgressImage(NEXT_NAME_IMAGE);
                 _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
@@ -71,6 +75,9 @@ namespace DronDonDon.Game.Levels.UI
         {
             if (_isCurrentLevel || _isCompleted)
             {
+                ProgressMapController.UnEnableSelectedLevel(_selectedLevel);
+                _selectedLevel.SetActive(true);
+                ProgressMapController.AddSelectedLevel(_selectedLevel);
                 _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
             }
         }
