@@ -8,6 +8,9 @@ namespace DronDonDon.Location.Model.Dron
     public class DronModel : PrefabModel
     {
 
-        
+        public void Awake()
+        {
+            ObjectType = WorldObjectType.DRON;
+        }
     }
 }
