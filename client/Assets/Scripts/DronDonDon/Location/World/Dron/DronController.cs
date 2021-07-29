@@ -88,18 +88,15 @@ namespace DronDonDon.Location.World.Dron
         {
             if (!ValidateMovement(sector))
             {
-                Debug.Log("[Swipe] Невозможно переместиться из текущей ячейки по этому свайпу");
+              ;
                 return;
             }
-            Debug.Log("[Swipe] Старые координаты ячейки: " + _virtualPosition);
             _virtualPosition += virtualVectors[sector];
-            Debug.Log("[Swipe] Новые координаты ячейки: " + _virtualPosition);
         }
 
         private void ShiftContainerPosition()
         {
             _containerPosition = _virtualPosition * _containerCoefficient;
-            Debug.Log("[Swipe] Координаты в контейнере: " + _containerPosition);
         }
 
         public void MoveDron(int sector)
