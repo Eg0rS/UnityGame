@@ -1,10 +1,14 @@
-﻿using DronDonDon.MainMenu.UI.Settings.UI;
+﻿using DronDonDon.Billing.UI;
+using DronDonDon.Billing.Event;
+using DronDonDon.Billing.Service;
+using DronDonDon.Settings.UI;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
+using AgkUI.Element.Text;
 using DronDonDon.Core;
 using DronDonDon.Game.Levels.UI;
 using IoC.Attribute;
@@ -24,6 +28,9 @@ namespace DronDonDon.MainMenu.UI.Panel
         [Inject]
         private LocationService _locationService;
         
+        [Inject] 
+        private BillingService _billingService;
+        
         [Inject]
         private UIService _uiService;
 
@@ -32,14 +39,27 @@ namespace DronDonDon.MainMenu.UI.Panel
         
         [UIObjectBinding("MiddlePanel")]
         private GameObject _middlePanel;
+        
+        [UIComponentBinding("CountChips")]
+        private UILabel _countChips;
 
         public void Init()
         {
             _overlayManager.Require().HideLoadingOverlay(true);
-            _logger.Debug("MainMenuPanel start init");
             _uiService.Create<ProgressMapController>(UiModel.Create<ProgressMapController>().Container(_middlePanel)).Done();
+            _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+            UpdateCredits();
+            _logger.Debug("MainMenuPanel start init");
+        }
+        private void UpdateCredits()
+        {
+            _countChips.text = _billingService.GetCreditsCount().ToString();
         }
         
+        private void OnResourceUpdated(BillingEvent resourceEvent)
+        {
+            UpdateCredits();
+        }
         [UIOnClick("StartGameButton")]
         private void OnStartGame()
         {
@@ -62,6 +82,7 @@ namespace DronDonDon.MainMenu.UI.Panel
         private void OnCreditsPanel()
         {
             _logger.Debug("Click on credits");
+            _dialogManager.Require().Show<CreditShopDialog>();
         }
     }
 }
