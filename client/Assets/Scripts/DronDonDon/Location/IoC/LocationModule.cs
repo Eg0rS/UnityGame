@@ -1,3 +1,4 @@
+using Assets.Scripts.DronDonDon.Location.Service;
 using DronDonDon.Location.Service;
 using DronDonDon.Location.Service.Builder;
 using IoC.Api;
@@ -10,6 +11,7 @@ namespace DronDonDon.Location.IoC
         {
             container.RegisterSingleton<LocationService>();      
             container.RegisterSingleton<LocationBuilderManager>();
+            container.RegisterSingleton<CreateObjectService>();
         }
     }
 }
