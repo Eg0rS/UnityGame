@@ -82,7 +82,15 @@ namespace DronDonDon.Game.Levels.Service
                 levelViewModel.LevelDescriptor = _levelsDescriptors[i];
                 levelViewModel.LevelProgress = playerProgressModel.LevelsProgress[i];
                 _levelsViewModels.Add(levelViewModel);
-            } 
+            }
+
+            foreach (LevelProgress item in playerProgressModel.LevelsProgress)
+            {
+                LevelViewModel levelViewModel = new LevelViewModel();
+                levelViewModel.LevelProgress = item;
+                levelViewModel.LevelDescriptor 
+                
+            }
             return _levelsViewModels;
         }
         
@@ -126,7 +134,7 @@ namespace DronDonDon.Game.Levels.Service
         
         private PlayerProgressModel RequireProgressModel()
         {
-            PlayerProgressModel model = _progressRepository.Get();
+            PlayerProgressModel model = _progressRepository.Require();
             return model;
         }
         

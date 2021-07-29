@@ -10,6 +10,7 @@ namespace DronDonDon.Game.Levels.IoC
         {
             container.RegisterSingleton<LevelService>();
             container.RegisterSingleton<ProgressRepository>();
+            container.RegisterSingleton<LevelDescriptorRegistry>();
         }
     }
 }
