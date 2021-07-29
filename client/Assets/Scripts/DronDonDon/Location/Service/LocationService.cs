@@ -11,23 +11,32 @@ namespace DronDonDon.Location.Service
     [Injectable]
     public class LocationService 
     {
-        private const string LOCATION_PREFAB = "World/Location/pfLocation@embeded";
         [Inject]
-        private ScreenManager _screenManager;   
+        private ScreenManager _screenManager;  
+        
         [Inject]
         private LocationBuilderManager _locationBuilderManager;
+        
         [Inject]
-        private IoCProvider<OverlayManager> _overlayManager; 
+        private IoCProvider<OverlayManager> _overlayManager;
+
+        private string _nameSelectedLevel;
+
+        public string NameSelectedLevel
+        {
+            set => _nameSelectedLevel = value;
+        }
+
         public void StartGame()
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld();
+            CreatedWorld(_nameSelectedLevel);
         }
-        private void CreatedWorld()
+        private void CreatedWorld(string nameSelectedLevel)
         {
             _locationBuilderManager.CreateDefault()
-                                   .Prefab(LOCATION_PREFAB)
+                                   .Prefab(nameSelectedLevel)
                                    .Build()
                                    .Then(() => {
                                        _overlayManager.Require().HideLoadingOverlay(true);

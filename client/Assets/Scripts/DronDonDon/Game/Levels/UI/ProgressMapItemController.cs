@@ -1,88 +1,115 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
+using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Service;
 using AgkUI.Element.Text;
 using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
 using IoC.Attribute;
-using IoC.Extension;
-using NUnit.Framework;
 using UnityEngine;
-using AgkUI.Core.Model;
+using LocationService = DronDonDon.Location.Service.LocationService;
 
 namespace DronDonDon.Game.Levels.UI
 {
     [UIController("UI/Panel/pfLevelProgressItemPanel@embeded")]
     public class ProgressMapItemController : MonoBehaviour
     {
+        private const string COMPLETED_NAME_IMAGE = "Сompleted";
+        private const string NEXT_NAME_IMAGE = "Next";
+        
         [Inject] 
         private LevelService _levelService;
 
         [Inject]
         private UIService _uiService;
 
-        // [UIObjectBinding("Chips")] 
-        // private GameObject _chips;
+        [Inject] 
+        private LocationService _locationService;
         
         [UIObjectBinding("Stars")] 
         private GameObject _stars;
-        
-        // [UIObjectBinding("Time")] 
-        // private GameObject _time;
 
+        [UIObjectBinding("pfLocationItemSpot")] 
+        private GameObject _spot;
+        
         [UIObjectBinding("LevelNumber")] 
         private GameObject _levelNumber;
 
+        private LevelDescriptor _levelDescriptor;
+        private bool _isCurrentLevel;
+        private bool _isCompleted;
+
         [UICreated]
-        public void Init(LevelProgress levelProgress)
+        public void Init(LevelProgress levelProgress, LevelDescriptor levelDescriptor, bool isCurrentLevel = false)
         {
+            _levelDescriptor = levelDescriptor;
+            _isCurrentLevel = isCurrentLevel;
             if (levelProgress.CountStars != 0)
             {
-                // _chips.GetComponent<UILabel>().text += levelProgress.CountChips;
-                // _time.GetComponent<UILabel>().text += levelProgress.TransitTime;
-                _levelNumber.GetComponent<UILabel>().text = levelProgress.Id;
-                int countStars = levelProgress.CountStars;
-                List<GameObject> starsChildren = _stars.GetChildren();
-                switch (countStars)
-                {
-                    case 1:
-                        starsChildren[0].SetActive(true);
-                        break;
-                    case 2:
-                        starsChildren[0].SetActive(true);
-                        starsChildren[1].SetActive(true);
-                        break;
-                    case 3:
-                        starsChildren[0].SetActive(true);
-                        starsChildren[1].SetActive(true);
-                        starsChildren[2].SetActive(true);
-                        break;
-                }
+                _isCompleted = true;
+                SetProgressImage(COMPLETED_NAME_IMAGE);
+                _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
+                SetStars(levelProgress.CountStars);
+                return;
+            }
+            if (isCurrentLevel)
+            {
+                _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
+                SetProgressImage(NEXT_NAME_IMAGE);
+                _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
             }
             else
             {
-                SetActiveProgressPanel(false);
+                _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
             }
         }
 
-        public void SetActiveProgressPanel(bool value)
+        [UIOnClick("pfLocationItemSpot")]
+        private void SelectLevel()
         {
-            GameObject panel = gameObject.GetChildRecursive("Panel");
-            panel.SetActive(value);
-        }
-
-        private List<GameObject> GetLevelsStateObjects()
-        {
-            GameObject starsContainer = gameObject.GetChildRecursive("pfLocationItemSpot");
-            List<GameObject> result = new List<GameObject>(starsContainer.transform.childCount);
-            for (int i = 0; i < result.Capacity; i++)
+            if (_isCurrentLevel || _isCompleted)
             {
-                result.Add(starsContainer.transform.GetChild(i).gameObject);
+                _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
             }
-            return result;
+        }
+        
+        private List<GameObject> GetSpotChildren()
+        {
+            List<GameObject> spotChildren = _spot.GetChildren();
+            return spotChildren;
+        }
+
+        private List<GameObject> GetStarsImage()
+        {
+            List<GameObject> stars = _stars.GetChildren();
+            return stars;
+        }
+
+        private void SetStars(int countStars)
+        {
+            List<GameObject> stars = GetStarsImage();
+            for (int i = 0; i < countStars; i++)
+            {
+                stars[i].SetActive(true);
+            }
+        }
+
+        private void SetProgressImage(string nameImage)
+        {
+            List<GameObject> spotChildren = GetSpotChildren();
+            switch (nameImage)
+            {
+                case "Сompleted":
+                    spotChildren[2].SetActive(false);
+                    spotChildren[0].SetActive(true);
+                    break;
+                case "Next":
+                    spotChildren[2].SetActive(false);
+                    spotChildren[1].SetActive(true);
+                    break;
+            }
         }
     }
 }

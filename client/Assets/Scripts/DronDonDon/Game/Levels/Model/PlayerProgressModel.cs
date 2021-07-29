@@ -11,7 +11,7 @@ namespace DronDonDon.Game.Levels.Model
             get { return _levelsProgress; }
             set { _levelsProgress = value; }
         }
-
+        
         public PlayerProgressModel()
         {
             _levelsProgress = new List<LevelProgress>();

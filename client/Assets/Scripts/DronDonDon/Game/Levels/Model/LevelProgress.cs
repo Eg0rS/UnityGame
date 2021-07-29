@@ -5,7 +5,7 @@ namespace DronDonDon.Game.Levels.Model
     public class LevelProgress
     {
         private string _id;
-        private int _transitTime;
+        private float _transitTime;
         private int _countStars;
         private int _countChips;
         public string Id
@@ -13,8 +13,8 @@ namespace DronDonDon.Game.Levels.Model
             get => _id;
             set => _id = value;
         }
-
-        public int TransitTime
+        
+        public float TransitTime
         {
             get => _transitTime;
             set => _transitTime = value;
