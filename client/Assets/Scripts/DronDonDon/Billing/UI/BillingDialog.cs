@@ -80,12 +80,5 @@ namespace DronDonDon.Billing.UI
             _billingService.AddCredits(500);
         }
         
-        [UIOnClick("DroneShopButton")]
-        private void OnDroneShopButton()
-        {
-            _dialogManager.Require()
-                .Hide(gameObject);
-            //_dialogManager.Require().Show<DroneShopDialog>();
-        }
     }
 }

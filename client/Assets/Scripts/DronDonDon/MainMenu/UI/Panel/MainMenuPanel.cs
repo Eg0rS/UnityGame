@@ -2,6 +2,7 @@
 using DronDonDon.Billing.UI;
 using DronDonDon.Billing.Event;
 using DronDonDon.Billing.Service;
+using DronDonDon.Shop.UI;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
@@ -62,6 +63,7 @@ namespace DronDonDon.MainMenu.UI.Panel
         [UIOnClick("DronShop")]
         private void OnDroneStore()
         { 
+            _dialogManager.Require().Show<ShopDialog>();
             _logger.Debug("Click on store");
         }
         [UIOnClick("SettingsButton")]
