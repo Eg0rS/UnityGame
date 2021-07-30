@@ -37,9 +37,10 @@ namespace DronDonDon.Location.World.Dron
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             DisablePath();
             ObjectType = model.ObjectType;
+            _speedShift = model.SpeedShift;
             _gestureService.AddSwipeHandler(OnSwiped,false);
             _gestureService.AddTapHandler(OnTap);
-            _speedShift = model.SpeedShift;
+           
         }
         
         private void OnTap(Tap tap)
@@ -71,9 +72,8 @@ namespace DronDonDon.Location.World.Dron
         {
             _bezier.speed = newSpeed;
         }
-
-        //кол-во пройденного пути
-        private float GetBeizerPath()
+        
+        private float GetBeizerPassedPath()
         {
             return _bezier.NormalizedT;
         }
@@ -89,11 +89,10 @@ namespace DronDonDon.Location.World.Dron
         
         private void OnSwiped(Swipe swipe)
         {
-            MoveDron(SwipeToSector(swipe));
+            MoveDron(NumberSwipedToSector(swipe));
         }
         
-        //Определяет номер сектора(позиции) по свайпу
-        private int SwipeToSector(Swipe swipe)
+        private int NumberSwipedToSector(Swipe swipe)
         {
             Vector2 swipeEndPoint;
             Vector2 swipeVector;
@@ -106,9 +105,10 @@ namespace DronDonDon.Location.World.Dron
             
             result = Vector2.Angle(Vector2.right, swipeVector.normalized) > 90 ? 360 - angle : angle;
             return (int) Mathf.Round(result / 45f) % 8;
+            
         }
     
-        // хранилище координат секторов
+       
         private Dictionary<int, Vector2> virtualVectors = new Dictionary<int, Vector2>(8)
         {
             {0, new Vector2(0, 1)},    // вверх
@@ -120,8 +120,7 @@ namespace DronDonDon.Location.World.Dron
             {6, new Vector2(-1, 0)},   // влево 
             {7, new Vector2(-1, 1)},   // влево вверх
         };
-
-        // Может ли дрон совершить манёвр, находясь в текущей позиции (столбце/строке/ячейке)
+        
         private bool ValidateMovement(int sector)
         {
             Vector2Int fakePosition = Vector2Int.RoundToInt(_containerPosition / _containerCoefficient); 
@@ -139,7 +138,7 @@ namespace DronDonDon.Location.World.Dron
             };
         }
     
-        //изменение позиции
+        
         private void ShiftVirtualPosition(int sector)
         {
             if (!ValidateMovement(sector))
@@ -156,5 +155,6 @@ namespace DronDonDon.Location.World.Dron
             _previusPosition = transform.localPosition;
             _isShifting = true;
         }
+        
     }
 }

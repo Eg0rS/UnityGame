@@ -11,6 +11,5 @@ namespace DronDonDon.Location.Model.BonusChips
         {
             ObjectType = WorldObjectType.BONUS_CHIPS;
         }
-        
     }
 }

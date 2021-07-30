@@ -9,8 +9,6 @@ namespace DronDonDon.Location.Model.Dron
     {
         public float SpeedShift = 2;
         
-        
-        
         public void Awake()
         {
             ObjectType = WorldObjectType.DRON;
