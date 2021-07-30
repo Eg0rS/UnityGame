@@ -7,7 +7,10 @@ namespace DronDonDon.Location.Model.Dron
 {
     public class DronModel : PrefabModel
     {
-
+        public float SpeedShift = 2;
+        
+        
+        
         public void Awake()
         {
             ObjectType = WorldObjectType.DRON;

@@ -54,7 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3395788657807914715}
-  - component: {fileID: 8338258201655892693}
+  - component: {fileID: 6724234764602500257}
   m_Layer: 0
   m_Name: pfDronContainer
   m_TagString: Untagged
@@ -78,7 +78,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8338258201655892693
+--- !u!114 &6724234764602500257
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,16 +87,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 7702659901763234085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46d12b9f97514694e962a3395a73e638, type: 3}
+  m_Script: {fileID: 11500000, guid: 148310ac13c958d4c93f53cdfe985375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
   travelMode: 0
-  travelTime: 5
+  speed: 5
   m_normalizedT: 0
-  highQuality: 1
-  movementLerpModifier: 12
-  rotationLerpModifier: 12
+  rotationLerpModifier: 10
   lookAt: 1
   onPathCompleted:
     m_PersistentCalls:
