@@ -54,7 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3395788657807914715}
-  - component: {fileID: 8338258201655892693}
+  - component: {fileID: 6724234764602500257}
   m_Layer: 0
   m_Name: pfDronContainer
   m_TagString: Untagged
@@ -78,7 +78,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8338258201655892693
+--- !u!114 &6724234764602500257
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,15 +87,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7702659901763234085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46d12b9f97514694e962a3395a73e638, type: 3}
+  m_Script: {fileID: 11500000, guid: 148310ac13c958d4c93f53cdfe985375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
   travelMode: 0
-  travelTime: 5
+  speed: 5
   m_normalizedT: 0
-  highQuality: 0
-  movementLerpModifier: 10
   rotationLerpModifier: 10
   lookAt: 1
   onPathCompleted:
@@ -202,7 +200,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 60
+  far clip plane: 150
   field of view: 80
   orthographic: 0
   orthographic size: 5
@@ -269,7 +267,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8866722505382954425}
-  m_Mesh: {fileID: -1682360018315694226, guid: 37c2a8760f87bb0478e485587422c71f, type: 3}
+  m_Mesh: {fileID: -1682360018315694226, guid: fc49526dfe841af4f99cfbd973e53272, type: 3}
 --- !u!23 &736201298404805390
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -289,10 +287,10 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -8896051167825165466, guid: 37c2a8760f87bb0478e485587422c71f, type: 3}
-  - {fileID: 6231023347082624160, guid: 37c2a8760f87bb0478e485587422c71f, type: 3}
-  - {fileID: -8274133419916619345, guid: 37c2a8760f87bb0478e485587422c71f, type: 3}
-  - {fileID: -6867524174320841699, guid: 37c2a8760f87bb0478e485587422c71f, type: 3}
+  - {fileID: -8896051167825165466, guid: fc49526dfe841af4f99cfbd973e53272, type: 3}
+  - {fileID: -6867524174320841699, guid: fc49526dfe841af4f99cfbd973e53272, type: 3}
+  - {fileID: -8274133419916619345, guid: fc49526dfe841af4f99cfbd973e53272, type: 3}
+  - {fileID: 6231023347082624160, guid: fc49526dfe841af4f99cfbd973e53272, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
