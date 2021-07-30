@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using AgkCommons.Configurations;
+using AgkCommons.Event;
 using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkCommons.Resources;
 using DronDonDon.Core.Filter;
+using DronDonDon.Game.Levels.Event;
 using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Repository;
@@ -11,36 +14,50 @@ using UnityEngine;
 
 namespace DronDonDon.Game.Levels.Service
 {
-    public class LevelService : IInitable
+    public class LevelService : GameEventDispatcher, IInitable  
     {
         [Inject]
         private ResourceService _resourceService;
-
+        
         [Inject] 
         private ProgressRepository _progressRepository;
 
-        private List<LevelViewModel> _levelsViewModels  = new List<LevelViewModel>();
+        [Inject]
+        private LevelDescriptorRegistry _levelDescriptorRegistry;
 
-        private List<LevelDescriptor> _levelsDescriptors;
+        private List<LevelViewModel> _levelsViewModels  = new List<LevelViewModel>();
+        
         
         public void Init()
         {
-            _resourceService.LoadConfiguration("Configs/levels@embeded", OnConfigLoaded);
-            InitProgress();
-        }
-        
-        public void InitProgress()
-        {
+            if (_levelDescriptorRegistry.LevelDescriptors.Count == 0)
+            {
+                _resourceService.LoadConfiguration("Configs/levels@embeded", OnConfigLoaded);
+            }
             if (!HasPlayerProgress())
             {
-                PlayerProgressModel model = new PlayerProgressModel();
-                _progressRepository.Set(model);
+                InitProgress();
             }
+        }
+        
+        private void InitProgress()
+        {
+            PlayerProgressModel model = new PlayerProgressModel
+            {
+                CurrentLevel = _levelDescriptorRegistry.LevelDescriptors[0].Id
+            };
+            LevelProgress levelProgress = new LevelProgress
+            {
+                Id = model.CurrentLevel, CountChips = 0, CountStars = 0, TransitTime = 0
+            };
+            model.LevelsProgress.Add(levelProgress);
+            SaveProgress(model);
         }
         
         public void SaveProgress( PlayerProgressModel model)
         {
             _progressRepository.Set(model);
+            
         }
         
         public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime)
@@ -75,35 +92,24 @@ namespace DronDonDon.Game.Levels.Service
         
         public List<LevelViewModel> GetLevels()
         {
+            _levelsViewModels = new List<LevelViewModel>();
             PlayerProgressModel playerProgressModel = RequireProgressModel();
-            for (int i = 0; i < playerProgressModel.LevelsProgress.Count; i++)
+            foreach (LevelDescriptor item in _levelDescriptorRegistry.LevelDescriptors)
             {
                 LevelViewModel levelViewModel = new LevelViewModel();
-                levelViewModel.LevelDescriptor = _levelsDescriptors[i];
-                levelViewModel.LevelProgress = playerProgressModel.LevelsProgress[i];
+                levelViewModel.LevelDescriptor = item;
+                levelViewModel.LevelProgress = playerProgressModel.LevelsProgress.Find(x => x.Id.Equals(item.Id));
                 _levelsViewModels.Add(levelViewModel);
             }
-
-            foreach (LevelProgress item in playerProgressModel.LevelsProgress)
-            {
-                LevelViewModel levelViewModel = new LevelViewModel();
-                levelViewModel.LevelProgress = item;
-                levelViewModel.LevelDescriptor 
-                
-            }
+            SaveProgress(playerProgressModel);
             return _levelsViewModels;
         }
         
         public LevelDescriptor GetLevelDescriptorByID(string id)
         {
-            return _levelsDescriptors.Find(x => x.Id.Equals(id));
+            return _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(id));
         }
-
-        public List<LevelDescriptor> GetListLevelsDescriptors()
-        {
-            return _levelsDescriptors;
-        }
-
+        
         public LevelProgress GetLevelProgressById(string levelId)
         {
             PlayerProgressModel playerModel = RequireProgressModel();
@@ -111,11 +117,10 @@ namespace DronDonDon.Game.Levels.Service
             return level;
         }
         
-        public void DeletePlayerProgress()
+        public void ResetPlayerProgress()
         {
-            _progressRepository.Delete();
-            PlayerProgressModel model = new PlayerProgressModel();
-            SaveProgress(model);
+            InitProgress();
+            Dispatch(new LevelEvent(LevelEvent.UPDATED));
         }
 
         public void CreateLevelById(string id)
@@ -129,10 +134,10 @@ namespace DronDonDon.Game.Levels.Service
         
         private bool HasPlayerProgress()
         {
-            return (_progressRepository.Get() != null);
+            return _progressRepository.Exists();
         }
         
-        private PlayerProgressModel RequireProgressModel()
+        public PlayerProgressModel RequireProgressModel()
         {
             PlayerProgressModel model = _progressRepository.Require();
             return model;
@@ -140,12 +145,11 @@ namespace DronDonDon.Game.Levels.Service
         
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
-            _levelsDescriptors = new List<LevelDescriptor>();
             foreach (Configuration temp in config.GetList<Configuration>("levels.level"))
             {
                 LevelDescriptor levelDescriptor = new LevelDescriptor();
                 levelDescriptor.Configure(temp);
-                _levelsDescriptors.Add(levelDescriptor);
+                _levelDescriptorRegistry.LevelDescriptors.Add(levelDescriptor);
             }
         }
     }

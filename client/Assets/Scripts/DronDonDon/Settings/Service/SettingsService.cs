@@ -79,7 +79,7 @@ namespace DronDonDon.Settings.Service
 
         public void ResetAllProgress()
         {
-            _levelService.DeletePlayerProgress();
+            _levelService.ResetPlayerProgress();
             _billingService.SetCreditsCount(0);
         }
     }

@@ -30,6 +30,15 @@ namespace DronDonDon.Game.Levels.UI
         
         [UIObjectBinding("Stars")] 
         private GameObject _stars;
+        
+        [UIObjectBinding("Сompleted")] 
+        private GameObject _completedLevelImage;
+        
+        [UIObjectBinding("Next")] 
+        private GameObject _nextLevelImage;
+        
+        [UIObjectBinding("Locked")] 
+        private GameObject _lockedLevelImage;
 
         [UIObjectBinding("pfLocationItemSpot")] 
         private GameObject _spot;
@@ -39,48 +48,66 @@ namespace DronDonDon.Game.Levels.UI
         
         [UIObjectBinding("Selected")] 
         private GameObject _selectedLevel;
+        
+        [UIObjectBinding("OneStar")] 
+        private GameObject _firstStar;
+        
+        [UIObjectBinding("TwoStar")] 
+        private GameObject _secondStar;
+        
+        [UIObjectBinding("ThreeStar")] 
+        private GameObject _thirdStar;
 
-        private LevelDescriptor _levelDescriptor;
-        private bool _isCurrentLevel;
-        private bool _isCompleted;
+        private LevelViewModel _levelViewModel;
+
 
         [UICreated]
-        public void Init(LevelProgress levelProgress, LevelDescriptor levelDescriptor, bool isCurrentLevel = false)
+        public void Init(LevelViewModel levelViewModel, bool isCurrentLevel)
         {
-            _levelDescriptor = levelDescriptor;
-            _isCurrentLevel = isCurrentLevel;
-            if (levelProgress.CountStars != 0)
+            ProgressMapController._progressMapItemController.Add(this);
+            DisableStars();
+            DisablePorgressImages();
+            _levelViewModel = levelViewModel;
+            if (levelViewModel.LevelProgress == null)
             {
-                _isCompleted = true;
-                SetProgressImage(COMPLETED_NAME_IMAGE);
-                _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
-                SetStars(levelProgress.CountStars);
-                return;
-            }
-            if (isCurrentLevel)
-            {
-                ProgressMapController.AddSelectedLevel(_selectedLevel);
-                _selectedLevel.SetActive(true);
-                _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
-                SetProgressImage(NEXT_NAME_IMAGE);
-                _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
+                _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
+                _lockedLevelImage.SetActive(true);
             }
             else
             {
-                _levelNumber.GetComponent<UILabel>().text = levelDescriptor.Order.ToString();
+                _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
+                if (isCurrentLevel)
+                {
+                    ProgressMapController.AddSelectedLevel(_selectedLevel);
+                    _selectedLevel.SetActive(true);
+                    _locationService.NameSelectedLevel = levelViewModel.LevelDescriptor.Prefab;
+                    _nextLevelImage.SetActive(true);
+                    _lockedLevelImage.SetActive(false);
+                    return;
+                }
+                _completedLevelImage.SetActive(true);
+                _lockedLevelImage.SetActive(false);
+                SetStars(levelViewModel.LevelProgress.CountStars);
             }
         }
 
         [UIOnClick("pfLocationItemSpot")]
         private void SelectLevel()
         {
-            if (_isCurrentLevel || _isCompleted)
+            PlayerProgressModel playerProgressModel = _levelService.RequireProgressModel();
+            string levelId = transform.parent.name;
+            if (playerProgressModel.LevelsProgress.Find(x => x.Id.Equals(levelId)).TransitTime != 0 )
             {
-                ProgressMapController.UnEnableSelectedLevel();
-                _selectedLevel.SetActive(true);
-                ProgressMapController.AddSelectedLevel(_selectedLevel);
-                _locationService.NameSelectedLevel = _levelDescriptor.Prefab;
+                _locationService.NameSelectedLevel = _levelViewModel.LevelDescriptor.Prefab;
+                _locationService.StartGame();
             }
+            // if ()
+            // {
+            //     ProgressMapController.UnEnableSelectedLevel();
+            //     _selectedLevel.SetActive(true);
+            //     ProgressMapController.AddSelectedLevel(_selectedLevel);
+            //     _locationService.NameSelectedLevel = _levelViewModel.LevelDescriptor.Prefab;
+            // }
         }
         
         private List<GameObject> GetSpotChildren()
@@ -104,20 +131,17 @@ namespace DronDonDon.Game.Levels.UI
             }
         }
 
-        private void SetProgressImage(string nameImage)
+        private void DisableStars()
         {
-            List<GameObject> spotChildren = GetSpotChildren();
-            switch (nameImage)
-            {
-                case "Сompleted":
-                    spotChildren[2].SetActive(false);
-                    spotChildren[0].SetActive(true);
-                    break;
-                case "Next":
-                    spotChildren[2].SetActive(false);
-                    spotChildren[1].SetActive(true);
-                    break;
-            }
+            _firstStar.SetActive(false);
+            _secondStar.SetActive(false);
+            _thirdStar.SetActive(false);
+        }
+
+        private void DisablePorgressImages()
+        {
+            _completedLevelImage.SetActive(false);
+            _nextLevelImage.SetActive(false);
         }
     }
 }
