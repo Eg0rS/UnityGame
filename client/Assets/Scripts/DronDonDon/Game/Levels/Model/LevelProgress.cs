@@ -8,7 +8,14 @@ namespace DronDonDon.Game.Levels.Model
         private float _transitTime;
         private int _countStars;
         private int _countChips;
-        
+        private bool _isCompleted;
+
+        public bool IsCompleted
+        {
+            get => _isCompleted;
+            set => _isCompleted = value;
+        }
+
         public string Id
         {
             get => _id;

@@ -10,6 +10,7 @@ using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Text;
 using DronDonDon.Core;
+using DronDonDon.Game.Levels.Service;
 using DronDonDon.Game.Levels.UI;
 using IoC.Attribute;
 using IoC.Util;
@@ -33,6 +34,8 @@ namespace DronDonDon.MainMenu.UI.Panel
         
         [Inject]
         private UIService _uiService;
+
+        [Inject] private LevelService _levelService;
 
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
@@ -63,7 +66,8 @@ namespace DronDonDon.MainMenu.UI.Panel
         [UIOnClick("StartGameButton")]
         private void OnStartGame()
         {
-            _locationService.StartGame();
+            //todo открытие диалога с информацией о текущем уровне, а не запуск уровня
+            _locationService.StartGame(_levelService.GetCurrentLevelPrefab());
         }
 
         [UIOnClick("DronShop")]

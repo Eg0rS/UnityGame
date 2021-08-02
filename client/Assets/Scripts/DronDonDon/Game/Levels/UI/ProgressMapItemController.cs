@@ -56,15 +56,27 @@ namespace DronDonDon.Game.Levels.UI
         [UIObjectBinding("ThreeStar")] 
         private GameObject _thirdStar;
 
-        public LevelViewModel _levelViewModel;
+        private LevelViewModel _levelViewModel;
+        private bool _isCurrentLevel;
         
-        
+
+        public bool IsCurrentLevel
+        {
+            get => _isCurrentLevel;
+        }
+        public LevelViewModel LevelViewModel
+        {
+            get => _levelViewModel;
+        }
+
+
         [UICreated]
         public void Init(LevelViewModel levelViewModel, bool isCurrentLevel)
         {
             DisableStars();
             DisableProgressImages();
             _levelViewModel = levelViewModel;
+            _isCurrentLevel = isCurrentLevel;
             _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
             if (levelViewModel.LevelProgress == null)
             {
@@ -86,9 +98,9 @@ namespace DronDonDon.Game.Levels.UI
         [UIOnClick("pfLocationItemSpot")]
         private void SelectLevel()
         {
-            if (_levelViewModel.LevelProgress != null)
-            {
-               _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id); 
+            if (_levelViewModel.LevelProgress != null || _isCurrentLevel)
+            { 
+                _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id); 
             }
         }
 
@@ -124,6 +136,8 @@ namespace DronDonDon.Game.Levels.UI
         {
             DisableStars();
             DisableProgressImages();
+            _levelViewModel = levelViewModel;
+            _isCurrentLevel = isCurrentLevel;
             _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
             if (levelViewModel.LevelProgress == null)
             {
