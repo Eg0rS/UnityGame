@@ -1,46 +1,41 @@
-using System.Reflection;
 using AgkCommons.CodeStyle;
-using AgkCommons.Input.Gesture.Model.Gestures;
-using AgkCommons.Input.Gesture.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
-using DronDonDon.Location.World.Dron;
+using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
 using DronDonDon.Location.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
-using UnityEngine;
 
-namespace Assets.Scripts.DronDonDon.Location.Service
+namespace DronDonDon.Location.Service
 {
     [Injectable]
     public class LocationService 
     {
-        private const string LOCATION_PREFAB = "World/Location/pfLocation@embeded";
+        [Inject]
+        private ScreenManager _screenManager;  
         
-        [Inject] 
-        private ScreenManager _screenManager;   
         [Inject]
         private LocationBuilderManager _locationBuilderManager;
+        
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
-       
-        public void StartGame()
+        
+        public void StartGame(string levelPrefabName)
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld();
+            CreatedWorld(levelPrefabName);
         }
-        private void CreatedWorld()
+        private void CreatedWorld(string levelPrefabName)
         {
             _locationBuilderManager.CreateDefault()
-                                   .Prefab(LOCATION_PREFAB)
+                                   .Prefab(levelPrefabName)
                                    .Build()
                                    .Then(() => {
                                        _overlayManager.Require().HideLoadingOverlay(true);
                                    })
                                    .Done();
         }
-        
     }
 }
