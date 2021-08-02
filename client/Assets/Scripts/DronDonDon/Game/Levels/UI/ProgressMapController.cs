@@ -68,8 +68,10 @@ namespace DronDonDon.Game.Levels.UI
             PlayerProgressModel playerProgressModel = _levelService.RequireProgressModel();
             foreach (ProgressMapItemController spotController in _progressMapItemController)
             {
-                spotController.UpdateSpot(_levelViewModels.Find(x => x.LevelProgress.Id.Equals(spotController._levelViewModel.LevelDescriptor.Id)),
-                    spotController._levelViewModel.LevelDescriptor.Id == playerProgressModel.CurrentLevel);
+                LevelDescriptor descriptor = spotController._levelViewModel.LevelDescriptor;
+                
+                LevelViewModel model = _levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));
+                spotController.UpdateSpot(model, descriptor.Id == playerProgressModel.CurrentLevel);
             }
         }
     }

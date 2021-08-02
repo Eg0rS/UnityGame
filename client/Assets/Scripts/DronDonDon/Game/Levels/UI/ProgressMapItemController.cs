@@ -64,6 +64,7 @@ namespace DronDonDon.Game.Levels.UI
         {
             DisableStars();
             DisableProgressImages();
+            _levelViewModel = levelViewModel;
             _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
             if (levelViewModel.LevelProgress == null)
             {
