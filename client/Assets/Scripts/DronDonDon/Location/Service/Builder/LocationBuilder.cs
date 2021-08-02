@@ -6,6 +6,7 @@ using UnityEngine;
 using DronDonDon.Location.Model.BaseModel;
 using Adept.Logger;
 
+
 namespace DronDonDon.Location.Service.Builder
 {
     public class LocationBuilder

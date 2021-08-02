@@ -5,6 +5,7 @@ using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using AgkCommons.Resources;
+using DronDonDon.Location.World.Dron;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
@@ -14,11 +15,19 @@ using UnityEngine.AI;
 using DronDonDon.Location.Model;
 using static DronDonDon.Location.Model.WorldObjectType;
 using DronDonDon.Location.Model.BaseModel;
+using DronDonDon.Location.Model.BonusChips;
+using DronDonDon.Location.Model.Dron;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
 using DronDonDon.Location.World.Object;
 using DronDonDon.Location.Model.Object;
+using DronDonDon.Location.Model.Obstacle;
+using DronDonDon.Location.Model.ShieldBooster;
 using DronDonDon.Location.World;
+using DronDonDon.Location.World.BonusChips;
+using DronDonDon.Location.World.Obstacle;
+using DronDonDon.Location.World.ShieldBooster;
+using DronDonDon.Location.World.SpeedBooster;
 
 namespace DronDonDon.Location.Service
 {
@@ -34,11 +43,11 @@ namespace DronDonDon.Location.Service
         
         public CreateObjectService()
         {
-           // _controllers[DRON] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-            _controllers[OBSTACLE] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-          //  _controllers[BONUS_CHIPS] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-          //  _controllers[SPEED_BUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-           // _controllers[SHIELD_BUSTER] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
+           _controllers[DRON] = new ControllerData(typeof(DronController), InitController<DronController, DronModel>);
+            _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
+           _controllers[BONUS_CHIPS] = new ControllerData(typeof(BonusChipsController), InitController<BonusChipsController, BonusChipsModel>);
+            _controllers[SPEED_BUSTER] = new ControllerData(typeof(SpeedBoosterController), InitController<BonusChipsController, BonusChipsModel>);
+           _controllers[SHIELD_BUSTER] = new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
           //  _controllers[START] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
           //  _controllers[FINISH] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
         }

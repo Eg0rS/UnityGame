@@ -62,6 +62,7 @@ namespace DronDonDon.Settings.UI
         {
             _logger.Debug("Reset");
             _settingsService.ResetAllProgress();
+            
         }
     }
 }
