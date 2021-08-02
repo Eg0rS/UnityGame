@@ -20,24 +20,17 @@ namespace DronDonDon.Location.Service
         
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
-
-        private string _nameSelectedLevel;
-
-        public string NameSelectedLevel
-        {
-            set => _nameSelectedLevel = value;
-        }
-
+        
         public void StartGame()
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(_nameSelectedLevel);
+            CreatedWorld();
         }
-        private void CreatedWorld(string nameSelectedLevel)
+        private void CreatedWorld()
         {
             _locationBuilderManager.CreateDefault()
-                                   .Prefab(nameSelectedLevel)
+                                   .Prefab("World/Location/fbLevel_1@embeded")
                                    .Build()
                                    .Then(() => {
                                        _overlayManager.Require().HideLoadingOverlay(true);

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Adept.Logger;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
@@ -7,6 +9,7 @@ using AgkUI.Element.Text;
 using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
+using DronDonDon.MainMenu.UI.Panel;
 using IoC.Attribute;
 using UnityEngine;
 using LocationService = DronDonDon.Location.Service.LocationService;
@@ -19,11 +22,9 @@ namespace DronDonDon.Game.Levels.UI
         private const string COMPLETED_NAME_IMAGE = "Сompleted";
         private const string NEXT_NAME_IMAGE = "Next";
         
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
         [Inject] 
         private LevelService _levelService;
-
-        [Inject]
-        private UIService _uiService;
 
         [Inject] 
         private LocationService _locationService;
@@ -45,10 +46,7 @@ namespace DronDonDon.Game.Levels.UI
         
         [UIObjectBinding("LevelNumber")] 
         private GameObject _levelNumber;
-        
-        [UIObjectBinding("Selected")] 
-        private GameObject _selectedLevel;
-        
+
         [UIObjectBinding("OneStar")] 
         private GameObject _firstStar;
         
@@ -58,35 +56,28 @@ namespace DronDonDon.Game.Levels.UI
         [UIObjectBinding("ThreeStar")] 
         private GameObject _thirdStar;
 
-        private LevelViewModel _levelViewModel;
-
-
+        public LevelViewModel _levelViewModel;
+        
+        
         [UICreated]
         public void Init(LevelViewModel levelViewModel, bool isCurrentLevel)
         {
-            ProgressMapController._progressMapItemController.Add(this);
             DisableStars();
-            DisablePorgressImages();
-            _levelViewModel = levelViewModel;
+            DisableProgressImages();
+            _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
             if (levelViewModel.LevelProgress == null)
             {
-                _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
                 _lockedLevelImage.SetActive(true);
             }
             else
             {
-                _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
+                _lockedLevelImage.SetActive(false);
                 if (isCurrentLevel)
                 {
-                    ProgressMapController.AddSelectedLevel(_selectedLevel);
-                    _selectedLevel.SetActive(true);
-                    _locationService.NameSelectedLevel = levelViewModel.LevelDescriptor.Prefab;
                     _nextLevelImage.SetActive(true);
-                    _lockedLevelImage.SetActive(false);
                     return;
                 }
                 _completedLevelImage.SetActive(true);
-                _lockedLevelImage.SetActive(false);
                 SetStars(levelViewModel.LevelProgress.CountStars);
             }
         }
@@ -94,26 +85,10 @@ namespace DronDonDon.Game.Levels.UI
         [UIOnClick("pfLocationItemSpot")]
         private void SelectLevel()
         {
-            PlayerProgressModel playerProgressModel = _levelService.RequireProgressModel();
-            string levelId = transform.parent.name;
-            if (playerProgressModel.LevelsProgress.Find(x => x.Id.Equals(levelId)).TransitTime != 0 )
+            if (_levelViewModel.LevelProgress != null)
             {
-                _locationService.NameSelectedLevel = _levelViewModel.LevelDescriptor.Prefab;
-                _locationService.StartGame();
+               _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id); 
             }
-            // if ()
-            // {
-            //     ProgressMapController.UnEnableSelectedLevel();
-            //     _selectedLevel.SetActive(true);
-            //     ProgressMapController.AddSelectedLevel(_selectedLevel);
-            //     _locationService.NameSelectedLevel = _levelViewModel.LevelDescriptor.Prefab;
-            // }
-        }
-        
-        private List<GameObject> GetSpotChildren()
-        {
-            List<GameObject> spotChildren = _spot.GetChildren();
-            return spotChildren;
         }
 
         private List<GameObject> GetStarsImage()
@@ -138,10 +113,32 @@ namespace DronDonDon.Game.Levels.UI
             _thirdStar.SetActive(false);
         }
 
-        private void DisablePorgressImages()
+        private void DisableProgressImages()
         {
             _completedLevelImage.SetActive(false);
             _nextLevelImage.SetActive(false);
+        }
+
+        public void UpdateSpot(LevelViewModel levelViewModel, bool isCurrentLevel)
+        {
+            DisableStars();
+            DisableProgressImages();
+            _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
+            if (levelViewModel.LevelProgress == null)
+            {
+                _lockedLevelImage.SetActive(true);
+            }
+            else
+            {
+                _lockedLevelImage.SetActive(false);
+                if (isCurrentLevel)
+                {
+                    _nextLevelImage.SetActive(true);
+                    return;
+                }
+                _completedLevelImage.SetActive(true);
+                SetStars(levelViewModel.LevelProgress.CountStars);
+            }
         }
     }
 }

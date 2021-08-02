@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Adept.Logger;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Core.Service;
@@ -10,6 +11,7 @@ using IoC.Attribute;
 using UnityEngine;
 using AgkUI.Core.Model;
 using DronDonDon.Game.Levels.Event;
+using DronDonDon.MainMenu.UI.Panel;
 using NUnit.Framework;
 
 namespace DronDonDon.Game.Levels.UI
@@ -17,6 +19,7 @@ namespace DronDonDon.Game.Levels.UI
     [UIController("UI/Panel/pfMiddlePanel@embeded")]
     public class ProgressMapController : MonoBehaviour
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
         [Inject]
         private LevelService _levelService;
         
@@ -25,42 +28,22 @@ namespace DronDonDon.Game.Levels.UI
         
         private List<LevelViewModel> _levelViewModels;
 
-        [Inject]
-        private LevelDescriptorRegistry _levelDescriptorRegistry;
-        
-        public static List<ProgressMapItemController> _progressMapItemController = new List<ProgressMapItemController>();
-
-        private static List<GameObject> _selectedOutline = new List<GameObject>();
-        
+        public List<ProgressMapItemController> _progressMapItemController = new List<ProgressMapItemController>();
         
         [UICreated]
         public void Init()
         {
+            _levelService.InitProgress();
+            _levelService.SetLevelProgress("level1",1,1,1);
+            _levelService.CreateLevelById("level2");
+            _levelService.SetLevelProgress("level2",1,1,1);
             _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
-                  _levelService.ResetPlayerProgress();
-             _levelService.CreateLevelById("level2");
-             _levelService.SetLevelProgress("level1", 1,1,0);
-             PlayerProgressModel playerProgressModel = _levelService.RequireProgressModel();
-             playerProgressModel.CurrentLevel = "level2";
-             _levelService.SetLevelProgress("level2", 1,1,1 );
-            // //_levelService.DeletePlayerProgress();
-            CreateSpots();
+             CreateSpots();
         }
         
         private void OnLevelMapUpdated(LevelEvent levelEvent)
         {
-          //  CreateSpots();
-            PlayerProgressModel playerProgressModel = _levelService.RequireProgressModel();
-            _levelViewModels = _levelService.GetLevels();
-            // foreach (ProgressMapItemController item in _progressMapItemController)
-            // {
-            //     item.Init();
-            // }
-
-            for (int i = 0; i < 5; i++)
-            {
-                _progressMapItemController[i].Init(_levelViewModels[i], _levelViewModels[i].LevelDescriptor.Id == playerProgressModel.CurrentLevel);
-            }
+            UpdateSpots();
         }
 
         private void CreateSpots()
@@ -70,28 +53,24 @@ namespace DronDonDon.Game.Levels.UI
             foreach (LevelViewModel item in _levelViewModels)
             {
                 GameObject levelContainer = GameObject.Find($"level{item.LevelDescriptor.Order}");
-                {
-                    _uiService.Create<ProgressMapItemController>(UiModel
+                _uiService.Create<ProgressMapItemController>(UiModel
                             .Create<ProgressMapItemController>(item, item.LevelDescriptor.Id == playerProgressModel.CurrentLevel)
                             .Container(levelContainer))
+                        .Then(controller => _progressMapItemController.Add(controller))
                         .Done();
-                }
             }
         }
 
-        public static void AddSelectedLevel(GameObject item)
+        private void UpdateSpots()
         {
-            _selectedOutline.Add(item);
-           
-        }
-        
-        public static void UnEnableSelectedLevel()
-        {
-            foreach (GameObject item in _selectedOutline)
-             {
-                 item.SetActive(false);
-             }
-             _selectedOutline = new List<GameObject>();
+            _logger.Debug("update");
+            _levelViewModels = _levelService.GetLevels();
+            PlayerProgressModel playerProgressModel = _levelService.RequireProgressModel();
+            foreach (ProgressMapItemController spotController in _progressMapItemController)
+            {
+                spotController.UpdateSpot(_levelViewModels.Find(x => x.LevelProgress.Id.Equals(spotController._levelViewModel.LevelDescriptor.Id)),
+                    spotController._levelViewModel.LevelDescriptor.Id == playerProgressModel.CurrentLevel);
+            }
         }
     }
 }

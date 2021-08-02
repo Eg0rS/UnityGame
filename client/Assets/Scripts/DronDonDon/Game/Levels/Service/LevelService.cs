@@ -40,7 +40,7 @@ namespace DronDonDon.Game.Levels.Service
             }
         }
         
-        private void InitProgress()
+        public void InitProgress()
         {
             PlayerProgressModel model = new PlayerProgressModel
             {
@@ -57,7 +57,6 @@ namespace DronDonDon.Game.Levels.Service
         public void SaveProgress( PlayerProgressModel model)
         {
             _progressRepository.Set(model);
-            
         }
         
         public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime)
@@ -101,7 +100,6 @@ namespace DronDonDon.Game.Levels.Service
                 levelViewModel.LevelProgress = playerProgressModel.LevelsProgress.Find(x => x.Id.Equals(item.Id));
                 _levelsViewModels.Add(levelViewModel);
             }
-            SaveProgress(playerProgressModel);
             return _levelsViewModels;
         }
         
