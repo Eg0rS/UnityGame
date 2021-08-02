@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AgkCommons.Configurations;
-using AgkCommons.Event;
 using AgkCommons.Resources;
-using DronDonDon.Core.Service;
+using DronDonDon.Core.Filter;
 using DronDonDon.Location.World.Dron.Descriptor;
 using DronDonDon.Location.World.Dron.IoC;
+using DronDonDon.Location.World.Dron.Model;
 using IoC.Attribute;
 
 namespace DronDonDon.Location.World.Dron.Service
 {
-    public class DronService 
+    public class DronService : IInitable
     {
-        [Inject]
-        private DronRepository _dronRepository;
-
         [Inject]
         private DronDescriptorRegistry _dronDescriptorRegistry;
         
         [Inject]
         private ResourceService _resourceService;
+        
+        private List<DronViewModel> _dronViewModels = new List<DronViewModel>();
 
         public void Init()
         {
@@ -38,8 +36,17 @@ namespace DronDonDon.Location.World.Dron.Service
                 _dronDescriptorRegistry.DronDescriptors.Add(dronDescriptor);
             }
         }
-        
-        
-        
+
+        public List<DronViewModel> getAllDrons()
+        {
+            _dronViewModels = new List<DronViewModel>();
+            foreach (DronDescriptor item in _dronDescriptorRegistry.DronDescriptors)
+            {
+                DronViewModel dronViewModel = new DronViewModel();
+                dronViewModel.DronDescriptor = item;
+                _dronViewModels.Add(dronViewModel);
+            }
+            return _dronViewModels;
+        }
     }
 }

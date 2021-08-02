@@ -1,5 +1,5 @@
 ﻿using DronDonDon.Core.Repository;
-using DronDonDon.Location.Model.Dron;
+using DronDonDon.Location.World.Dron.Model;
 
 namespace DronDonDon.Location.World.Dron.Service
 {

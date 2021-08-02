@@ -14,8 +14,8 @@
             _id = id;
             _title = title;
             _energy = energy;
-            _mobility = mobility;
             _durability = durability;
+            _mobility = mobility;
             _prefab = prefab;
         }
     }

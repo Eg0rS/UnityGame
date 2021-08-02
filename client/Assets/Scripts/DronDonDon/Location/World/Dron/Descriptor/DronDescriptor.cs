@@ -22,38 +22,38 @@ namespace DronDonDon.Location.World.Dron.Descriptor
 
         public string Id
         {
-            get { return _id; }
-            set { _id = value; }
+            get => _id;
+            set => _id = value;
         }
         
         public string Title
         {
-            get { return _title; }
-            set { _title = value; }
+            get => _title;
+            set => _title = value;
         }
 
         public int Energy
         {
-            get { return _energy; }
-            private set { _energy = value;  }
+            get => _energy;
+            private set => _energy = value;
         }
 
         public int Durability
         {
-            get { return _durability; }
-            private set { _durability = value; }
+            get => _durability;
+            private set => _durability = value;
         }
 
         public int Mobility
         {
-            get { return _mobility; }
-            private set { _mobility = value; }
+            get => _mobility;
+            private set => _mobility = value;
         }
         
         public string Prefab
         {
-            get { return _prefab; }
-            private set { _prefab = value; }
+            get => _prefab;
+            private set => _prefab = value;
         }
     }
 }

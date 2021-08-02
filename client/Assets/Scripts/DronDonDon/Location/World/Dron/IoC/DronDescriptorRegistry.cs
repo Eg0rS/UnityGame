@@ -17,5 +17,6 @@ namespace DronDonDon.Location.World.Dron.IoC
             get => _dronDescriptors;
             set => _dronDescriptors = value;
         }
+        
     }
 }
