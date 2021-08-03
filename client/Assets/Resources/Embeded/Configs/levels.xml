@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
     <levels>
-        <level id="level1" order="1" prefab="Levels/pfLevel1@embeded" chips="10" time="1" strength="2" title = "City" description = "This city"/>
-        <level id="level2" order="2" prefab="Levels/pfLevel2@embeded" chips="15" time="2" strength="3" title = "City1" description = "This city1"/>
-        <level id="level3" order="3" prefab="Levels/pfLevel3@embeded" chips="10" time="2" strength="2" title = "City2" description = "This city2"/>
-        <level id="level4" order="4" prefab="Levels/pfLevel4@embeded" chips="10" time="2" strength="2" title = "City3" description = "This city3"/>
-        <level id="level5" order="5" prefab="Levels/pfLevel5@embeded" chips="5" time="3" strength="5" title = "City4" description = "This city4"/>
+        <level id="level1" order="1" prefab="Levels/pfLevel1@embeded" chips="10" time="1" strength="2" title = "Level1" 
+               image = "Embeded/UI/Texture/txLockedLevel" description = "Обратилась компания BornInside, которая занимается производством инкубаторов. Для их клиента нужно доставить инкубатор и куриные яйца. Тип груза — медицинский (т.е. хрупкий), доставка срочная."/>
+        <level id="level2" order="2" prefab="Levels/pfLevel2@embeded" chips="15" time="2" strength="3" title = "City1" 
+               image = "UI/Texture/txLockedLevel@embeded" description = "This city1"/>
+        <level id="level3" order="3" prefab="Levels/pfLevel3@embeded" chips="10" time="2" strength="2" title = "City2" 
+               image = "UI/Texture/txLockedLevel@embeded" description = "This city2"/>
+        <level id="level4" order="4" prefab="Levels/pfLevel4@embeded" chips="10" time="2" strength="2" title = "City3" 
+               image = "UI/Texture/txLockedLevel@embeded" description = "This city3"/>
+        <level id="level5" order="5" prefab="Levels/pfLevel5@embeded" chips="5" time="3" strength="5" title = "City4" 
+               image = "UI/Texture/txLockedLevel@embeded" description = "This city4"/>
     </levels>
 </config>

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Adept.Logger;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Service;
 using AgkUI.Element.Text;
+using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Panel;
+using DronDonDon.Resource.UI.DescriptionLevelDialog;
 using IoC.Attribute;
 using UnityEngine;
 using LocationService = DronDonDon.Location.Service.LocationService;
@@ -59,7 +62,6 @@ namespace DronDonDon.Game.Levels.UI
         private LevelViewModel _levelViewModel;
         private bool _isCurrentLevel;
         
-
         public bool IsCurrentLevel
         {
             get => _isCurrentLevel;
@@ -68,8 +70,7 @@ namespace DronDonDon.Game.Levels.UI
         {
             get => _levelViewModel;
         }
-
-
+        
         [UICreated]
         public void Init(LevelViewModel levelViewModel, bool isCurrentLevel)
         {
@@ -99,8 +100,9 @@ namespace DronDonDon.Game.Levels.UI
         private void SelectLevel()
         {
             if (_levelViewModel.LevelProgress != null || _isCurrentLevel)
-            { 
-                _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id); 
+            {
+                _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);
+                _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id);
             }
         }
 

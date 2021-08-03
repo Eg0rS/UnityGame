@@ -10,10 +10,9 @@ namespace DronDonDon.Game.Levels.Descriptor
         public int NecessaryCountChips { get; private set; }
         public int NecessaryTime { get; private set; }
         public int NecessaryCountStrength { get; private set; }
-        
         public string LevelTitle { get; private set; }
-        
         public string LevelDescription { get; private set; }
+        public string LevelImage { get; private set; }
         
         public void Configure(Configuration config)
         {
@@ -25,6 +24,7 @@ namespace DronDonDon.Game.Levels.Descriptor
             NecessaryCountStrength = config.GetInt("strength");
             LevelTitle = config.GetString("title");
             LevelDescription = config.GetString("description");
+            LevelImage = config.GetString("image");
         }
     }
 }
