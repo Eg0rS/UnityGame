@@ -2,17 +2,10 @@
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Dialog.Attributes;
-using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
+using AgkUI.Element.Text;
 using DronDonDon.Core.UI.Dialog;
-using DronDonDon.Game.Levels.Descriptor;
-using DronDonDon.Game.Levels.IoC;
-using DronDonDon.Game.Levels.Model;
-using DronDonDon.Game.Levels.Service;
-using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace DronDonDon.Game.LevelDialogs.LevelFinished
 {
@@ -23,117 +16,61 @@ namespace DronDonDon.Game.LevelDialogs.LevelFinished
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFinishedDialog@embeded";
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
 
-        private const string TASK_COUNT_TITLE = "Выполнено заданий {0} из 3";
-        private const string CHIPS_TASK = "Собрано чипов — {0} из {1}";
-        private const string STRENGTH_TASK = "Прочность груза — {0}%";
-        private const string TIME_TASK = "Время прохождения — {0}";
-        
-        [Inject]
-        private LevelService _levelService;
+        private string _levelId;
 
         [UIObjectBinding("RestartButton")]
-        private UIButton _restartButton;
+        private GameObject _restartButton;
         
         [UIObjectBinding("NextLevelButton")]
-        private UIButton _nextLevelButton;
+        private GameObject _nextLevelButton;
 
         [UIObjectBinding("LevelMapButton")]
-        private UIButton _levelMapButton;
+        private GameObject _levelMapButton;
 
-        [UIObjectBinding("ChipsStar")]
-        private GameObject _chipsStar;
+        [UIComponentBinding("ChipsStar")]
+        private ToggleButton _chipsStar;
         
-        [UIObjectBinding("StrengthStar")]
-        private GameObject _strengthStar;
+        [UIComponentBinding("DurabilityStar")]
+        private ToggleButton _durabilityStar;
         
-        [UIObjectBinding("TimeStar")]
-        private GameObject _timeStar;
+        [UIComponentBinding("TimeStar")]
+        private ToggleButton _timeStar;
         
-        [UIObjectBinding("ChipsTask")]
-        private GameObject _chipsTask;
+        [UIComponentBinding("ChipsTask")]
+        private UILabel _chipsTaskLabel;
         
-        [UIObjectBinding("StrengthTask")]
-        private GameObject _strengthTask;
+        [UIComponentBinding("DurabilityTask")]
+        private UILabel _durabilityTaskLabel;
         
-        [UIObjectBinding("TimeTask")]
-        private GameObject _timeTask;
-
-        public void CalculateResult(string levelId, int chips, int strength, int time)
+        [UIComponentBinding("TimeTask")]
+        private UILabel _timeTaskLabel;
+        
+        [UICreated]
+        public void Init(string levelId, 
+                         bool chipsTaskCompleted, 
+                         bool durabilityTaskCompleted, 
+                         bool timeTaskCompleted, 
+                         string chipsTaskTitle, 
+                         string durabilityTaskTitle, 
+                         string timeTaskTitle)
         {
-            PlayerProgressModel model = _levelService.RequireProgressModel();
+            _logger.Debug("[LevelFinishedDialog] Итоговые результаты уровня " + levelId + ": " +
+                          chipsTaskTitle + ", " +
+                          durabilityTaskTitle + ", " +
+                          timeTaskTitle);
+            _levelId = levelId;
             
-            // LevelDescriptor levelDescriptor = _levelService.GetLevelDescriptorByID(levelId);
-            // PlayerProgressModel model = _levelService.RequireProgressModel();
-            // string currentLevel = model.CurrentLevel;
+            _chipsStar.Interactable = false;
+            _durabilityStar.Interactable = false;
+            _timeStar.Interactable = false;
             
-            // Результат и количество выполненных заданий
-            bool chipsTaskGoal = false;
-            bool strengthTaskGoal = false;
-            bool timeTaskGoal = false;
-            int goalCount = 0;
-
-            // А это как бы результат прохождения уровня
-            int level_chips = 47;
-            int level_strength = 36;
-            int level_time = 153;
-
-            // Если собрали достаточное количество чипов
-            if (level_chips > chips)
-            {
-                chipsTaskGoal = true;
-                goalCount += 1;
-            }
-            else
-            {
-                
-            }
-
-            // Если не ушатали дрон
-            if (level_strength > strength)
-            {
-                strengthTaskGoal = true;
-                goalCount += 1;
-            }
-            else
-            {
-                
-            }
-
-            // Если успели вовремя
-            if (level_time < time)
-            {
-                timeTaskGoal = true;
-                goalCount += 1;
-            }
-            else
-            {
-                
-            }
+            _chipsStar.IsOn = chipsTaskCompleted;
+            _durabilityStar.IsOn = durabilityTaskCompleted;
+            _timeStar.IsOn = timeTaskCompleted;
             
-            chipsTaskGoal = level_chips > chips;
-            strengthTaskGoal = level_strength > strength;
-            timeTaskGoal = level_time < time;
-
-            goalCount = 2;
-            int chips_res = chips;
-            int strength_res = strength / level_strength;
-            int time_res = 180;
-            
-            _logger.Debug("[LevelFinishedDialog] На уровне " + levelId +
-                          " собрано чипов — " + level_chips +
-                          ", прочность — " + level_strength +
-                          ", время — " + level_time);
-            
-            _logger.Debug("[LevelFinishedDialog] Итоговые результаты: " +
-                          String.Format(TASK_COUNT_TITLE, goalCount) + ", " +
-                          String.Format(CHIPS_TASK, chips_res, level_chips) + ", " +
-                          String.Format(STRENGTH_TASK, strength_res) + ", " +
-                          String.Format(TIME_TASK, time_res));
-        }
-
-        private void _SwitchStar(GameObject gameObject, bool flag)
-        {
-            
+            _chipsTaskLabel.GetComponent<UILabel>().text = chipsTaskTitle;
+            _durabilityTaskLabel.GetComponent<UILabel>().text = durabilityTaskTitle;
+            _timeTaskLabel.GetComponent<UILabel>().text = timeTaskTitle;
         }
     }
 }
