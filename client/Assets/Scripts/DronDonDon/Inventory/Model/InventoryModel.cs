@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using System;
 
 namespace DronDonDon.Inventory.Model
 {
@@ -13,7 +15,14 @@ namespace DronDonDon.Inventory.Model
         [CanBeNull]
         public InventoryItemModel GetItem(string itemId)
         {
-            return Items.FirstOrDefault(x => x.Id == itemId);
+            try
+            {
+                return Items.FirstOrDefault(x => x.Id == itemId);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
         
         public bool HasItem(string itemId)

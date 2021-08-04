@@ -3,11 +3,11 @@ using IoC.Api;
 
 namespace DronDonDon.Inventory.IoC
 {
-    public class InvntoryModel : IIoCModule
+    public class InventoryModule : IIoCModule
     {
         public void Configure(IIoCContainer container)
         {
-            container.RegisterSingleton<InventoryService>(); 
+            container.RegisterSingleton<InventoryService>();
             container.RegisterSingleton<InventoryRepository>();
         }
     }

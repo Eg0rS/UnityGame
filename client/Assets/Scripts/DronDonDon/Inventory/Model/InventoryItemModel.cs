@@ -13,6 +13,9 @@
             Type = type;
             Count = count;
         }
-        
+
+        public InventoryItemModel()
+        {
+        }
     }
 }

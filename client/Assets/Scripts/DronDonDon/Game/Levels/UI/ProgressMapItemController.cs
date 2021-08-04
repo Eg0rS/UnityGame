@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Adept.Logger;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
-using AgkUI.Core.Service;
 using AgkUI.Element.Text;
-using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Panel;
@@ -19,16 +16,8 @@ namespace DronDonDon.Game.Levels.UI
     [UIController("UI/Panel/pfLevelProgressItemPanel@embeded")]
     public class ProgressMapItemController : MonoBehaviour
     {
-        private const string COMPLETED_NAME_IMAGE = "Сompleted";
-        private const string NEXT_NAME_IMAGE = "Next";
-        
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
-        [Inject] 
-        private LevelService _levelService;
 
-        [Inject] 
-        private LocationService _locationService;
-        
         [UIObjectBinding("Stars")] 
         private GameObject _stars;
         
@@ -59,16 +48,10 @@ namespace DronDonDon.Game.Levels.UI
         private LevelViewModel _levelViewModel;
         private bool _isCurrentLevel;
         
-
-        public bool IsCurrentLevel
-        {
-            get => _isCurrentLevel;
-        }
         public LevelViewModel LevelViewModel
         {
             get => _levelViewModel;
         }
-
 
         [UICreated]
         public void Init(LevelViewModel levelViewModel, bool isCurrentLevel)

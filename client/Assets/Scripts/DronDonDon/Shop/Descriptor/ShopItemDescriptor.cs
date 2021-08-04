@@ -21,13 +21,14 @@ namespace DronDonDon.Shop.Descriptor
         [XmlAttribute("model")]
         public string Model { get; set; }
         
-        public void Configure(Configuration config)
+        public void Configure(Configuration configItem)
         {
-            Id = config.GetString("id");
-            int type = config.GetInt("type");
+            Id = configItem.GetString("id");
+            int type = configItem.GetInt("type");
             Type = (InventoryItemTypeModel)type;
-            Model = config.GetString("model");
-            Price = config.GetInt("price");
+            Model = configItem.GetString("model");
+            Price = configItem.GetInt("price");
+            Name = configItem.GetString("name");
         }
     }
 }

@@ -4,17 +4,24 @@ using Adept.Logger;
 using AgkCommons.Event;
 using DronDonDon.Inventory.Model;
 using IoC.Attribute;
+using DronDonDon.Core.Filter;
+using DronDonDon.Inventory.Event;
+using DronDonDon.Shop.Descriptor;
 
 namespace DronDonDon.Inventory.Service
 {
-    public class InventoryService : GameEventDispatcher
+    public class InventoryService : GameEventDispatcher, IInitable
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<InventoryService>();
 
         [Inject] 
         private InventoryRepository _inventoryRepository;
 
-        public InventoryModel _inventory;
+        [Inject]
+        private ShopDescriptor _shopDescriptor;
+        
+        private InventoryModel _inventory;
+        
         
         public void Init()
         {
@@ -34,30 +41,28 @@ namespace DronDonDon.Inventory.Service
             }
             else
             {
-                InventoryModel _inventory = _inventoryRepository.Require();
+                _inventory = _inventoryRepository.Require();
             }
         }
-        /*public void AddInventory(string itemId)
+        public void AddInventory(string itemId)
         {
-            InventoryItemModel item = Inventory.GetItem(itemId); 
+            InventoryItemModel item = new InventoryItemModel(); 
+            item = Inventory.GetItem(itemId); 
             if (item != null) { 
                 return;
             }
-           // ShopItemDescriptor shopItemDescriptor = _shopDescriptor.RequireShopItem(itemId);
-            List<InventoryItemModel> inventoryItems = Inventory.Items;
+            ShopItemDescriptor shopItemDescriptor = _shopDescriptor.RequireShopItem(itemId);
+            
             item = new InventoryItemModel(itemId, shopItemDescriptor.Type, 1); 
-            inventoryItems.Add(item);
+            Inventory.Items.Add(item);
+            _inventoryRepository.Set(Inventory);
             Dispatch(new InventoryEvent(InventoryEvent.UPDATED, item, shopItemDescriptor.Type));
-        }*/
+        }
+        
+        
         public InventoryModel Inventory
         {
-            get
-            {
-                if (_inventory == null) {
-                    throw new NullReferenceException("Inventory model not initialized");
-                }
-                return _inventory;
-            }
+            get {return _inventory;}
         }
     }
 }

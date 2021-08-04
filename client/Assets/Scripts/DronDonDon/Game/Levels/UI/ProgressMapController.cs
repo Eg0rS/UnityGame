@@ -34,7 +34,6 @@ namespace DronDonDon.Game.Levels.UI
         [UICreated]
         public void Init()
         {
-            _levelService.InitProgress();
             _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
              CreateSpots();
         }
