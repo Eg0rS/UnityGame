@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Adept.Logger;
-using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Core.Service;
-using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
 using IoC.Attribute;
@@ -13,7 +10,6 @@ using AgkUI.Core.Model;
 using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Event;
 using DronDonDon.MainMenu.UI.Panel;
-using NUnit.Framework;
 
 namespace DronDonDon.Game.Levels.UI
 {
@@ -35,7 +31,7 @@ namespace DronDonDon.Game.Levels.UI
         public void Init()
         {
             _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
-             CreateSpots();
+            CreateSpots();
         }
         
         private void OnLevelMapUpdated(LevelEvent levelEvent)

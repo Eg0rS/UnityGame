@@ -1,36 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 using Adept.Logger;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
-using AgkUI.Core.Service;
 using AgkUI.Element.Text;
-using DronDonDon.Game.Levels.Descriptor;
-using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Panel;
-using DronDonDon.Resource.UI.DescriptionLevelDialog;
 using IoC.Attribute;
 using UnityEngine;
-using LocationService = DronDonDon.Location.Service.LocationService;
 
 namespace DronDonDon.Game.Levels.UI
 {
     [UIController("UI/Panel/pfLevelProgressItemPanel@embeded")]
     public class ProgressMapItemController : MonoBehaviour
     {
-        private const string COMPLETED_NAME_IMAGE = "Сompleted";
-        private const string NEXT_NAME_IMAGE = "Next";
         
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
+        
         [Inject] 
         private LevelService _levelService;
-
-        [Inject] 
-        private LocationService _locationService;
         
         [UIObjectBinding("Stars")] 
         private GameObject _stars;

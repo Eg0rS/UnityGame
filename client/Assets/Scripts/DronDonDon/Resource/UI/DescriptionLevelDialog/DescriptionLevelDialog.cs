@@ -1,20 +1,14 @@
-﻿using System;
-using AgkUI.Binding.Attributes;
+﻿using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
-using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using DronDonDon.Core.UI.Dialog;
-using DronDonDon.Descriptor.Service;
 using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Service;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using UnityEngine.UIElements;
-using DronDonDon.Location.Service;
-using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 using LocationService = DronDonDon.Location.Service.LocationService;
 
@@ -52,15 +46,13 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
 
         [UIObjectBinding("CargoImage")] 
         private GameObject _cargoImage;
-
+        
         private LevelDescriptor _levelDescriptor;
         
-        private GameObject _fog;
-
+        
         [UICreated]
         public void Init(LevelDescriptor levelDescriptor)
         {
-            FindFog();
             _levelDescriptor = levelDescriptor;
             DisplayTitle();
             DisplayDescription();
@@ -84,6 +76,11 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
             _strengthText.text += _levelDescriptor.NecessaryCountStrength + " процентов";
             _timeText.text += _levelDescriptor.NecessaryTime + " минуты";
         }
+        
+        private void DisplayImage()
+        {
+            _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.LevelImage, typeof(Sprite)) as Sprite;
+        }
 
         [UIOnClick("StartGameButton")]
         private void OnStartGameButton()
@@ -92,23 +89,7 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
         
-        private void OnMouseDown()
-        {
-            _dialogManager.Require().Hide(gameObject);
-        }
-
-        private void DisplayImage()
-        {
-            _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.LevelImage, typeof(Sprite)) as Sprite;
-        }
-
-        private void FindFog()
-        {
-            _fog = GameObject.Find("pfShadowFog(Clone)");
-            _fog.transform.SetParent(transform);
-        }
-        
-        //[UIOnClick("pfShadowFog(Clone)")]
+        [UIOnClick("CloseButton")]
         private void CloseDialog()
         {
             _dialogManager.Require().Hide(gameObject);
