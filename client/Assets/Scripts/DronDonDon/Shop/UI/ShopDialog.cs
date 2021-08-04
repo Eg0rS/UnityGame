@@ -52,6 +52,12 @@ namespace DronDonDon.Shop.UI
         public void Init()
         {
             CreateShopItem();
+            _gestureService.AddSwipeHandler(OnSwiped,false);
+        }
+
+        private void OnSwiped(Swipe swipe)
+        {
+            _logger.Debug("asdc");
         }
 
         private void OnShopEventUpdated()
@@ -85,8 +91,10 @@ namespace DronDonDon.Shop.UI
            
             
         }
+        /*[UIOnSwipe("SwipePlane")]
         private void OnSwipe(Swipe swipe)
         {
+            _logger.Debug("Swipe!");
             if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
                 Debug.Log("Swipe button 1 left");
                 MoveLeft();
@@ -94,16 +102,22 @@ namespace DronDonDon.Shop.UI
                 Debug.Log("Swipe button 1 right");
                 MoveRight();
             }
+        }*/
+
+        [UIOnClick("ButtonContainer")]
+        private void onContainer()
+        {
+            _logger.Debug("asdc");
         }
 
-        [UIOnClick("LeftContainer")]
+        [UIOnClick("LeftButton")]
         private void OnLeftClick()
         {
             _logger.Debug("clickleft");
             MoveLeft();
            
         }
-        [UIOnClick("RightContainer")]
+        [UIOnClick("RightButton")]
         private void OnRightClick()
         {
             _logger.Debug("clickrekt");

@@ -39,14 +39,6 @@ namespace DronDonDon.Shop.UI
             Debug.Log("создан");
             SetItemLabel(itemDescriptor.Name);
             SetItemCondition(itemDescriptor.Price, isHasItem);
-            //GameObject.Find("ScrollView").gameObject.GetComponent<ListPositionCtrl>().listBoxes.Add( GameObject.Find("pfDronView(Clone)").GetComponent<ListBox>()) ;
-            //scroll.listBoxes = new ListBox[1];
-            /*if (gameObject.GetComponent<ListBox>())
-            {
-                Debug.Log("1123");
-            }*/
-
-           // scroll.listBoxes.Add(gameObject.GetComponent(typeof(ListBox)) as ListBox);
             // SetItemModel(itemDescriptor.Model);
             //SetItemСharact(itemDescriptor.Energy, itemDescriptor.Durability);
 
