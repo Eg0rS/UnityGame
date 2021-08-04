@@ -51,34 +51,5 @@ namespace DronDonDon.Billing.UI
                 .Hide(gameObject);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
-
-        /*[UIOnClick("BlueButton")]
-        private void On32ChipsButton()
-        {
-            _logger.Debug("+10Chips");
-            _billingService.AddCredits(10);
-        }
-        
-        [UIOnClick("GreenButton")]
-        private void On64ChipsButton()
-        {
-            _logger.Debug("+50Chips");
-            _billingService.AddCredits(50);
-        }
-        
-        [UIOnClick("YellowButton")]
-        private void On128ChipsButton()
-        {
-            _logger.Debug("+100Chips");
-            _billingService.AddCredits(100);
-        }
-        
-        [UIOnClick("RedButton")]
-        private void On256ChipsButton()
-        {
-            _logger.Debug("+500Chips");
-            _billingService.AddCredits(500);
-        }*/
-        
     }
 }
