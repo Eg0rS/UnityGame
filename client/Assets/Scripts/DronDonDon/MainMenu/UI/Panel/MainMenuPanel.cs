@@ -1,4 +1,5 @@
-﻿using DronDonDon.Billing.UI;
+﻿using DronDonDon.Shop.UI;
+using DronDonDon.Billing.UI;
 using DronDonDon.Billing.Event;
 using DronDonDon.Billing.Service;
 using DronDonDon.Settings.UI;
@@ -67,6 +68,7 @@ namespace DronDonDon.MainMenu.UI.Panel
         [UIOnClick("DronShop")]
         private void OnDroneStore()
         { 
+            _dialogManager.Require().Show<ShopDialog>();
             _logger.Debug("Click on store");
         }
         

@@ -9,6 +9,8 @@ using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Location.IoC;
 using DronDonDon.Settings.IoC;
 using DronDonDon.Billing.IoC;
+using DronDonDon.Inventory.IoC;
+using DronDonDon.Shop.IoC;
 using IoC;
 using IoC.Api;
 using IoC.Extension;
@@ -43,6 +45,9 @@ namespace DronDonDon.Core.Filter
             context.RegisterModule(new SettingsModule());
             context.RegisterModule(new LevelsModule());
             context.RegisterModule(new BillingModule());
+            context.RegisterModule(new ShopModule());
+            context.RegisterModule(new InventoryModule());
+          
         }
     }
 }
