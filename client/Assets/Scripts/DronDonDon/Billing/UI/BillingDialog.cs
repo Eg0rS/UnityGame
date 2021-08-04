@@ -1,4 +1,5 @@
-﻿using AgkUI.Binding.Attributes;
+﻿using System.Collections.Generic;
+using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
@@ -7,7 +8,10 @@ using DronDonDon.Billing.Event;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
+using AgkUI.Core.Model;
+using AgkUI.Core.Service;
 using AgkUI.Element.Text;
+using DronDonDon.Billing.IoC;
 using DronDonDon.Billing.Service;
 using UnityEngine;
 
@@ -18,20 +22,47 @@ namespace DronDonDon.Billing.UI
     public class CreditShopDialog : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreditShopDialog>();
-        [UIComponentBinding("CountChips")]
-        private UILabel _countChips;
 
         [Inject] 
         private BillingService _billingService;
+
+        [Inject] 
+        private UIService _uiService;
         
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
+
+        [Inject] 
+        private BillingDescriptorRegistry _billingDescriptorRegistry;
         
+        [UIComponentBinding("CountChips")]
+        private UILabel _countChips;
+
+        private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
+        private ListPositionCtrl _listPositionCtrl;
         [UICreated]
         public void Init()
         {
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             UpdateCredits();
+            CreateBillingItems();
+        }
+        
+        private void CreateBillingItems()
+        {
+            GameObject itemContainer = GameObject.Find("ScrollContainer");
+            foreach (var item in _billingDescriptorRegistry.BillingDescriptors)
+            {
+                _uiService.Create<BillingItemController>(UiModel
+                        .Create<BillingItemController>(item)
+                        .Container(itemContainer))
+                    .Then(controller => {_billingItemControllers.Add(controller);})
+                    .Done();
+            }
+            _uiService.Create<BillingScrollController>(UiModel
+                    .Create<BillingScrollController>(_billingItemControllers)
+                    .Container(itemContainer)).Then(controller => { _listPositionCtrl = controller.Control;})
+                .Done();
         }
 
         private void UpdateCredits()

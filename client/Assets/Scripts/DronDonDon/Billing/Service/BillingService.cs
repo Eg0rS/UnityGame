@@ -1,15 +1,43 @@
-﻿using AgkCommons.Event;
+﻿using AgkCommons.Configurations;
+using AgkCommons.Event;
+using AgkCommons.Resources;
+using DronDonDon.Billing.Descriptor;
 using IoC.Attribute;
 using DronDonDon.Billing.Model;
 using DronDonDon.Billing.Event;
+using DronDonDon.Billing.IoC;
+using DronDonDon.Core.Filter;
 
 namespace DronDonDon.Billing.Service
 {
-    public class BillingService : GameEventDispatcher
+    public class BillingService : GameEventDispatcher, IInitable
     {
         [Inject]
-        private BillingRepository _creditShopRepository; 
+        private BillingRepository _creditShopRepository;
         
+        [Inject]
+        private ResourceService _resourceService;
+
+        [Inject] 
+        private BillingDescriptorRegistry _billingDescriptorRegistry;
+
+        [Inject] 
+        private BillingDescriptor _billingDescriptor;
+        public void Init()
+        {
+            _resourceService.LoadConfiguration("Configs/Billing@embeded", OnConfigLoaded);
+        }
+
+        private void OnConfigLoaded(Configuration config, object[] loadparameters)
+        {
+            foreach (Configuration temp in config.GetList<Configuration>("billing.billingItem"))
+            {
+                BillingDescriptor shopItemDescriptor = new BillingDescriptor();
+                shopItemDescriptor.Configure(temp);
+                _billingDescriptorRegistry.BillingDescriptors.Add(shopItemDescriptor);
+            }
+        }
+
         public void UpdateSettings()
         {
             PlayerResourceModel playerResourceModel = RequirePlayerResourceModel();

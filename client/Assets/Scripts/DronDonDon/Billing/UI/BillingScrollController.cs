@@ -2,21 +2,23 @@
 using AgkUI.Binding.Attributes;
 using UnityEngine;
 
-namespace DronDonDon.Shop.UI
+namespace DronDonDon.Billing.UI
 {
-    [UIController("UI/Scrolls/pfScrollViewDroneStore@embeded")]
-    public class ScrollController : MonoBehaviour
+    [UIController("UI/Scrolls/pfScrollViewBilling@embeded")]
+    public class BillingScrollController : MonoBehaviour
     {
         public ListPositionCtrl Control;
         [UICreated]
-        private void Init(List<ShopItemPanel> _ShopItemPanels)
+        private void Init(List<BillingItemController> billingItemControllers)
         {
             ListPositionCtrl control = gameObject.GetComponent<ListPositionCtrl>();
             Control = control;
-            foreach (var itemPanel in _ShopItemPanels)
+            foreach (var itemPanel in billingItemControllers)
             {
                 control.listBoxes.Add(itemPanel.GetComponent<ListBox>());
             }
         }
+        
+        
     }
 }

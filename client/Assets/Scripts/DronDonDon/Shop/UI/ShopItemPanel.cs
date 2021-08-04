@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DronDonDon.Shop.UI
 {
-    [UIController("UI/Panel/pfDronView@embeded")]
+    [UIController("UI/Items/pfDronView@embeded")]
     public class ShopItemPanel : MonoBehaviour
     {
         [UIObjectBinding("Label")] 

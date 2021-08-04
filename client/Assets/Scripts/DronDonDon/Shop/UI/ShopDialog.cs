@@ -33,9 +33,6 @@ namespace DronDonDon.Shop.UI
 
         [Inject] 
         private UIService _uiService;
-        
-        [Inject] 
-        private ShopService _shopService;
 
         [Inject] 
         private ShopDescriptor _shopDescriptor;
@@ -46,84 +43,53 @@ namespace DronDonDon.Shop.UI
         [Inject]
         private IGestureService _gestureService;
 
-        public ListPositionCtrl _listPositionCtrl;
-        public List<ShopItemPanel> _ShopItemPanels = new List<ShopItemPanel>();
+        private ListPositionCtrl _listPositionCtrl;
+        private readonly List<ShopItemPanel> _shopItemPanels = new List<ShopItemPanel>();
+        
         [UICreated]
         public void Init()
         {
             CreateShopItem();
             _gestureService.AddSwipeHandler(OnSwiped,false);
         }
-
         private void OnSwiped(Swipe swipe)
         {
             _logger.Debug("asdc");
         }
-
-        private void OnShopEventUpdated()
-        {
-        }
-        
         private void CreateShopItem()
         {
             List<ShopItemDescriptor> shopItemDescriptors = _shopDescriptor.ShopItemDescriptors;
             GameObject itemContainer = GameObject.Find("ScrollContainer");
-            List<ShopItemPanel> panels = new List<ShopItemPanel>();
-            int i = 0;
-            foreach (var itemDescriptor in shopItemDescriptors)
+            foreach (ShopItemDescriptor itemDescriptor in shopItemDescriptors)
             {
-                i++;
                 bool isHasItem = _inventoryService.Inventory.HasItem(itemDescriptor.Id);
                 _uiService.Create<ShopItemPanel>(UiModel
                         .Create<ShopItemPanel>(itemDescriptor, isHasItem)
                         .Container(itemContainer))
                     .Then(controller =>
                     {
-                        _ShopItemPanels.Add(controller);
+                        _shopItemPanels.Add(controller);
                     })
                     .Done();
-
             }
             _uiService.Create<ScrollController>(UiModel
-                    .Create<ScrollController>(_ShopItemPanels)
+                    .Create<ScrollController>(_shopItemPanels)
                     .Container(itemContainer)).Then(controller => { _listPositionCtrl = controller.Control;})
                 .Done();
-           
-            
-        }
-        /*[UIOnSwipe("SwipePlane")]
-        private void OnSwipe(Swipe swipe)
-        {
-            _logger.Debug("Swipe!");
-            if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
-                Debug.Log("Swipe button 1 left");
-                MoveLeft();
-            } else if (swipe.Check(HorizontalSwipeDirection.RIGHT)) {
-                Debug.Log("Swipe button 1 right");
-                MoveRight();
-            }
-        }*/
-
-        [UIOnClick("ButtonContainer")]
-        private void onContainer()
-        {
-            _logger.Debug("asdc");
         }
 
         [UIOnClick("LeftButton")]
         private void OnLeftClick()
         {
-            _logger.Debug("clickleft");
+            _logger.Debug("clickLeft");
             MoveLeft();
-           
         }
         [UIOnClick("RightButton")]
         private void OnRightClick()
         {
-            _logger.Debug("clickrekt");
+            _logger.Debug("clickRight");
             MoveRight();
         }
-
         private void MoveLeft()
         {
             _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(1);
