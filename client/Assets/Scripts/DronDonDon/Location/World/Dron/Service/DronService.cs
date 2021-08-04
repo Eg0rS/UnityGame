@@ -43,7 +43,7 @@ namespace DronDonDon.Location.World.Dron.Service
             _logger.Debug("[DronService] Теперь количество элементов в _dronDescriptorRegistry.DronDescriptors = " + _dronDescriptorRegistry.DronDescriptors.Count);
         }
 
-        public List<DronViewModel> getAllDrons()
+        public List<DronViewModel> GetAllDrons()
         {
             _dronViewModels = new List<DronViewModel>();
             foreach (DronDescriptor item in _dronDescriptorRegistry.DronDescriptors)
@@ -53,6 +53,13 @@ namespace DronDonDon.Location.World.Dron.Service
                 _dronViewModels.Add(dronViewModel);
             }
             return _dronViewModels;
+        }
+
+        public DronViewModel GetDronById(string dronId)
+        {
+            DronViewModel dronViewModel = new DronViewModel();
+            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Equals(dronId));;
+            return dronViewModel;
         }
     }
 }
