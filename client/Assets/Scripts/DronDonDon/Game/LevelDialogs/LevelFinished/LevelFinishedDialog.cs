@@ -14,6 +14,23 @@ namespace DronDonDon.Game.LevelDialogs.LevelFinished
     public class LevelFinishedDialog : MonoBehaviour
     {
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFinishedDialog@embeded";
+        private const string CHIPS_TASK = "Собрать {0} чипов";
+        private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
+        private const string TIME_TASK = "Уложиться в {0} мин.";
+        
+        private int _chipsGoal;
+        private float _durabilityGoal;
+        private int _timeGoal;
+        
+        private int _chipsLevelResult;
+        private float _durabilityLevelResult;
+        private int _timeLevelResult;
+        
+        private bool _chipsTaskCompleted = false;
+        private bool _durabilityTaskCompleted = false;
+        private bool _timeTaskCompleted = false;
+        private int _tasksCompletedCount = 0;
+        
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
 
         private string _levelId;
@@ -46,32 +63,39 @@ namespace DronDonDon.Game.LevelDialogs.LevelFinished
         private UILabel _timeTaskLabel;
         
         [UICreated]
-        // public void Init(string levelId, 
-        //                  bool chipsTaskCompleted, 
-        //                  bool durabilityTaskCompleted, 
-        //                  bool timeTaskCompleted, 
-        //                  string chipsTaskTitle, 
-        //                  string durabilityTaskTitle, 
-        //                  string timeTaskTitle)
         public void Init(object[] arg)
         {
-            _logger.Debug("[LevelFinishedDialog] Итоговые результаты уровня " + levelId + ": " +
-                          chipsTaskTitle + ", " +
-                          durabilityTaskTitle + ", " +
-                          timeTaskTitle);
-            _levelId = levelId;
+            _logger.Debug("[LevelFinishedDialog] Init() ...");
+
+            if (_chipsLevelResult > _chipsGoal)
+            {
+                _chipsTaskCompleted = true;
+                _tasksCompletedCount++;
+            }
+
+            if (_durabilityLevelResult > _durabilityGoal)
+            {
+                _durabilityTaskCompleted = true;
+                _tasksCompletedCount++;
+            }
+
+            if (_timeLevelResult < _timeGoal)
+            {
+                _timeTaskCompleted = true;
+                _tasksCompletedCount++;
+            }
             
             _chipsStar.Interactable = false;
             _durabilityStar.Interactable = false;
             _timeStar.Interactable = false;
             
-            _chipsStar.IsOn = chipsTaskCompleted;
-            _durabilityStar.IsOn = durabilityTaskCompleted;
-            _timeStar.IsOn = timeTaskCompleted;
+            _chipsStar.IsOn = _chipsTaskCompleted;
+            _durabilityStar.IsOn = _durabilityTaskCompleted;
+            _timeStar.IsOn = _timeTaskCompleted;
             
-            _chipsTaskLabel.GetComponent<UILabel>().text = chipsTaskTitle;
-            _durabilityTaskLabel.GetComponent<UILabel>().text = durabilityTaskTitle;
-            _timeTaskLabel.GetComponent<UILabel>().text = timeTaskTitle;
+            _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
+            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
+            _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
         }
     }
 }
