@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using AgkCommons.Configurations;
 using AgkCommons.Event;
-using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkCommons.Resources;
 using AgkUI.Dialog.Service;
 using DronDonDon.Core.Filter;
@@ -15,7 +13,6 @@ using DronDonDon.Game.Levels.Repository;
 using DronDonDon.Resource.UI.DescriptionLevelDialog;
 using IoC.Attribute;
 using IoC.Util;
-using UnityEngine;
 
 namespace DronDonDon.Game.Levels.Service
 {
@@ -56,7 +53,7 @@ namespace DronDonDon.Game.Levels.Service
             };
             LevelProgress levelProgress = new LevelProgress
             {
-                Id = model.CurrentLevel, CountChips = 0, CountStars = 0, TransitTime = 0
+                Id = model.CurrentLevel, CountChips = 0, CountStars = 0, TransitTime = 0, Durability = 0
             };
             model.LevelsProgress.Add(levelProgress);
             SaveProgress(model);
@@ -74,13 +71,14 @@ namespace DronDonDon.Game.Levels.Service
             return  _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(model.CurrentLevel)).Prefab;
         }
 
-        public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime,bool isCompleted, bool isCurrent)
+        public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime,int durability,bool isCompleted, bool isCurrent)
         {
             PlayerProgressModel model = RequireProgressModel();
             LevelProgress levelProgress = GetLevelProgressById(levelId);
             levelProgress.CountChips = countChips;
             levelProgress.CountStars = countStars;
             levelProgress.TransitTime = transitTime;
+            levelProgress.Durability = durability;
             levelProgress.IsCompleted = isCompleted;
             if (isCurrent && isCompleted)
             {
@@ -115,7 +113,7 @@ namespace DronDonDon.Game.Levels.Service
             return GetLevelProgressById(levelId).CountStars;
         }
         
-        public float GetTransitTime(string levelId)
+        public int GetTransitTime(string levelId)
         {
             return GetLevelProgressById(levelId).TransitTime;
         }
@@ -150,11 +148,6 @@ namespace DronDonDon.Game.Levels.Service
             PlayerProgressModel playerModel = RequireProgressModel();
             LevelProgress level = playerModel.LevelsProgress.Find(x => x.Id.Equals(levelId));
             return level;
-        }
-
-        private bool HasPlayerProgress()
-        {
-            return _progressRepository.Exists();
         }
         
         public PlayerProgressModel RequireProgressModel()
@@ -197,6 +190,11 @@ namespace DronDonDon.Game.Levels.Service
         private void SaveProgress( PlayerProgressModel model)
         {
             _progressRepository.Set(model);
+        }
+        
+        private bool HasPlayerProgress()
+        {
+            return _progressRepository.Exists();
         }
     }
 }

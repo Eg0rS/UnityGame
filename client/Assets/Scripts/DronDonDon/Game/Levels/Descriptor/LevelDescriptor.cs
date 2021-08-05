@@ -4,12 +4,12 @@ namespace DronDonDon.Game.Levels.Descriptor
 {
     public class LevelDescriptor
     {
-        public string Id { get;  set; }
+        public string Id { get; private set; }
         public string Prefab { get; private set; }
         public int Order { get; private set; }
         public int NecessaryCountChips { get; private set; }
         public int NecessaryTime { get; private set; }
-        public int NecessaryCountStrength { get; private set; }
+        public int NecessaryDurability { get; private set; }
         public string LevelTitle { get; private set; }
         public string LevelDescription { get; private set; }
         public string LevelImage { get; private set; }
@@ -21,7 +21,7 @@ namespace DronDonDon.Game.Levels.Descriptor
             Order = config.GetInt("order");
             NecessaryCountChips = config.GetInt("chips");
             NecessaryTime = config.GetInt("time");
-            NecessaryCountStrength = config.GetInt("strength");
+            NecessaryDurability = config.GetInt("durability");
             LevelTitle = config.GetString("title");
             LevelDescription = config.GetString("description");
             LevelImage = config.GetString("image");

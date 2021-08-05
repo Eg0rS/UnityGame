@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Adept.Logger;
+﻿using System.Collections.Generic;
 using AgkCommons.Event;
 using DronDonDon.Inventory.Model;
 using IoC.Attribute;
@@ -12,8 +10,6 @@ namespace DronDonDon.Inventory.Service
 {
     public class InventoryService : GameEventDispatcher, IInitable
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<InventoryService>();
-
         [Inject] 
         private InventoryRepository _inventoryRepository;
 
@@ -30,7 +26,7 @@ namespace DronDonDon.Inventory.Service
 
         public bool HasInventoryModel()
         {
-            return (_inventoryRepository.Get() != null);
+            return _inventoryRepository.Exists();
         }
         
         private void InitInventoryModel()
@@ -38,6 +34,7 @@ namespace DronDonDon.Inventory.Service
             if (!HasInventoryModel())
             {
                 _inventory = new InventoryModel {Items = new List<InventoryItemModel>()};
+                SaveInventoryModel(_inventory);
             }
             else
             {
@@ -55,14 +52,28 @@ namespace DronDonDon.Inventory.Service
             
             item = new InventoryItemModel(itemId, shopItemDescriptor.Type, 1); 
             Inventory.Items.Add(item);
-            _inventoryRepository.Set(Inventory);
+            SaveInventoryModel(_inventory);
             Dispatch(new InventoryEvent(InventoryEvent.UPDATED, item, shopItemDescriptor.Type));
         }
-        
+
+        public void ResetModelInventory()
+        {
+            InventoryModel model = new InventoryModel()
+            {
+                Items = new List<InventoryItemModel>() 
+            };
+            _inventoryRepository.Set(model);
+        }
+
+        public void SaveInventoryModel(InventoryModel model)
+        {
+            _inventoryRepository.Set(model);
+        }
         
         public InventoryModel Inventory
         {
-            get {return _inventory;}
+            get => _inventory;
+            set => _inventory = value;
         }
     }
 }
