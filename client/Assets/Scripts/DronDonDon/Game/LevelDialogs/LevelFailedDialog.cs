@@ -52,22 +52,12 @@ namespace DronDonDon.Game.LevelDialogs
         public void Init(object[] args)
         {
             _logger.Debug("[LevelFailedDialog] Init() ...");
-            
-            _chipsStar.Interactable = false;
-            _durabilityStar.Interactable = false;
-            _timeStar.Interactable = false;
-            
-            _chipsStar.IsOn = false;
-            _durabilityStar.IsOn = false;
-            _timeStar.IsOn = false;
-            
+
             // TODO: определить, по какой причине игрок проиграл —
             // закончилась энергия или прочность
             
-            _failReasonLabel.text = _failReason;
-            _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
-            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
-            _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
+            SetDialogStars();
+            SetDialogLabels();
         }
         
         [UIOnClick("RestartButton")]
@@ -80,6 +70,25 @@ namespace DronDonDon.Game.LevelDialogs
         private void LevelMapButtonClicked()
         {
             
+        }
+
+        private void SetDialogStars()
+        {
+            _chipsStar.Interactable = false;
+            _durabilityStar.Interactable = false;
+            _timeStar.Interactable = false;
+            
+            _chipsStar.IsOn = false;
+            _durabilityStar.IsOn = false;
+            _timeStar.IsOn = false;
+        }
+        
+        private void SetDialogLabels()
+        {
+            _failReasonLabel.text = _failReason;
+            _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
+            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
+            _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
         }
     }
 }

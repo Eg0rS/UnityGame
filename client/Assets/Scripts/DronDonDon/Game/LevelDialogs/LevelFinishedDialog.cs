@@ -7,6 +7,7 @@ using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using DronDonDon.Core.UI.Dialog;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace DronDonDon.Game.LevelDialogs
 {
@@ -76,18 +77,8 @@ namespace DronDonDon.Game.LevelDialogs
                 _timeTaskCompleted = true;
                 _tasksCompletedCount++;
             }
-            
-            _chipsStar.Interactable = false;
-            _durabilityStar.Interactable = false;
-            _timeStar.Interactable = false;
-            
-            _chipsStar.IsOn = _chipsTaskCompleted;
-            _durabilityStar.IsOn = _durabilityTaskCompleted;
-            _timeStar.IsOn = _timeTaskCompleted;
-            
-            _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
-            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
-            _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
+            SetDialogStars();
+            SetDialogLabels();
         }
         
         [UIOnClick("RestartButton")]
@@ -106,6 +97,24 @@ namespace DronDonDon.Game.LevelDialogs
         private void LevelMapButtonClicked()
         {
             
+        }
+
+        private void SetDialogStars()
+        {
+            _chipsStar.Interactable = false;
+            _durabilityStar.Interactable = false;
+            _timeStar.Interactable = false;
+            
+            _chipsStar.IsOn = _chipsTaskCompleted;
+            _durabilityStar.IsOn = _durabilityTaskCompleted;
+            _timeStar.IsOn = _timeTaskCompleted;
+        }
+
+        private void SetDialogLabels()
+        {
+            _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
+            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
+            _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
         }
     }
 }

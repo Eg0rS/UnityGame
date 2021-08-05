@@ -18,6 +18,20 @@ namespace DronDonDon.Game.LevelDialogs
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
         private string _failReason = "";
+        
+        [UIComponentBinding("FailReasonTitle")]
+        private UILabel _failReasonLabel;
+
+        [UICreated]
+        public void Init(object[] args)
+        {
+            _logger.Debug("[LevelFailedCompactDialog] Init() ...");
+            
+            // TODO: определить, по какой причине игрок проиграл —
+            // закончилась энергия или прочность
+            
+            SetDialogLabels();
+        }
 
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
@@ -30,18 +44,9 @@ namespace DronDonDon.Game.LevelDialogs
         {
             
         }
-        
-        [UIComponentBinding("FailReasonTitle")]
-        private UILabel _failReasonLabel;
 
-        [UICreated]
-        public void Init(object[] args)
+        private void SetDialogLabels()
         {
-            _logger.Debug("[LevelFailedDialog] Init() ...");
-            
-            // TODO: определить, по какой причине игрок проиграл —
-            // закончилась энергия или прочность
-            
             _failReasonLabel.text = _failReason;
         }
     }
