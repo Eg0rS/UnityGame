@@ -1,6 +1,7 @@
 ﻿using System;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
+using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
@@ -22,19 +23,9 @@ namespace DronDonDon.Game.LevelDialogs
         private int _chipsGoal;
         private float _durabilityGoal;
         private int _timeGoal;
-        
-        private bool _chipsTaskCompleted = false;
-        private bool _durabilityTaskCompleted = false;
-        private bool _timeTaskCompleted = false;
         private string _failReason = "";
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
-        
-        [UIObjectBinding("RestartButton")]
-        private GameObject _restartButton;
-        
-        [UIObjectBinding("LevelMapButton")]
-        private GameObject _levelMapButton;
         
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
@@ -65,18 +56,30 @@ namespace DronDonDon.Game.LevelDialogs
             _chipsStar.Interactable = false;
             _durabilityStar.Interactable = false;
             _timeStar.Interactable = false;
-
-            _chipsStar.IsOn = _chipsTaskCompleted;
-            _durabilityStar.IsOn = _durabilityTaskCompleted;
-            _timeStar.IsOn = _timeTaskCompleted;
+            
+            _chipsStar.IsOn = false;
+            _durabilityStar.IsOn = false;
+            _timeStar.IsOn = false;
             
             // TODO: определить, по какой причине игрок проиграл —
             // закончилась энергия или прочность
             
+            _failReasonLabel.text = _failReason;
             _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
             _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
             _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
-            _failReasonLabel.text = _failReason;
+        }
+        
+        [UIOnClick("RestartButton")]
+        private void RestartButtonClicked()
+        {
+            
+        }
+
+        [UIOnClick("LevelMapButton")]
+        private void LevelMapButtonClicked()
+        {
+            
         }
     }
 }

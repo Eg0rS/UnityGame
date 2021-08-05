@@ -1,6 +1,7 @@
 ﻿using System;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
+using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
@@ -33,17 +34,8 @@ namespace DronDonDon.Game.LevelDialogs
         
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
 
-        private string _levelId;
-
-        [UIObjectBinding("RestartButton")]
-        private GameObject _restartButton;
+        private string _levelId; 
         
-        [UIObjectBinding("NextLevelButton")]
-        private GameObject _nextLevelButton;
-
-        [UIObjectBinding("LevelMapButton")]
-        private GameObject _levelMapButton;
-
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
         
@@ -96,6 +88,24 @@ namespace DronDonDon.Game.LevelDialogs
             _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
             _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
             _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
+        }
+        
+        [UIOnClick("RestartButton")]
+        private void RestartButtonClicked()
+        {
+            
+        }
+
+        [UIOnClick("NextLevelButton")]
+        private void NextLevelButtonClicked()
+        {
+            
+        }
+
+        [UIOnClick("LevelMapButton")]
+        private void LevelMapButtonClicked()
+        {
+            
         }
     }
 }
