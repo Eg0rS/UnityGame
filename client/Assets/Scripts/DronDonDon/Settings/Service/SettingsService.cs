@@ -18,7 +18,7 @@ namespace DronDonDon.Settings.Service
 
         [Inject] 
         private LevelService _levelService;
-
+        
         [Inject]
         private InventoryService _inventoryService;
         
