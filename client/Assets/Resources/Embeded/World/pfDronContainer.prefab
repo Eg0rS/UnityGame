@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5558900977321141418}
   - component: {fileID: 7203058195922755626}
+  - component: {fileID: 7352025188458025176}
+  - component: {fileID: 5930214455664642252}
   m_Layer: 0
   m_Name: DronCube
   m_TagString: Untagged
@@ -25,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6019808304011269422}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.0028906942, y: -0.042427946, z: -0.0070275166}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2932610106471321569}
@@ -45,6 +47,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectType: 1
+  SpeedShift: 2.5
+--- !u!65 &7352025188458025176
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019808304011269422}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 9, y: 9, z: 9}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &5930214455664642252
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019808304011269422}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1 &7702659901763234085
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,7 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
   travelMode: 0
-  speed: 5
+  speed: 45
   m_normalizedT: 0
   rotationLerpModifier: 10
   lookAt: 1
@@ -108,7 +140,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6451208381247632844}
-  - component: {fileID: 465186908358972}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -125,25 +156,12 @@ Transform:
   m_GameObject: {fileID: 7803677948563665766}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.360256, y: 1.515617, z: 1.470183}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5558900977321141418}
   m_Father: {fileID: 3395788657807914715}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &465186908358972
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7803677948563665766}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 27, y: 27, z: 9}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8712546077286463687
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,7 +204,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
+  m_BackGroundColor: {r: 0.7294118, g: 0.83137256, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 1
@@ -199,12 +217,12 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 150
-  field of view: 80
+  near clip plane: 0.5
+  far clip plane: 120
+  field of view: 79.31688
   orthographic: 0
   orthographic size: 5
-  m_Depth: 0
+  m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -238,7 +256,6 @@ GameObject:
   - component: {fileID: 2932610106471321569}
   - component: {fileID: 3461071936546833635}
   - component: {fileID: 736201298404805390}
-  - component: {fileID: 250168219498448796}
   m_Layer: 0
   m_Name: dronx
   m_TagString: Untagged
@@ -312,16 +329,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &250168219498448796
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8866722505382954425}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 9, y: 9, z: 9}
-  m_Center: {x: 0, y: 0, z: 1}

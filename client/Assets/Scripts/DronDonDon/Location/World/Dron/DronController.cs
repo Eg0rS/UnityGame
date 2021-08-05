@@ -1,21 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using DronDonDon.Location.Model.Dron;
 using UnityEngine;
 using DronDonDon.Location.Model;
-using DronDonDon.Location.Model.Object;
 using AgkCommons.Event;
+using AgkCommons.Input.Gesture.Model;
 using AgkCommons.Input.Gesture.Model.Gestures;
-using DronDonDon.Location.Model.BaseModel;
 using IoC.Attribute;
-using IoC.Extension;
 using AgkCommons.Input.Gesture.Service;
-using AgkUI.Binding.Attributes.Method;
 using BezierSolution;
+
 
 namespace DronDonDon.Location.World.Dron
 {
-    public class DronController: MonoBehaviour,  IWorldObjectController<DronModel>
+    public class DronController: GameEventDispatcher,  IWorldObjectController<DronModel>
     {
         private Vector2 _containerPosition=Vector2.zero;
         private BezierWalkerWithSpeed _bezier;
@@ -27,7 +26,9 @@ namespace DronDonDon.Location.World.Dron
         private float _levelSpeed = 15;
         private float _acceleration = 0.2f;
         private bool _GameStarted = false;
-
+        private float _angleRotate = 60;
+        private Swipe _lastWorkSwipe;
+        
         [Inject]
         private IGestureService _gestureService;
         
@@ -40,7 +41,6 @@ namespace DronDonDon.Location.World.Dron
             _speedShift = model.SpeedShift;
             _gestureService.AddSwipeHandler(OnSwiped,false);
             _gestureService.AddTapHandler(OnTap);
-           
         }
         
         private void OnTap(Tap tap)
@@ -53,17 +53,23 @@ namespace DronDonDon.Location.World.Dron
         {
             if (!_GameStarted) return;
             
-            _levelSpeed += _acceleration *Time.deltaTime;
+            if (GetBeizerPassedPath() < 0.5f)
+            {
+                _levelSpeed += _acceleration *Time.deltaTime;
+            }
             SetBeizerSpeed(_levelSpeed);
-
+            
             if (_isShifting)
             {
                 _shiftCoeficient += _speedShift * Time.deltaTime;
                 transform.localPosition = Vector3.Lerp(_previusPosition, _containerPosition, _shiftCoeficient);
+                RotateSelf(_lastWorkSwipe, (float)Math.Sin(_shiftCoeficient * Math.PI) * _angleRotate);
+                
                 if (transform.localPosition.Equals(_containerPosition))
                 {
                     _isShifting = false;
                     _shiftCoeficient = 0;
+                    RotateSelf(_lastWorkSwipe, 0);
                 }
             }
         }
@@ -89,7 +95,11 @@ namespace DronDonDon.Location.World.Dron
         
         private void OnSwiped(Swipe swipe)
         {
-            MoveDron(NumberSwipedToSector(swipe));
+            if (!_isShifting)
+            {
+                _lastWorkSwipe = swipe;
+                ShiftNewPosition(NumberSwipedToSector(swipe));
+            }
         }
         
         private int NumberSwipedToSector(Swipe swipe)
@@ -98,7 +108,7 @@ namespace DronDonDon.Location.World.Dron
             Vector2 swipeVector;
             int angle;
             int result;
-            
+         
             swipeEndPoint = (Vector2) typeof(Swipe).GetField("_endPoint", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(swipe);
             swipeVector = swipeEndPoint - swipe.Position;
             angle = (int) Vector2.Angle(Vector2.up, swipeVector.normalized);
@@ -137,24 +147,36 @@ namespace DronDonDon.Location.World.Dron
                 _ => false
             };
         }
-    
-        
-        private void ShiftVirtualPosition(int sector)
+
+        private void ShiftNewPosition(int sector)
         {
             if (!ValidateMovement(sector))
             {
                 return;
             }
             _containerPosition += virtualVectors[sector] *_containerCoefficient;
-        }
-
-        public void MoveDron(int sector)
-        {
-            if(_isShifting) return;
-            ShiftVirtualPosition(sector);
             _previusPosition = transform.localPosition;
             _isShifting = true;
         }
-        
+
+        private void RotateSelf(Swipe swipe, float angleRotate)
+        {
+            if (swipe.Check(HorizontalSwipeDirection.LEFT))
+            {
+                transform.localRotation = Quaternion.Euler(0,0, angleRotate);
+            }
+            else if (swipe.Check(HorizontalSwipeDirection.RIGHT))
+            {
+                transform.localRotation = Quaternion.Euler(0,0, -angleRotate);
+            }
+            else if (swipe.Check(VerticalSwipeDirection.DOWN))
+            {
+                transform.localRotation = Quaternion.Euler(angleRotate * 0.5f, 0,0);
+            }
+            else if (swipe.Check(VerticalSwipeDirection.UP))
+            {
+                transform.localRotation = Quaternion.Euler( -angleRotate * 0.5f, 0,0);
+            }
+        }
     }
 }
