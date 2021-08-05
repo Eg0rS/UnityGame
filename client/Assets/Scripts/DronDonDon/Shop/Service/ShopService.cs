@@ -47,7 +47,7 @@ namespace DronDonDon.Shop.Service
             }
         }
 
-        public void ev()
+        public void UpdateShop()
         {
             Dispatch(new ShopEvent(ShopEvent.UPDATED));
         }
