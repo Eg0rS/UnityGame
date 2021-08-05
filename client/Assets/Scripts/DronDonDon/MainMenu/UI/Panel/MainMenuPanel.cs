@@ -64,16 +64,10 @@ namespace DronDonDon.MainMenu.UI.Panel
         {
             UpdateCredits();
         }
-        [UIOnClick("StartGameButton")]
-        private void OnStartGame()
-        {
-            //todo открытие диалога с информацией о текущем уровне, а не запуск уровня
-            _locationService.StartGame(_levelService.GetCurrentLevelPrefab());
-        }
 
         [UIOnClick("DronShop")]
         private void OnDroneStore()
-        { 
+        {
             _dialogManager.Require().Show<ShopDialog>();
             _logger.Debug("Click on store");
         }

@@ -21,6 +21,10 @@ namespace DronDonDon.Shop.Descriptor
         [XmlAttribute("model")]
         public string Model { get; set; }
         
+        public string Energy { get; set; }
+        
+        public string Durability { get; set; }
+        
         public void Configure(Configuration configItem)
         {
             Id = configItem.GetString("id");
@@ -29,6 +33,9 @@ namespace DronDonDon.Shop.Descriptor
             Model = configItem.GetString("model");
             Price = configItem.GetInt("price");
             Name = configItem.GetString("name");
+            
+            Energy = configItem.GetString("energy");
+            Durability = configItem.GetString("durability");
         }
     }
 }

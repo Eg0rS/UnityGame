@@ -20,8 +20,10 @@ using DronDonDon.Shop.Descriptor;
 using DronDonDon.Shop.Event;
 using DronDonDon.Shop.Service;
 using UnityEngine;
+using DronDonDon.Billing.Service;
 using UnityEngine.UI;
-
+using DronDonDon.Billing.Event;
+using DronDonDon.Billing.UI;
 
 namespace DronDonDon.Shop.UI
 {
@@ -33,7 +35,13 @@ namespace DronDonDon.Shop.UI
 
         [Inject] 
         private UIService _uiService;
-
+        
+        [Inject] 
+        private BillingService _billingService;
+        
+        [Inject]
+        private IoCProvider<DialogManager> _dialogManager;
+        
         [Inject] 
         private ShopDescriptor _shopDescriptor;
 
@@ -46,12 +54,27 @@ namespace DronDonDon.Shop.UI
         private ListPositionCtrl _listPositionCtrl;
         private readonly List<ShopItemPanel> _shopItemPanels = new List<ShopItemPanel>();
         
+        [UIComponentBinding("CountChips")]
+        private UILabel _countChips;
+        
         [UICreated]
         public void Init()
         {
+            _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+            UpdateCredits();
             CreateShopItem();
             _gestureService.AddSwipeHandler(OnSwiped,false);
         }
+        
+        private void OnResourceUpdated(BillingEvent resourceEvent)
+        {
+            UpdateCredits();
+        }
+        private void UpdateCredits()
+        {
+            _countChips.text = _billingService.GetCreditsCount().ToString();
+        }
+        
         private void OnSwiped(Swipe swipe)
         {
             _logger.Debug("asdc");
@@ -97,6 +120,23 @@ namespace DronDonDon.Shop.UI
         private void MoveRight()
         {
             _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);;
+        }
+        
+        [UIOnClick("CloseButton")]
+        private void CloseButton()
+        {
+            _dialogManager.Require()
+                .Hide(gameObject);
+            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+        }
+        [UIOnClick("StoreChipsButton")]
+        private void OnCreditsPanel()
+        {
+            _dialogManager.Require()
+                .Hide(gameObject);
+            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+            _logger.Debug("Click on credits");
+            _dialogManager.Require().Show<CreditShopDialog>();
         }
     }
 }

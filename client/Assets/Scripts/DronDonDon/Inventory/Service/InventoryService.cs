@@ -32,7 +32,12 @@ namespace DronDonDon.Inventory.Service
         {
             return (_inventoryRepository.Get() != null);
         }
-        
+
+        public void ResetInventory()
+        {
+            _inventory = new InventoryModel {Items = new List<InventoryItemModel>()};
+            _inventoryRepository.Set(_inventory);
+        }
         private void InitInventoryModel()
         {
             if (!HasInventoryModel())

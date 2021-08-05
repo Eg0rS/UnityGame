@@ -9,6 +9,7 @@ using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Panel;
 using IoC.Attribute;
 using UnityEngine;
+using UnityEngine.UI;
 using LocationService = DronDonDon.Location.Service.LocationService;
 
 namespace DronDonDon.Game.Levels.UI
@@ -54,8 +55,14 @@ namespace DronDonDon.Game.Levels.UI
         }
 
         [UICreated]
-        public void Init(LevelViewModel levelViewModel, bool isCurrentLevel)
+        public void Init(LevelViewModel levelViewModel, bool isCurrentLevel, bool isBossLevel)
         {
+            if (isBossLevel)
+            {
+                _nextLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txCurrentLevelBoss", typeof(Sprite)) as Sprite;
+                _completedLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txCompletedLevelBoss", typeof(Sprite)) as Sprite;
+                _lockedLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txLockedLevelBoss", typeof(Sprite)) as Sprite;
+            }
             DisableStars();
             DisableProgressImages();
             _levelViewModel = levelViewModel;

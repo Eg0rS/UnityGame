@@ -3,6 +3,7 @@ using AgkUI.Binding.Attributes;
 using DronDonDon.Settings.Model;
 using DronDonDon.Billing.Service;
 using DronDonDon.Game.Levels.Service;
+using DronDonDon.Inventory.Service;
 using IoC.Attribute;
 
 namespace DronDonDon.Settings.Service
@@ -17,6 +18,9 @@ namespace DronDonDon.Settings.Service
 
         [Inject] 
         private LevelService _levelService;
+
+        [Inject]
+        private InventoryService _inventoryService;
         
         public void UpdateSettings()
         {
@@ -79,6 +83,7 @@ namespace DronDonDon.Settings.Service
 
         public void ResetAllProgress()
         {
+            _inventoryService.ResetInventory();
             _levelService.ResetPlayerProgress();
             _billingService.SetCreditsCount(0);
         }

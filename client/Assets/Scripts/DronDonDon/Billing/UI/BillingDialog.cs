@@ -13,6 +13,7 @@ using AgkUI.Core.Service;
 using AgkUI.Element.Text;
 using DronDonDon.Billing.IoC;
 using DronDonDon.Billing.Service;
+using DronDonDon.Shop.UI;
 using UnityEngine;
 
 namespace DronDonDon.Billing.UI
@@ -81,6 +82,14 @@ namespace DronDonDon.Billing.UI
             _dialogManager.Require()
                 .Hide(gameObject);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+        }
+        [UIOnClick("DroneStoreButton")]
+        private void DroneStoreButton()
+        {
+            _dialogManager.Require()
+                .Hide(gameObject);
+            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
+            _dialogManager.Require().Show<ShopDialog>();
         }
     }
 }
