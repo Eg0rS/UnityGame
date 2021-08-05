@@ -82,7 +82,7 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
         [UICreated]
         public void Init(LevelDescriptor levelDescriptor)
         {
-            //_inventoryService.AddInventory("dron3");
+            _inventoryService.AddInventory("dron1");//Todo это чтобы был хоть 1 дрон
             string chipText = "Собрать {0} чипов";
             string durabilityText = "Сохранить не менее {0}% груза";
             string timeText = "Уложиться в {0} мин.";
