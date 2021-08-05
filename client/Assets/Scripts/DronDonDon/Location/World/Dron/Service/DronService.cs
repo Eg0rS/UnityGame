@@ -3,7 +3,6 @@ using Adept.Logger;
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using DronDonDon.Core.Filter;
-using DronDonDon.Location.Service;
 using DronDonDon.Location.World.Dron.Descriptor;
 using DronDonDon.Location.World.Dron.IoC;
 using DronDonDon.Location.World.Dron.Model;
@@ -21,7 +20,7 @@ namespace DronDonDon.Location.World.Dron.Service
         [Inject]
         private ResourceService _resourceService;
         
-        private List<DronViewModel> _dronViewModels = new List<DronViewModel>();
+        private DronModel _dronModel = new DronModel();
 
         public void Init()
         {
@@ -45,20 +44,32 @@ namespace DronDonDon.Location.World.Dron.Service
 
         public List<DronViewModel> GetAllDrons()
         {
-            _dronViewModels = new List<DronViewModel>();
+            List<DronViewModel> dronViewModels = new List<DronViewModel>();
             foreach (DronDescriptor item in _dronDescriptorRegistry.DronDescriptors)
             {
-                DronViewModel dronViewModel = new DronViewModel();
-                dronViewModel.DronDescriptor = item;
-                _dronViewModels.Add(dronViewModel);
+                DronViewModel _dronViewModel = new DronViewModel();
+                _dronViewModel.DronDescriptor = item;
+                dronViewModels.Add(_dronViewModel);
             }
-            return _dronViewModels;
+            return dronViewModels;
         }
 
         public DronViewModel GetDronById(string dronId)
         {
             DronViewModel dronViewModel = new DronViewModel();
-            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Equals(dronId));;
+            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Equals(dronId));
+            return dronViewModel;
+        }
+
+        public void SetCurrentDronId(string dronId)
+        {
+            _dronModel.CurrentDron = dronId;
+        }
+
+        public DronViewModel GetCurrentDron()
+        {
+            DronViewModel dronViewModel = new DronViewModel();
+            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Equals(_dronModel.CurrentDron));
             return dronViewModel;
         }
     }
