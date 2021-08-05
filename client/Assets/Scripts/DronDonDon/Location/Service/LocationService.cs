@@ -3,7 +3,7 @@ using AgkCommons.CodeStyle;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
-using DronDonDon.Game.LevelDialogs.LevelFinished;
+using DronDonDon.Game.LevelDialogs;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
 using IoC.Attribute;
