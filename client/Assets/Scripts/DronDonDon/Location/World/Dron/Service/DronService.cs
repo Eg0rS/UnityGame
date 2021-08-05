@@ -13,14 +13,21 @@ namespace DronDonDon.Location.World.Dron.Service
     public class DronService : IInitable
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DronService>();
-
+        
+        private DronModel _dronModel = new DronModel();
+        private string _currentDronId;
+        
         [Inject]
         private DronDescriptorRegistry _dronDescriptorRegistry;
         
         [Inject]
         private ResourceService _resourceService;
-        
-        private DronModel _dronModel = new DronModel();
+
+        public string CurrentDronId
+        {
+            get => _currentDronId;
+            set => _currentDronId = value;
+        }
 
         public void Init()
         {
@@ -61,15 +68,10 @@ namespace DronDonDon.Location.World.Dron.Service
             return dronViewModel;
         }
 
-        public void SetCurrentDronId(string dronId)
-        {
-            _dronModel.CurrentDron = dronId;
-        }
-
         public DronViewModel GetCurrentDron()
         {
             DronViewModel dronViewModel = new DronViewModel();
-            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Equals(_dronModel.CurrentDron));
+            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Equals(CurrentDronId));
             return dronViewModel;
         }
     }
