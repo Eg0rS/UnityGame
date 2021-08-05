@@ -3,9 +3,12 @@ using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
+using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using DronDonDon.Core.UI.Dialog;
+using IoC.Attribute;
+using IoC.Util;
 using UnityEngine;
 
 namespace DronDonDon.Game.LevelDialogs
@@ -15,6 +18,9 @@ namespace DronDonDon.Game.LevelDialogs
     public class LevelFailedDialog : MonoBehaviour
     {
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedDialog@embeded";
+        
+        [Inject]
+        private IoCProvider<DialogManager> _dialogManager;
         
         private const string CHIPS_TASK = "Собрать {0} чипов";
         private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";

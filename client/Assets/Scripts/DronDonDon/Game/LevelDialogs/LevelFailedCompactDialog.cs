@@ -25,7 +25,7 @@ namespace DronDonDon.Game.LevelDialogs
         [UICreated]
         public void Init(object[] args)
         {
-            _logger.Debug("[LevelFailedCompactDialog] Init() ...");
+            _logger.Debug("[LevelFailedCompactDialog] Init()...");
             
             // TODO: определить, по какой причине игрок проиграл —
             // закончилась энергия или прочность
@@ -36,17 +36,20 @@ namespace DronDonDon.Game.LevelDialogs
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
         {
-            
+            _logger.Debug("[LevelFailedCompactDialog] RestartButtonClicked()...");
+
         }
 
         [UIOnClick("LevelMapButton")]
         private void LevelMapButtonClicked()
         {
-            
+            _logger.Debug("[LevelFailedCompactDialog] LevelMapButtonClicked()...");
+
         }
 
         private void SetDialogLabels()
         {
+            _logger.Debug("[LevelFailedCompactDialog] SetDialogLabels()...");
             _failReasonLabel.text = _failReason;
         }
     }

@@ -58,7 +58,7 @@ namespace DronDonDon.Game.LevelDialogs
         [UICreated]
         public void Init(object[] arg)
         {
-            _logger.Debug("[LevelFinishedDialog] Init() ...");
+            _logger.Debug("[LevelFinishedDialog] Init()...");
 
             if (_chipsLevelResult > _chipsGoal)
             {
@@ -84,23 +84,24 @@ namespace DronDonDon.Game.LevelDialogs
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
         {
-            
+            _logger.Debug("[LevelFinishedDialog] RestartButtonClicked()...");
         }
 
         [UIOnClick("NextLevelButton")]
         private void NextLevelButtonClicked()
         {
-            
+            _logger.Debug("[LevelFinishedDialog] NextLevelButtonClicked()...");
         }
 
         [UIOnClick("LevelMapButton")]
         private void LevelMapButtonClicked()
         {
-            
+            _logger.Debug("[LevelFinishedDialog] LevelMapButtonClicked()...");
         }
 
         private void SetDialogStars()
         {
+            _logger.Debug("[LevelFinishedDialog] SetDialogStars()...");
             _chipsStar.Interactable = false;
             _durabilityStar.Interactable = false;
             _timeStar.Interactable = false;
@@ -112,6 +113,7 @@ namespace DronDonDon.Game.LevelDialogs
 
         private void SetDialogLabels()
         {
+            _logger.Debug("[LevelFinishedDialog] SetDialogLabels()...");
             _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
             _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
             _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
