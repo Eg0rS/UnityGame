@@ -57,11 +57,16 @@ namespace DronDonDon.Location.Service
 
         public void StartGame(string levelPrefabName)
         {
+            bool aasdsd = true;
+            string a = "asd";
             /*_overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelPrefabName);*/
-            _dialogManager.Require().Show<LevelFinishedDialog>();
+            object[] asd = {aasdsd, a};
+            _dialogManager.Require().Show<LevelFinishedDialog>(asd);
+            
         }
+        
         private void CreatedWorld(string levelPrefabName)
         {
             _locationBuilderManager.CreateDefault()
@@ -100,19 +105,19 @@ namespace DronDonDon.Location.Service
             if (chipsRes >= _chipsGoal)
             {
                 _chipsTaskCompleted = true;
-                _tasksCompletedCount += 1;
+                _tasksCompletedCount++;
             }
 
             if (_durabilityPercent >= _durabilityGoal)
             {
                 _durabilityTaskCompleted = true;
-                _tasksCompletedCount += 1;
+                _tasksCompletedCount++;
             }
 
             if (timeRes <= _timeGoal)
             {
                 _timeTaskCompleted = true;
-                _tasksCompletedCount += 1;
+                _tasksCompletedCount++;
             }
             
             // _logger.Debug("[LevelFinishedDialog] На уровне " + levelId +

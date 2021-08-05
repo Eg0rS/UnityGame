@@ -46,13 +46,14 @@ namespace DronDonDon.Game.LevelDialogs.LevelFinished
         private UILabel _timeTaskLabel;
         
         [UICreated]
-        public void Init(string levelId, 
-                         bool chipsTaskCompleted, 
-                         bool durabilityTaskCompleted, 
-                         bool timeTaskCompleted, 
-                         string chipsTaskTitle, 
-                         string durabilityTaskTitle, 
-                         string timeTaskTitle)
+        // public void Init(string levelId, 
+        //                  bool chipsTaskCompleted, 
+        //                  bool durabilityTaskCompleted, 
+        //                  bool timeTaskCompleted, 
+        //                  string chipsTaskTitle, 
+        //                  string durabilityTaskTitle, 
+        //                  string timeTaskTitle)
+        public void Init(object[] arg)
         {
             _logger.Debug("[LevelFinishedDialog] Итоговые результаты уровня " + levelId + ": " +
                           chipsTaskTitle + ", " +
