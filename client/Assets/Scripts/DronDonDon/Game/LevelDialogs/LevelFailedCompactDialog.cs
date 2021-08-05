@@ -36,20 +36,17 @@ namespace DronDonDon.Game.LevelDialogs
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
         {
-            _logger.Debug("[LevelFailedCompactDialog] RestartButtonClicked()...");
 
         }
 
         [UIOnClick("LevelMapButton")]
         private void LevelMapButtonClicked()
         {
-            _logger.Debug("[LevelFailedCompactDialog] LevelMapButtonClicked()...");
 
         }
 
         private void SetDialogLabels()
         {
-            _logger.Debug("[LevelFailedCompactDialog] SetDialogLabels()...");
             _failReasonLabel.text = _failReason;
         }
     }

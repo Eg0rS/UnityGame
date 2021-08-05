@@ -13,8 +13,6 @@ namespace DronDonDon.Location.World.Dron.Service
     public class DronService : IInitable
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DronService>();
-        
-        private DronModel _dronModel = new DronModel();
         private string _currentDronId;
         
         [Inject]
