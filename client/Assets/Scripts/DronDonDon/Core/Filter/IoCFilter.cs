@@ -10,6 +10,7 @@ using DronDonDon.Location.IoC;
 using DronDonDon.Settings.IoC;
 using DronDonDon.Billing.IoC;
 using DronDonDon.Inventory.IoC;
+using DronDonDon.Location.World.Dron.Module;
 using DronDonDon.Shop.IoC;
 using IoC;
 using IoC.Api;
@@ -47,7 +48,7 @@ namespace DronDonDon.Core.Filter
             context.RegisterModule(new BillingModule());
             context.RegisterModule(new ShopModule());
             context.RegisterModule(new InventoryModule());
-          
+            context.RegisterModule(new DronModule());
         }
     }
 }
