@@ -60,6 +60,15 @@ namespace DronDonDon.Shop.Service
                 return false;
             }
         }
+<<<<<<< HEAD
+=======
+
+        public void UpdateShop()
+        {
+            Dispatch(new ShopEvent(ShopEvent.UPDATED));
+        }
+
+>>>>>>> ITLAB21-21-DialogAboutLevel
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
             foreach (Configuration temp in config.GetList<Configuration>("shop.shopItem"))

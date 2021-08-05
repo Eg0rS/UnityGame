@@ -19,7 +19,11 @@ namespace DronDonDon.Settings.Service
         [Inject] 
         private LevelService _levelService;
 
+<<<<<<< HEAD
         [Inject]
+=======
+        [Inject] 
+>>>>>>> ITLAB21-21-DialogAboutLevel
         private InventoryService _inventoryService;
         
         public void UpdateSettings()
@@ -85,6 +89,7 @@ namespace DronDonDon.Settings.Service
         {
             _inventoryService.ResetInventory();
             _levelService.ResetPlayerProgress();
+            _inventoryService.ResetModelInventory();
             _billingService.SetCreditsCount(0);
         }
     }

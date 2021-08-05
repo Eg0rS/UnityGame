@@ -9,16 +9,23 @@ using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Panel;
 using IoC.Attribute;
 using UnityEngine;
+<<<<<<< HEAD
 using UnityEngine.UI;
 using LocationService = DronDonDon.Location.Service.LocationService;
+=======
+>>>>>>> ITLAB21-21-DialogAboutLevel
 
 namespace DronDonDon.Game.Levels.UI
 {
     [UIController("UI/Panel/pfLevelProgressItemPanel@embeded")]
     public class ProgressMapItemController : MonoBehaviour
     {
+        
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
-
+        
+        [Inject] 
+        private LevelService _levelService;
+        
         [UIObjectBinding("Stars")] 
         private GameObject _stars;
         
@@ -49,11 +56,15 @@ namespace DronDonDon.Game.Levels.UI
         private LevelViewModel _levelViewModel;
         private bool _isCurrentLevel;
         
+        public bool IsCurrentLevel
+        {
+            get => _isCurrentLevel;
+        }
         public LevelViewModel LevelViewModel
         {
             get => _levelViewModel;
         }
-
+        
         [UICreated]
         public void Init(LevelViewModel levelViewModel, bool isCurrentLevel, bool isBossLevel)
         {
@@ -89,8 +100,9 @@ namespace DronDonDon.Game.Levels.UI
         private void SelectLevel()
         {
             if (_levelViewModel.LevelProgress != null || _isCurrentLevel)
-            { 
-                _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id); 
+            {
+                _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);
+                _logger.Debug("start dialog: "+ _levelViewModel.LevelDescriptor.Id);
             }
         }
 
