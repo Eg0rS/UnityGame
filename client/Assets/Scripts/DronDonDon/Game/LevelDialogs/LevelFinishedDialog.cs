@@ -24,14 +24,15 @@ namespace DronDonDon.Game.LevelDialogs
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFinishedDialog@embeded";
         
         private const string TASKS_COMPLETED = "Выполнено заданий {0} из 3";
-        private const string STARS_COLLECTED = "Получено звёзд {0} из 3";
         private const string CHIPS_TASK = "Собрать {0} чипов";
-        private const string CHIPS_TASK_FULL = "Собрано чипов {0} из {1}";
         private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
-        private const string DURABILITY_TASK_FULL = "Груз сохранён на {0}%";
         private const string TIME_TASK = "Уложиться в {0} сек.";
-        private const string TIME_TASK_FULL = "Уровень пройден за {0} сек.";
         
+        private const string STARS_COLLECTED = "Получено звёзд {0} из 3";
+        private const string CHIPS_TASK_FULL = "Собрано чипов {0} из {1}";
+        private const string DURABILITY_TASK_FULL = "Груз сохранён на {0}%";
+        private const string TIME_TASK_FULL = "Уровень пройден за {0} сек.";
+
         private int _chipsGoal;
         private float _durabilityGoal;
         private int _timeGoal;
