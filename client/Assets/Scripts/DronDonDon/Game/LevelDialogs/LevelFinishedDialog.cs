@@ -3,17 +3,16 @@ using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
+using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
+using AgkUI.Screens.Service;
 using DronDonDon.Core.UI.Dialog;
 using DronDonDon.Game.Levels.Model;
-using DronDonDon.Game.Levels.Service;
-using DronDonDon.Location.Service;
-using DronDonDon.MainMenu.UI.Panel;
+using DronDonDon.MainMenu.UI.Screen;
 using IoC.Attribute;
+using IoC.Util;
 using UnityEngine;
-using UnityEngine.Rendering;
-using LocationService = DronDonDon.Location.Service.LocationService;
 
 namespace DronDonDon.Game.LevelDialogs
 {
@@ -25,9 +24,13 @@ namespace DronDonDon.Game.LevelDialogs
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFinishedDialog@embeded";
         
         private const string TASKS_COMPLETED = "Выполнено заданий {0} из 3";
+        private const string STARS_COLLECTED = "Получено звёзд {0} из 3";
         private const string CHIPS_TASK = "Собрать {0} чипов";
+        private const string CHIPS_TASK_FULL = "Собрано чипов {0} из {1}";
         private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
+        private const string DURABILITY_TASK_FULL = "Груз сохранён на {0}%";
         private const string TIME_TASK = "Уложиться в {0} сек.";
+        private const string TIME_TASK_FULL = "Уровень пройден за {0} сек.";
         
         private int _chipsGoal;
         private float _durabilityGoal;
@@ -45,10 +48,10 @@ namespace DronDonDon.Game.LevelDialogs
         private string _levelId;
         
         [Inject]
-        private LocationService _locationService;
+        private IoCProvider<DialogManager> _dialogManager;
         
         [Inject]
-        private LevelService _levelService;
+        private ScreenManager _screenManager;
         
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
@@ -75,18 +78,21 @@ namespace DronDonDon.Game.LevelDialogs
         public void Init(LevelViewModel levelViewModel)
         {
             _logger.Debug("[LevelFinishedDialog] Init()...");
+            _tasksCompletedCount = 0;
+
+            _chipsTaskCompleted = false;
+            _durabilityTaskCompleted = false;
+            _timeTaskCompleted = false;
             
             _levelId = levelViewModel.LevelDescriptor.Id;
             
-            _chipsGoal = levelViewModel.LevelDescriptor.NecessaryCountChips;
+            /*_chipsGoal = levelViewModel.LevelDescriptor.NecessaryCountChips;
             _durabilityGoal = levelViewModel.LevelDescriptor.NecessaryDurability;
             _timeGoal = levelViewModel.LevelDescriptor.NecessaryTime;
 
             _chipsLevelResult = levelViewModel.LevelProgress.CountChips;
             _durabilityLevelResult = levelViewModel.LevelProgress.Durability;
-            _timeLevelResult = (int) levelViewModel.LevelProgress.TransitTime;
-
-            _tasksCompletedCount = 0;
+            _timeLevelResult = (int) levelViewModel.LevelProgress.TransitTime;*/
 
             if (_chipsLevelResult > _chipsGoal)
             {
@@ -112,19 +118,25 @@ namespace DronDonDon.Game.LevelDialogs
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
         {
-            _locationService.StartGame(_levelService.GetCurrentLevelPrefab());
+            _dialogManager.Require().Hide(this);
+            _screenManager.LoadScreen<MainMenuScreen>();
+            // _dialogManager.Require().Show<DescriptionLevelDialog>();
         }
 
         [UIOnClick("NextLevelButton")]
         private void NextLevelButtonClicked()
         {
-            
+            _dialogManager.Require().Hide(this);
+            // Обновляем id "текущего уровня" (если это не последний уровень)
+            // Вызываем диалог информации об обновлённом (следующем) уровне
+            // Или же отказываемся от этой кнопки...
         }
 
         [UIOnClick("LevelMapButton")]
         private void LevelMapButtonClicked()
         {
-            
+            _dialogManager.Require().Hide(this);
+            _screenManager.LoadScreen<MainMenuScreen>();
         }
 
         private void SetDialogStars()
@@ -144,6 +156,11 @@ namespace DronDonDon.Game.LevelDialogs
             _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
             _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
             _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);
+            
+            /*_tasksCompletedLabel.text = String.Format(STARS_COLLECTED, _tasksCompletedCount);
+            _chipsTaskLabel.text = String.Format(CHIPS_TASK_FULL, _chipsLevelResult, _chipsGoal);
+            _timeTaskLabel.text = String.Format(TIME_TASK_FULL,_timeLevelResult);
+            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK_FULL,_durabilityLevelResult);*/
         }
     }
 }

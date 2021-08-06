@@ -17,11 +17,9 @@ namespace DronDonDon.Game.LevelDialogs
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class LevelFailedDialog : MonoBehaviour
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFailedDialog>();
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedDialog@embeded";
-        
-        [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
-        
+
         private const string CHIPS_TASK = "Собрать {0} чипов";
         private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
         private const string TIME_TASK = "Уложиться в {0} сек.";
@@ -30,8 +28,9 @@ namespace DronDonDon.Game.LevelDialogs
         private float _durabilityGoal;
         private int _timeGoal;
         private string _failReason = "";
-
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
+        
+        [Inject]
+        private IoCProvider<DialogManager> _dialogManager;
         
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;

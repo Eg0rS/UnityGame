@@ -6,6 +6,7 @@ using DronDonDon.Core;
 using DronDonDon.Game.LevelDialogs;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
+using DronDonDon.Location.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -29,11 +30,11 @@ namespace DronDonDon.Location.Service
 
         public void StartGame(string levelPrefabName)
         {
-            /*_overlayManager.Require().ShowPreloader();
+            _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelPrefabName);*/
-
-            _dialogManager.Require().Show<LevelFinishedDialog>();
+            CreatedWorld(levelPrefabName);
+            
+            OnLevelFinished();
         }
         
         private void CreatedWorld(string levelPrefabName)
@@ -52,6 +53,7 @@ namespace DronDonDon.Location.Service
             /* Показываем диалог о завершении уровня.
                Передаём в него ViewModel, откуда берём исходные и конечные данные            
             */
+            _dialogManager.Require().Show<LevelFinishedDialog>(_levelService.v);
         }
 
         public void OnLevelFailed()
