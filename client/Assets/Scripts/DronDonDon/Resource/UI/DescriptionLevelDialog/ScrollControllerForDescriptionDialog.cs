@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DronDonDon.Resource.UI.DescriptionLevelDialog
 {
-    [UIController("UI/Dialog/ScrollView@embeded")]
+    [UIController("UI/Scrolls/pfScrollViewDroneStore@embeded")]
     public class ScrollControllerForDescriptionDialog : MonoBehaviour
     {
         public ListPositionCtrl Control;
