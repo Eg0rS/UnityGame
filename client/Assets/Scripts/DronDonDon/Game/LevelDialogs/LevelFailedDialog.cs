@@ -24,7 +24,7 @@ namespace DronDonDon.Game.LevelDialogs
         
         private const string CHIPS_TASK = "Собрать {0} чипов";
         private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
-        private const string TIME_TASK = "Уложиться в {0} мин.";
+        private const string TIME_TASK = "Уложиться в {0} сек.";
         
         private int _chipsGoal;
         private float _durabilityGoal;
@@ -55,13 +55,11 @@ namespace DronDonDon.Game.LevelDialogs
         private UILabel _failReasonLabel;
 
         [UICreated]
-        public void Init(object[] args)
+        public void Init(string failReason)
         {
             _logger.Debug("[LevelFailedDialog] Init() ...");
-
-            // TODO: определить, по какой причине игрок проиграл —
-            // закончилась энергия или прочность
             
+            _failReason = failReason;
             SetDialogStars();
             SetDialogLabels();
         }

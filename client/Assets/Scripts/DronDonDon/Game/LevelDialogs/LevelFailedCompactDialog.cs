@@ -6,6 +6,7 @@ using AgkUI.Dialog.Attributes;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Game.Levels.Model;
 using UnityEngine;
 
 namespace DronDonDon.Game.LevelDialogs
@@ -23,13 +24,11 @@ namespace DronDonDon.Game.LevelDialogs
         private UILabel _failReasonLabel;
 
         [UICreated]
-        public void Init(object[] args)
+        public void Init(string failReason)
         {
             _logger.Debug("[LevelFailedCompactDialog] Init()...");
-            
-            // TODO: определить, по какой причине игрок проиграл —
-            // закончилась энергия или прочность
-            
+
+            _failReason = failReason;
             SetDialogLabels();
         }
 

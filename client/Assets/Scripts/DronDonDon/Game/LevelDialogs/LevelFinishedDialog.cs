@@ -6,8 +6,14 @@ using AgkUI.Dialog.Attributes;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Game.Levels.Model;
+using DronDonDon.Game.Levels.Service;
+using DronDonDon.Location.Service;
+using DronDonDon.MainMenu.UI.Panel;
+using IoC.Attribute;
 using UnityEngine;
 using UnityEngine.Rendering;
+using LocationService = DronDonDon.Location.Service.LocationService;
 
 namespace DronDonDon.Game.LevelDialogs
 {
@@ -15,10 +21,13 @@ namespace DronDonDon.Game.LevelDialogs
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class LevelFinishedDialog : MonoBehaviour
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFinishedDialog@embeded";
+        
+        private const string TASKS_COMPLETED = "Выполнено заданий {0} из 3";
         private const string CHIPS_TASK = "Собрать {0} чипов";
         private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
-        private const string TIME_TASK = "Уложиться в {0} мин.";
+        private const string TIME_TASK = "Уложиться в {0} сек.";
         
         private int _chipsGoal;
         private float _durabilityGoal;
@@ -28,14 +37,18 @@ namespace DronDonDon.Game.LevelDialogs
         private float _durabilityLevelResult;
         private int _timeLevelResult;
         
-        private bool _chipsTaskCompleted = false;
-        private bool _durabilityTaskCompleted = false;
-        private bool _timeTaskCompleted = false;
-        private int _tasksCompletedCount = 0;
+        private bool _chipsTaskCompleted;
+        private bool _durabilityTaskCompleted;
+        private bool _timeTaskCompleted;
+        private int _tasksCompletedCount;
         
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
-
-        private string _levelId; 
+        private string _levelId;
+        
+        [Inject]
+        private LocationService _locationService;
+        
+        [Inject]
+        private LevelService _levelService;
         
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
@@ -55,10 +68,25 @@ namespace DronDonDon.Game.LevelDialogs
         [UIComponentBinding("TimeTask")]
         private UILabel _timeTaskLabel;
         
+        [UIComponentBinding("TasksCompletedTitle")]
+        private UILabel _tasksCompletedLabel;
+        
         [UICreated]
-        public void Init(object[] arg)
+        public void Init(LevelViewModel levelViewModel)
         {
             _logger.Debug("[LevelFinishedDialog] Init()...");
+            
+            _levelId = levelViewModel.LevelDescriptor.Id;
+            
+            _chipsGoal = levelViewModel.LevelDescriptor.NecessaryCountChips;
+            _durabilityGoal = levelViewModel.LevelDescriptor.NecessaryDurability;
+            _timeGoal = levelViewModel.LevelDescriptor.NecessaryTime;
+
+            _chipsLevelResult = levelViewModel.LevelProgress.CountChips;
+            _durabilityLevelResult = levelViewModel.LevelProgress.Durability;
+            _timeLevelResult = (int) levelViewModel.LevelProgress.TransitTime;
+
+            _tasksCompletedCount = 0;
 
             if (_chipsLevelResult > _chipsGoal)
             {
@@ -84,7 +112,7 @@ namespace DronDonDon.Game.LevelDialogs
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
         {
-            
+            _locationService.StartGame(_levelService.GetCurrentLevelPrefab());
         }
 
         [UIOnClick("NextLevelButton")]
@@ -112,6 +140,7 @@ namespace DronDonDon.Game.LevelDialogs
 
         private void SetDialogLabels()
         {
+            _tasksCompletedLabel.text = String.Format(TASKS_COMPLETED, _tasksCompletedCount);
             _chipsTaskLabel.text = String.Format(CHIPS_TASK,_chipsGoal);
             _durabilityTaskLabel.text = String.Format(DURABILITY_TASK,_durabilityGoal);
             _timeTaskLabel.text = String.Format(TIME_TASK,_timeGoal);

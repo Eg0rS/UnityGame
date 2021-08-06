@@ -32,8 +32,7 @@ namespace DronDonDon.Location.Service
             /*_overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelPrefabName);*/
-            
-            
+
             _dialogManager.Require().Show<LevelFinishedDialog>();
         }
         
@@ -48,14 +47,18 @@ namespace DronDonDon.Location.Service
                                    .Done();
         }
 
-        private void OnLevelFinished()
+        public void OnLevelFinished()
         {
-            
+            /* Показываем диалог о завершении уровня.
+               Передаём в него ViewModel, откуда берём исходные и конечные данные            
+            */
         }
 
-        private void OnLevelFailed()
+        public void OnLevelFailed()
         {
-            
+            /* Показываем диалог о проигрыше.
+               Передаём в него причину поражения: закончилась энергия или прочность            
+            */
         }
     }
 }

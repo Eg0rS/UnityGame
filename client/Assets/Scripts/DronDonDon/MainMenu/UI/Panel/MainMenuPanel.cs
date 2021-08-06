@@ -35,7 +35,8 @@ namespace DronDonDon.MainMenu.UI.Panel
         [Inject]
         private UIService _uiService;
 
-        [Inject] private LevelService _levelService;
+        [Inject]
+        private LevelService _levelService;
 
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
