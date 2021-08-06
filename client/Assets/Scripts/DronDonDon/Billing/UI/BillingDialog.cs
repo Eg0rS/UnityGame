@@ -1,4 +1,5 @@
-﻿using AgkUI.Binding.Attributes;
+﻿using System.Collections.Generic;
+using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
@@ -7,8 +8,12 @@ using DronDonDon.Billing.Event;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
+using AgkUI.Core.Model;
+using AgkUI.Core.Service;
 using AgkUI.Element.Text;
+using DronDonDon.Billing.IoC;
 using DronDonDon.Billing.Service;
+using DronDonDon.Shop.UI;
 using UnityEngine;
 
 namespace DronDonDon.Billing.UI
@@ -18,20 +23,47 @@ namespace DronDonDon.Billing.UI
     public class CreditShopDialog : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreditShopDialog>();
-        [UIComponentBinding("CountChips")]
-        private UILabel _countChips;
 
         [Inject] 
         private BillingService _billingService;
+
+        [Inject] 
+        private UIService _uiService;
         
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
+
+        [Inject] 
+        private BillingDescriptorRegistry _billingDescriptorRegistry;
         
+        [UIComponentBinding("CountChips")]
+        private UILabel _countChips;
+
+        private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
+        private ListPositionCtrl _listPositionCtrl;
         [UICreated]
         public void Init()
         {
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             UpdateCredits();
+            CreateBillingItems();
+        }
+        
+        private void CreateBillingItems()
+        {
+            GameObject itemContainer = GameObject.Find("ScrollBillingContainer");
+            foreach (var item in _billingDescriptorRegistry.BillingDescriptors)
+            {
+                _uiService.Create<BillingItemController>(UiModel
+                        .Create<BillingItemController>(item)
+                        .Container(itemContainer))
+                    .Then(controller => {_billingItemControllers.Add(controller);})
+                    .Done();
+            }
+            _uiService.Create<BillingScrollController>(UiModel
+                    .Create<BillingScrollController>(_billingItemControllers)
+                    .Container(itemContainer)).Then(controller => { _listPositionCtrl = controller.Control;})
+                .Done();
         }
 
         private void UpdateCredits()
@@ -51,41 +83,12 @@ namespace DronDonDon.Billing.UI
                 .Hide(gameObject);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
-
-        [UIOnClick("BlueButton")]
-        private void On32ChipsButton()
-        {
-            _logger.Debug("+10Chips");
-            _billingService.AddCredits(10);
-        }
-        
-        [UIOnClick("GreenButton")]
-        private void On64ChipsButton()
-        {
-            _logger.Debug("+50Chips");
-            _billingService.AddCredits(50);
-        }
-        
-        [UIOnClick("YellowButton")]
-        private void On128ChipsButton()
-        {
-            _logger.Debug("+100Chips");
-            _billingService.AddCredits(100);
-        }
-        
-        [UIOnClick("RedButton")]
-        private void On256ChipsButton()
-        {
-            _logger.Debug("+500Chips");
-            _billingService.AddCredits(500);
-        }
-        
-        [UIOnClick("DroneShopButton")]
-        private void OnDroneShopButton()
+        [UIOnClick("DroneStoreButton")]
+        private void DroneStoreButton()
         {
             _dialogManager.Require()
                 .Hide(gameObject);
-            //_dialogManager.Require().Show<DroneShopDialog>();
+            _billingService.ShowDronStoreDialog();
         }
     }
 }

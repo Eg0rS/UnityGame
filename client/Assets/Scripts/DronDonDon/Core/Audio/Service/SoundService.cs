@@ -86,7 +86,7 @@ namespace DronDonDon.Core.Audio.Service
         private void LoadEmbededSounds()
         {
             List<Sound> embededSounds = new List<Sound> {
-                    
+                    new Sound("Music1", "Embeded/Audio/Music/mainManuMusic", 1,true )
             };
             foreach (Sound sound in embededSounds) {
                 string soundName = sound.SoundName;
