@@ -1,12 +1,15 @@
 ﻿using AgkCommons.Configurations;
 using AgkCommons.Event;
 using AgkCommons.Resources;
+using AgkUI.Dialog.Service;
 using DronDonDon.Billing.Descriptor;
 using IoC.Attribute;
 using DronDonDon.Billing.Model;
 using DronDonDon.Billing.Event;
 using DronDonDon.Billing.IoC;
 using DronDonDon.Core.Filter;
+using DronDonDon.Shop.UI;
+using IoC.Util;
 
 namespace DronDonDon.Billing.Service
 {
@@ -20,6 +23,9 @@ namespace DronDonDon.Billing.Service
 
         [Inject] 
         private BillingDescriptorRegistry _billingDescriptorRegistry;
+        
+        [Inject]
+        private IoCProvider<DialogManager> _dialogManager;
 
         [Inject] 
         private BillingDescriptor _billingDescriptor;
@@ -82,6 +88,11 @@ namespace DronDonDon.Billing.Service
         public void AddCredits(int count)
         {
             SetCreditsCount(GetCreditsCount()+count);
+        }
+
+        public void ShowDronStoreDialog()
+        {
+            _dialogManager.Require().Show<ShopDialog>();
         }
     }
 }

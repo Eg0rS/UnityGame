@@ -7,6 +7,7 @@ using DronDonDon.Billing.Model;
 using DronDonDon.Billing.Service;
 using DronDonDon.Billing.UI;
 using DronDonDon.Core.Filter;
+using DronDonDon.Inventory.Model;
 using DronDonDon.Inventory.Service;
 using IoC.Attribute;
 using DronDonDon.Shop.Descriptor;
@@ -50,8 +51,8 @@ namespace DronDonDon.Shop.Service
             if (_resourceModel.creditsCount >= shopItemDescriptor.Price)
             {
                 _billingService.SetCreditsCount(_resourceModel.creditsCount - shopItemDescriptor.Price);
-                _inventoryService.AddInventory(itemId);
-                _dialogManager.Require().ShowModal<BuyDialog>(true);
+                InventoryItemModel item = new InventoryItemModel(itemId, shopItemDescriptor.Type, 1);
+                _inventoryService.AddInventory(item);
                 return true;
             }
             else

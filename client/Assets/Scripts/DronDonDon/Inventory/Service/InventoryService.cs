@@ -32,6 +32,8 @@ namespace DronDonDon.Inventory.Service
         public void ResetInventory()
         {
             _inventory = new InventoryModel {Items = new List<InventoryItemModel>()};
+            InventoryItemModel defaultItem = new InventoryItemModel("dron1", InventoryItemTypeModel.DRON, 1);
+            AddInventory(defaultItem);
             _inventoryRepository.Set(_inventory);
         }
         private void InitInventoryModel()
@@ -46,19 +48,19 @@ namespace DronDonDon.Inventory.Service
                 _inventory = _inventoryRepository.Require();
             }
         }
-        public void AddInventory(string itemId)
+        public void AddInventory(InventoryItemModel item)
         {
-            InventoryItemModel item = new InventoryItemModel(); 
+            /*InventoryItemModel item = new InventoryItemModel(); 
             item = Inventory.GetItem(itemId); 
             if (item != null) { 
                 return;
             }
             ShopItemDescriptor shopItemDescriptor = _shopDescriptor.RequireShopItem(itemId);
             
-            item = new InventoryItemModel(itemId, shopItemDescriptor.Type, 1); 
+            item = new InventoryItemModel(itemId, shopItemDescriptor.Type, 1); */
             Inventory.Items.Add(item);
             SaveInventoryModel(_inventory);
-            Dispatch(new InventoryEvent(InventoryEvent.UPDATED, item, shopItemDescriptor.Type));
+            Dispatch(new InventoryEvent(InventoryEvent.UPDATED, item, item.Type));
         }
 
         public void SaveInventoryModel(InventoryModel model)

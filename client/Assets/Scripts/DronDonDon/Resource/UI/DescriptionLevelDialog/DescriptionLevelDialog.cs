@@ -82,7 +82,6 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
         [UICreated]
         public void Init(LevelDescriptor levelDescriptor)
         {
-            _inventoryService.AddInventory("dron1");//Todo это чтобы был хоть 1 дрон
             string chipText = "Собрать {0} чипов";
             string durabilityText = "Сохранить не менее {0}% груза";
             string timeText = "Уложиться в {0} мин.";
@@ -130,9 +129,17 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
                     })
                     .Done();
             }
+            if(_viewDronPanels.Count ==2){
+                GameObject.Find("ScrollContainer").transform.Translate(447,0,0);
+            }
             _uiService.Create<ScrollControllerForDescriptionDialog>(UiModel
                     .Create<ScrollControllerForDescriptionDialog>(_viewDronPanels)
-                    .Container(itemContainer)).Then(controller => { _listPositionCtrl = controller.Control;})
+                    .Container(itemContainer)).Then(
+                    controller =>
+                    {
+                        _listPositionCtrl = controller.Control;
+                        
+                    })
                 .Done();
         }
         

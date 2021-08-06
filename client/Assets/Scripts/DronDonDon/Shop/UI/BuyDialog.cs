@@ -62,17 +62,11 @@ namespace DronDonDon.Shop.UI
 
         private void SetPropertyPanel(bool condition)
         {
-            if (condition)
-            {
-                _buyMessage.GetComponent<UILabel>().text = "Упешно";
-                _buyDescription.GetComponent<UILabel>().text = "Этот дрон появился в вашей коллекции!";
-                _buttonText.GetComponent<UILabel>().text = "Назад";
-            }
-            else
+            if (!condition)
             {
                 _buyMessage.GetComponent<UILabel>().text = "Упсс...";
                 _buyDescription.GetComponent<UILabel>().text = "У вас недостаточно чипов для покупки";
-                _buttonText.GetComponent<UILabel>().text = "Магазин чипов"; 
+                _buttonText.GetComponent<UILabel>().text = "Магазин чипов";
             }
         }
 
@@ -83,9 +77,9 @@ namespace DronDonDon.Shop.UI
                 .Hide(gameObject);
             if (!_trasaction)
             {
-                _dialogManager.Require().Show<CreditShopDialog>();
                 _dialogManager.Require()
                     .Hide(GameObject.Find("pfShopDialog(Clone)"));
+                _dialogManager.Require().ShowModal<CreditShopDialog>();
             }
             
         }

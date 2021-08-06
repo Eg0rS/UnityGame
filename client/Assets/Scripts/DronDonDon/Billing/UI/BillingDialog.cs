@@ -51,7 +51,7 @@ namespace DronDonDon.Billing.UI
         
         private void CreateBillingItems()
         {
-            GameObject itemContainer = GameObject.Find("ScrollContainer");
+            GameObject itemContainer = GameObject.Find("ScrollBillingContainer");
             foreach (var item in _billingDescriptorRegistry.BillingDescriptors)
             {
                 _uiService.Create<BillingItemController>(UiModel
@@ -88,8 +88,7 @@ namespace DronDonDon.Billing.UI
         {
             _dialogManager.Require()
                 .Hide(gameObject);
-            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
-            _dialogManager.Require().Show<ShopDialog>();
+            _billingService.ShowDronStoreDialog();
         }
     }
 }

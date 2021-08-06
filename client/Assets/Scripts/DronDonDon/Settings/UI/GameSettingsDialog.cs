@@ -64,5 +64,11 @@ namespace DronDonDon.Settings.UI
             _settingsService.ResetAllProgress();
             
         }
+
+        [UIOnClick("Info")]
+        private void OnInfoClick()
+        {
+            _dialogManager.Require().ShowModal<DownloadedDialog>();
+        }
     }
 }

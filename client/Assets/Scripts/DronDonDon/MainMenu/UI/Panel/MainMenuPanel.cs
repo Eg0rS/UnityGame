@@ -36,8 +36,6 @@ namespace DronDonDon.MainMenu.UI.Panel
         [Inject]
         private UIService _uiService;
 
-        [Inject] private LevelService _levelService;
-
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
         
@@ -85,5 +83,10 @@ namespace DronDonDon.MainMenu.UI.Panel
             _logger.Debug("Click on credits");
             _dialogManager.Require().Show<CreditShopDialog>();
         }
+
+        // private bool CheckSoundState()
+        // {
+        //     
+        // }
     }
 }

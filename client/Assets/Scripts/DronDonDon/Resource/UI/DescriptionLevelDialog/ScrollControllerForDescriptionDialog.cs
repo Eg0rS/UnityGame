@@ -10,11 +10,11 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
         public ListPositionCtrl Control;
         
         [UICreated]
-        private void Init(List<ViewDronPanel> _viewDronPanels)
+        private void Init(List<ViewDronPanel> viewDronPanels)
         {
             ListPositionCtrl control = gameObject.GetComponent<ListPositionCtrl>();
             Control = control;
-            foreach (var itemPanel in _viewDronPanels)
+            foreach (var itemPanel in viewDronPanels)
             {
                 control.listBoxes.Add(itemPanel.GetComponent<ListBox>());
             }
