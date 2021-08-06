@@ -51,9 +51,9 @@ namespace DronDonDon.Location.Service
         public void OnLevelFinished()
         {
             /* Показываем диалог о завершении уровня.
-               Передаём в него ViewModel, откуда берём исходные и конечные данные            
+               Передаём в него ViewModel current level id, откуда берём исходные и конечные данные            
             */
-            _dialogManager.Require().Show<LevelFinishedDialog>(_levelService.v);
+            _dialogManager.Require().Show<LevelFinishedDialog>();
         }
 
         public void OnLevelFailed()
