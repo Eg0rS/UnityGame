@@ -2,6 +2,7 @@
 using AgkUI.Screens.Service;
 using AgkUI.Screens.Ui;
 using DronDonDon.Core.UI.Dialog.Service;
+using DronDonDon.World;
 using IoC;
 using IoC.Api;
 using IoC.Scope;
@@ -26,6 +27,7 @@ namespace DronDonDon.Core.UI.IoC
             container.RegisterSingleton<DialogService>();
 
             container.RegisterSingleton<ScreenStructureManager>();
+            container.RegisterSingleton<GameWorld>(GetMainWorld, null, ScopeType.SCREEN);
             container.RegisterSingleton<DialogManager>(CreateDialogManager, null, ScopeType.SCREEN);
             _screenStructureManager = AppContext.Resolve<ScreenStructureManager>();
         }
@@ -62,5 +64,13 @@ namespace DronDonDon.Core.UI.IoC
             return container;
         }
         
+        [CanBeNull]
+        private object GetMainWorld()
+        {
+            if (_screenStructureManager.ScreenWorldViewContainer == null) {
+                return null;
+            }
+            return _screenStructureManager.ScreenWorldViewContainer.GetComponentInChildren<GameWorld>();
+        }
     }
 }
