@@ -113,7 +113,7 @@ namespace DronDonDon.Game.Levels.Service
             return GetLevelProgressById(levelId).CountStars;
         }
         
-        public int GetTransitTime(string levelId)
+        public float GetTransitTime(string levelId)
         {
             return GetLevelProgressById(levelId).TransitTime;
         }
