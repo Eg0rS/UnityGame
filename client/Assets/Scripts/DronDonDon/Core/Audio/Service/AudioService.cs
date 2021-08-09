@@ -34,10 +34,11 @@ namespace DronDonDon.Core.Audio.Service
 
         private void Awake()
         {
-            _music1Source.clip = Resources.Load("Embeded/Audio/Music/mainManuMusic", typeof(AudioClip))as AudioClip;
-           // _music1Source.playOnAwake = true;
+            /*_music2Source.clip = Resources.Load("Embeded/Audio/Music/mainMenuMusic", typeof(AudioClip))as AudioClip;
+            _music1Source.clip = Resources.Load("Embeded/Audio/Music/gameMusic", typeof(AudioClip))as AudioClip;
+            _music1Source.volume = 0f;
+            _music2Source.volume = 0f;*/
             _activeMusic = _music1Source;
-            _activeMusic.volume = 0.12f;
             _inactiveMusic = _music2Source;
             PlayMusic(_activeMusic.clip);
         }
@@ -194,7 +195,7 @@ namespace DronDonDon.Core.Audio.Service
 
             AudioSource temp = _activeMusic;
             _activeMusic = _inactiveMusic;
-            _activeMusic.volume = 1;
+            _activeMusic.volume = 0.090f;
 
             _inactiveMusic = temp;
             _inactiveMusic.Stop();
