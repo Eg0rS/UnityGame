@@ -41,6 +41,11 @@ namespace DronDonDon.Shop.Service
             _resourceService.LoadConfiguration("Configs/shop@embeded", OnConfigLoaded);
         }
 
+        public void RemoveListener()
+        {
+            Dispatch(new ShopEvent(ShopEvent.UPDATED));
+        }
+
         public bool BuyDron(string itemId)
         {
             _resourceModel = _billingService.RequirePlayerResourceModel();

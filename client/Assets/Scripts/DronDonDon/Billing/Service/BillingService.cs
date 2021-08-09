@@ -44,7 +44,7 @@ namespace DronDonDon.Billing.Service
             }
         }
 
-        public void UpdateSettings()
+        private void UpdateSettings()
         {
             PlayerResourceModel playerResourceModel = RequirePlayerResourceModel();
             SetCreditsCount(playerResourceModel.creditsCount);
@@ -60,11 +60,11 @@ namespace DronDonDon.Billing.Service
             return _creditShopRepository.Require();
         }
         
-        public bool HasCreditShopModel()
+        private bool HasCreditShopModel()
         {
             return (_creditShopRepository.Get() != null);
         }
-        public void InitCreditsCount()
+        private void InitCreditsCount()
         {
             if (!HasCreditShopModel()) {
                 PlayerResourceModel playerResourceModel = new PlayerResourceModel();
