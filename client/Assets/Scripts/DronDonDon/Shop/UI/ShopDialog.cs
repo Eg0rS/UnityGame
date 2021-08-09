@@ -64,16 +64,15 @@ namespace DronDonDon.Shop.UI
         public void Init()
         {
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
-            _shopService.AddListener<ShopEvent>(ShopEvent.UPDATED, OnDialogUpdated);
+            _shopService.AddListener<ShopEvent>(ShopEvent.CLOSE_DIALOG, OnCloseUpdated);
             UpdateCredits();
             CreateShopItem();
             _gestureService.AddSwipeHandler(OnSwiped,false);
         }
 
-        private void OnDialogUpdated(ShopEvent dialogEvent)
+        private void OnCloseUpdated(ShopEvent dialogEvent)
         {
-            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
-            _shopService.RemoveListener<ShopEvent>(ShopEvent.UPDATED, OnDialogUpdated);
+            CloseDialog();
         }
 
         private void OnResourceUpdated(BillingEvent resourceEvent)
@@ -142,6 +141,7 @@ namespace DronDonDon.Shop.UI
         {
             _dialogManager.Require()
                 .Hide(gameObject);
+            _shopService.RemoveListener<ShopEvent>(ShopEvent.CLOSE_DIALOG, OnCloseUpdated);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
 

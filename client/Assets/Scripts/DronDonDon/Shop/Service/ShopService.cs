@@ -43,7 +43,7 @@ namespace DronDonDon.Shop.Service
 
         public void RemoveListener()
         {
-            Dispatch(new ShopEvent(ShopEvent.UPDATED));
+            Dispatch(new ShopEvent(ShopEvent.CLOSE_DIALOG));
         }
 
         public bool BuyDron(string itemId)
