@@ -41,6 +41,7 @@ namespace DronDonDon.Billing.UI
 
         private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
         private ListPositionCtrl _listPositionCtrl;
+        
         [UICreated]
         public void Init()
         {
@@ -79,15 +80,20 @@ namespace DronDonDon.Billing.UI
         [UIOnClick("CloseButton")]
         private void CloseButton()
         {
+            CloseDialog();
+        }
+
+        private void CloseDialog()
+        {
             _dialogManager.Require()
                 .Hide(gameObject);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
+
         [UIOnClick("DroneStoreButton")]
         private void DroneStoreButton()
         {
-            _dialogManager.Require()
-                .Hide(gameObject);
+            CloseDialog();
             _billingService.ShowDronStoreDialog();
         }
     }

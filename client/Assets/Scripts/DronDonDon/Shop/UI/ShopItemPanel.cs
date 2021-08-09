@@ -23,13 +23,10 @@ namespace DronDonDon.Shop.UI
     {
         [Inject] 
         private ShopService _shopService;
+        
+        [Inject] 
+        private BillingService _billingService;
 
-        [Inject] 
-        private IoCProvider<DialogManager> _dialogManager;
-        
-        [Inject] 
-        private UIService _uiService;
-        
         [UIObjectBinding("Label")] 
         private GameObject _label;
         
@@ -66,7 +63,6 @@ namespace DronDonDon.Shop.UI
         [UIOnClick("BuyButton")]
         private void BuyClick()
         {
-            Debug.Log("12");
             if (_shopService.BuyDron(_id))
             {
                 _bought.SetActive(true);
