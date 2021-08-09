@@ -6,6 +6,7 @@ using AgkUI.Dialog.Service;
 using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
 using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
@@ -20,6 +21,7 @@ namespace DronDonDon.Game.LevelDialogs
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFailedCompactDialog>();
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedCompactDialog@embeded";
 
+        private string _levelId;
         private string _failReason = "";
         // "Закончилась энергия"
         // "Дрон разбился"
@@ -30,6 +32,9 @@ namespace DronDonDon.Game.LevelDialogs
         [Inject]
         private ScreenManager _screenManager;
         
+        [Inject]
+        private LevelService _levelService;
+        
         [UIComponentBinding("FailReasonTitle")]
         private UILabel _failReasonLabel;
         
@@ -37,6 +42,7 @@ namespace DronDonDon.Game.LevelDialogs
         public void Init(string failReason)
         {
             _logger.Debug("[LevelFailedCompactDialog] Init()...");
+            _levelId = _levelService.CurrentLevelId;
 
             _failReason = failReason;
             SetDialogLabels();
@@ -47,7 +53,7 @@ namespace DronDonDon.Game.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            // _dialogManager.Require().Show<DescriptionLevelDialog>();
+            _levelService.ShowStartLevelDialog(_levelId);
         }
 
         [UIOnClick("LevelMapButton")]
@@ -59,7 +65,13 @@ namespace DronDonDon.Game.LevelDialogs
 
         private void SetDialogLabels()
         {
-            _failReasonLabel.text = _failReason;
+            switch (_failReason)
+            {
+                case "1": _failReasonLabel.text = "Закончилась энергия";
+                    break;
+                default: _failReasonLabel.text = "Дрон разбился";
+                    break;
+            }
         }
     }
 }
