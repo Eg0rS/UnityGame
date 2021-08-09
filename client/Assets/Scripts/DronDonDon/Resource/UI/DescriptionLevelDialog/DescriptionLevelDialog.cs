@@ -132,6 +132,10 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
             if(_viewDronPanels.Count % 2 == 0){
                 GameObject.Find("ScrollContainer").transform.Translate(447,0,0);
             }
+            else
+            {
+                GameObject.Find("ScrollContainer").transform.Translate(0,0,0);
+            }
             _uiService.Create<ScrollControllerForDescriptionDialog>(UiModel
                     .Create<ScrollControllerForDescriptionDialog>(_viewDronPanels)
                     .Container(itemContainer)).Then(
