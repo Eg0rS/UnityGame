@@ -47,7 +47,7 @@ namespace DronDonDon.Game.Levels.UI
             {
                 GameObject levelContainer = GameObject.Find($"level{item.LevelDescriptor.Order}");
                 _uiService.Create<ProgressMapItemController>(UiModel
-                            .Create<ProgressMapItemController>(item, item.LevelDescriptor.Id == playerProgressModel.CurrentLevel, item.LevelDescriptor.Order% 5==0)
+                            .Create<ProgressMapItemController>(item, item.LevelDescriptor.Id == playerProgressModel.NextLevel, item.LevelDescriptor.Order% 5==0)
                             .Container(levelContainer))
                         .Then(controller => progressMapItemController.Add(controller))
                         .Done();
@@ -64,7 +64,7 @@ namespace DronDonDon.Game.Levels.UI
                 LevelDescriptor descriptor = spotController.LevelViewModel.LevelDescriptor;
                 
                 LevelViewModel model = levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));
-                spotController.UpdateSpot(model, descriptor.Id == playerProgressModel.CurrentLevel);
+                spotController.UpdateSpot(model, descriptor.Id == playerProgressModel.NextLevel);
             }
         }
     }

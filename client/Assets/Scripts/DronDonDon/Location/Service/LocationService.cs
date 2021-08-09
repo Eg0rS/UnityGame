@@ -5,6 +5,8 @@ using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
+using DronDonDon.Game.LevelDialogs;
+using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
 using DronDonDon.Location.UI;
 using DronDonDon.Location.UI.Screen;
