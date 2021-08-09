@@ -8,6 +8,7 @@ namespace DronDonDon.Game.Levels.Model
         private float _transitTime;
         private int _countStars;
         private int _countChips;
+        private int _durability;
         private bool _isCompleted;
 
         public bool IsCompleted
@@ -38,6 +39,12 @@ namespace DronDonDon.Game.Levels.Model
         {
             get => _countChips;
             set => _countChips = value;
+        }
+
+        public int Durability
+        {
+            get => _durability;
+            set => _durability = value;
         }
     }
 }

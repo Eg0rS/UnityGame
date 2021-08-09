@@ -2,12 +2,15 @@
 using AgkUI.Binding.Attributes;
 using DronDonDon.Settings.Model;
 using DronDonDon.Billing.Service;
+using DronDonDon.Core.Filter;
 using DronDonDon.Game.Levels.Service;
+using DronDonDon.Inventory.Service;
 using IoC.Attribute;
+using UnityEngine;
 
 namespace DronDonDon.Settings.Service
 {
-    public class SettingsService
+    public class SettingsService : IInitable
     {
         [Inject]
         private SettingsRepository _settingsRepository;
@@ -17,6 +20,9 @@ namespace DronDonDon.Settings.Service
 
         [Inject] 
         private LevelService _levelService;
+        
+        [Inject]
+        private InventoryService _inventoryService;
         
         public void UpdateSettings()
         {
@@ -35,12 +41,12 @@ namespace DronDonDon.Settings.Service
             SettingsModel model = _settingsRepository.Get();
             if (model == null)
             {
-                InitSettings();
+                Init();
             }
             return _settingsRepository.Require();
         }
         
-        public void InitSettings()
+        public void Init()
         {
             if (!HasSettingsModel()) {
                 SettingsModel settingsModel = new SettingsModel();
@@ -58,7 +64,7 @@ namespace DronDonDon.Settings.Service
 
         public void SetMusicMute(bool isMute)
         {
-          //  AudioListener.volume = isMute ? 1f : 0f;
+            AudioListener.volume = isMute ? 1f : 0f;
             SettingsModel settingsModel = RequireSettingsModel();
             settingsModel.IsMusicMute = isMute;
             _settingsRepository.Set(settingsModel);
@@ -71,7 +77,7 @@ namespace DronDonDon.Settings.Service
 
         public void SetSoundMute(bool isMute)
         {
-          //  AudioListener.volume = isMute ? 1f : 0f;
+           // AudioListener.volume = isMute ? 1f : 0f;
             SettingsModel settingsModel = RequireSettingsModel();
             settingsModel.IsSoundMute = isMute;
             _settingsRepository.Set(settingsModel);
@@ -79,6 +85,7 @@ namespace DronDonDon.Settings.Service
 
         public void ResetAllProgress()
         {
+            _inventoryService.ResetInventory();
             _levelService.ResetPlayerProgress();
             _billingService.SetCreditsCount(0);
         }

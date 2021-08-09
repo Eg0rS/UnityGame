@@ -34,8 +34,12 @@ namespace DronDonDon.Core.Audio.Service
 
         private void Awake()
         {
+            _music1Source.clip = Resources.Load("Embeded/Audio/Music/mainManuMusic", typeof(AudioClip))as AudioClip;
+           // _music1Source.playOnAwake = true;
             _activeMusic = _music1Source;
+            _activeMusic.volume = 0.12f;
             _inactiveMusic = _music2Source;
+            PlayMusic(_activeMusic.clip);
         }
 
         public void PlaySound(AudioClip clip, int track = 0, bool loop = false)
