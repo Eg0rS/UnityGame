@@ -5,12 +5,12 @@ namespace DronDonDon.Game.Levels.Model
     public class PlayerProgressModel
     {
         private List<LevelProgress> _levelsProgress;
-        private string _currentLevel;
+        private string _nextLevelId;
 
-        public string CurrentLevel
+        public string NextLevel
         {
-            get => _currentLevel;
-            set => _currentLevel = value;
+            get => _nextLevelId;
+            set => _nextLevelId = value;
         }
 
         public List<LevelProgress> LevelsProgress
