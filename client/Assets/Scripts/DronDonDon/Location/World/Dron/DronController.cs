@@ -11,6 +11,8 @@ using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using AgkCommons.Input.Gesture.Service;
 using BezierSolution;
+using DronDonDon.Core.Audio.Service;
+using DronDonDon.Game;
 using DronDonDon.Location.Model.BaseModel;
 using DronDonDon.Location.Model.BonusChips;
 using DronDonDon.Location.Model.Finish;
@@ -48,6 +50,9 @@ namespace DronDonDon.Location.World.Dron
         
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+        
+        [Inject]
+        private SoundService _soundService;
         
         public WorldObjectType ObjectType { get; private set; }
         public void Init(DronModel  model)
@@ -228,23 +233,30 @@ namespace DronDonDon.Location.World.Dron
 
         private void OnCrash(ObstacleModel obstacle)
         {
+            _soundService.StopAllSounds();
             _durability -= obstacle.Damage;
+            _soundService.PlaySound(GameSounds.COLLISION);
         }
         
         private void OnTakeChip(BonusChipsModel chip)
         {
-            
+            _soundService.StopAllSounds();
             Destroy(chip.gameObject);
+            _soundService.PlaySound(GameSounds.CHIP_PICKUP);
         }
 
         private void OnTakeSpeed(SpeedBoosterModel speedBooster)
         {
+            _soundService.StopAllSounds();
             Destroy(speedBooster.gameObject);
+            _soundService.PlaySound(GameSounds.BOOSTER_PICKUP);
         }
 
         private void OnTakeShield(ShieldBoosterModel shieldBooster)
         {
+            _soundService.StopAllSounds();
             Destroy(shieldBooster.gameObject);
+            _soundService.PlaySound(GameSounds.BOOSTER_PICKUP);
         }
 
         private void Victory(FinishModel finish)
