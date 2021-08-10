@@ -70,7 +70,6 @@ namespace DronDonDon.Location.Service
                                        _overlayManager.Require().HideLoadingOverlay(true);
                                        
                                    })
-                                   //
                                    .Done();
         }
     }
