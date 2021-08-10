@@ -28,7 +28,7 @@ namespace DronDonDon.Location.World.Dron
     {
         private Vector2 _containerPosition=Vector2.zero;
         private BezierWalkerWithSpeed _bezier;
-        private float _containerCoefficient=9;
+        private float _containerCoefficient=1;
         private bool _isShifting=false;
         private Vector3 _previusPosition;
         private float _shiftCoeficient=0;
