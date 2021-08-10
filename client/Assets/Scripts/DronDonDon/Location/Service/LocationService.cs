@@ -1,16 +1,16 @@
 using AgkCommons.CodeStyle;
+using AgkCommons.Configurations;
 using AgkCommons.Event;
+using AgkCommons.Resources;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
-using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
+using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Location.Service.Builder;
 using DronDonDon.Location.UI;
 using DronDonDon.Location.UI.Screen;
-using DronDonDon.Settings.UI;
-using DronDonDon.World;
-using DronDonDon.World.Event;
+using DronDonDon.Location.World.Dron.Descriptor;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -18,50 +18,38 @@ using UnityEngine;
 namespace DronDonDon.Location.Service
 {
     [Injectable]
-    public class LocationService: GameEventDispatcher
+    public class LocationService : GameEventDispatcher
     {
-        [Inject]
-        private ScreenManager _screenManager;  
-        
-        [Inject]
-        private LocationBuilderManager _locationBuilderManager;
-        
-        [Inject]
-        private IoCProvider<OverlayManager> _overlayManager;
+        [Inject] private ScreenManager _screenManager;
 
-        [Inject] 
-        private IoCProvider<DialogManager> _dialogManager;
+        [Inject] private LocationBuilderManager _locationBuilderManager;
+
+        [Inject] private IoCProvider<OverlayManager> _overlayManager;
+
+        [Inject] private IoCProvider<WorldService> _gameService;
         
-        [Inject] private UIService _uiService;
+        [Inject] private ResourceService _resourceService;
+
+
         
         public void StartGame(string levelPrefabName)
         {
+            
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelPrefabName);
-            
-            //
-            // _uiService.Create<DronStatsDialog>(UiModel
-            //         .Create<DronStatsDialog>()
-            //         .Container(levelContainer))
-            //     .Done();
+           // CreatedWorld(levelPrefabName, dronDescriptor);
         }
-        private void CreatedWorld(string levelPrefabName)
+
+        private void CreatedWorld(string levelPrefabName, DronDescriptor dronDescriptor)
         {
             _locationBuilderManager.CreateDefault()
-                                   .Prefab(levelPrefabName)
-                                   .Build()
-                                   .Then(() => {
-                                       _overlayManager.Require().HideLoadingOverlay(true);
-                                       GameObject levelContainer = GameObject.Find($"Overlay");
-                                       _uiService.Create<DronStatsDialog>(UiModel
-                                               .Create<DronStatsDialog>()
-                                               .Container(levelContainer))
-                                           .Done();
-                                       
-                                   })
-                                   //
-                                   .Done();
+                .Prefab(levelPrefabName)
+                .Build()
+                .Then(() =>
+                {
+                    _gameService.Require().StartGame(dronDescriptor);
+                    
+                });
         }
     }
 }

@@ -24,6 +24,7 @@ using DronDonDon.Location.World.Object;
 using DronDonDon.Location.Model.Object;
 using DronDonDon.Location.Model.Obstacle;
 using DronDonDon.Location.Model.ShieldBooster;
+using DronDonDon.Location.Model.SpeedBooster;
 using DronDonDon.Location.World;
 using DronDonDon.Location.World.BonusChips;
 using DronDonDon.Location.World.Finish;
@@ -48,7 +49,7 @@ namespace DronDonDon.Location.Service
            _controllers[DRON] = new ControllerData(typeof(DronController), InitController<DronController, DronModel>);
             _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
            _controllers[BONUS_CHIPS] = new ControllerData(typeof(BonusChipsController), InitController<BonusChipsController, BonusChipsModel>);
-            _controllers[SPEED_BUSTER] = new ControllerData(typeof(SpeedBoosterController), InitController<BonusChipsController, BonusChipsModel>);
+            _controllers[SPEED_BUSTER] = new ControllerData(typeof(SpeedBoosterController), InitController<SpeedBoosterController, SpeedBoosterModel>);
            _controllers[SHIELD_BUSTER] = new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
           //  _controllers[START] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
