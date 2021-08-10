@@ -49,11 +49,11 @@ namespace DronDonDon.Game.Levels.Service
         {
             PlayerProgressModel model = new PlayerProgressModel
             {
-                CurrentLevel = _levelDescriptorRegistry.LevelDescriptors[0].Id
+                NextLevel = _levelDescriptorRegistry.LevelDescriptors[0].Id
             };
             LevelProgress levelProgress = new LevelProgress
             {
-                Id = model.CurrentLevel, CountChips = 0, CountStars = 0, TransitTime = 0, Durability = 0
+                Id = model.NextLevel, CountChips = 0, CountStars = 0, TransitTime = 0, Durability = 0
             };
             model.LevelsProgress.Add(levelProgress);
             SaveProgress(model);
@@ -68,7 +68,7 @@ namespace DronDonDon.Game.Levels.Service
         public string GetCurrentLevelPrefab()
         {
             PlayerProgressModel model = RequireProgressModel();
-            return  _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(model.CurrentLevel)).Prefab;
+            return  _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(model.NextLevel)).Prefab;
         }
 
         public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime,int durability,bool isCompleted, bool isCurrent)
@@ -86,12 +86,12 @@ namespace DronDonDon.Game.Levels.Service
                 LevelDescriptor nextDescriptor = GetLevelByOrder(descriptor.Order+1);
                 if (nextDescriptor != null)
                 {
-                    model.CurrentLevel = nextDescriptor.Id;
+                    model.NextLevel = nextDescriptor.Id;
                     CreateLevelById(nextDescriptor.Id);
                 }
                 else
                 {
-                    model.CurrentLevel = "EndGame";
+                    model.NextLevel = "EndGame";
                 }
             }
             SaveProgress(model);
