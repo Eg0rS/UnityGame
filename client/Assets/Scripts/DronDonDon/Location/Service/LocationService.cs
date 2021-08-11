@@ -6,7 +6,6 @@ using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
 using DronDonDon.Game.LevelDialogs;
-using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
 using DronDonDon.Location.UI;
@@ -35,37 +34,38 @@ namespace DronDonDon.Location.Service
 
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
-
-        [Inject] 
-        private GameService _gameService;
         
         [Inject] private UIService _uiService;
 
         [Inject] 
         private DronService _dronService;
-
-        private LevelDescriptor _levelDescriptor;
         
-        public void StartGame(LevelDescriptor levelDescriptor, string dronId)
+        public void StartGame(string levelPrefabName, string dronId)
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelDescriptor, dronId);
+            CreatedWorld(levelPrefabName, dronId);
         }
-        private void CreatedWorld(LevelDescriptor levelDescriptor, string dronId)
+        private void CreatedWorld(string levelPrefabName, string dronId)
         {
-            string levelPrefabName = levelDescriptor.Prefab;
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
                                    .Build()
                                    .Then(() =>
                                    {
-                                       string path  = _dronService.GetDronById(dronId).DronDescriptor.Prefab;
-                                       GameObject.Find("dronx").GetComponent<MeshFilter>().mesh = Resources.Load<Mesh>(path); 
-                                       _gameService.StartGame(levelDescriptor,dronId);
+                                       SetDrone(dronId);
+                                       _overlayManager.Require().CreateGameOverlay();
                                        _overlayManager.Require().HideLoadingOverlay(true);
                                    })
                                    .Done();
+        }
+
+        private void SetDrone(string dronId)
+        {
+            GameObject parent = GameObject.Find("DronCube");
+            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab),
+                parent.transform.position, Quaternion.Euler(0, 0, 0),
+                parent.transform);
         }
     }
 }
