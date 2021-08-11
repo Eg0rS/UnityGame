@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Adept.Logger;
 using AgkCommons.Input.Gesture.Model;
 using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkUI.Binding.Attributes;
@@ -10,7 +9,6 @@ using AgkUI.Core.Service;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Text;
-using DronDonDon.Core.Audio.Service;
 using DronDonDon.Core.UI.Dialog;
 using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Service;
@@ -30,8 +28,6 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
     public class DescriptionLevelDialog : MonoBehaviour
     {
         private const string PREFAB_NAME = "UI/Dialog/pfDescriptionLevelDialog@embeded";
-        
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DescriptionLevelDialog>();
 
         [Inject] 
         private LocationService _locationService;
@@ -135,13 +131,16 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
             }
             _uiService.Create<ScrollControllerForDescriptionDialog>(UiModel
                     .Create<ScrollControllerForDescriptionDialog>(_viewDronPanels)
-                    .Container(itemContainer))
-                .Then(
+                    .Container(itemContainer)).Then(
                     controller =>
                     {
                         _listPositionCtrl = controller.Control;
-                        if(_inventoryService.Inventory.Items.Count % 2 == 0){
-                            itemContainer.GetComponent<RectTransform>().localPosition = new Vector3(400, 0, 0);
+                        if(_viewDronPanels.Count % 2 == 0){
+                            itemContainer.transform.Translate(447,0,0);
+                        }
+                        else
+                        {
+                            itemContainer.transform.Translate(0,0,0);
                         }
                     })
                 .Done();
@@ -159,18 +158,7 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
         [UIOnClick("StartGameButton")]
         private void OnStartGameButton()
         {
-            string id = "";
-            foreach (ViewDronPanel panel in _viewDronPanels)
-            {
-                Transform transform = panel.gameObject.GetComponent<Transform>();
-                if (transform.position.x >= 400 && transform.position.x <= 600)
-                {
-                    id = panel.ItemId;
-                    Debug.Log(transform.position.x.ToString());
-                }
-            }
-            Debug.Log(id);
-            _locationService.StartGame(_levelDescriptor.Prefab, id);
+            _locationService.StartGame(_levelDescriptor.Prefab);
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
         

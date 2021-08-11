@@ -10,7 +10,6 @@ using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
 using DronDonDon.Location.UI;
 using DronDonDon.Location.UI.Screen;
-using DronDonDon.Location.World.Dron.Service;
 using DronDonDon.Settings.UI;
 using DronDonDon.World;
 using DronDonDon.World.Event;
@@ -36,28 +35,34 @@ namespace DronDonDon.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
         
         [Inject] private UIService _uiService;
-
-        [Inject] 
-        private DronService _dronService;
         
-        public void StartGame(string levelPrefabName, string dronId)
+        public void StartGame(string levelPrefabName)
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelPrefabName, dronId);
+            CreatedWorld(levelPrefabName);
+            
+            //
+            // _uiService.Create<DronStatsDialog>(UiModel
+            //         .Create<DronStatsDialog>()
+            //         .Container(levelContainer))
+            //     .Done();
         }
-        private void CreatedWorld(string levelPrefabName, string dronId)
+        private void CreatedWorld(string levelPrefabName)
         {
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
                                    .Build()
-                                   .Then(() =>
-                                   {
-                                       string path  = _dronService.GetDronById(dronId).DronDescriptor.Prefab;
-                                       GameObject.Find("dronx").GetComponent<MeshFilter>().mesh = Resources.Load<Mesh>(path);
-                                       _overlayManager.Require().CreateGameOverlay();
+                                   .Then(() => {
                                        _overlayManager.Require().HideLoadingOverlay(true);
+                                       GameObject levelContainer = GameObject.Find($"Overlay");
+                                       _uiService.Create<DronStatsDialog>(UiModel
+                                               .Create<DronStatsDialog>()
+                                               .Container(levelContainer))
+                                           .Done();
+                                       
                                    })
+                                   //
                                    .Done();
         }
     }

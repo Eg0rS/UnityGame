@@ -9,13 +9,6 @@ namespace DronDonDon.Game.Levels.Model
         private int _countStars;
         private int _countChips;
         private int _durability;
-        private bool _isCompleted;
-
-        public bool IsCompleted
-        {
-            get => _isCompleted;
-            set => _isCompleted = value;
-        }
 
         public string Id
         {

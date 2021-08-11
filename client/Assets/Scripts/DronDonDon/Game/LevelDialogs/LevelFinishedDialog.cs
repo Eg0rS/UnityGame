@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
@@ -8,6 +9,7 @@ using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
 using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Game.Levels.IoC;
 using DronDonDon.Game.Levels.Model;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Screen;
@@ -54,6 +56,9 @@ namespace DronDonDon.Game.LevelDialogs
 
         [Inject]
         private LevelService _levelService;
+
+        [Inject] 
+        private LevelDescriptorRegistry _levelDescriptorRegistry;
 
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
@@ -144,7 +149,7 @@ namespace DronDonDon.Game.LevelDialogs
 
         private void SetButtons()
         {
-            _nextLevelButton.enabled = _levelService.RequireProgressModel().NextLevel != "EndGame";
+            _nextLevelButton.enabled = _levelService.GetNextLevel() != 0;
         }
 
         [UIOnClick("RestartButton")]
@@ -160,7 +165,7 @@ namespace DronDonDon.Game.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _levelService.ShowStartLevelDialog(_levelService.RequireProgressModel().NextLevel);
+            _levelService.ShowStartLevelDialog(_levelDescriptorRegistry.LevelDescriptors.FirstOrDefault(a => a.Order == _levelService.GetNextLevel()).Id);
         }
 
         [UIOnClick("LevelMapButton")]

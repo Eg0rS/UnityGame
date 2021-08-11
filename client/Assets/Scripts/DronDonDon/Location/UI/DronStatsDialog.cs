@@ -1,27 +1,32 @@
 ﻿
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
-using AgkUI.Dialog.Service;
-using DronDonDon.Game.LevelDialogs;
-using IoC.Attribute;
-using IoC.Util;
+
 using UnityEngine;
 
 
 namespace DronDonDon.Location.UI
 {
-    [UIController("UI/Dialog/pfGameOverlay@embeded")]
+    [UIController("UI/Dialog/pfDronState@embeded")]
     public class DronStatsDialog :MonoBehaviour
     {
-        [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
-        
-        [UIOnClick("PauseButton")]
-        private void OnPauseButton()
+        [UIOnClick("StopButton")]
+        private void CloseButton()
         {
-            _dialogManager.Require().ShowModal<LevelPauseDialog>();
+       
         }
         
+        [UIOnClick("ShieldButton")]
+        private void ShieldBoost()
+        {
+          
+        }
+        
+        [UIOnClick("SpeedButton")]
+        private void SpeedBoost()
+        {
+            
+        }
         
         
     }

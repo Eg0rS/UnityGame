@@ -39,7 +39,7 @@ namespace DronDonDon.Location.World.Dron
         private Swipe _lastWorkSwipe=null;
         private DronModel _model=null;
         
-        private float _speedShift;
+        private float _speedShift=0;
         private float _durability=0;
         private float _energy=0;
 
