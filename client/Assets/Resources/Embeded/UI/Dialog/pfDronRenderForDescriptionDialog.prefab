@@ -281,7 +281,7 @@ Light:
   m_GameObject: {fileID: 1500780774605698058}
   m_Enabled: 1
   serializedVersion: 10
-  m_Type: 0
+  m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.5849056, g: 0.5655927, b: 0.5655927, a: 1}
   m_Intensity: 0.1
@@ -372,7 +372,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2432428730404739002}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
@@ -702,7 +702,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5546458494048799574}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
@@ -993,6 +993,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7357401776994749776}
+  - component: {fileID: 154020481463029218}
   m_Layer: 16
   m_Name: pfDronRenderForDescriptionDialog
   m_TagString: Untagged
@@ -1017,6 +1018,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &154020481463029218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7899576190036790403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96fa0af38e89fab4981a0cdbe8627011, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rendererInfo: []
+  _lightmaps: []
+  _lightmapsDir: []
+  _shadowMasks: []
+  _lightInfo: []
 --- !u!1 &9006841570605685332
 GameObject:
   m_ObjectHideFlags: 0
