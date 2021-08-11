@@ -30,11 +30,11 @@ namespace DronDonDon.Core
             }
         }
 
-        public void CreateGameOverlay()
+        public void CreateGameOverlay(DronStats dronStats)
         { 
             GameObject levelContainer = GameObject.Find($"Overlay");
             _uiService.Create<DronStatsDialog>(UiModel
-                    .Create<DronStatsDialog>()
+                    .Create<DronStatsDialog>(dronStats)
                     .Container(levelContainer))
                 .Then(controller => { _dronStats = controller;})
                 .Done();

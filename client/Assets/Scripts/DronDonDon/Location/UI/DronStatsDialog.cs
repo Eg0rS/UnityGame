@@ -31,7 +31,6 @@ namespace DronDonDon.Location.UI
         [UIComponentBinding("CountEnergy")] 
             private UILabel _countEnergy;
             
-                
         [UIComponentBinding("CountDurability")] 
             private UILabel _durability;
 

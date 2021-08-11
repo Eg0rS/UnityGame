@@ -57,7 +57,7 @@ namespace DronDonDon.Location.Service
         private DronService _dronService;
 
         private GameObject _levelContainer;
-
+                
         private DronStats _dronStats;
 
         private bool _isPlay = false;
@@ -77,11 +77,9 @@ namespace DronDonDon.Location.Service
             _dronStats._durability = dronDescriptor.Durability;
             _dronStats._energy = dronDescriptor.Energy;
             _dronStats._countChips = 0;
-            
-            _uiService.Create<DronStatsDialog>(UiModel
-                .Create<DronStatsDialog>(_dronStats)
-                .Container(_levelContainer)).Done();
-            _gestureService.AddTapHandler(OnTap);
+            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.UI_UPDATE,
+                _dronStats));
+            _overlayManager.Require().CreateGameOverlay(_dronStats);
         }
 
         private void OnTap(Tap tap)
