@@ -45,12 +45,6 @@ namespace DronDonDon.Location.Service
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelPrefabName, dronId);
-            
-            //
-            // _uiService.Create<DronStatsDialog>(UiModel
-            //         .Create<DronStatsDialog>()
-            //         .Container(levelContainer))
-            //     .Done();
         }
         private void CreatedWorld(string levelPrefabName, string dronId)
         {
@@ -61,14 +55,8 @@ namespace DronDonDon.Location.Service
                                    {
                                        string path  = _dronService.GetDronById(dronId).DronDescriptor.Prefab;
                                        GameObject.Find("dronx").GetComponent<MeshFilter>().mesh = Resources.Load<Mesh>(path);
-                                       
-                                       GameObject levelContainer = GameObject.Find($"Overlay");
-                                       _uiService.Create<DronStatsDialog>(UiModel
-                                               .Create<DronStatsDialog>()
-                                               .Container(levelContainer))
-                                           .Done();
+                                       _overlayManager.Require().CreateGameOverlay();
                                        _overlayManager.Require().HideLoadingOverlay(true);
-                                       
                                    })
                                    .Done();
         }
