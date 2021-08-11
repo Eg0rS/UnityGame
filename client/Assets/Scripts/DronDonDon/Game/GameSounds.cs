@@ -7,8 +7,8 @@ namespace DronDonDon.Game
         public static readonly Sound BOOSTER_PICKUP =
             new Sound("sndBoosterPickup", "Audio/Sound/sndBoosterPickup@embeded", 1, false);
         
-        public static readonly Sound ACCELERATION_ACTIVATED =
-            new Sound("sndAccelerationActivated", "Audio/Sound/sndAccelerationActivated@embeded", 2, false);
+        public static readonly Sound SPEED_ACTIVATED =
+            new Sound("sndSpeedActivated", "Audio/Sound/sndSpeedActivated@embeded", 2, false);
         
         public static readonly Sound SHIELD_ACTIVATED =
             new Sound("sndShieldActivated", "Audio/Sound/sndShieldActivated@embeded", 3, false);

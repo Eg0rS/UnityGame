@@ -90,7 +90,7 @@ namespace DronDonDon.Core.Audio.Service
                     GameSounds.CHIP_PICKUP,
                     GameSounds.BOOSTER_PICKUP,
                     GameSounds.SHIELD_ACTIVATED,
-                    GameSounds.ACCELERATION_ACTIVATED,
+                    GameSounds.SPEED_ACTIVATED,
                     GameSounds.COLLISION,
                     GameSounds.DRON_CRASHED,
                     GameSounds.DRON_TAKEOFF,
