@@ -1,11 +1,19 @@
 using AgkCommons.CodeStyle;
+using AgkCommons.Event;
+using AgkUI.Core.Model;
 using AgkUI.Core.Service;
+using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
-using DronDonDon.Game.Levels.Descriptor;
+using DronDonDon.Game.LevelDialogs;
+using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
+using DronDonDon.Location.UI;
 using DronDonDon.Location.UI.Screen;
 using DronDonDon.Location.World.Dron.Service;
+using DronDonDon.Settings.UI;
+using DronDonDon.World;
+using DronDonDon.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -13,7 +21,7 @@ using UnityEngine;
 namespace DronDonDon.Location.Service
 {
     [Injectable]
-    public class LocationService
+    public class LocationService: GameEventDispatcher
     {
         [Inject]
         private ScreenManager _screenManager;  
@@ -23,24 +31,23 @@ namespace DronDonDon.Location.Service
         
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
-        
-        [Inject]
-        private IoCProvider<GameService> _gameService;
 
+        [Inject] 
+        private IoCProvider<DialogManager> _dialogManager;
+        
         [Inject] private UIService _uiService;
 
         [Inject] 
         private DronService _dronService;
         
-        public void StartGame(LevelDescriptor level, string dronId)
+        public void StartGame(string levelPrefabName, string dronId)
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(level, dronId);
+            CreatedWorld(levelPrefabName, dronId);
         }
-        private void CreatedWorld(LevelDescriptor level, string dronId)
+        private void CreatedWorld(string levelPrefabName, string dronId)
         {
-            string levelPrefabName = level.Prefab;
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
                                    .Build()
@@ -48,7 +55,8 @@ namespace DronDonDon.Location.Service
                                    {
                                        string path  = _dronService.GetDronById(dronId).DronDescriptor.Prefab;
                                        GameObject.Find("dronx").GetComponent<MeshFilter>().mesh = Resources.Load<Mesh>(path);
-                                       _gameService.Require().StartGame(level,dronId);
+                                       _overlayManager.Require().CreateGameOverlay();
+                                       _overlayManager.Require().HideLoadingOverlay(true);
                                    })
                                    .Done();
         }
