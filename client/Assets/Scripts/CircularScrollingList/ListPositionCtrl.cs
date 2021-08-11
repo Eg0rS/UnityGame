@@ -27,6 +27,9 @@ public class ListEvent : UnityEvent<ListPositionCtrl>
 
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 {
+	[Tooltip("The boxes which belong to this list.")]
+	public List<ListBox> listBoxes;
+
 	public enum ListType
 	{
 		Circular,
@@ -54,24 +57,29 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	};
 
 	/*========== Settings ==========*/
+
 	/* List mode */
+
 	[Tooltip("The type of the list.")]
 	public ListType listType = ListType.Circular;
+
 	[Tooltip("The controlling mode of the list.")]
 	public ControlMode controlMode = ControlMode.Drag;
+
 	[Tooltip("Should a box align in the middle of the list after sliding?")]
 	public bool alignMiddle = false;
+
 	[Tooltip("The major moving direction of the list.")]
 	public Direction direction = Direction.Vertical;
 
 	/* Containers */
+
 	[Tooltip("The game object which holds the content bank for the list. " +
 	         "It will be the derived class of the BaseListBank.")]
 	public BaseListBank listBank;
+
 	[Tooltip("Specify the initial content ID for the centered box.")]
 	public int centeredContentID = 0;
-	[Tooltip("The boxes which belong to this list.")]
-	public List<ListBox> listBoxes;
 
 	/* Appearance */
 	[Tooltip("The distance between each box. The larger, the closer.")]

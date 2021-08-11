@@ -5,6 +5,7 @@ using DronDonDon.Inventory.Model;
 using DronDonDon.Shop.Descriptor;
 using IoC.Attribute;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DronDonDon.Resource.UI.DescriptionLevelDialog
 {
@@ -13,37 +14,31 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
     {
         private const string PREFAB_NAME = "UI/Panel/pfChoiseDronPanel@embeded";
 
-        [Inject] 
-        private ShopDescriptor _shopDescriptor;
-        
+        [Inject] private ShopDescriptor _shopDescriptor;
+
         [UIObjectBinding("Text")] 
         private GameObject _text;
-
-        private InventoryItemModel _item;
-
-        public InventoryItemModel Item
-        {
-            get => _item;
-            set => _item = value;
-        }
         
+        [UIObjectBinding("Model")]
+        private GameObject _model;
+
+        public string ItemId { get; private set; }
+
         [UICreated]
         private void Init(InventoryItemModel item)
         {
-            _item = item;
-            SetItemLabel(_shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(_item.Id)).Name);
+            ItemId = item.Id;
+            SetItemLabel(_shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId)).Name);
+            SetItemModel(_shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId)).Model);
+            
         }
-        
-        private void SetItemLabel(string name)
+        private void SetItemModel(string model)
         {
-            _text.GetComponent<UILabel>().text = name;
+            _model.GetComponent<RawImage>().texture = Resources.Load(model, typeof(Texture)) as Texture;
         }
-
-        [UIOnClick()]
-        private void OnClick()
+        private void SetItemLabel(string title)
         {
-            Debug.Log(_item.Id);
-            //TODO отдавал в дрон сервис id выбранного дрона
+            _text.GetComponent<UILabel>().text = title;
         }
     }
 }
