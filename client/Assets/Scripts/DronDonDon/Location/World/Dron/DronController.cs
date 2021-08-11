@@ -50,10 +50,7 @@ namespace DronDonDon.Location.World.Dron
         
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-        
-        [Inject]
-        private SoundService _soundService;
-        
+
         public WorldObjectType ObjectType { get; private set; }
         public void Init(DronModel  model)
         {
@@ -233,30 +230,22 @@ namespace DronDonDon.Location.World.Dron
 
         private void OnCrash(ObstacleModel obstacle)
         {
-            _soundService.StopAllSounds();
             _durability -= obstacle.Damage;
-            _soundService.PlaySound(GameSounds.COLLISION);
         }
         
         private void OnTakeChip(BonusChipsModel chip)
         {
-            _soundService.StopAllSounds();
             Destroy(chip.gameObject);
-            _soundService.PlaySound(GameSounds.CHIP_PICKUP);
         }
 
         private void OnTakeSpeed(SpeedBoosterModel speedBooster)
         {
-            _soundService.StopAllSounds();
             Destroy(speedBooster.gameObject);
-            _soundService.PlaySound(GameSounds.BOOSTER_PICKUP);
         }
 
         private void OnTakeShield(ShieldBoosterModel shieldBooster)
         {
-            _soundService.StopAllSounds();
             Destroy(shieldBooster.gameObject);
-            _soundService.PlaySound(GameSounds.BOOSTER_PICKUP);
         }
 
         private void Victory(FinishModel finish)
