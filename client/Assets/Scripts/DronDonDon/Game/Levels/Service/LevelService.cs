@@ -51,11 +51,11 @@ namespace DronDonDon.Game.Levels.Service
             {
                 NextLevel = _levelDescriptorRegistry.LevelDescriptors[0].Id
             };
-            LevelProgress levelProgress = new LevelProgress
+            /*LevelProgress levelProgress = new LevelProgress
             {
                 Id = model.NextLevel, CountChips = 0, CountStars = 0, TransitTime = 0, Durability = 0
-            };
-            model.LevelsProgress.Add(levelProgress);
+            };*/
+            //model.LevelsProgress.Add(levelProgress);
             SaveProgress(model);
         }
 
