@@ -32,7 +32,7 @@ namespace DronDonDon.Location.World.Dron
         private bool _isShifting=false;
         private Vector3 _previusPosition;
         private float _shiftCoeficient=0;
-        private float _levelSpeed = 15;
+        private float _levelSpeed = 10;
         private float _acceleration = 0.2f;
         private bool _isGameRun = false;
         private float _angleRotate = 60;
