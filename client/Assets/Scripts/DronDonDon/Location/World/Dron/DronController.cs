@@ -11,6 +11,8 @@ using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using AgkCommons.Input.Gesture.Service;
 using BezierSolution;
+using DronDonDon.Core.Audio.Service;
+using DronDonDon.Game;
 using DronDonDon.Location.Model.BaseModel;
 using DronDonDon.Location.Model.BonusChips;
 using DronDonDon.Location.Model.Finish;
@@ -48,7 +50,7 @@ namespace DronDonDon.Location.World.Dron
         
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-        
+
         public WorldObjectType ObjectType { get; private set; }
         public void Init(DronModel  model)
         {
@@ -233,7 +235,6 @@ namespace DronDonDon.Location.World.Dron
         
         private void OnTakeChip(BonusChipsModel chip)
         {
-            
             Destroy(chip.gameObject);
         }
 
