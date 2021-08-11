@@ -52,7 +52,7 @@ namespace DronDonDon.Location.Service
             _controllers[SPEED_BUSTER] = new ControllerData(typeof(SpeedBoosterController), InitController<SpeedBoosterController, SpeedBoosterModel>);
            _controllers[SHIELD_BUSTER] = new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
           //  _controllers[START] = new ControllerData(typeof(ObjectController), InitController<ObjectController, ObjectModel>);
-            _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController,FinishModel>);
+            _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
         }
         public Component AttachController(PrefabModel model)
         {

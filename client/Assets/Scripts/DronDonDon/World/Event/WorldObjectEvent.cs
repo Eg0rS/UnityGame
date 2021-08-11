@@ -1,5 +1,4 @@
 ﻿using AgkCommons.Event;
-using DronDonDon.Location.Model;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -12,17 +11,23 @@ namespace DronDonDon.World.Event
         public const string CHANGED = "WorldObjectChanged";
         public const string SELECTED = "WorldObjectSelected";
         public const string ON_COLLISION = "OnCollision";
-        public const string SHIELD_ACTIVATE = "ShieldActive";
-        public const string SPEED_ACTIVE = "SpeedActive";
-        public const string STOP_GAME = "StopGame";
-        
+        public const string UI_UPDATE = "UiUpdate";
+
+        public GameObject _collisionObject;
+        public DronStats _dronStats;
         public WorldObjectEvent(string name, GameObject target) : base(name, target)
         {
-            
+            _collisionObject = target;
+        }
+        
+        public WorldObjectEvent(string name, DronStats dronStats) : base(name)
+        {
+            _dronStats = dronStats;
         }
 
         public WorldObjectEvent(string name) : base(name)
         {
+            
         }
 
         public T GetController<T>()
