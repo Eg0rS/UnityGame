@@ -1,5 +1,4 @@
-﻿using System;
-using AgkCommons.Event;
+﻿using AgkCommons.Event;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Element.Text;
@@ -7,7 +6,6 @@ using DronDonDon.World;
 using DronDonDon.World.Event;
 using IoC.Attribute;
 using IoC.Util;
-using UnityEngine;
 
 namespace DronDonDon.Location.UI
 {

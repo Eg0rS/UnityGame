@@ -30,7 +30,7 @@ public struct DronStats
 namespace DronDonDon.Location.Service
 {
     [Injectable]
-    public class WorldService: GameEventDispatcher
+    public class GameService: GameEventDispatcher
     {
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -39,7 +39,8 @@ namespace DronDonDon.Location.Service
 
         [Inject] private UIService _uiService;
 
-        public DronStats _dronStats;
+        private DronStats _dronStats;
+        
         public void StartGame( DronDescriptor dronDescriptor)
         {
             _overlayManager.Require().HideLoadingOverlay(true);
@@ -47,8 +48,8 @@ namespace DronDonDon.Location.Service
             
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.ON_COLLISION, DronCollision);
             _dronStats._durability = dronDescriptor.Durability;
-            _dronStats._countChips = 0;
             _dronStats._energy = dronDescriptor.Energy;
+            _dronStats._countChips = 0;
             
             _uiService.Create<DronStatsDialog>(UiModel
                 .Create<DronStatsDialog>(_dronStats)
@@ -58,7 +59,7 @@ namespace DronDonDon.Location.Service
         private void DronCollision(WorldObjectEvent worldObjectEvent)
         {
             GameObject _collisionObject = worldObjectEvent._collisionObject;
-            switch (worldObjectEvent._collisionObject.GetComponent<PrefabModel>().ObjectType)
+            switch (_collisionObject.GetComponent<PrefabModel>().ObjectType)
             {
                 case WorldObjectType.OBSTACLE:
                     OnDronCrash(_collisionObject.GetComponent<ObstacleModel>());
@@ -87,19 +88,19 @@ namespace DronDonDon.Location.Service
 
         private void OnTakeShield(ShieldBoosterModel getComponent)
         {
-            Destroy(getComponent.gameObject);
+            getComponent.gameObject.SetActive(false);
         }
 
         private void OnTakeSpeed(SpeedBoosterModel getComponent)
         {
-            Destroy(getComponent.gameObject);
+            getComponent.gameObject.SetActive(false);
         }
 
         private void OnTakeChip(BonusChipsModel getComponent)
         {
             _dronStats._countChips++;
-            Destroy(getComponent.gameObject);
             UiUpdate();
+            getComponent.gameObject.SetActive(false);
         }
 
         private void OnDronCrash(ObstacleModel getComponent)

@@ -45,12 +45,6 @@ namespace DronDonDon.Location.Service
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelPrefabName, dronId);
-            
-            //
-            // _uiService.Create<DronStatsDialog>(UiModel
-            //         .Create<DronStatsDialog>()
-            //         .Container(levelContainer))
-            //     .Done();
         }
         private void CreatedWorld(string levelPrefabName, string dronId)
         {
