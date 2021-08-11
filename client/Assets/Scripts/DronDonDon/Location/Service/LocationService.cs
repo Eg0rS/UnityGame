@@ -53,12 +53,19 @@ namespace DronDonDon.Location.Service
                                    .Build()
                                    .Then(() =>
                                    {
-                                       string path  = _dronService.GetDronById(dronId).DronDescriptor.Prefab;
-                                       GameObject.Find("dronx").GetComponent<MeshFilter>().mesh = Resources.Load<Mesh>(path);
+                                       SetDrone(dronId);
                                        _overlayManager.Require().CreateGameOverlay();
                                        _overlayManager.Require().HideLoadingOverlay(true);
                                    })
                                    .Done();
+        }
+
+        private void SetDrone(string dronId)
+        {
+            GameObject parent = GameObject.Find("DronCube");
+            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab),
+                parent.transform.position, Quaternion.Euler(0, 0, 0),
+                parent.transform);
         }
     }
 }
