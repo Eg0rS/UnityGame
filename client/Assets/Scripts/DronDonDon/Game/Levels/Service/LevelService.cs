@@ -71,7 +71,7 @@ namespace DronDonDon.Game.Levels.Service
             return  _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(model.NextLevel)).Prefab;
         }
 
-        public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime,int durability,bool isCompleted, bool isCurrent)
+        public void SetLevelProgress(string levelId, int countStars, int countChips, float transitTime, float durability,bool isCompleted, bool isCurrent)
         {
             PlayerProgressModel model = RequireProgressModel();
             LevelProgress levelProgress = GetLevelProgressById(levelId);

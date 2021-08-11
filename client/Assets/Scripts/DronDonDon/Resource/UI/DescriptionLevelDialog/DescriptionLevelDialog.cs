@@ -170,7 +170,7 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
                 }
             }
             Debug.Log(id);
-            _locationService.StartGame(_levelDescriptor.Prefab, id);
+            _locationService.StartGame(_levelDescriptor, id);
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
         

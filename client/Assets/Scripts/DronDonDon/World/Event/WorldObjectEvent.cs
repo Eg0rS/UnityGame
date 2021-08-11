@@ -12,6 +12,8 @@ namespace DronDonDon.World.Event
         public const string SELECTED = "WorldObjectSelected";
         public const string ON_COLLISION = "OnCollision";
         public const string UI_UPDATE = "UiUpdate";
+        public const string START_GAME = "StartGame";
+        public const string END_GAME = "EnGame";
 
         public GameObject _collisionObject;
         public DronStats _dronStats;

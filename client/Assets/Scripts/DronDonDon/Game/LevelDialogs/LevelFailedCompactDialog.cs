@@ -1,4 +1,5 @@
 ﻿using Adept.Logger;
+using AgkCommons.Event;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
@@ -16,13 +17,13 @@ namespace DronDonDon.Game.LevelDialogs
 {
     [UIController(PREFAB_NAME)]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
-    public class LevelFailedCompactDialog : MonoBehaviour
+    public class LevelFailedCompactDialog : GameEventDispatcher
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFailedCompactDialog>();
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedCompactDialog@embeded";
 
         private string _levelId;
-        private string _failReason = "";
+        private short _failReason = 0;
         // "Закончилась энергия"
         // "Дрон разбился"
         
@@ -39,7 +40,7 @@ namespace DronDonDon.Game.LevelDialogs
         private UILabel _failReasonLabel;
         
         [UICreated]
-        public void Init(string failReason)
+        public void Init(short failReason)
         {
             _logger.Debug("[LevelFailedCompactDialog] Init()...");
             _levelId = _levelService.CurrentLevelId;
@@ -54,6 +55,7 @@ namespace DronDonDon.Game.LevelDialogs
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
             _levelService.ShowStartLevelDialog(_levelId);
+            _dialogManager.Require().Hide(this);
         }
 
         [UIOnClick("LevelMapButton")]
@@ -61,13 +63,16 @@ namespace DronDonDon.Game.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
+            _dialogManager.Require().Hide(this);
         }
 
         private void SetDialogLabels()
         {
             switch (_failReason)
             {
-                case "1": _failReasonLabel.text = "Закончилась энергия";
+                case 0: _failReasonLabel.text = "Закончилась энергия";
+                    break;
+                case 1: _failReasonLabel.text = "Дрон разбился";
                     break;
                 default: _failReasonLabel.text = "Дрон разбился";
                     break;

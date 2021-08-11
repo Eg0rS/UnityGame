@@ -47,14 +47,11 @@ namespace DronDonDon.Location.World.Dron
             ObjectType = model.ObjectType;
             _model = model;
             _speedShift = model.SpeedShift;
-
+            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gestureService.AddSwipeHandler(OnSwiped,false);
-            _gestureService.AddTapHandler(OnTap);
-            
-                //_gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.SHIELD_ACTIVE, ShieldActivate );
         }
         
-        private void OnTap(Tap tap)
+        private void StartGame(WorldObjectEvent worldObjectEvent)
         {
             _isGameRun = true;
             EnablePath();
