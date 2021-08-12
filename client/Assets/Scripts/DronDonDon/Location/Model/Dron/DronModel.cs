@@ -5,7 +5,7 @@ namespace DronDonDon.Location.Model.Dron
 {
     public class DronModel : PrefabModel, IoCProvider<DronModel>
     {
-        public float SpeedShift = 5;
+        public float SpeedShift = 2;
         public float durability = 10;
         public float Energy = 10;
         

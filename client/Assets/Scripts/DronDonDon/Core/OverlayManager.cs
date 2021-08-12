@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System.Runtime.InteropServices;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
@@ -5,6 +6,9 @@ using DronDonDon.Core.UI.Overlay;
 using DronDonDon.Game.LevelDialogs;
 using DronDonDon.Location.UI;
 using IoC.Attribute;
+=======
+﻿using DronDonDon.Core.UI.Overlay;
+>>>>>>> finishController
 using UnityEngine;
 
 namespace DronDonDon.Core
@@ -13,6 +17,7 @@ namespace DronDonDon.Core
     {
         private int _lockCount;
         private PreloaderOverlay _preloaderOverlay;
+<<<<<<< HEAD
         [Inject] 
         private UIService _uiService;
 
@@ -23,6 +28,8 @@ namespace DronDonDon.Core
         private LevelFailedCompactDialog _failedDialog=null;
 
         private GameObject levelContainer;
+=======
+>>>>>>> finishController
         
         private void Awake()
         {
@@ -37,6 +44,7 @@ namespace DronDonDon.Core
             }
         }
 
+<<<<<<< HEAD
         public void CreateGameOverlay(DronStats dronStats)
         { 
            levelContainer = GameObject.Find($"Overlay");
@@ -53,6 +61,8 @@ namespace DronDonDon.Core
             Destroy(_dronStats.gameObject);
         }
         
+=======
+>>>>>>> finishController
         public void ShowPreloader()
         {
             PreloaderOverlay.Show();

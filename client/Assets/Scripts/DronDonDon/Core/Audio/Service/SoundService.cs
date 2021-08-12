@@ -4,6 +4,7 @@ using Adept.Logger;
 using AgkCommons.CodeStyle;
 using AgkCommons.Resources;
 using DronDonDon.Core.Audio.Model;
+using DronDonDon.Game;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -86,7 +87,15 @@ namespace DronDonDon.Core.Audio.Service
         private void LoadEmbededSounds()
         {
             List<Sound> embededSounds = new List<Sound> {
-                    new Sound("Music1", "Embeded/Audio/Music/mainManuMusic", 1,true )
+                    GameSounds.CHIP_PICKUP,
+                    GameSounds.BOOSTER_PICKUP,
+                    GameSounds.SHIELD_ACTIVATED,
+                    GameSounds.SPEED_ACTIVATED,
+                    GameSounds.COLLISION,
+                    GameSounds.DRON_CRASHED,
+                    GameSounds.DRON_TAKEOFF,
+                    GameSounds.DRON_LANDING,
+                    GameSounds.SHOW_DIALOG
             };
             foreach (Sound sound in embededSounds) {
                 string soundName = sound.SoundName;

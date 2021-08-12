@@ -4,14 +4,7 @@ namespace DronDonDon.Game.Levels.Model
 {
     public class PlayerProgressModel
     {
-        private List<LevelProgress> _levelsProgress;
-        private string _nextLevelId;
-
-        public string NextLevel
-        {
-            get => _nextLevelId;
-            set => _nextLevelId = value;
-        }
+        private List<LevelProgress> _levelsProgress = new List<LevelProgress>();
 
         public List<LevelProgress> LevelsProgress
         {
@@ -21,7 +14,6 @@ namespace DronDonDon.Game.Levels.Model
         
         public PlayerProgressModel()
         {
-            _levelsProgress = new List<LevelProgress>();
         }
     }
 }
