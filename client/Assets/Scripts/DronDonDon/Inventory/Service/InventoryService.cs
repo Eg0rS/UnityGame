@@ -41,6 +41,8 @@ namespace DronDonDon.Inventory.Service
             if (!HasInventoryModel())
             {
                 _inventory = new InventoryModel {Items = new List<InventoryItemModel>()};
+                InventoryItemModel defaultItem = new InventoryItemModel("dron1", InventoryItemTypeModel.DRON, 1);
+                AddInventory(defaultItem);
                 SaveInventoryModel(_inventory);
             }
             else
