@@ -6,6 +6,7 @@ using AgkCommons.Configurations;
 using AgkCommons.Event;
 using AgkCommons.Resources;
 using AgkUI.Dialog.Service;
+using DronDonDon.Billing.Service;
 using DronDonDon.Core.Filter;
 using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Event;
@@ -31,6 +32,9 @@ namespace DronDonDon.Game.Levels.Service
         
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
+
+        [Inject] 
+        private BillingService _billingService;
         
         private List<LevelViewModel> _levelsViewModels  = new List<LevelViewModel>();
         public string CurrentLevelId { get; set; }
@@ -74,6 +78,7 @@ namespace DronDonDon.Game.Levels.Service
             levelProgress.CountStars = countStars;
             levelProgress.TransitTime = transitTime;
             levelProgress.Durability = durability;
+            _billingService.AddCredits(countChips);
             SaveProgress(model);
             Dispatch(new LevelEvent(LevelEvent.UPDATED));
         }

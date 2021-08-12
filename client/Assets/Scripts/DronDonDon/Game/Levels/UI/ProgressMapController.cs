@@ -42,7 +42,6 @@ namespace DronDonDon.Game.Levels.UI
         private void CreateSpots()
         {
             levelViewModels = _levelService.GetLevels();
-            PlayerProgressModel playerProgressModel = _levelService.GetPlayerProgressModel();
             foreach (LevelViewModel item in levelViewModels)
             {
                 GameObject levelContainer = GameObject.Find($"level{item.LevelDescriptor.Order}");
@@ -58,7 +57,6 @@ namespace DronDonDon.Game.Levels.UI
         {
             _logger.Debug("update");
             levelViewModels = _levelService.GetLevels();
-            PlayerProgressModel playerProgressModel = _levelService.GetPlayerProgressModel();
             foreach (ProgressMapItemController spotController in progressMapItemController)
             {
                 LevelDescriptor descriptor = spotController.LevelViewModel.LevelDescriptor;
