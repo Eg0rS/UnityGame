@@ -6,6 +6,7 @@ using AgkCommons.Configurations;
 using AgkCommons.Event;
 using AgkCommons.Resources;
 using AgkUI.Dialog.Service;
+using DigitalRubyShared;
 using DronDonDon.Billing.Service;
 using DronDonDon.Core.Filter;
 using DronDonDon.Game.Levels.Descriptor;
@@ -56,7 +57,7 @@ namespace DronDonDon.Game.Levels.Service
 
         public int GetNextLevel()
         {
-            List<LevelDescriptor> descriptors = _levelDescriptorRegistry.LevelDescriptors.OrderBy(o=>o.Order).ToList();;
+            List<LevelDescriptor> descriptors = _levelDescriptorRegistry.LevelDescriptors.OrderBy(o=>o.Order).ToList();
             foreach (LevelDescriptor descriptor in descriptors)
             {
                 LevelProgress progress = GetPlayerProgressModel().LevelsProgress.FirstOrDefault(a => a.Id == descriptor.Id);
@@ -64,22 +65,28 @@ namespace DronDonDon.Game.Levels.Service
                 {
                     return descriptor.Order;
                 }
-                return 0;
             }
 
             return 1;
         }
 
-<<<<<<< HEAD
-        public void SetLevelProgress(string levelId, int countStars, int countChips, float transitTime, float durability,bool isCompleted, bool isCurrent)
-=======
-        public void SetLevelProgress(string levelId, int countStars, int countChips, int transitTime,int durability)
->>>>>>> finishController
+
+
+        public void SetLevelProgress(string levelId, int countStars, int countChips, float transitTime, int durability)
         {
             PlayerProgressModel model = GetPlayerProgressModel();
-            LevelProgress levelProgress = GetLevelProgressById(levelId);
+            LevelProgress levelProgress = model.LevelsProgress.FirstOrDefault(a => a.Id == levelId);
+            if (levelProgress == null)
+            {
+                levelProgress = new LevelProgress(){Id = levelId};
+                model.LevelsProgress.Add(levelProgress);
+            }
+            //model.LevelsProgress.Find(x => x.id == )
             levelProgress.CountChips = countChips;
-            levelProgress.CountStars = countStars;
+            if (levelProgress.CountStars < countStars)
+            {
+                levelProgress.CountStars = countStars;
+            }
             levelProgress.TransitTime = transitTime;
             levelProgress.Durability = durability;
             _billingService.AddCredits(countChips);

@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace DronDonDon.Location.UI
 {
-    [UIController("UI/Dialog/pfGameOverlay@embeded")]
+    [UIController("UI/Dialog/pfDronState@embeded")]
     public class DronStatsDialog :MonoBehaviour
     {
         [Inject]

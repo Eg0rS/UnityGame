@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Diagnostics;
 using AgkCommons.CodeStyle;
@@ -91,8 +92,8 @@ namespace DronDonDon.Location.Service
             
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.ON_COLLISION, DronCollision);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.ACTIVATE_BOOST, ActivateBoost);
-            _dronStats._MaxDurability = _dronStats._durability;
             _dronStats._durability = dronDescriptor.Durability;
+            _dronStats._MaxDurability = dronDescriptor.Durability;
             _dronStats._energy = dronDescriptor.Energy;
             _dronStats._countChips = 0;
             _dronStats._energyFall = 0.15f;
@@ -235,8 +236,7 @@ namespace DronDonDon.Location.Service
             float timeInGame = Time.time - _startTime;
             Time.timeScale = 0f;
             _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats._countChips, 
-                timeInGame, ((_dronStats._durability / _dronStats._MaxDurability) * 100), false, 
-                _levelService.CurrentLevelId == _levelDescriptor.Id);
+                timeInGame, (int)((_dronStats._durability / _dronStats._MaxDurability) * 100));
         }
         private void Victory(FinishModel getComponent)
         {
@@ -250,9 +250,9 @@ namespace DronDonDon.Location.Service
             _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
         }
 
-        private short CalculateStars(float timeInGame)
+        private int CalculateStars(float timeInGame)
         {
-            short countStars=0;
+            int countStars=0;
 
             if (_dronStats._durability >= _levelDescriptor.NecessaryDurability)
             {

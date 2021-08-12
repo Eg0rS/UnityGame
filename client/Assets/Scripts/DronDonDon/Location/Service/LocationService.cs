@@ -60,7 +60,6 @@ namespace DronDonDon.Location.Service
                                    .Then(() =>
                                    {
                                        SetDrone(dronId);
-                                       _overlayManager.Require().HideLoadingOverlay(true);
                                        _gameService.Require().StartGame(levelDescriptor, dronId);
                                    })
                                    .Done();
