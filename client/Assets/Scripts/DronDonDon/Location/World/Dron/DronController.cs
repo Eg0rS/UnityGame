@@ -30,6 +30,7 @@ namespace DronDonDon.Location.World.Dron
         private float _angleRotate = 60;
         private Swipe _lastWorkSwipe=null;
         private DronModel _model=null;
+        private float _boostSpeed=0;
         
         private float _speedShift=0;
 
@@ -48,6 +49,7 @@ namespace DronDonDon.Location.World.Dron
             _model = model;
             _speedShift = model.SpeedShift;
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
             _gestureService.AddSwipeHandler(OnSwiped,false);
         }
         
@@ -123,7 +125,6 @@ namespace DronDonDon.Location.World.Dron
             
             result = Vector2.Angle(Vector2.right, swipeVector.normalized) > 90 ? 360 - angle : angle;
             return (int) Mathf.Round(result / 45f) % 8;
-            
         }
     
        
@@ -191,6 +192,18 @@ namespace DronDonDon.Location.World.Dron
         {
             _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ON_COLLISION, 
                 other.gameObject));
+        }
+
+        public void Acceleration( WorldObjectEvent objectEvent)
+        {
+            _boostSpeed = objectEvent.SpeedBoost;
+            _levelSpeed += _boostSpeed;
+            Invoke(nameof(DisableAcceleration),objectEvent.SpeedBoostTime);
+        }
+
+        public void DisableAcceleration()
+        {
+            _levelSpeed -= _boostSpeed;
         }
     }
 }

@@ -1,15 +1,15 @@
-﻿using System;
-using AgkUI.Binding.Attributes;
+﻿using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
+using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using DronDonDon.Game.LevelDialogs;
+using DronDonDon.Location.Model;
 using DronDonDon.World;
 using DronDonDon.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-
 
 namespace DronDonDon.Location.UI
 {
@@ -34,6 +34,12 @@ namespace DronDonDon.Location.UI
         [UIComponentBinding("CountDurability")] 
             private UILabel _durability;
 
+        [UIComponentBinding("ShieldButton")]
+            private UIButton _shieldButton;
+        
+        [UIComponentBinding("SpeedButton")]
+            private UIButton _speedButton;
+
         private float _time=0;
 
         private bool _isGame=false;
@@ -44,11 +50,29 @@ namespace DronDonDon.Location.UI
         private void Init(DronStats dronStats)
         {
             _MaxDurability = dronStats._durability;    //для вывода в процентах
-            SetStats(dronStats);
+            SetStats(dronStats);                                                                                
             _timer.text = "0,00";
+            _shieldButton.gameObject.SetActive(false);
+            _speedButton.gameObject.SetActive(false);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.UI_UPDATE, UiUpdate);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.END_GAME, EndGame);
+            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.TAKE_BOOST, SetActiveBoost);
+        }
+
+        private void SetActiveBoost(WorldObjectEvent objectEvent)
+        {
+            switch (objectEvent._typeBoost)
+            {
+                case WorldObjectType.SHIELD_BUSTER:
+                    _shieldButton.gameObject.SetActive(true);
+                    break;
+                case WorldObjectType.SPEED_BUSTER:
+                    _speedButton.gameObject.SetActive(true);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void EndGame(WorldObjectEvent objectEvent)
@@ -89,6 +113,20 @@ namespace DronDonDon.Location.UI
             _dialogManager.Require().ShowModal<LevelPauseDialog>();
         }
         
+        [UIOnClick("ShieldButton")]
+        private void OnShieldButton()
+        {
+            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, 
+                WorldObjectType.SHIELD_BUSTER));
+            _shieldButton.gameObject.SetActive(false);
+        }
         
+        [UIOnClick("SpeedButton")]
+        private void OnSpeedButton()
+        {
+            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, 
+                WorldObjectType.SPEED_BUSTER));
+            _speedButton.gameObject.SetActive(false);
+        }
     }
 }

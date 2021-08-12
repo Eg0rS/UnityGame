@@ -80,8 +80,9 @@ namespace DronDonDon.Game.LevelDialogs
         private UILabel _tasksCompletedLabel;
 
         [UICreated]
-        public void Init(string levelId)
+        public void Init()
         {
+            _levelId = _levelService.CurrentLevelId;
             _logger.Debug("[LevelFinishedDialog] Init()...");
             _levelViewModel = _levelService.GetLevels().Find(it => it.LevelProgress.Id.Equals(_levelId));
 
@@ -89,9 +90,7 @@ namespace DronDonDon.Game.LevelDialogs
             _durabilityTaskCompleted = false;
             _timeTaskCompleted = false;
             _tasksCompletedCount = 0;
-
-            _levelId = _levelService.CurrentLevelId;
-
+            
             _chipsGoal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
             _durabilityGoal = _levelViewModel.LevelDescriptor.NecessaryDurability;
             _timeGoal = _levelViewModel.LevelDescriptor.NecessaryTime;

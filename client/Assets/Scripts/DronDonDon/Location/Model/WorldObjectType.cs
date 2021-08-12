@@ -1,5 +1,4 @@
 ﻿
-
 namespace DronDonDon.Location.Model
 {
     public enum WorldObjectType
@@ -7,10 +6,10 @@ namespace DronDonDon.Location.Model
         NONE,
         DRON,
         OBSTACLE,
+        Battery,
         BONUS_CHIPS,
         SPEED_BUSTER,
         SHIELD_BUSTER,
-        START,
         FINISH
     }
 }

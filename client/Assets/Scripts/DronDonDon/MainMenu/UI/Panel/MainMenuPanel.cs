@@ -83,10 +83,5 @@ namespace DronDonDon.MainMenu.UI.Panel
             _logger.Debug("Click on credits");
             _dialogManager.Require().Show<CreditShopDialog>();
         }
-
-        // private bool CheckSoundState()
-        // {
-        //     
-        // }
     }
 }

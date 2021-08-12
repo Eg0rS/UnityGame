@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -2336148880836416388}
   - component: {fileID: 5687612474602356083}
   - component: {fileID: 7164481933970165914}
+  - component: {fileID: 8162958236292597234}
   m_Layer: 0
   m_Name: pfShieldBooster
   m_TagString: Untagged
@@ -58,7 +59,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &5687612474602356083
 MeshFilter:
@@ -109,3 +110,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8162958236292597234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4015305901427799039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d78d0e7708bc824408a1148165e710e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 100

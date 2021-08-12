@@ -6,6 +6,7 @@ using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core;
 using DronDonDon.Game.LevelDialogs;
+using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.Location.Service.Builder;
 using DronDonDon.Location.UI;
@@ -31,6 +32,9 @@ namespace DronDonDon.Location.Service
         
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
+        
+        [Inject]
+        private IoCProvider<GameService> _gameService;
 
         [Inject] 
         private IoCProvider<DialogManager> _dialogManager;
@@ -40,22 +44,24 @@ namespace DronDonDon.Location.Service
         [Inject] 
         private DronService _dronService;
         
-        public void StartGame(string levelPrefabName, string dronId)
+        public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
+            string levelPrefabName = levelDescriptor.Prefab;
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelPrefabName, dronId);
+            CreatedWorld(levelDescriptor, dronId);
         }
-        private void CreatedWorld(string levelPrefabName, string dronId)
+        private void CreatedWorld(LevelDescriptor levelDescriptor, string dronId)
         {
+            string levelPrefabName = levelDescriptor.Prefab;
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
                                    .Build()
                                    .Then(() =>
                                    {
                                        SetDrone(dronId);
-                                       _overlayManager.Require().CreateGameOverlay();
                                        _overlayManager.Require().HideLoadingOverlay(true);
+                                       _gameService.Require().StartGame(levelDescriptor, dronId);
                                    })
                                    .Done();
         }

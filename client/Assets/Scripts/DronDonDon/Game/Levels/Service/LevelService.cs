@@ -95,7 +95,7 @@ namespace DronDonDon.Game.Levels.Service
                 }
             }
             SaveProgress(model);
-            Dispatch(new LevelEvent(LevelEvent.UPDATED));
+            //Dispatch(new LevelEvent(LevelEvent.UPDATED));
         }
 
         public LevelProgress GetLevelProgress(string levelId)

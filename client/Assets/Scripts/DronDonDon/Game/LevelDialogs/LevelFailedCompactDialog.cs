@@ -11,7 +11,6 @@ using DronDonDon.Game.Levels.Service;
 using DronDonDon.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
-using UnityEngine;
 
 namespace DronDonDon.Game.LevelDialogs
 {
@@ -55,7 +54,6 @@ namespace DronDonDon.Game.LevelDialogs
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
             _levelService.ShowStartLevelDialog(_levelId);
-            _dialogManager.Require().Hide(this);
         }
 
         [UIOnClick("LevelMapButton")]
@@ -63,16 +61,15 @@ namespace DronDonDon.Game.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _dialogManager.Require().Hide(this);
         }
 
         private void SetDialogLabels()
         {
             switch (_failReason)
             {
-                case 0: _failReasonLabel.text = "Закончилась энергия";
+                case 0: _failReasonLabel.text = "Дрон разбился";
                     break;
-                case 1: _failReasonLabel.text = "Дрон разбился";
+                case 1: _failReasonLabel.text = "Закончилась энергия";
                     break;
                 default: _failReasonLabel.text = "Дрон разбился";
                     break;

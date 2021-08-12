@@ -1,10 +1,6 @@
 ﻿using DronDonDon.Location.Model;
-using AgkCommons.Event;
-using DronDonDon.Location.Model.BaseModel;
 using DronDonDon.Location.Model.Obstacle;
-using IoC.Attribute;
 using UnityEngine;
-using IoC.Extension;
 
 namespace DronDonDon.Location.World.Obstacle
 {

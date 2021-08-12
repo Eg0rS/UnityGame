@@ -10,7 +10,6 @@ using Adept.Logger;
 using DronDonDon.Settings.Service;
 using UnityEngine;
 
-
 namespace DronDonDon.Settings.UI
 {
     [UIController("UI/Dialog/pfSettingsDialog@embeded")]
