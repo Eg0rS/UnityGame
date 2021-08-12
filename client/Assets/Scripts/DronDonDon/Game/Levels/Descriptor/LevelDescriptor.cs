@@ -1,4 +1,5 @@
-﻿using AgkCommons.Configurations;
+﻿
+using AgkCommons.Configurations;
 
 namespace DronDonDon.Game.Levels.Descriptor
 {
