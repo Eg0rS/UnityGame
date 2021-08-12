@@ -5,6 +5,7 @@ using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DronDonDon.Core.UI.Dialog;
+using DronDonDon.Location.Service;
 using DronDonDon.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
@@ -25,6 +26,10 @@ namespace DronDonDon.Game.LevelDialogs
         [Inject]
         private ScreenManager _screenManager;
         
+        [Inject]
+        private GameService _gameService;
+
+        
         [UICreated]
         public void Init()
         {
@@ -37,6 +42,7 @@ namespace DronDonDon.Game.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
+            _gameService.IsPlay = false;
         }
         
         [UIOnClick("ContinueButton")]

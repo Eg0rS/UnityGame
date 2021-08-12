@@ -13,6 +13,9 @@ namespace DronDonDon.Game.Levels.Descriptor
         public string LevelTitle { get; private set; }
         public string LevelDescription { get; private set; }
         public string LevelImage { get; private set; }
+        public string Skybox { get; private set; }
+        public string Color { get; private set; }
+        public float Intensity { get; private set; }
         
         public void Configure(Configuration config)
         {
@@ -25,6 +28,9 @@ namespace DronDonDon.Game.Levels.Descriptor
             LevelTitle = config.GetString("title");
             LevelDescription = config.GetString("description");
             LevelImage = config.GetString("image");
+            Skybox = config.GetString("skybox");
+            Intensity = config.GetFloat("intensity");
+            Color = config.GetString("color");
         }
     }
 }

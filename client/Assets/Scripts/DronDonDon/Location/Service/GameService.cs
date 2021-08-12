@@ -83,15 +83,42 @@ namespace DronDonDon.Location.Service
 
         private float _startTime=0;
 
+        private int _speedShift;
+
+        public bool IsPlay
+        {
+            get
+            {
+                return _isPlay;
+            }
+            set
+            {
+                _isPlay = value;
+            }
+        }
+        public int SpeedShift
+        { 
+            set
+            {
+                _speedShift = value;
+            }
+
+            get
+            {
+                return _speedShift;
+            }
+        }
+
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            _levelDescriptor = levelDescriptor; 
+            _levelDescriptor = levelDescriptor;
             DronDescriptor dronDescriptor = _dronService.GetDronById(dronId).DronDescriptor;
             _overlayManager.Require().HideLoadingOverlay(true);
              _levelContainer = GameObject.Find($"Overlay");
             
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.ON_COLLISION, DronCollision);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.ACTIVATE_BOOST, ActivateBoost);
+            SpeedShift = _dronService.GetDronById(dronId).DronDescriptor.Mobility;
             _dronStats._durability = dronDescriptor.Durability;
             _dronStats._MaxDurability = dronDescriptor.Durability;
             _dronStats._energy = dronDescriptor.Energy;
@@ -142,20 +169,20 @@ namespace DronDonDon.Location.Service
         private IEnumerator FallEnergy()
         {
             while (_isPlay)
-            {
-                _dronStats._energy -= _dronStats._energyFall;
-                if (_dronStats._energy <= 0)
                 {
-                    _dronStats._energy = 0;
-                    UiUpdate();
-                    DronFailed(1);
+                    _dronStats._energy -= _dronStats._energyFall;
+                    if (_dronStats._energy <= 0)
+                    {
+                        _dronStats._energy = 0;
+                        UiUpdate();
+                        DronFailed(1);
+                    }
+                    else
+                    {
+                        UiUpdate();
+                        yield return new WaitForSeconds(1f);
+                    }
                 }
-                else
-                {
-                    UiUpdate();
-                    yield return new WaitForSeconds(1f);
-                }
-            }
         }
         
         private void OnTakeBattery(BatteryModel getComponent)
@@ -207,6 +234,7 @@ namespace DronDonDon.Location.Service
             {
                 case WorldObjectType.SHIELD_BUSTER:
                     _dronStats._onActiveShield = true;
+                    Invoke(nameof(DisableShield), _dronStats._boostShieldTime);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
                     _dronStats._energy -= _dronStats._energyForSpeed;
@@ -230,23 +258,27 @@ namespace DronDonDon.Location.Service
                 _dronStats));
         }
 
-        private void EndGame()
+        private void EndGame(bool isWin)
         {
             _isPlay = false;
             float timeInGame = Time.time - _startTime;
             Time.timeScale = 0f;
-            _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats._countChips, 
-                timeInGame, (int)((_dronStats._durability / _dronStats._MaxDurability) * 100));
+            if (isWin)
+            {
+                _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats._countChips, 
+                    timeInGame, (int)((_dronStats._durability / _dronStats._MaxDurability) * 100));
+            }
+           
         }
         private void Victory(FinishModel getComponent)
         {
-            EndGame();
+            EndGame(true);
             _dialogManager.Require().ShowModal<LevelFinishedDialog>();
         }
 
         private void DronFailed(short reason)
         {
-            EndGame();
+            EndGame(false);
             _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
         }
 

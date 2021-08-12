@@ -26,7 +26,7 @@ namespace DronDonDon.Core
         private LevelFailedCompactDialog _failedDialog=null;
 
         private GameObject levelContainer;
-
+        
         private void Awake()
         {
             _preloaderOverlay = FindObjectOfType<PreloaderOverlay>();
@@ -54,6 +54,9 @@ namespace DronDonDon.Core
         public void DestroyGameOverlay()
         {
             Destroy(_dronStats.gameObject);
+            Light lightOnLevel = GameObject.Find("DirectionalLight").GetComponent<Light>();
+            lightOnLevel.color = Color.white;
+            lightOnLevel.intensity = 1.3f;
         }
         
         public void ShowPreloader()

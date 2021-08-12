@@ -1,3 +1,4 @@
+using System;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Core.Model;
@@ -18,6 +19,8 @@ using DronDonDon.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
+using RenderSettings = UnityEngine.RenderSettings;
 
 namespace DronDonDon.Location.Service
 {
@@ -50,6 +53,10 @@ namespace DronDonDon.Location.Service
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelDescriptor, dronId);
+            Light lightOnLevel = GameObject.Find("DirectionalLight").GetComponent<Light>();
+            lightOnLevel.color = Resources.Load<Material>(levelDescriptor.Color).color;
+            RenderSettings.skybox = Resources.Load<Material>(levelDescriptor.Skybox);
+            DynamicGI.UpdateEnvironment();
         }
         private void CreatedWorld(LevelDescriptor levelDescriptor, string dronId)
         {

@@ -67,7 +67,7 @@ namespace DronDonDon.Game.Levels.Service
                 }
             }
 
-            return 1;
+            return 0;
         }
 
 

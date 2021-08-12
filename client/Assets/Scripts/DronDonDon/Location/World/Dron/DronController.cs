@@ -10,6 +10,8 @@ using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using AgkCommons.Input.Gesture.Service;
 using BezierSolution;
+using DronDonDon.Location.Service;
+using DronDonDon.Location.World.Dron.Service;
 using DronDonDon.World;
 using DronDonDon.World.Event;
 using IoC.Util;
@@ -40,6 +42,9 @@ namespace DronDonDon.Location.World.Dron
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
         
+        [Inject]
+        private GameService _gameService;
+
         public WorldObjectType ObjectType { get; private set; }
         public void Init(DronModel  model)
         {
@@ -47,7 +52,6 @@ namespace DronDonDon.Location.World.Dron
             DisablePath();
             ObjectType = model.ObjectType;
             _model = model;
-            _speedShift = model.SpeedShift;
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
             _gestureService.AddSwipeHandler(OnSwiped,false);
@@ -57,6 +61,7 @@ namespace DronDonDon.Location.World.Dron
         {
             _isGameRun = true;
             EnablePath();
+            _speedShift = _gameService.SpeedShift;
         }
         
         public void Update()

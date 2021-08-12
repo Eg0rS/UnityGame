@@ -29,8 +29,8 @@ namespace DronDonDon.Game.LevelDialogs
 
         private const string TASKS_COMPLETED = "Выполнено заданий {0} из 3";
         private const string CHIPS_TASK_FULL = "Собрано чипов {0} из {1}";
-        private const string DURABILITY_TASK = "Груз сохранён на {0}%";
-        private const string TIME_TASK = "Уровень пройден за {0} сек.";
+        private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
+        private const string TIME_TASK = "Уложиться в {0} сек.";
 
         private int _chipsGoal;
         private float _durabilityGoal;
@@ -104,19 +104,19 @@ namespace DronDonDon.Game.LevelDialogs
             _durabilityLevelResult = _levelViewModel.LevelProgress.Durability;
             _timeLevelResult = (int) _levelViewModel.LevelProgress.TransitTime;
 
-            if (_chipsLevelResult > _chipsGoal)
+            if (_chipsLevelResult >= _chipsGoal)
             {
                 _chipsTaskCompleted = true;
                 _tasksCompletedCount++;
             }
 
-            if (_durabilityLevelResult > _durabilityGoal)
+            if (_durabilityLevelResult >= _durabilityGoal)
             {
                 _durabilityTaskCompleted = true;
                 _tasksCompletedCount++;
             }
 
-            if (_timeLevelResult < _timeGoal)
+            if (_timeLevelResult <= _timeGoal)
             {
                 _timeTaskCompleted = true;
                 _tasksCompletedCount++;
@@ -148,7 +148,7 @@ namespace DronDonDon.Game.LevelDialogs
 
         private void SetButtons()
         {
-            _nextLevelButton.enabled = _levelService.GetNextLevel() != 0;
+            _nextLevelButton.gameObject.SetActive(_levelService.GetNextLevel() != 0);
         }
 
         [UIOnClick("RestartButton")]
