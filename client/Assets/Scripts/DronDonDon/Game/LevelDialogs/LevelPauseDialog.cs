@@ -17,7 +17,7 @@ namespace DronDonDon.Game.LevelDialogs
     public class LevelPauseDialog : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelPauseDialog>();
-        private const string PREFAB_NAME = "UI/Dialog/LevelPauseDialog@embeded";
+        private const string PREFAB_NAME = "UI/Dialog/pfLevelPauseDialog@embeded";
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
