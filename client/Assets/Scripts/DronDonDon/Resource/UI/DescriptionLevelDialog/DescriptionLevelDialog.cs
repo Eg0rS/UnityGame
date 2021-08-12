@@ -166,7 +166,7 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
                     id = panel.ItemId;
                 }
             }
-            _locationService.StartGame(_levelDescriptor.Prefab, id);
+            _locationService.StartGame(_levelDescriptor, id);
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
         
