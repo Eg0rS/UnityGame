@@ -11,8 +11,11 @@ GameObject:
   - component: {fileID: 7180971792850026212}
   - component: {fileID: 6055147259360964929}
   - component: {fileID: 8353265883341325707}
+  - component: {fileID: 3107008827743303184}
+  - component: {fileID: 856186137980859498}
+  - component: {fileID: 7540311070958793684}
   m_Layer: 0
-  m_Name: fbbonus_speed
+  m_Name: pfBonusSpeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,3 +84,42 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3107008827743303184
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7560487556205028446}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2292714, y: 0.8353215, z: 0.15680343}
+  m_Center: {x: 0.12175496, y: 0.0018499792, z: 0.000044178218}
+--- !u!114 &856186137980859498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7560487556205028446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c26d4bade13bc4c96127ff66d4e375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectType: 5
+--- !u!114 &7540311070958793684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7560487556205028446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d78d0e7708bc824408a1148165e710e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 280.2

@@ -1,4 +1,5 @@
-﻿using AgkUI.Binding.Attributes;
+﻿using System.Text;
+using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
@@ -10,6 +11,7 @@ using DronDonDon.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace DronDonDon.Location.UI
 {
@@ -39,6 +41,9 @@ namespace DronDonDon.Location.UI
         
         [UIComponentBinding("SpeedButton")]
             private UIButton _speedButton;
+            
+        [UIObjectBinding("ShieldActive")]
+            private GameObject _shieldActive;
 
         private float _time=0;
 
@@ -54,6 +59,7 @@ namespace DronDonDon.Location.UI
             _timer.text = "0,00";
             _shieldButton.gameObject.SetActive(false);
             _speedButton.gameObject.SetActive(false);
+            _shieldActive.SetActive(false);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.UI_UPDATE, UiUpdate);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.END_GAME, EndGame);
@@ -119,6 +125,15 @@ namespace DronDonDon.Location.UI
             _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, 
                 WorldObjectType.SHIELD_BUSTER));
             _shieldButton.gameObject.SetActive(false);
+            _shieldActive.SetActive(true);
+            //_shieldActive.GetComponent<Blinking>()._on = true;
+            Invoke(nameof(DisableShieldImage), 5 );
+        }
+
+        private void DisableShieldImage()
+        {
+            //_shieldActive.GetComponent<Blinking>()._on = false;
+            _shieldActive.SetActive(false);
         }
         
         [UIOnClick("SpeedButton")]
