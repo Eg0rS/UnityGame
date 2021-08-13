@@ -10,7 +10,6 @@ using AgkUI.Core.Service;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Text;
-using DronDonDon.Core.Audio.Service;
 using DronDonDon.Core.UI.Dialog;
 using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Service;
@@ -78,9 +77,7 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
         
         private ListPositionCtrl _listPositionCtrl;
 
-        private string _currentDronId;
-
-        public string CurrentDronId { get; set; }
+        private float _screenWidth;
         
         
         [UICreated]
@@ -88,13 +85,14 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
         {
             string chipText = "Собрать {0} чипов";
             string durabilityText = "Сохранить не менее {0}% груза";
-            string timeText = "Уложиться в {0} мин.";
+            string timeText = "Уложиться в {0} сек.";
             _levelDescriptor = levelDescriptor;
             DisplayTitle();
             DisplayDescription();
             DisplayTasks(chipText,durabilityText,timeText);
             DisplayImage();
             CreateChoiseDron();
+            _screenWidth = Screen.width;
         }
         
         private void DisplayTitle()
@@ -162,15 +160,13 @@ namespace DronDonDon.Resource.UI.DescriptionLevelDialog
             string id = "";
             foreach (ViewDronPanel panel in _viewDronPanels)
             {
-                Transform transform = panel.gameObject.GetComponent<Transform>();
-                if (transform.position.x >= 400 && transform.position.x <= 600)
+                RectTransform transform = panel.gameObject.GetComponent<RectTransform>();
+                if (transform.position.x >= _screenWidth/3 && transform.position.x <= _screenWidth)
                 {
                     id = panel.ItemId;
-                    Debug.Log(transform.position.x.ToString());
                 }
             }
-            Debug.Log(id);
-            _locationService.StartGame(_levelDescriptor.Prefab, id);
+            _locationService.StartGame(_levelDescriptor, id);
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
         

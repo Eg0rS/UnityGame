@@ -8,7 +8,7 @@ namespace DronDonDon.Location.UI.Screen
     [UIController("UI/Screen/pfLocationScreen@embeded")]
     public class LocationScreen : MonoBehaviour
     {
-        [Inject]
+        [Inject] 
         private OverlayManager _overlayManager;
         
         [UICreated]

@@ -75,7 +75,7 @@ namespace DronDonDon.Game.Levels.UI
             _levelViewModel = levelViewModel;
             _isCurrentLevel = isCurrentLevel;
             _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
-            if (levelViewModel.LevelProgress == null)
+            if (levelViewModel.LevelProgress == null && !isCurrentLevel)
             {
                 _lockedLevelImage.SetActive(true);
             }
@@ -137,7 +137,7 @@ namespace DronDonDon.Game.Levels.UI
             _levelViewModel = levelViewModel;
             _isCurrentLevel = isCurrentLevel;
             _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
-            if (levelViewModel.LevelProgress == null)
+            if (levelViewModel.LevelProgress == null && !isCurrentLevel)
             {
                 _lockedLevelImage.SetActive(true);
             }

@@ -1,4 +1,5 @@
-﻿using DronDonDon.Shop.UI;
+﻿using System;
+using DronDonDon.Shop.UI;
 using DronDonDon.Billing.UI;
 using DronDonDon.Billing.Event;
 using DronDonDon.Billing.Service;
@@ -53,6 +54,12 @@ namespace DronDonDon.MainMenu.UI.Panel
             UpdateCredits();
             _logger.Debug("MainMenuPanel start init");
         }
+
+        private void OnDestroy()
+        {
+         _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);   
+        }
+
         private void UpdateCredits()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
@@ -83,10 +90,5 @@ namespace DronDonDon.MainMenu.UI.Panel
             _logger.Debug("Click on credits");
             _dialogManager.Require().Show<CreditShopDialog>();
         }
-
-        // private bool CheckSoundState()
-        // {
-        //     
-        // }
     }
 }

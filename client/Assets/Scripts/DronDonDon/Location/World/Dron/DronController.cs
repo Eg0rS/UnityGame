@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using DronDonDon.Location.Model.Dron;
@@ -11,15 +10,6 @@ using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using AgkCommons.Input.Gesture.Service;
 using BezierSolution;
-using DronDonDon.Core.Audio.Service;
-using DronDonDon.Game;
-using DronDonDon.Location.Model.BaseModel;
-using DronDonDon.Location.Model.BonusChips;
-using DronDonDon.Location.Model.Finish;
-using DronDonDon.Location.Model.Obstacle;
-using DronDonDon.Location.Model.ShieldBooster;
-using DronDonDon.Location.Model.SpeedBooster;
-using DronDonDon.Location.World.Obstacle;
 using DronDonDon.World;
 using DronDonDon.World.Event;
 using IoC.Util;
@@ -34,23 +24,22 @@ namespace DronDonDon.Location.World.Dron
         private bool _isShifting=false;
         private Vector3 _previusPosition;
         private float _shiftCoeficient=0;
-        private float _levelSpeed = 15;
+        private float _levelSpeed = 10;
         private float _acceleration = 0.2f;
         private bool _isGameRun = false;
         private float _angleRotate = 60;
         private Swipe _lastWorkSwipe=null;
         private DronModel _model=null;
+        private float _boostSpeed=0;
         
-        private float _speedShift;
-        private float _durability=0;
-        private float _energy=0;
+        private float _speedShift=0;
 
         [Inject]
         private IGestureService _gestureService;
         
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-
+        
         public WorldObjectType ObjectType { get; private set; }
         public void Init(DronModel  model)
         {
@@ -59,16 +48,12 @@ namespace DronDonDon.Location.World.Dron
             ObjectType = model.ObjectType;
             _model = model;
             _speedShift = model.SpeedShift;
-            _durability = model.durability;
-            _energy = _model.Energy;
-            
+            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
             _gestureService.AddSwipeHandler(OnSwiped,false);
-            _gestureService.AddTapHandler(OnTap);
-            
-                //_gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.SHIELD_ACTIVE, ShieldActivate );
         }
         
-        private void OnTap(Tap tap)
+        private void StartGame(WorldObjectEvent worldObjectEvent)
         {
             _isGameRun = true;
             EnablePath();
@@ -140,7 +125,6 @@ namespace DronDonDon.Location.World.Dron
             
             result = Vector2.Angle(Vector2.right, swipeVector.normalized) > 90 ? 360 - angle : angle;
             return (int) Mathf.Round(result / 45f) % 8;
-            
         }
     
        
@@ -206,60 +190,20 @@ namespace DronDonDon.Location.World.Dron
 
         private void OnCollisionEnter(Collision other)
         {
-            switch (other.gameObject.GetComponent<PrefabModel>().ObjectType)
-            {
-                case WorldObjectType.OBSTACLE:
-                    OnCrash(other.gameObject.GetComponent<ObstacleModel>());
-                    break;
-                case WorldObjectType.BONUS_CHIPS:
-                    OnTakeChip(other.gameObject.GetComponent<BonusChipsModel>());
-                    break;
-                case WorldObjectType.SPEED_BUSTER:
-                    OnTakeSpeed(other.gameObject.GetComponent<SpeedBoosterModel>());
-                    break;
-                case WorldObjectType.SHIELD_BUSTER:
-                    OnTakeShield(other.gameObject.GetComponent<ShieldBoosterModel>());
-                    break;
-                case WorldObjectType.FINISH:
-                    Victory(other.gameObject.GetComponent<FinishModel>());
-                    break;
-                default:
-                    break;
-            }
+            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ON_COLLISION, 
+                other.gameObject));
         }
 
-        private void OnCrash(ObstacleModel obstacle)
+        public void Acceleration( WorldObjectEvent objectEvent)
         {
-            _durability -= obstacle.Damage;
-        }
-        
-        private void OnTakeChip(BonusChipsModel chip)
-        {
-            Destroy(chip.gameObject);
+            _boostSpeed = objectEvent.SpeedBoost;
+            _levelSpeed += _boostSpeed;
+            Invoke(nameof(DisableAcceleration),objectEvent.SpeedBoostTime);
         }
 
-        private void OnTakeSpeed(SpeedBoosterModel speedBooster)
+        public void DisableAcceleration()
         {
-            Destroy(speedBooster.gameObject);
-        }
-
-        private void OnTakeShield(ShieldBoosterModel shieldBooster)
-        {
-            Destroy(shieldBooster.gameObject);
-        }
-
-        private void Victory(FinishModel finish)
-        {
-            _isGameRun = false;
-            DisablePath();
-        }
-        
-        private void GameOver()
-        {
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-            gameObject.GetComponent<Rigidbody>().freezeRotation = false;
-            _isGameRun = false;
-            DisablePath();
+            _levelSpeed -= _boostSpeed;
         }
     }
 }

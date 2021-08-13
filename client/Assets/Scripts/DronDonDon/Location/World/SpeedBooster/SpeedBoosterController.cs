@@ -1,10 +1,6 @@
 ﻿using DronDonDon.Location.Model;
 using DronDonDon.Location.Model.SpeedBooster;
-using AgkCommons.Event;
-using DronDonDon.Location.Model.BaseModel;
-using IoC.Attribute;
 using UnityEngine;
-using IoC.Extension;
 
 namespace DronDonDon.Location.World.SpeedBooster
 {

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using DronDonDon.Location.Model.BaseModel;
-using UnityEngine;
 
 namespace DronDonDon.Location.Model.Obstacle
 {
@@ -11,7 +8,7 @@ namespace DronDonDon.Location.Model.Obstacle
         public void Awake()
         {
             ObjectType = WorldObjectType.OBSTACLE;
-            Damage = 3f;
+            Damage = 13f;
         }
     }
 }
