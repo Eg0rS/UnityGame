@@ -9,6 +9,9 @@ using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
 using DronDonDon.Core;
+using DronDonDon.Core.Audio;
+using DronDonDon.Core.Audio.Model;
+using DronDonDon.Core.Audio.Service;
 using DronDonDon.Game.LevelDialogs;
 using DronDonDon.Game.Levels.Descriptor;
 using DronDonDon.Game.Levels.Service;
@@ -73,6 +76,9 @@ namespace DronDonDon.Location.Service
         [Inject] 
         private DronService _dronService;
 
+        [Inject] 
+        private SoundService _soundService;
+
         private GameObject _levelContainer;
                 
         private DronStats _dronStats;
@@ -107,6 +113,12 @@ namespace DronDonDon.Location.Service
             {
                 return _speedShift;
             }
+        }
+
+        private void PlaySound(Sound sound)
+        {
+            _soundService.StopAllSounds();
+            _soundService.PlaySound(sound);
         }
 
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
@@ -145,21 +157,27 @@ namespace DronDonDon.Location.Service
             {
                 case WorldObjectType.OBSTACLE:
                     OnDronCrash(_collisionObject.GetComponent<ObstacleModel>());
+                    PlaySound(GameSounds.COLLISION);
                     break;
                 case WorldObjectType.Battery:
                     OnTakeBattery(_collisionObject.GetComponent<BatteryModel>());
+                    PlaySound(GameSounds.BOOSTER_PICKUP);
                     break;
                 case WorldObjectType.BONUS_CHIPS:
                     OnTakeChip(_collisionObject.GetComponent<BonusChipsModel>());
+                    PlaySound(GameSounds.CHIP_PICKUP);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
                     OnTakeSpeed(_collisionObject.GetComponent<SpeedBoosterModel>());
+                    PlaySound(GameSounds.BOOSTER_PICKUP);
                     break;
                 case WorldObjectType.SHIELD_BUSTER:
                     OnTakeShield(_collisionObject.GetComponent<ShieldBoosterModel>());
+                    PlaySound(GameSounds.BOOSTER_PICKUP);
                     break;
                 case WorldObjectType.FINISH:
                     Victory(_collisionObject.GetComponent<FinishModel>());
+                    PlaySound(GameSounds.SHOW_DIALOG);
                     break;
                 default:
                     break;

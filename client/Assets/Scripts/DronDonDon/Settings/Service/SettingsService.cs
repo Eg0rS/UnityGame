@@ -2,6 +2,7 @@
 using AgkUI.Binding.Attributes;
 using DronDonDon.Settings.Model;
 using DronDonDon.Billing.Service;
+using DronDonDon.Core.Audio.Service;
 using DronDonDon.Core.Filter;
 using DronDonDon.Game.Levels.Service;
 using DronDonDon.Inventory.Service;
@@ -23,6 +24,9 @@ namespace DronDonDon.Settings.Service
         
         [Inject]
         private InventoryService _inventoryService;
+
+        [Inject] 
+        private AudioService _audioService;
         
         public void UpdateSettings()
         {
@@ -64,7 +68,7 @@ namespace DronDonDon.Settings.Service
 
         public void SetMusicMute(bool isMute)
         {
-            AudioListener.volume = isMute ? 1f : 0f;
+            _audioService.MusicMute = !isMute;
             SettingsModel settingsModel = RequireSettingsModel();
             settingsModel.IsMusicMute = isMute;
             _settingsRepository.Set(settingsModel);
@@ -77,7 +81,7 @@ namespace DronDonDon.Settings.Service
 
         public void SetSoundMute(bool isMute)
         {
-           // AudioListener.volume = isMute ? 1f : 0f;
+            _audioService.SoundMute = !isMute;
             SettingsModel settingsModel = RequireSettingsModel();
             settingsModel.IsSoundMute = isMute;
             _settingsRepository.Set(settingsModel);

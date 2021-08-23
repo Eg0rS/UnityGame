@@ -46,6 +46,10 @@ namespace DronDonDon.Core.Audio.Service
             AudioClip clip = _soundClips[actualSoundName];
             
             _sounds.Add(sound);
+            foreach (Sound item in _sounds)
+            {
+            }
+            
             _audioService.PlaySound(clip, sound.Track, sound.Looped);
         }
 
@@ -96,7 +100,10 @@ namespace DronDonDon.Core.Audio.Service
                     GameSounds.DRON_CRASHED,
                     GameSounds.DRON_TAKEOFF,
                     GameSounds.DRON_LANDING,
-                    GameSounds.SHOW_DIALOG
+                    GameSounds.SHOW_DIALOG,
+                    GameSounds.SHIFT,
+                    GameSounds.FAILED,
+                    GameSounds.VICTORY
             };
             foreach (Sound sound in embededSounds) {
                 string soundName = sound.SoundName;

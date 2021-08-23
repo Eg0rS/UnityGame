@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 2275793414829755056}
   - component: {fileID: 1303836805298779433}
   - component: {fileID: 3367238348319082050}
-  - component: {fileID: 5800357724685839259}
+  - component: {fileID: 8970407918166992377}
   m_Layer: 5
   m_Name: ShieldActive
   m_TagString: Untagged
@@ -210,19 +210,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5800357724685839259
-MonoBehaviour:
+--- !u!111 &8970407918166992377
+Animation:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 635125479985677412}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17d79dc3d3df43ee8747a745226b4e25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _on: 1
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: c408be062c8f5d44b9a231186a2345d3, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: c408be062c8f5d44b9a231186a2345d3, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &711322249854585968
 GameObject:
   m_ObjectHideFlags: 0

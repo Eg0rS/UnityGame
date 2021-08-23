@@ -4,6 +4,9 @@ using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
+using DronDonDon.Core.Audio;
+using DronDonDon.Core.Audio.Model;
+using DronDonDon.Core.Audio.Service;
 using DronDonDon.Game.LevelDialogs;
 using DronDonDon.Location.Model;
 using DronDonDon.World;
@@ -23,6 +26,9 @@ namespace DronDonDon.Location.UI
         
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject] 
+        private SoundService _soundService;
 
         [UIComponentBinding("CountChips")] 
             private UILabel _countChips;
@@ -44,6 +50,8 @@ namespace DronDonDon.Location.UI
             
         [UIObjectBinding("ShieldActive")]
             private GameObject _shieldActive;
+            
+        
 
         private float _time=0;
 
@@ -64,6 +72,13 @@ namespace DronDonDon.Location.UI
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.END_GAME, EndGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.TAKE_BOOST, SetActiveBoost);
+        }
+        
+        private void PlaySound(Sound sound)
+        {
+            _soundService.StopAllSounds();
+            _soundService.PlaySound(sound);
+            
         }
 
         private void SetActiveBoost(WorldObjectEvent objectEvent)
@@ -122,6 +137,7 @@ namespace DronDonDon.Location.UI
         [UIOnClick("ShieldButton")]
         private void OnShieldButton()
         {
+            PlaySound(GameSounds.SHIELD_ACTIVATED);
             _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, 
                 WorldObjectType.SHIELD_BUSTER));
             _shieldButton.gameObject.SetActive(false);
@@ -139,6 +155,7 @@ namespace DronDonDon.Location.UI
         [UIOnClick("SpeedButton")]
         private void OnSpeedButton()
         {
+            PlaySound(GameSounds.SPEED_ACTIVATED);
             _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, 
                 WorldObjectType.SPEED_BUSTER));
             _speedButton.gameObject.SetActive(false);
