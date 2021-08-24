@@ -2,10 +2,10 @@
 {
     public class InventoryItemModel
     {
-        public string Id { get; }
-        public InventoryItemTypeModel Type { get; }
+        public string Id { get; set; }
+        public InventoryItemTypeModel Type { get; set; }
 
-        private int Count { get; }
+        public int Count { get; set; }
 
         public InventoryItemModel(string itemId, InventoryItemTypeModel type, int count)
         {
