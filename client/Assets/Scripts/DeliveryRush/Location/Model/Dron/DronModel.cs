@@ -8,12 +8,11 @@ namespace DeliveryRush.Location.Model.Dron
         public float SpeedShift = 2;
         public float durability = 10;
         public float Energy = 10;
-        
+
         public void Awake()
         {
             ObjectType = WorldObjectType.DRON;
         }
-
 
         public DronModel Get()
         {

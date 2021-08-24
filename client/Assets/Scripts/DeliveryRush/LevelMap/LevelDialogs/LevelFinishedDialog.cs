@@ -60,7 +60,7 @@ namespace DeliveryRush.Resource.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
-        [Inject] 
+        [Inject]
         private LevelDescriptorRegistry _levelDescriptorRegistry;
 
         [UIComponentBinding("ChipsStar")]
@@ -86,10 +86,10 @@ namespace DeliveryRush.Resource.LevelDialogs
 
         [UIComponentBinding("TasksCompletedTitle")]
         private UILabel _tasksCompletedLabel;
-        
-        [Inject] 
+
+        [Inject]
         private SoundService _soundService;
-        
+
         [UICreated]
         public void Init()
         {
@@ -101,7 +101,7 @@ namespace DeliveryRush.Resource.LevelDialogs
             _durabilityTaskCompleted = false;
             _timeTaskCompleted = false;
             _tasksCompletedCount = 0;
-            
+
             _chipsGoal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
             _durabilityGoal = _levelViewModel.LevelDescriptor.NecessaryDurability;
             _timeGoal = _levelViewModel.LevelDescriptor.NecessaryTime;
@@ -110,20 +110,17 @@ namespace DeliveryRush.Resource.LevelDialogs
             _durabilityLevelResult = _levelViewModel.LevelProgress.Durability;
             _timeLevelResult = (int) _levelViewModel.LevelProgress.TransitTime;
 
-            if (_chipsLevelResult >= _chipsGoal)
-            {
+            if (_chipsLevelResult >= _chipsGoal) {
                 _chipsTaskCompleted = true;
                 _tasksCompletedCount++;
             }
 
-            if (_durabilityLevelResult >= _durabilityGoal)
-            {
+            if (_durabilityLevelResult >= _durabilityGoal) {
                 _durabilityTaskCompleted = true;
                 _tasksCompletedCount++;
             }
 
-            if (_timeLevelResult <= _timeGoal)
-            {
+            if (_timeLevelResult <= _timeGoal) {
                 _timeTaskCompleted = true;
                 _tasksCompletedCount++;
             }
@@ -133,7 +130,7 @@ namespace DeliveryRush.Resource.LevelDialogs
             SetButtons();
             PlaySound(GameSounds.VICTORY);
         }
-        
+
         private void PlaySound(Sound sound)
         {
             _soundService.StopAllSounds();
@@ -177,7 +174,8 @@ namespace DeliveryRush.Resource.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _levelService.ShowStartLevelDialog(_levelDescriptorRegistry.LevelDescriptors.FirstOrDefault(a => a.Order == _levelService.GetNextLevel()).Id);
+            _levelService.ShowStartLevelDialog(_levelDescriptorRegistry.LevelDescriptors.FirstOrDefault(a => a.Order == _levelService.GetNextLevel())
+                                                                       .Id);
         }
 
         [UIOnClick("LevelMapButton")]

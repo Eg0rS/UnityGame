@@ -9,20 +9,13 @@ namespace DeliveryRush.Resource.Model
         private int _countStars;
         private int _countChips;
         private float _durability;
-        private bool _isCompleted;
-
-        public bool IsCompleted
-        {
-            get => _isCompleted;
-            set => _isCompleted = value;
-        }
 
         public string Id
         {
             get => _id;
             set => _id = value;
         }
-        
+
         public float TransitTime
         {
             get => _transitTime;

@@ -6,7 +6,7 @@ namespace DeliveryRush.Resource.IoC
     public class LevelDescriptorRegistry
     {
         private List<LevelDescriptor> _levelDescriptors;
-        
+
         public List<LevelDescriptor> LevelDescriptors
         {
             get => _levelDescriptors;

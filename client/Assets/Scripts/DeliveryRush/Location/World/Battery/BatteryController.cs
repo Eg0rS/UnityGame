@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace DeliveryRush.Location.World.Battery
 {
-    public class BatteryController : MonoBehaviour,  IWorldObjectController<BatteryModel>
+    public class BatteryController : MonoBehaviour, IWorldObjectController<BatteryModel>
     {
         public WorldObjectType ObjectType { get; private set; }
+
         public void Init(BatteryModel model)
         {
             ObjectType = model.ObjectType;

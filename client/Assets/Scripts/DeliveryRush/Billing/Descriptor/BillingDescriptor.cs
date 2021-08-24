@@ -7,16 +7,16 @@ namespace DeliveryRush.Billing.Descriptor
     {
         [XmlAttribute("id")]
         public string Id { get; set; }
-        
+
         [XmlAttribute("credits")]
-        public int Credits { get; set; } 
-        
+        public int Credits { get; set; }
+
         [XmlAttribute("price")]
         public double Price { get; set; }
-        
+
         [XmlAttribute("icon")]
         public string Icon { get; set; }
-        
+
         public void Configure(Configuration configItem)
         {
             Id = configItem.GetString("id");

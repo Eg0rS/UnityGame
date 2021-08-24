@@ -8,17 +8,15 @@ namespace DeliveryRush.Billing.UI
     public class BillingScrollController : MonoBehaviour
     {
         public ListPositionCtrl Control;
+
         [UICreated]
         private void Init(List<BillingItemController> billingItemControllers)
         {
             ListPositionCtrl control = gameObject.GetComponent<ListPositionCtrl>();
             Control = control;
-            foreach (var itemPanel in billingItemControllers)
-            {
+            foreach (BillingItemController itemPanel in billingItemControllers) {
                 control.listBoxes.Add(itemPanel.GetComponent<ListBox>());
             }
         }
-        
-        
     }
 }

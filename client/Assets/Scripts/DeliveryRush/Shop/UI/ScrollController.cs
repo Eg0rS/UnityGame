@@ -8,14 +8,15 @@ namespace DeliveryRush.Shop.UI
     [UIController("UI/Scrolls/pfScrollViewDroneStore@embeded")]
     public class ScrollController : MonoBehaviour
     {
-        [FormerlySerializedAs("Control")] public ListPositionCtrl control;
+        [FormerlySerializedAs("Control")]
+        public ListPositionCtrl Control;
+
         [UICreated]
         private void Init(List<ShopItemPanel> shopItemPanels)
         {
             ListPositionCtrl control = gameObject.GetComponent<ListPositionCtrl>();
-            this.control = control;
-            foreach (var itemPanel in shopItemPanels)
-            {
+            Control = control;
+            foreach (ShopItemPanel itemPanel in shopItemPanels) {
                 control.listBoxes.Add(itemPanel.GetComponent<ListBox>());
             }
         }

@@ -5,9 +5,8 @@ namespace DeliveryRush.Settings.Service
 {
     public class SettingsRepository : LocalPrefsSingleRepository<SettingsModel>
     {
-        public SettingsRepository() : base("settingsRepository")    
+        public SettingsRepository() : base("settingsRepository")
         {
-            
         }
     }
 }

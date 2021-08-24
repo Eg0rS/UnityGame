@@ -36,12 +36,12 @@ namespace DeliveryRush.Core.Filter
         private void Configure(IIoCContainer context)
         {
             context.RegisterModule(new AgkCommonsModule());
-            context.RegisterModule(new GameKitModule());     
+            context.RegisterModule(new GameKitModule());
             context.RegisterModule(new ConsoleModule());
             context.RegisterModule(new AudioModule());
             context.RegisterModule(new UIModule());
             context.RegisterModule(new CoreModule());
-            context.RegisterModule(new DescriptorModule());    
+            context.RegisterModule(new DescriptorModule());
             context.RegisterModule(new LocationModule());
             context.RegisterModule(new SettingsModule());
             context.RegisterModule(new LevelsModule());

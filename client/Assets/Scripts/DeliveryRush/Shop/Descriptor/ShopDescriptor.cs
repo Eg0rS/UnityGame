@@ -8,17 +8,19 @@ namespace DeliveryRush.Shop.Descriptor
     public class ShopDescriptor
     {
         private List<ShopItemDescriptor> _shopItemDescriptors;
-        
+
         public List<ShopItemDescriptor> ShopItemDescriptors
         {
             get => _shopItemDescriptors;
             set => _shopItemDescriptors = value;
         }
+
         public ShopDescriptor()
         {
             _shopItemDescriptors = new List<ShopItemDescriptor>();
         }
 
+        [NotNull]
         public ShopItemDescriptor RequireShopItem(string itemId)
         {
             ShopItemDescriptor shopItemDescriptor = GetShopItems().FirstOrDefault(x => x.Id == itemId);
@@ -31,21 +33,16 @@ namespace DeliveryRush.Shop.Descriptor
         [CanBeNull]
         public ShopItemDescriptor GetShopItem(string itemId)
         {
-            try
-            {
+            try {
                 return GetShopItems().FirstOrDefault(x => x.Id == itemId);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 return null;
             }
-            
         }
+
         private List<ShopItemDescriptor> GetShopItems()
         {
             return ShopItemDescriptors;
         }
     }
-
-    
 }

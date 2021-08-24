@@ -28,57 +28,56 @@ namespace DeliveryRush.Resource.UI
     public class DescriptionLevelDialog : MonoBehaviour
     {
         private const string PREFAB_NAME = "UI/Dialog/pfDescriptionLevelDialog@embeded";
-        
+
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DescriptionLevelDialog>();
 
-        [Inject] 
+        [Inject]
         private Location.Service.LocationService _locationService;
-        
-        [Inject] 
+
+        [Inject]
         private UIService _uiService;
-        
-        [Inject] 
+
+        [Inject]
         private LevelService _levelService;
-        
+
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
-        [Inject] 
+        [Inject]
         private ShopDescriptor _shopDescriptor;
 
-        [Inject] 
+        [Inject]
         private InventoryService _inventoryService;
-        
+
         [UIComponentBinding("Title")]
         private UILabel _title;
-        
+
         [UIComponentBinding("Description")]
         private UILabel _description;
-        
-        [UIComponentBinding("ChipsTask")] 
+
+        [UIComponentBinding("ChipsTask")]
         private UILabel _chipText;
-        
-        [UIComponentBinding("DurabilityTask")] 
+
+        [UIComponentBinding("DurabilityTask")]
         private UILabel _durabilityText;
-        
-        [UIComponentBinding("TimeTask")] 
+
+        [UIComponentBinding("TimeTask")]
         private UILabel _timeText;
 
-        [UIObjectBinding("CargoImage")] 
+        [UIObjectBinding("CargoImage")]
         private GameObject _cargoImage;
 
-        [UIObjectBinding("ScrollContainer")] 
+        [UIObjectBinding("ScrollContainer")]
         private GameObject _scrollContainer;
-        
+
         private LevelDescriptor _levelDescriptor;
 
         private List<ViewDronPanel> _viewDronPanels = new List<ViewDronPanel>();
-        
+
         private ListPositionCtrl _listPositionCtrl;
 
         private float _screenWidth;
-        
-        
+
         [UICreated]
         public void Init(LevelDescriptor levelDescriptor)
         {
@@ -88,12 +87,12 @@ namespace DeliveryRush.Resource.UI
             _levelDescriptor = levelDescriptor;
             DisplayTitle();
             DisplayDescription();
-            DisplayTasks(chipText,durabilityText,timeText);
+            DisplayTasks(chipText, durabilityText, timeText);
             DisplayImage();
             CreateChoiseDron();
             _screenWidth = Screen.width;
         }
-        
+
         private void DisplayTitle()
         {
             _title.text = _levelDescriptor.LevelTitle;
@@ -110,7 +109,7 @@ namespace DeliveryRush.Resource.UI
             _durabilityText.text = String.Format(durabilityText, _levelDescriptor.NecessaryDurability);
             _timeText.text = String.Format(timeText, _levelDescriptor.NecessaryTime);
         }
-        
+
         private void DisplayImage()
         {
             _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.LevelImage, typeof(Sprite)) as Sprite;
@@ -119,56 +118,47 @@ namespace DeliveryRush.Resource.UI
         private void CreateChoiseDron()
         {
             GameObject itemContainer = GameObject.Find("ScrollContainer");
-            foreach (InventoryItemModel item in _inventoryService.Inventory.Items)
-            {
-                _uiService.Create<ViewDronPanel>(UiModel
-                        .Create<ViewDronPanel>(item)
-                        .Container(itemContainer))
-                    .Then(controller =>
-                    {
-                        _viewDronPanels.Add(controller);
-                    })
-                    .Done();
+            foreach (InventoryItemModel item in _inventoryService.Inventory.Items) {
+                _uiService.Create<ViewDronPanel>(UiModel.Create<ViewDronPanel>(item).Container(itemContainer))
+                          .Then(controller => { _viewDronPanels.Add(controller); })
+                          .Done();
             }
-            _uiService.Create<ScrollControllerForDescriptionDialog>(UiModel
-                    .Create<ScrollControllerForDescriptionDialog>(_viewDronPanels)
-                    .Container(itemContainer))
-                .Then(
-                    controller =>
-                    {
-                        _listPositionCtrl = controller.Control;
-                        if(_inventoryService.Inventory.Items.Count % 2 == 0){
-                            itemContainer.GetComponent<RectTransform>().localPosition = new Vector3(400, 0, 0);
-                        }
-                    })
-                .Done();
+            _uiService.Create<ScrollControllerForDescriptionDialog>(UiModel.Create<ScrollControllerForDescriptionDialog>(_viewDronPanels)
+                                                                           .Container(itemContainer))
+                      .Then(controller => {
+                          _listPositionCtrl = controller._control;
+                          if (_inventoryService.Inventory.Items.Count % 2 == 0) {
+                              itemContainer.GetComponent<RectTransform>().localPosition = new Vector3(400, 0, 0);
+                          }
+                      })
+                      .Done();
         }
-        
+
         private void MoveLeft()
         {
             _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(1);
         }
+
         private void MoveRight()
         {
-            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);;
+            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);
+            ;
         }
 
         [UIOnClick("StartGameButton")]
         private void OnStartGameButton()
         {
             string id = "";
-            foreach (ViewDronPanel panel in _viewDronPanels)
-            {
+            foreach (ViewDronPanel panel in _viewDronPanels) {
                 RectTransform transform = panel.gameObject.GetComponent<RectTransform>();
-                if (transform.position.x >= _screenWidth/3 && transform.position.x <= _screenWidth)
-                {
+                if (transform.position.x >= _screenWidth / 3 && transform.position.x <= _screenWidth) {
                     id = panel.ItemId;
                 }
             }
             _locationService.StartGame(_levelDescriptor, id);
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
-        
+
         [UIOnClick("pfBackground")]
         private void CloseDialog()
         {
@@ -184,13 +174,14 @@ namespace DeliveryRush.Resource.UI
                 MoveRight();
             }
         }
-        
+
         [UIOnClick("LeftArrow")]
         private void OnLeftClick()
         {
             Debug.Log("click");
             MoveLeft();
         }
+
         [UIOnClick("RightArrow")]
         private void OnRightClick()
         {

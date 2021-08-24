@@ -22,21 +22,20 @@ namespace DeliveryRush.Resource.LevelDialogs
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-        
+
         [Inject]
         private ScreenManager _screenManager;
-        
+
         [Inject]
         private GameService _gameService;
 
-        
         [UICreated]
         public void Init()
         {
             _logger.Debug("[LevelPauseDialog] Init()...");
             Time.timeScale = 0;
         }
-        
+
         [UIOnClick("LevelMapButton")]
         private void LevelMapButtonClicked()
         {
@@ -44,7 +43,7 @@ namespace DeliveryRush.Resource.LevelDialogs
             _screenManager.LoadScreen<MainMenuScreen>();
             _gameService.IsPlay = false;
         }
-        
+
         [UIOnClick("ContinueButton")]
         private void ContinueButtonClicked()
         {

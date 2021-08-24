@@ -28,22 +28,22 @@ namespace DeliveryRush.Resource.LevelDialogs
         private short _failReason = 0;
         // "Закончилась энергия"
         // "Дрон разбился"
-        
+
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-        
+
         [Inject]
         private ScreenManager _screenManager;
-        
+
         [Inject]
         private LevelService _levelService;
-        
-        [Inject] 
+
+        [Inject]
         private SoundService _soundService;
-        
+
         [UIComponentBinding("FailReasonTitle")]
         private UILabel _failReasonLabel;
-        
+
         [UICreated]
         public void Init(short failReason)
         {
@@ -54,13 +54,13 @@ namespace DeliveryRush.Resource.LevelDialogs
             SetDialogLabels();
             PlaySound(GameSounds.FAILED);
         }
-        
+
         private void PlaySound(Sound sound)
         {
             _soundService.StopAllSounds();
             _soundService.PlaySound(sound);
         }
-        
+
         [UIOnClick("RestartButton")]
         private void RestartButtonClicked()
         {
@@ -78,13 +78,15 @@ namespace DeliveryRush.Resource.LevelDialogs
 
         private void SetDialogLabels()
         {
-            switch (_failReason)
-            {
-                case 0: _failReasonLabel.text = "Дрон разбился";
+            switch (_failReason) {
+                case 0:
+                    _failReasonLabel.text = "Дрон разбился";
                     break;
-                case 1: _failReasonLabel.text = "Закончилась энергия";
+                case 1:
+                    _failReasonLabel.text = "Закончилась энергия";
                     break;
-                default: _failReasonLabel.text = "Дрон разбился";
+                default:
+                    _failReasonLabel.text = "Дрон разбился";
                     break;
             }
         }

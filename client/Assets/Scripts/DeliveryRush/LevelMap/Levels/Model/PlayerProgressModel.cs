@@ -11,9 +11,5 @@ namespace DeliveryRush.Resource.Model
             get { return _levelsProgress; }
             set { _levelsProgress = value; }
         }
-        
-        public PlayerProgressModel()
-        {
-        }
     }
 }

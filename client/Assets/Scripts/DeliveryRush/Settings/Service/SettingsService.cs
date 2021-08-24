@@ -12,41 +12,40 @@ namespace DeliveryRush.Settings.Service
     {
         [Inject]
         private SettingsRepository _settingsRepository;
-        
-        [Inject] 
+
+        [Inject]
         private BillingService _billingService;
 
-        [Inject] 
+        [Inject]
         private LevelService _levelService;
-        
+
         [Inject]
         private InventoryService _inventoryService;
 
-        [Inject] 
+        [Inject]
         private AudioService _audioService;
-        
-        public void UpdateSettings()
+
+        private void UpdateSettings()
         {
             SettingsModel settingsModel = RequireSettingsModel();
             SetMusicMute(settingsModel.IsMusicMute);
             SetSoundMute(settingsModel.IsSoundMute);
         }
 
-        public bool HasSettingsModel()
+        private bool HasSettingsModel()
         {
             return (_settingsRepository.Get() != null);
         }
 
-        public SettingsModel RequireSettingsModel()
+        private SettingsModel RequireSettingsModel()
         {
             SettingsModel model = _settingsRepository.Get();
-            if (model == null)
-            {
+            if (model == null) {
                 Init();
             }
             return _settingsRepository.Require();
         }
-        
+
         public void Init()
         {
             if (!HasSettingsModel()) {
@@ -57,7 +56,7 @@ namespace DeliveryRush.Settings.Service
             }
             UpdateSettings();
         }
-        
+
         public bool GetMusicMute()
         {
             return RequireSettingsModel().IsMusicMute;
@@ -70,7 +69,7 @@ namespace DeliveryRush.Settings.Service
             settingsModel.IsMusicMute = isMute;
             _settingsRepository.Set(settingsModel);
         }
-        
+
         public bool GetSoundMute()
         {
             return RequireSettingsModel().IsSoundMute;

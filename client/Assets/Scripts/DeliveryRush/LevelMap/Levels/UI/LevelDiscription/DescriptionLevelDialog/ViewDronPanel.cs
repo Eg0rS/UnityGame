@@ -13,11 +13,12 @@ namespace DeliveryRush.Resource.UI
     {
         private const string PREFAB_NAME = "UI/Panel/pfChoiseDronPanel@embeded";
 
-        [Inject] private ShopDescriptor _shopDescriptor;
+        [Inject]
+        private ShopDescriptor _shopDescriptor;
 
-        [UIObjectBinding("Text")] 
+        [UIObjectBinding("Text")]
         private GameObject _text;
-        
+
         [UIObjectBinding("Model")]
         private GameObject _model;
 
@@ -29,12 +30,13 @@ namespace DeliveryRush.Resource.UI
             ItemId = item.Id;
             SetItemLabel(_shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId)).Name);
             SetItemModel(_shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId)).Model);
-            
         }
+
         private void SetItemModel(string model)
         {
             _model.GetComponent<RawImage>().texture = Resources.Load(model, typeof(Texture)) as Texture;
         }
+
         private void SetItemLabel(string title)
         {
             _text.GetComponent<UILabel>().text = title;

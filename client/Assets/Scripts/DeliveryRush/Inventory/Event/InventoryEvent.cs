@@ -7,9 +7,9 @@ namespace DeliveryRush.Inventory.Event
     {
         public const string UPDATED = "UpdateInventory";
 
-        public InventoryItemModel Item { get; }
-        
-        public InventoryItemTypeModel InventoryType { get; }
+        private InventoryItemModel Item { get; }
+
+        private InventoryItemTypeModel InventoryType { get; }
 
         public InventoryEvent(string name, InventoryItemModel item, InventoryItemTypeModel inventoryType) : base(name)
         {

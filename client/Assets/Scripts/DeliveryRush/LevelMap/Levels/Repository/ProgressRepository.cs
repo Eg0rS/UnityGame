@@ -3,9 +3,9 @@ using DeliveryRush.Resource.Model;
 
 namespace DeliveryRush.Resource.Repository
 {
-    public class ProgressRepository  : LocalPrefsSingleRepository<PlayerProgressModel>
+    public class ProgressRepository : LocalPrefsSingleRepository<PlayerProgressModel>
     {
-        public ProgressRepository() : base("progressRepository")    
+        public ProgressRepository() : base("progressRepository")
         {
         }
     }

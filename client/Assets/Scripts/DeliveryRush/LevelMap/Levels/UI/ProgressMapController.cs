@@ -19,21 +19,21 @@ namespace DeliveryRush.Resource.UI
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
         [Inject]
         private LevelService _levelService;
-        
-        [Inject] 
+
+        [Inject]
         private UIService _uiService;
-        
-        private List<LevelViewModel> levelViewModels;
+
+        private List<LevelViewModel> _levelViewModels;
 
         private List<ProgressMapItemController> progressMapItemController = new List<ProgressMapItemController>();
-        
+
         [UICreated]
         public void Init()
         {
             _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
             CreateSpots();
         }
-        
+
         private void OnLevelMapUpdated(LevelEvent levelEvent)
         {
             UpdateSpots();
@@ -41,13 +41,16 @@ namespace DeliveryRush.Resource.UI
 
         private void CreateSpots()
         {
-            levelViewModels = _levelService.GetLevels();
-            foreach (LevelViewModel item in levelViewModels)
-            {
+            _levelViewModels = _levelService.GetLevels();
+            foreach (LevelViewModel item in _levelViewModels) {
                 GameObject levelContainer = GameObject.Find($"level{item.LevelDescriptor.Order}");
-                _uiService.Create<ProgressMapItemController>(UiModel
-                            .Create<ProgressMapItemController>(item, item.LevelDescriptor.Order == _levelService.GetNextLevel(), item.LevelDescriptor.Order% 5==0)
-                            .Container(levelContainer))
+                _uiService
+                        .Create<ProgressMapItemController>(UiModel
+                                                           .Create<ProgressMapItemController>(item,
+                                                                                              item.LevelDescriptor.Order
+                                                                                              == _levelService.GetNextLevel(),
+                                                                                              item.LevelDescriptor.Order % 5 == 0)
+                                                           .Container(levelContainer))
                         .Then(controller => progressMapItemController.Add(controller))
                         .Done();
             }
@@ -56,12 +59,11 @@ namespace DeliveryRush.Resource.UI
         private void UpdateSpots()
         {
             _logger.Debug("update");
-            levelViewModels = _levelService.GetLevels();
-            foreach (ProgressMapItemController spotController in progressMapItemController)
-            {
+            _levelViewModels = _levelService.GetLevels();
+            foreach (ProgressMapItemController spotController in progressMapItemController) {
                 LevelDescriptor descriptor = spotController.LevelViewModel.LevelDescriptor;
-                
-                LevelViewModel model = levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));
+
+                LevelViewModel model = _levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));
                 spotController.UpdateSpot(model, descriptor.Order == _levelService.GetNextLevel());
             }
         }

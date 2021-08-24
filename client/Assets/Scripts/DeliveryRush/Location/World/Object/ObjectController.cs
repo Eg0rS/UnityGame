@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace DeliveryRush.Location.World.Object
 {
-    public class ObjectController : MonoBehaviour,  IWorldObjectController<ObjectModel >
+    public class ObjectController : MonoBehaviour, IWorldObjectController<ObjectModel>
     {
         public WorldObjectType ObjectType { get; private set; }
-        public void Init(ObjectModel  model)
+
+        public void Init(ObjectModel model)
         {
             ObjectType = model.ObjectType;
         }

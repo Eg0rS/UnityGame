@@ -20,35 +20,35 @@ namespace DeliveryRush.Settings.UI
 
         [UIComponentBinding("SoundToggleButton")]
         private ToggleButton _toggleSoundButton;
-        
+
         [UIComponentBinding("MusicToggleButton")]
         private ToggleButton _toggleMusicButton;
-        
-        [Inject] 
+
+        [Inject]
         private SettingsService _settingsService;
-        
+
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
+
         private void Start()
         {
             _toggleMusicButton.IsOn = _settingsService.GetMusicMute();
             _toggleSoundButton.IsOn = _settingsService.GetSoundMute();
         }
-        
+
         [UIOnClick("CloseButton")]
         private void CloseButton()
         {
-            _dialogManager.Require()
-                .Hide(gameObject);
+            _dialogManager.Require().Hide(gameObject);
         }
-        
+
         [UIOnClick("SoundToggleButton")]
         private void OnSoundButton()
         {
             _logger.Debug("MuteSound");
             _settingsService.SetSoundMute(_toggleSoundButton.IsOn);
         }
-        
+
         [UIOnClick("MusicToggleButton")]
         private void OnMusicButton()
         {
@@ -61,7 +61,6 @@ namespace DeliveryRush.Settings.UI
         {
             _logger.Debug("Reset");
             _settingsService.ResetAllProgress();
-            
         }
 
         [UIOnClick("Info")]

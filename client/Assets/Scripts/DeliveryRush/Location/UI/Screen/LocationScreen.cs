@@ -8,28 +8,24 @@ namespace DeliveryRush.Location.UI.Screen
     [UIController("UI/Screen/pfLocationScreen@embeded")]
     public class LocationScreen : MonoBehaviour
     {
-        [Inject] 
+        [Inject]
         private OverlayManager _overlayManager;
-        
+
         [UICreated]
         private void Init()
         {
-           
         }
 
         private void OnDestroy()
         {
-            _overlayManager.DestroyGameOverlay();
         }
 
         private void OnWorldCreated()
         {
-           
         }
 
         private void AddUIScreenLoader()
         {
-          
         }
     }
 }

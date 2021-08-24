@@ -26,22 +26,22 @@ namespace DeliveryRush.MainMenu.UI.Panel
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
         private const string PREFAB = "UI/Panel/pfMainScreenPanel@embeded";
-        
+
         [Inject]
-        private IoCProvider<OverlayManager> _overlayManager;     
-        
-        [Inject] 
+        private IoCProvider<OverlayManager> _overlayManager;
+
+        [Inject]
         private BillingService _billingService;
-        
+
         [Inject]
         private UIService _uiService;
 
-        [Inject] 
+        [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-        
+
         [UIObjectBinding("MiddlePanel")]
         private GameObject _middlePanel;
-        
+
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
 
@@ -56,14 +56,14 @@ namespace DeliveryRush.MainMenu.UI.Panel
 
         private void OnDestroy()
         {
-         _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);   
+            _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
 
         private void UpdateCredits()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
-        
+
         private void OnResourceUpdated(BillingEvent resourceEvent)
         {
             UpdateCredits();
@@ -75,14 +75,14 @@ namespace DeliveryRush.MainMenu.UI.Panel
             _dialogManager.Require().Show<ShopDialog>();
             _logger.Debug("Click on store");
         }
-        
+
         [UIOnClick("SettingsButton")]
         private void OnSettingsPanel()
         {
             _dialogManager.Require().Show<GameSettingsDialog>();
             _logger.Debug("Click on settings");
         }
-        
+
         [UIOnClick("StoreChipsButton")]
         private void OnCreditsPanel()
         {

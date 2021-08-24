@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DeliveryRush.Location.World.Obstacle
 {
-    public class ObstacleController : MonoBehaviour,  IWorldObjectController<ObstacleModel>
+    public class ObstacleController : MonoBehaviour, IWorldObjectController<ObstacleModel>
     {
         public WorldObjectType ObjectType { get; private set; }
 

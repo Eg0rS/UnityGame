@@ -5,9 +5,8 @@ namespace DeliveryRush.Inventory.Service
 {
     public class InventoryRepository : LocalPrefsSingleRepository<InventoryModel>
     {
-        public InventoryRepository() : base("inventoryRepository")    
+        public InventoryRepository() : base("inventoryRepository")
         {
-            
         }
     }
 }

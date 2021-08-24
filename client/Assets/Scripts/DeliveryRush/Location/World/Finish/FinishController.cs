@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace DeliveryRush.Location.World.Finish
 {
-    public class FinishController : MonoBehaviour,  IWorldObjectController<FinishModel>
+    public class FinishController : MonoBehaviour, IWorldObjectController<FinishModel>
     {
         public WorldObjectType ObjectType { get; private set; }
-        public void Init(FinishModel  model)
+
+        public void Init(FinishModel model)
         {
             ObjectType = model.ObjectType;
         }

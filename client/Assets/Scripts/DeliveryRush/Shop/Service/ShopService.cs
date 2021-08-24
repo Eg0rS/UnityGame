@@ -20,18 +20,18 @@ namespace DeliveryRush.Shop.Service
     {
         [Inject]
         private ResourceService _resourceService;
-        
+
         [Inject]
         private ShopDescriptor _shopDescriptor;
 
         [Inject]
         private InventoryService _inventoryService;
 
-        [Inject] 
+        [Inject]
         private BillingService _billingService;
-        [Inject] 
+        [Inject]
         private PlayerResourceModel _resourceModel;
-        
+
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
@@ -52,23 +52,20 @@ namespace DeliveryRush.Shop.Service
             if (shopItemDescriptor == null) {
                 throw new Exception("ShopItem not found, itemId = " + itemId);
             }
-            if (_resourceModel.creditsCount >= shopItemDescriptor.Price)
-            {
-                _billingService.SetCreditsCount(_resourceModel.creditsCount - shopItemDescriptor.Price);
+            if (_resourceModel.CreditsCount >= shopItemDescriptor.Price) {
+                _billingService.SetCreditsCount(_resourceModel.CreditsCount - shopItemDescriptor.Price);
                 InventoryItemModel item = new InventoryItemModel(itemId, shopItemDescriptor.Type, 1);
                 _inventoryService.AddInventory(item);
                 return true;
-            }
-            else
-            {
+            } else {
                 _dialogManager.Require().ShowModal<BuyDialog>(false);
                 return false;
             }
         }
+
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration temp in config.GetList<Configuration>("shop.shopItem"))
-            {
+            foreach (Configuration temp in config.GetList<Configuration>("shop.shopItem")) {
                 ShopItemDescriptor shopItemDescriptor = new ShopItemDescriptor();
                 shopItemDescriptor.Configure(temp);
                 _shopDescriptor.ShopItemDescriptors.Add(shopItemDescriptor);

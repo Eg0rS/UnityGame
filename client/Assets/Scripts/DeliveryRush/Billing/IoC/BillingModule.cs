@@ -6,7 +6,7 @@ using IoC.Api;
 
 namespace DeliveryRush.Billing.IoC
 {
-    public class BillingModule: IIoCModule
+    public class BillingModule : IIoCModule
     {
         public void Configure(IIoCContainer container)
         {
@@ -16,6 +16,6 @@ namespace DeliveryRush.Billing.IoC
             container.RegisterSingleton<PlayerResourceModel>();
             container.RegisterSingleton<BillingDescriptorRegistry>();
             container.RegisterSingleton<BillingDescriptor>();
-        } 
+        }
     }
 }

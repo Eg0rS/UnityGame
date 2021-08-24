@@ -16,7 +16,7 @@ namespace DeliveryRush.Resource.Descriptor
         public string Skybox { get; private set; }
         public string Color { get; private set; }
         public float Intensity { get; private set; }
-        
+
         public void Configure(Configuration config)
         {
             Id = config.GetString("id");

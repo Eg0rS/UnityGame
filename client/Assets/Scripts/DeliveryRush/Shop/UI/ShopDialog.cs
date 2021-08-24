@@ -29,33 +29,33 @@ namespace DeliveryRush.Shop.UI
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<ShopDialog>();
 
-        [Inject] 
+        [Inject]
         private UIService _uiService;
-        
-        [Inject] 
+
+        [Inject]
         private BillingService _billingService;
-        
+
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-        
-        [Inject] 
+
+        [Inject]
         private ShopDescriptor _shopDescriptor;
 
-        [Inject] 
+        [Inject]
         private ShopService _shopService;
 
-        [Inject] 
+        [Inject]
         private InventoryService _inventoryService;
-        
+
         [Inject]
         private IGestureService _gestureService;
 
         private ListPositionCtrl _listPositionCtrl;
         private readonly List<ShopItemPanel> _shopItemPanels = new List<ShopItemPanel>();
-        
+
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
-        
+
         [UICreated]
         public void Init()
         {
@@ -74,31 +74,25 @@ namespace DeliveryRush.Shop.UI
         {
             UpdateCredits();
         }
+
         private void UpdateCredits()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
         }
-        
+
         private void CreateShopItem()
         {
             List<ShopItemDescriptor> shopItemDescriptors = _shopDescriptor.ShopItemDescriptors;
             GameObject itemContainer = GameObject.Find("ScrollContainer");
-            foreach (ShopItemDescriptor itemDescriptor in shopItemDescriptors)
-            {
+            foreach (ShopItemDescriptor itemDescriptor in shopItemDescriptors) {
                 bool isHasItem = _inventoryService.Inventory.HasItem(itemDescriptor.Id);
-                _uiService.Create<ShopItemPanel>(UiModel
-                        .Create<ShopItemPanel>(itemDescriptor, isHasItem)
-                        .Container(itemContainer))
-                    .Then(controller =>
-                    {
-                        _shopItemPanels.Add(controller);
-                    })
-                    .Done();
+                _uiService.Create<ShopItemPanel>(UiModel.Create<ShopItemPanel>(itemDescriptor, isHasItem).Container(itemContainer))
+                          .Then(controller => { _shopItemPanels.Add(controller); })
+                          .Done();
             }
-            _uiService.Create<ScrollController>(UiModel
-                    .Create<ScrollController>(_shopItemPanels)
-                    .Container(itemContainer)).Then(controller => { _listPositionCtrl = controller.control;})
-                .Done();
+            _uiService.Create<ScrollController>(UiModel.Create<ScrollController>(_shopItemPanels).Container(itemContainer))
+                      .Then(controller => { _listPositionCtrl = controller.Control; })
+                      .Done();
         }
 
         [UIOnClick("LeftButton")]
@@ -107,21 +101,25 @@ namespace DeliveryRush.Shop.UI
             _logger.Debug("clickLeft");
             MoveLeft();
         }
+
         [UIOnClick("RightButton")]
         private void OnRightClick()
         {
             _logger.Debug("clickRight");
             MoveRight();
         }
+
         private void MoveLeft()
         {
             _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(1);
         }
+
         private void MoveRight()
         {
-            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);;
+            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);
+            ;
         }
-        
+
         [UIOnClick("CloseButton")]
         private void CloseButton()
         {
@@ -130,8 +128,7 @@ namespace DeliveryRush.Shop.UI
 
         private void CloseDialog()
         {
-            _dialogManager.Require()
-                .Hide(gameObject);
+            _dialogManager.Require().Hide(gameObject);
             _shopService.RemoveListener<ShopEvent>(ShopEvent.CLOSE_DIALOG, OnCloseUpdated);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }

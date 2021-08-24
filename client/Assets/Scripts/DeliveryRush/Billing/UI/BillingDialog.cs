@@ -9,6 +9,7 @@ using Adept.Logger;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Element.Text;
+using DeliveryRush.Billing.Descriptor;
 using DeliveryRush.Billing.Event;
 using DeliveryRush.Billing.IoC;
 using DeliveryRush.Billing.Service;
@@ -24,24 +25,24 @@ namespace DeliveryRush.Billing.UI
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreditShopDialog>();
 
-        [Inject] 
+        [Inject]
         private BillingService _billingService;
 
-        [Inject] 
+        [Inject]
         private UIService _uiService;
-        
+
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
-        [Inject] 
+        [Inject]
         private BillingDescriptorRegistry _billingDescriptorRegistry;
-        
+
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
 
         private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
         private ListPositionCtrl _listPositionCtrl;
-        
+
         [UICreated]
         public void Init()
         {
@@ -49,22 +50,18 @@ namespace DeliveryRush.Billing.UI
             UpdateCredits();
             CreateBillingItems();
         }
-        
+
         private void CreateBillingItems()
         {
             GameObject itemContainer = GameObject.Find("ScrollBillingContainer");
-            foreach (var item in _billingDescriptorRegistry.BillingDescriptors)
-            {
-                _uiService.Create<BillingItemController>(UiModel
-                        .Create<BillingItemController>(item)
-                        .Container(itemContainer))
-                    .Then(controller => {_billingItemControllers.Add(controller);})
-                    .Done();
+            foreach (BillingDescriptor item in _billingDescriptorRegistry.BillingDescriptors) {
+                _uiService.Create<BillingItemController>(UiModel.Create<BillingItemController>(item).Container(itemContainer))
+                          .Then(controller => { _billingItemControllers.Add(controller); })
+                          .Done();
             }
-            _uiService.Create<BillingScrollController>(UiModel
-                    .Create<BillingScrollController>(_billingItemControllers)
-                    .Container(itemContainer)).Then(controller => { _listPositionCtrl = controller.Control;})
-                .Done();
+            _uiService.Create<BillingScrollController>(UiModel.Create<BillingScrollController>(_billingItemControllers).Container(itemContainer))
+                      .Then(controller => { _listPositionCtrl = controller.Control; })
+                      .Done();
         }
 
         private void UpdateCredits()
@@ -85,8 +82,7 @@ namespace DeliveryRush.Billing.UI
 
         private void CloseDialog()
         {
-            _dialogManager.Require()
-                .Hide(gameObject);
+            _dialogManager.Require().Hide(gameObject);
             _billingService.RemoveListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
         }
 

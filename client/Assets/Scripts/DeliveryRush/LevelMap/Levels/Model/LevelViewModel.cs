@@ -13,7 +13,7 @@ namespace DeliveryRush.Resource.Model
             get => _levelProgress;
             set => _levelProgress = value;
         }
-        
+
         public LevelDescriptor LevelDescriptor
         {
             get => _levelDescriptor;

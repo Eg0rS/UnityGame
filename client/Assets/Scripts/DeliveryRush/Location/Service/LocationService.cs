@@ -1,7 +1,5 @@
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
-using AgkUI.Core.Service;
-using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DeliveryRush.Core;
 using DeliveryRush.Resource.Descriptor;
@@ -16,31 +14,25 @@ using RenderSettings = UnityEngine.RenderSettings;
 namespace DeliveryRush.Location.Service
 {
     [Injectable]
-    public class LocationService: GameEventDispatcher
+    public class LocationService : GameEventDispatcher
     {
         [Inject]
-        private ScreenManager _screenManager;  
-        
+        private ScreenManager _screenManager;
+
         [Inject]
         private LocationBuilderManager _locationBuilderManager;
-        
+
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
-        
+
         [Inject]
         private IoCProvider<GameService> _gameService;
 
-        [Inject] 
-        private IoCProvider<DialogManager> _dialogManager;
-        
-        [Inject] private UIService _uiService;
-
-        [Inject] 
+        [Inject]
         private DronService _dronService;
-        
+
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            string levelPrefabName = levelDescriptor.Prefab;
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelDescriptor, dronId);
@@ -49,14 +41,14 @@ namespace DeliveryRush.Location.Service
             RenderSettings.skybox = Resources.Load<Material>(levelDescriptor.Skybox);
             DynamicGI.UpdateEnvironment();
         }
+
         private void CreatedWorld(LevelDescriptor levelDescriptor, string dronId)
         {
             string levelPrefabName = levelDescriptor.Prefab;
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
                                    .Build()
-                                   .Then(() =>
-                                   {
+                                   .Then(() => {
                                        SetDrone(dronId);
                                        _gameService.Require().StartGame(levelDescriptor, dronId);
                                    })
@@ -66,9 +58,8 @@ namespace DeliveryRush.Location.Service
         private void SetDrone(string dronId)
         {
             GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab),
-                parent.transform.position, Quaternion.Euler(0, 0, 0),
-                parent.transform);
+            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform.position,
+                        Quaternion.Euler(0, 0, 0), parent.transform);
         }
     }
 }

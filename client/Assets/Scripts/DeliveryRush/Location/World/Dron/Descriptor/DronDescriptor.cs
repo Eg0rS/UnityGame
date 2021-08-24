@@ -10,6 +10,7 @@ namespace DeliveryRush.Location.World.Dron.Descriptor
         private int _durability;
         private int _mobility;
         private string _prefab;
+
         public void Configure(Configuration config)
         {
             Id = config.GetString("id");
@@ -25,10 +26,9 @@ namespace DeliveryRush.Location.World.Dron.Descriptor
             get => _id;
             set => _id = value;
         }
-        
-        public string Title
+
+        private string Title
         {
-            get => _title;
             set => _title = value;
         }
 
@@ -49,7 +49,7 @@ namespace DeliveryRush.Location.World.Dron.Descriptor
             get => _mobility;
             private set => _mobility = value;
         }
-        
+
         public string Prefab
         {
             get => _prefab;

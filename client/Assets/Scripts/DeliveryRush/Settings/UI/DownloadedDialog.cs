@@ -15,12 +15,11 @@ namespace DeliveryRush.Settings.UI
     {
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-        
+
         [UIOnClick("pfBackground")]
         private void CloseButton()
         {
-            _dialogManager.Require()
-                .Hide(gameObject);
+            _dialogManager.Require().Hide(gameObject);
         }
     }
 }

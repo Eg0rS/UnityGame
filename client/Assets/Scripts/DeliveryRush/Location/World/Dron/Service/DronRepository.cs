@@ -5,9 +5,8 @@ namespace DeliveryRush.Location.World.Dron.Service
 {
     public class DronRepository : LocalPrefsSingleRepository<DronModel>
     {
-        public DronRepository() : base("dronRepository")    
+        public DronRepository() : base("dronRepository")
         {
-            
         }
     }
 }

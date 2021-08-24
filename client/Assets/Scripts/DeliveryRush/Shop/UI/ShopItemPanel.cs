@@ -13,27 +13,27 @@ namespace DeliveryRush.Shop.UI
     [UIController("UI/Items/pfDronView@embeded")]
     public class ShopItemPanel : MonoBehaviour
     {
-        [Inject] 
+        [Inject]
         private ShopService _shopService;
-        
-        [Inject] 
+
+        [Inject]
         private BillingService _billingService;
 
-        [UIObjectBinding("Label")] 
+        [UIObjectBinding("Label")]
         private GameObject _label;
-        
+
         [UIObjectBinding("DurabilityBar")]
         private GameObject _durabilityBar;
-        
+
         [UIObjectBinding("EnergyBar")]
         private GameObject _energyBar;
-        
+
         [UIObjectBinding("BuyButton")]
         private GameObject _buyButton;
-        
+
         [UIObjectBinding("Bought")]
         private GameObject _bought;
-        
+
         [UIObjectBinding("Price")]
         private GameObject _price;
 
@@ -41,7 +41,7 @@ namespace DeliveryRush.Shop.UI
         private GameObject _model;
 
         private string _id;
-        
+
         [UICreated]
         private void Init(ShopItemDescriptor itemDescriptor, bool isHasItem)
         {
@@ -55,17 +55,15 @@ namespace DeliveryRush.Shop.UI
         [UIOnClick("BuyButton")]
         private void BuyClick()
         {
-            if (_shopService.BuyDron(_id))
-            {
+            if (_shopService.BuyDron(_id)) {
                 _bought.SetActive(true);
                 _buyButton.SetActive(false);
-            }
-            else
-            {
+            } else {
                 _bought.SetActive(false);
                 _buyButton.SetActive(true);
             }
         }
+
         private void SetItemLabel(string label)
         {
             _label.GetComponent<UILabel>().text = label;
@@ -73,13 +71,10 @@ namespace DeliveryRush.Shop.UI
 
         private void SetItemCondition(int price, bool isHasItem)
         {
-            if (isHasItem)
-            {
+            if (isHasItem) {
                 _bought.SetActive(true);
                 _buyButton.SetActive(false);
-            }
-            else
-            {
+            } else {
                 _bought.SetActive(false);
                 _buyButton.SetActive(true);
                 _price.GetComponent<UILabel>().text = price.ToString();
@@ -90,7 +85,7 @@ namespace DeliveryRush.Shop.UI
         {
             _model.GetComponent<RawImage>().texture = Resources.Load(model, typeof(Texture)) as Texture;
         }
-        
+
         private void SetItemСharact(string energy, string durability)
         {
             _energyBar.GetComponent<Image>().sprite = Resources.Load(energy, typeof(Sprite)) as Sprite;

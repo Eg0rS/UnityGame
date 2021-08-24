@@ -1,30 +1,12 @@
-using System.Runtime.InteropServices;
-using AgkUI.Core.Model;
-using AgkUI.Core.Service;
 using DeliveryRush.Core.UI.Overlay;
-using DeliveryRush.Resource.LevelDialogs;
-using DeliveryRush.Location.UI;
-using IoC.Attribute;
 using UnityEngine;
 
 namespace DeliveryRush.Core
 {
     public class OverlayManager : MonoBehaviour
     {
-        private int _lockCount;
         private PreloaderOverlay _preloaderOverlay;
 
-        [Inject] 
-        private UIService _uiService;
-
-        private DronStatsDialog _dronStats;
-        
-        private LevelFinishedDialog _finishedDialog=null;
-
-        private LevelFailedCompactDialog _failedDialog=null;
-
-        private GameObject levelContainer;
-        
         private void Awake()
         {
             _preloaderOverlay = FindObjectOfType<PreloaderOverlay>();
@@ -37,26 +19,7 @@ namespace DeliveryRush.Core
                 _preloaderOverlay.Complete(removePreloaderAfterComplete);
             }
         }
-        
-        public void CreateGameOverlay(DronStats dronStats)
-        { 
-           levelContainer = GameObject.Find($"Overlay");
-            
-            _uiService.Create<DronStatsDialog>(UiModel
-                    .Create<DronStatsDialog>(dronStats)
-                    .Container(levelContainer))
-                .Then(controller => { _dronStats = controller;})
-                .Done();
-        }
-        
-        public void DestroyGameOverlay()
-        {
-            Destroy(_dronStats.gameObject);
-            Light lightOnLevel = GameObject.Find("DirectionalLight").GetComponent<Light>();
-            lightOnLevel.color = Color.white;
-            lightOnLevel.intensity = 1.3f;
-        }
-        
+
         public void ShowPreloader()
         {
             PreloaderOverlay.Show();

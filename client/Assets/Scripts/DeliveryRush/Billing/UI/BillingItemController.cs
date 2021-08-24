@@ -10,23 +10,23 @@ using UnityEngine.UI;
 namespace DeliveryRush.Billing.UI
 {
     [UIController("UI/Items/pfBillingItem@embeded")]
-    public class BillingItemController: MonoBehaviour
+    public class BillingItemController : MonoBehaviour
     {
-        [Inject] 
+        [Inject]
         private BillingService _billingService;
 
-        [Inject] 
+        [Inject]
         private BillingDescriptor _billingDescriptor;
-        
-        [UIObjectBinding("Count")] 
+
+        [UIObjectBinding("Count")]
         private GameObject _creditCount;
-        
-        [UIObjectBinding("Price")] 
+
+        [UIObjectBinding("Price")]
         private GameObject _price;
-        
-        [UIObjectBinding("IconChip")] 
+
+        [UIObjectBinding("IconChip")]
         private GameObject _iconChip;
-        
+
         [UICreated]
         private void Init(BillingDescriptor descriptor)
         {
@@ -40,10 +40,12 @@ namespace DeliveryRush.Billing.UI
         {
             _iconChip.GetComponent<Image>().sprite = Resources.Load(iconPath, typeof(Sprite)) as Sprite;
         }
+
         private void SetPrice(double itemPrice)
         {
-            _price.GetComponent<UILabel>().text ="$"+itemPrice;
+            _price.GetComponent<UILabel>().text = "$" + itemPrice;
         }
+
         private void SetCredits(int creditsCount)
         {
             _creditCount.GetComponent<UILabel>().text = creditsCount.ToString();

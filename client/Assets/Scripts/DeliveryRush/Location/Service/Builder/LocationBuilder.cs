@@ -15,7 +15,7 @@ namespace DeliveryRush.Location.Service.Builder
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createCreateService;
         private readonly ResourceService _resourceService;
-        
+
         private Promise _promise;
         private string _prefab;
         private Transform _container;
@@ -53,13 +53,13 @@ namespace DeliveryRush.Location.Service.Builder
         private void OnPrefabLoad(GameObject loadedObject, object[] loadparameters)
         {
             loadedObject = Object.Instantiate(loadedObject, _container);
-            
+
             GameWorld gameWorld = loadedObject.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
-            
+
             InitControllers(gameWorld);
             InitService();
-            
+
             _promise.Resolve();
         }
 
