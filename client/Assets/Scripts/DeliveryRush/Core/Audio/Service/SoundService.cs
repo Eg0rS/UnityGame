@@ -4,7 +4,7 @@ using Adept.Logger;
 using AgkCommons.CodeStyle;
 using AgkCommons.Resources;
 using DeliveryRush.Core.Audio.Model;
-using DeliveryRush.Game;
+using DeliveryRush.Resource;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using UnityEngine;

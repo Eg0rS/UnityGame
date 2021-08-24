@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using DeliveryRush.Core.UI.Overlay;
-using DeliveryRush.Game.LevelDialogs;
+using DeliveryRush.Resource.LevelDialogs;
 using DeliveryRush.Location.UI;
 using IoC.Attribute;
 using UnityEngine;

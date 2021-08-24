@@ -1,6 +1,6 @@
 using System.Collections;
 using AgkUI.Core.Service;
-using DeliveryRush.Resource.UI.Element.Progress;
+using DeliveryRush.Resource.Element.Progress;
 using IoC.Attribute;
 using IoC.Extension;
 using UnityEngine;

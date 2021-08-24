@@ -1,7 +1,7 @@
 ﻿using DeliveryRush.Billing.Service;
 using DeliveryRush.Core.Audio.Service;
 using DeliveryRush.Core.Filter;
-using DeliveryRush.Game.Levels.Service;
+using DeliveryRush.Resource.Service;
 using DeliveryRush.Inventory.Service;
 using DeliveryRush.Settings.Model;
 using IoC.Attribute;

@@ -6,7 +6,7 @@ using AgkUI.Element.Text;
 using DeliveryRush.Core.Audio;
 using DeliveryRush.Core.Audio.Model;
 using DeliveryRush.Core.Audio.Service;
-using DeliveryRush.Game.LevelDialogs;
+using DeliveryRush.Resource.LevelDialogs;
 using DeliveryRush.Location.Model;
 using DeliveryRush.World;
 using DeliveryRush.World.Event;

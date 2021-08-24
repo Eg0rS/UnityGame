@@ -4,7 +4,7 @@ using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using DeliveryRush.Core;
-using DeliveryRush.Game.Levels.Descriptor;
+using DeliveryRush.Resource.Descriptor;
 using DeliveryRush.Location.Service.Builder;
 using DeliveryRush.Location.UI.Screen;
 using DeliveryRush.Location.World.Dron.Service;

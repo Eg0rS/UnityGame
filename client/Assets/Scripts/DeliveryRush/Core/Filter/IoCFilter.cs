@@ -6,7 +6,7 @@ using DeliveryRush.Core.Audio.IoC;
 using DeliveryRush.Core.IoC;
 using DeliveryRush.Core.UI.IoC;
 using DeliveryRush.Descriptor.IoC;
-using DeliveryRush.Game.Levels.IoC;
+using DeliveryRush.Resource.IoC;
 using DeliveryRush.Inventory.IoC;
 using DeliveryRush.Location.IoC;
 using DeliveryRush.Location.World.Dron.Module;
