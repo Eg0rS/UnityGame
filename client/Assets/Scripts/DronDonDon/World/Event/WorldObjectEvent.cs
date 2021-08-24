@@ -16,7 +16,7 @@ namespace DronDonDon.World.Event
         public const string ACTIVATE_BOOST = "ActivateBoost";
         public const string TAKE_BOOST = "TakeBoost";
         public const string START_GAME = "StartGame";
-        public const string END_GAME = "EnGame";
+        public const string END_GAME = "EndGame";
         public const string DRON_BOOST_SPEED = "DronBoostSpeed";
 
         public GameObject _collisionObject;
