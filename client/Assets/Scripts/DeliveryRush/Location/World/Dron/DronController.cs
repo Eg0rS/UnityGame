@@ -58,12 +58,12 @@ namespace DeliveryRush.Location.World.Dron
             DisablePath();
             ObjectType = model.ObjectType;
             _model = model;
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gestureService.AddSwipeHandler(OnSwiped, false);
         }
 
-        private void StartGame(WorldObjectEvent worldObjectEvent)
+        private void StartGame(WorldEvent worldObjectEvent)
         {
             _isGameRun = true;
             EnablePath();
@@ -183,10 +183,10 @@ namespace DeliveryRush.Location.World.Dron
 
         private void OnCollisionEnter(Collision other)
         {
-            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ON_COLLISION, other.gameObject));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
         }
 
-        public void Acceleration(WorldObjectEvent objectEvent)
+        public void Acceleration(WorldEvent objectEvent)
         {
             _boostSpeed = objectEvent.SpeedBoost;
             _levelSpeed += _boostSpeed;
