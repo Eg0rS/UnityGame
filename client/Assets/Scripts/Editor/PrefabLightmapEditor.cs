@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 // ReSharper disable IdentifierTypo
-namespace DronDonDon.PrefabLightmap
+namespace DeliveryRush.PrefabLightmap
 {
     [CustomEditor(typeof(BakingPrefabLightmap))]
     public class PrefabLightmapEditor : Editor
