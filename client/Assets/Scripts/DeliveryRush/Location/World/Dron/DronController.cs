@@ -82,12 +82,12 @@ namespace DeliveryRush.Location.World.Dron
             if (_isShifting) {
                 _shiftCoeficient += _speedShift * Time.deltaTime;
                 transform.localPosition = Vector3.Lerp(_previusPosition, _containerPosition, _shiftCoeficient);
-                RotateSelf(_lastWorkSwipe, (float) Math.Sin(_shiftCoeficient * Math.PI) * _angleRotate);
+                
 
                 if (transform.localPosition.Equals(_containerPosition)) {
                     _isShifting = false;
                     _shiftCoeficient = 0;
-                    RotateSelf(_lastWorkSwipe, 0);
+                  
                 }
             }
         }
@@ -120,7 +120,7 @@ namespace DeliveryRush.Location.World.Dron
 
         private void OnSwiped(Swipe swipe)
         {
-            if (!_isShifting && _isGameRun) {
+            if ( _isGameRun) {
                 _lastWorkSwipe = swipe;
                 ShiftNewPosition(NumberSwipedToSector(swipe));
                 PlaySound(GameSounds.SHIFT);
@@ -179,18 +179,7 @@ namespace DeliveryRush.Location.World.Dron
             _isShifting = true;
         }
 
-        private void RotateSelf(Swipe swipe, float angleRotate)
-        {
-            if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
-                transform.localRotation = Quaternion.Euler(0, 0, angleRotate);
-            } else if (swipe.Check(HorizontalSwipeDirection.RIGHT)) {
-                transform.localRotation = Quaternion.Euler(0, 0, -angleRotate);
-            } else if (swipe.Check(VerticalSwipeDirection.DOWN)) {
-                transform.localRotation = Quaternion.Euler(angleRotate * 0.5f, 0, 0);
-            } else if (swipe.Check(VerticalSwipeDirection.UP)) {
-                transform.localRotation = Quaternion.Euler(-angleRotate * 0.5f, 0, 0);
-            }
-        }
+        
 
         private void OnCollisionEnter(Collision other)
         {

@@ -31,7 +31,7 @@ namespace DeliveryRush.Location.Service
         [Inject]
         private DronService _dronService;
 
-        public void StartGame(LevelDescriptor levelDescriptor, string dronId)
+        public void SwitchLocation(LevelDescriptor levelDescriptor, string dronId)
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
@@ -50,7 +50,7 @@ namespace DeliveryRush.Location.Service
                                    .Build()
                                    .Then(() => {
                                        SetDrone(dronId);
-                                       _gameService.Require().StartGame(levelDescriptor, dronId);
+                                        _gameService.Require().StartGame(levelDescriptor, dronId);
                                    })
                                    .Done();
         }

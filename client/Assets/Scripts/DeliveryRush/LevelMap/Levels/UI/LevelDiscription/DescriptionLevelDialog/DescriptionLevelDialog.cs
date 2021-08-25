@@ -155,7 +155,7 @@ namespace DeliveryRush.Resource.UI
                     id = panel.ItemId;
                 }
             }
-            _locationService.StartGame(_levelDescriptor, id);
+            _locationService.SwitchLocation(_levelDescriptor, id);
             _levelService.CurrentLevelId = _levelDescriptor.Id;
         }
 

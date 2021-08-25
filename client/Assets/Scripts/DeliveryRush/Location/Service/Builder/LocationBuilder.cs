@@ -56,6 +56,8 @@ namespace DeliveryRush.Location.Service.Builder
 
             GameWorld gameWorld = loadedObject.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
+            
+            
 
             InitControllers(gameWorld);
             InitService();
