@@ -1,8 +1,6 @@
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
-using AgkUI.Core.Model;
-using AgkUI.Core.Service;
 using DeliveryRush.Location.Service;
 using DeliveryRush.World.Event;
 using IoC.Attribute;
@@ -13,12 +11,6 @@ namespace DeliveryRush.Location.UI.Screen
     [UIController("UI/Screen/pfLocationScreen@embeded")]
     public class LocationScreen : MonoBehaviour
     {
-        [Inject]
-        private UIService _uiService;
-
-        [Inject]
-        private GameService _gameService;
-
         [Inject]
         private GameOverlayManager _gameOverlayManager;
 
@@ -38,7 +30,7 @@ namespace DeliveryRush.Location.UI.Screen
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
-            _gameOverlayManager.LoadGameOverlay();
+            _gameOverlayManager.LoadGameOverlay(worldEvent._dronStats);
         }
 
         //(overlay locationScreen) locationService create world gameservice run dron in worlkd createdron

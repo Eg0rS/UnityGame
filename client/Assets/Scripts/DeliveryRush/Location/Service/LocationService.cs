@@ -9,6 +9,8 @@ using DeliveryRush.World;
 using DeliveryRush.World.Event;
 using IoC.Attribute;
 using IoC.Util;
+using RSG;
+using UnityEngine;
 
 namespace DeliveryRush.Location.Service
 {
@@ -24,27 +26,24 @@ namespace DeliveryRush.Location.Service
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
 
-        [Inject]
-        private IoCProvider<GameService> _gameService;
+        // [Inject]
+        // private GameService _gameService;
         
-        [Inject]
-        private GameWorld _gameWorld;
-
-        public void SwitchLocation(LevelDescriptor levelDescriptor, string dronId)
+        public void SwitchLocation(LevelDescriptor levelDescriptor)
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelDescriptor, dronId);
+            CreatedWorld(levelDescriptor);
         }
 
-        private void CreatedWorld(LevelDescriptor levelDescriptor, string dronId)
+        private void CreatedWorld(LevelDescriptor levelDescriptor)
         {
             string levelPrefabName = levelDescriptor.Prefab;
-            _locationBuilderManager.CreateDefault().Prefab(levelPrefabName).Build().Then(() => 
-            {
-                //_gameWorld.Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, levelDescriptor, dronId));
-                _gameService.Require().StartGame(levelDescriptor,dronId);
-            }).Done();
+            _locationBuilderManager.CreateDefault()
+                                   .Prefab(levelPrefabName)
+                                   .Build()
+                                   .Then(() => Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED)))
+                                   .Done();
         }
     }
 }

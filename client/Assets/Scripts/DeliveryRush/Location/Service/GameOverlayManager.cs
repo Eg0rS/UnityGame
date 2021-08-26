@@ -19,9 +19,9 @@ namespace DeliveryRush.Location.Service
 
         private GameOverlay _gameOverlay;
 
-        public IPromise LoadGameOverlay()
+        public IPromise LoadGameOverlay(DronStats dronStats)
         {
-            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>()).Then(Attach);
+            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>(dronStats)).Then(Attach);
         }
 
         public bool GameOverlayEnabled
@@ -35,13 +35,13 @@ namespace DeliveryRush.Location.Service
                 _gameOverlay.gameObject.SetActive(value);
             }
         }
-
+        
         private IPromise Attach(GameOverlay arg)
         {
             Promise promise = new Promise();
             _gameOverlay = arg;
             _screenStructureManager.AttachToSafeArea(_gameOverlay.gameObject);
-            GameOverlayEnabled = false;
+            GameOverlayEnabled = true;
             promise.Resolve();
             return promise;
         }

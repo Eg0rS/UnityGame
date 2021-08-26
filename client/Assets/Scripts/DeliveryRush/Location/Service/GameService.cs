@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Security.Principal;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkCommons.Input.Gesture.Model.Gestures;
@@ -9,7 +8,6 @@ using DeliveryRush.Core;
 using DeliveryRush.Core.Audio;
 using DeliveryRush.Core.Audio.Model;
 using DeliveryRush.Core.Audio.Service;
-using DeliveryRush.Core.Filter;
 using DeliveryRush.Resource.LevelDialogs;
 using DeliveryRush.Resource.Descriptor;
 using DeliveryRush.Resource.Service;
@@ -34,22 +32,19 @@ public struct DronStats
     public float _durability;
     public float _energy;
     public int _countChips;
-    public bool _onHasShield;
-    public bool _onHasSpeed;
     public float _boostSpeedValue;
-
     public float _boostShieldTime;
     public float _boostSpeedTime;
     public bool _onActiveShield;
     public float _energyFall;
     public float _energyForSpeed;
-    public float _MaxDurability;
+    public float _maxDurability;
 }
 
 namespace DeliveryRush.Location.Service
 {
     [Injectable]
-    public class GameService : GameEventDispatcher, IInitable
+    public class GameService : GameEventDispatcher
     {
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -72,14 +67,14 @@ namespace DeliveryRush.Location.Service
         [Inject]
         private SoundService _soundService;
 
-        private DronStats _dronStats;
-
-        private bool _isPlay = false;
+        [Inject]
+        private LocationService _locationService;
 
         private LevelDescriptor _levelDescriptor;
-
-        private float _startTime = 0;
-
+        private DronStats _dronStats;
+        private bool _isPlay;
+        private string _dronId;
+        private float _startTime;
         private int _speedShift;
 
         public bool IsPlay
@@ -87,16 +82,22 @@ namespace DeliveryRush.Location.Service
             get { return _isPlay; }
             set { _isPlay = value; }
         }
+
         public int SpeedShift
         {
-            set { _speedShift = value; }
-
             get { return _speedShift; }
+            set { _speedShift = value; }
         }
 
-        public void Init()
+        public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            //AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, StartGame);
+            _dronId = dronId;
+            _levelDescriptor = levelDescriptor;
+            _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            _gestureService.AddTapHandler(OnTap, false);
+            _locationService.SwitchLocation(levelDescriptor);
+            _overlayManager.Require().HideLoadingOverlay(true);
+            SetStartOptionsDron();
         }
 
         private void PlaySound(Sound sound)
@@ -105,22 +106,23 @@ namespace DeliveryRush.Location.Service
             _soundService.PlaySound(sound);
         }
 
-        public void StartGame(LevelDescriptor levelDescriptor, string dronId) //WorldEvent worldEvent
+        private void SetStartOptionsDron()
         {
-            _levelDescriptor = levelDescriptor;
-            DronDescriptor dronDescriptor = _dronService.GetDronById(dronId).DronDescriptor;
-            CreateDrone(dronId);
-            _overlayManager.Require().HideLoadingOverlay(true);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, DronCollision);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, ActivateBoost);
-            SpeedShift = _dronService.GetDronById(dronId).DronDescriptor.Mobility;
+            DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
+            SpeedShift = dronDescriptor.Mobility;
             _dronStats._durability = dronDescriptor.Durability;
-            _dronStats._MaxDurability = dronDescriptor.Durability;
+            _dronStats._maxDurability = dronDescriptor.Durability;
             _dronStats._energy = dronDescriptor.Energy;
             _dronStats._countChips = 0;
             _dronStats._energyFall = 0.15f;
-            _gestureService.AddTapHandler(OnTap, false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, gameObject));
+        }
+
+        private void OnWorldCreated(WorldEvent worldEvent)
+        {
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, ActivateBoost);
+            CreateDrone(_dronId);
         }
 
         private void OnTap(Tap tap)
@@ -132,7 +134,7 @@ namespace DeliveryRush.Location.Service
             _gestureService.RemoveTapHandler(OnTap);
         }
 
-        private void DronCollision(WorldEvent worldEvent)
+        private void OnDronCollision(WorldEvent worldEvent)
         {
             GameObject collisionObject = worldEvent._collisionObject;
             switch (collisionObject.GetComponent<PrefabModel>().ObjectType) {
@@ -160,61 +162,42 @@ namespace DeliveryRush.Location.Service
                     Victory(collisionObject.GetComponent<FinishModel>());
                     PlaySound(GameSounds.SHOW_DIALOG);
                     break;
-                default:
-                    break;
             }
         }
 
-        private IEnumerator FallEnergy()
+        private void OnTakeBattery(BatteryModel component)
         {
-            while (_isPlay) {
-                _dronStats._energy -= _dronStats._energyFall;
-                if (_dronStats._energy <= 0) {
-                    _dronStats._energy = 0;
-                    UiUpdate();
-                    DronFailed(1);
-                } else {
-                    UiUpdate();
-                    yield return new WaitForSeconds(1f);
-                }
-            }
+            _dronStats._energy += component.Energy;
+            component.gameObject.SetActive(false);
         }
 
-        private void OnTakeBattery(BatteryModel getComponent)
+        private void OnTakeShield(ShieldBoosterModel component)
         {
-            _dronStats._energy += getComponent.Energy;
-            getComponent.gameObject.SetActive(false);
+            _dronStats._boostShieldTime = component.Duration;
+            component.gameObject.SetActive(false);
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
 
-        private void OnTakeShield(ShieldBoosterModel getComponent)
+        private void OnTakeSpeed(SpeedBoosterModel component)
         {
-            _dronStats._onHasShield = true;
-            _dronStats._boostShieldTime = getComponent.Duration;
-            getComponent.gameObject.SetActive(false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, getComponent.ObjectType));
+            _dronStats._boostSpeedTime = component.Duration;
+            _dronStats._boostSpeedValue = component.SpeedBoost;
+            _dronStats._energyForSpeed = component.NeedsEnergy;
+            component.gameObject.SetActive(false);
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
 
-        private void OnTakeSpeed(SpeedBoosterModel getComponent)
-        {
-            _dronStats._onHasSpeed = true;
-            _dronStats._boostSpeedTime = getComponent.Duration;
-            _dronStats._boostSpeedValue = getComponent.SpeedBoost;
-            _dronStats._energyForSpeed = getComponent.NeedsEnergy;
-            getComponent.gameObject.SetActive(false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, getComponent.ObjectType));
-        }
-
-        private void OnTakeChip(BonusChipsModel getComponent)
+        private void OnTakeChip(BonusChipsModel component)
         {
             _dronStats._countChips++;
             UiUpdate();
-            getComponent.gameObject.SetActive(false);
+            component.gameObject.SetActive(false);
         }
 
-        private void OnDronCrash(ObstacleModel getComponent)
+        private void OnDronCrash(ObstacleModel component)
         {
             if (_dronStats._onActiveShield) return;
-            _dronStats._durability -= getComponent.Damage;
+            _dronStats._durability -= component.Damage;
             if (_dronStats._durability <= 0) {
                 _dronStats._durability = 0;
                 DronFailed(0);
@@ -234,8 +217,6 @@ namespace DeliveryRush.Location.Service
                     Invoke("DisableSpeed", _dronStats._boostSpeedTime);
                     _gameWorld.Require()
                               .Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats._boostSpeedValue, _dronStats._boostSpeedTime));
-                    break;
-                default:
                     break;
             }
         }
@@ -257,7 +238,7 @@ namespace DeliveryRush.Location.Service
             Time.timeScale = 0f;
             if (isWin) {
                 _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats._countChips, timeInGame,
-                                               (int) ((_dronStats._durability / _dronStats._MaxDurability) * 100));
+                                               (int) ((_dronStats._durability / _dronStats._maxDurability) * 100));
             }
         }
 
@@ -265,12 +246,14 @@ namespace DeliveryRush.Location.Service
         {
             EndGame(true);
             _dialogManager.Require().ShowModal<LevelFinishedDialog>();
+            _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void DronFailed(short reason)
         {
             EndGame(false);
             _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
+            _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void CreateDrone(string dronId)
@@ -295,6 +278,21 @@ namespace DeliveryRush.Location.Service
             }
 
             return countStars;
+        }
+
+        private IEnumerator FallEnergy()
+        {
+            while (_isPlay) {
+                _dronStats._energy -= _dronStats._energyFall;
+                if (_dronStats._energy <= 0) {
+                    _dronStats._energy = 0;
+                    UiUpdate();
+                    DronFailed(1);
+                } else {
+                    UiUpdate();
+                    yield return new WaitForSeconds(1f);
+                }
+            }
         }
     }
 }
