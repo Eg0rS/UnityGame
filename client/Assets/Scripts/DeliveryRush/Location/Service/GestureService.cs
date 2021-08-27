@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using AgkCommons.Event;
+using DeliveryRush.World.Event;
 using UnityEngine;
 
 namespace DeliveryRush.Location.Service
 {
-    public class GestureService : MonoBehaviour
+    public class GestureService : GameEventDispatcher
     {
-        public Vector2 SwipeVector { get; private set; }
+        public Vector2 _swipeVector;
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
 
@@ -18,25 +19,24 @@ namespace DeliveryRush.Location.Service
                     _startTouch = touch.position;
                     _currentTouch = touch.position;
                 }
-
-                if (touch.phase == TouchPhase.Moved) {
+                else if (touch.phase == TouchPhase.Moved) {
                     _currentTouch = touch.position;
-                    DetectDirection();
+                    DetectSwipeVector(_startTouch,_currentTouch);
                 }
-
-                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled ) {
+                else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled ) {
                     _currentTouch = touch.position;
-                    DetectDirection();
+                    DetectSwipeVector(_startTouch,_currentTouch);
                 }
             }
         }
 
-        private void DetectDirection()
+        private void DetectSwipeVector(Vector2 StartPoint, Vector2 EndPoint)
         {
-            Vector2 swipeVector = _currentTouch - _startTouch;
+            Vector2 swipeVector = EndPoint - StartPoint;
             if (swipeVector.magnitude >= SWIPE_THRESHOLD) {
-                SwipeVector = RoundVector(swipeVector);
+                _swipeVector = RoundVector(swipeVector);
             }
+            Dispatch(new WorldObjectEvent(WorldObjectEvent.SWIPE, _swipeVector));
         }
 
         private Vector2 RoundVector(Vector2 vector)

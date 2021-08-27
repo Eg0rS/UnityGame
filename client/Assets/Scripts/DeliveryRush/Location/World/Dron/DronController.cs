@@ -26,7 +26,8 @@ namespace DeliveryRush.Location.World.Dron
         private IoCProvider<GameWorld> _gameWorld;
 
         public WorldObjectType ObjectType { get; }
-
+        
+        [Inject]
         private GestureService _gestureService;
 
         public void Init(DronModel model)
@@ -52,19 +53,19 @@ namespace DeliveryRush.Location.World.Dron
                 _levelSpeed += ACCELERATION * Time.deltaTime;
             }
             _bezier.speed = _levelSpeed;
-            if (CheckPossibilitySwipe(_gestureService.SwipeVector)) {
-                transform.position += (Vector3) _gestureService.SwipeVector;
-            } else {
-                Debug.Log("Hui" );
+            
+            Vector3 swipe = new Vector3(_gestureService._swipeVector.x, _gestureService._swipeVector.y, 0f);
+            if (CheckPossibilitySwipe(swipe)) {
+                transform.localPosition += swipe;
             }
+            Debug.Log(transform.localPosition);
         }
 
-        private bool CheckPossibilitySwipe(Vector2 swipe)
+        private bool CheckPossibilitySwipe(Vector3 swipe)
         {
             Vector2 Max = new Vector2(1, 1);
             Vector2 Min = new Vector2(-1, -1);
-            Vector2 NewPos = (Vector2)transform.localPosition + swipe;
-            Debug.Log( transform.localPosition);
+            Vector3 NewPos = transform.localPosition + swipe;
             return NewPos.x <= Max.x && NewPos.y <= Max.y && NewPos.x >= Min.x && NewPos.y >= Min.y;
         }
 
