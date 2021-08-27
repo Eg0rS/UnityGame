@@ -136,7 +136,7 @@ namespace DeliveryRush.Location.Service
 
         private void OnDronCollision(WorldEvent worldEvent)
         {
-            GameObject collisionObject = worldEvent._collisionObject;
+            GameObject collisionObject = worldEvent.CollisionObject;
             switch (collisionObject.GetComponent<PrefabModel>().ObjectType) {
                 case WorldObjectType.OBSTACLE:
                     OnDronCrash(collisionObject.GetComponent<ObstacleModel>());
@@ -207,7 +207,7 @@ namespace DeliveryRush.Location.Service
 
         private void ActivateBoost(WorldEvent @event)
         {
-            switch (@event._typeBoost) {
+            switch (@event.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
                     _dronStats._onActiveShield = true;
                     Invoke(nameof(DisableShield), _dronStats._boostShieldTime);

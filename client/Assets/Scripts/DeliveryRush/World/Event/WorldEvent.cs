@@ -22,29 +22,27 @@ namespace DeliveryRush.World.Event
         public const string WORLD_CREATED = "WorldCreated";
         public const string CREATE_WORLD = "CreateWorld";
 
-        public GameObject _collisionObject;
-        public DronStats _dronStats;
-        public WorldObjectType _typeBoost;
-        public float SpeedBoost;
-        public float SpeedBoostTime;
-        
+        public GameObject CollisionObject { get; private set; }
         public LevelDescriptor LevelDescriptor { get; private set; }
+        public DronStats DronStats { get; private set; }
+        public WorldObjectType TypeBoost { get; private set; }
         public string DronId { get; private set; }
-        
+        public float SpeedBoost { get; private set; }
+        public float SpeedBoostTime { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
-            _collisionObject = target;
+            CollisionObject = target;
         }
 
         public WorldEvent(string name, DronStats dronStats) : base(name)
         {
-            _dronStats = dronStats;
+            DronStats = dronStats;
         }
 
         public WorldEvent(string name, WorldObjectType type) : base(name)
         {
-            _typeBoost = type;
+            TypeBoost = type;
         }
 
         public WorldEvent(string name, float speedBoost, float speedBoostTime) : base(name)
@@ -52,13 +50,13 @@ namespace DeliveryRush.World.Event
             SpeedBoost = speedBoost;
             SpeedBoostTime = speedBoostTime;
         }
-        
+
         public WorldEvent(string name, LevelDescriptor levelDescriptor, string dronId) : base(name)
         {
             LevelDescriptor = levelDescriptor;
             DronId = dronId;
         }
-        
+
         public WorldEvent(string name) : base(name)
         {
         }

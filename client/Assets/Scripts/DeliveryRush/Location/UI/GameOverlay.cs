@@ -16,7 +16,7 @@ using UnityEngine;
 
 namespace DeliveryRush.Location.UI
 {
-    [UIController("UI/Dialog/pfDronState@embeded")]
+    [UIController("UI/Dialog/pfGameOverlay@embeded")]
     public class GameOverlay : MonoBehaviour
     {
         [Inject]
@@ -49,16 +49,14 @@ namespace DeliveryRush.Location.UI
         [UIObjectBinding("ShieldActive")]
         private GameObject _shieldActive;
 
-        private float _time = 0;
-
-        private bool _isGame = false;
-
-        private float _MaxDurability = 0;
+        private float _time;
+        private float _maxDurability;
+        private bool _isGame;
 
         [UICreated]
         private void Init(DronStats dronStats)
         {
-            _MaxDurability = dronStats._durability; //для вывода в процентах
+            _maxDurability = dronStats._durability; //для вывода в процентах
             SetStats(dronStats);
             _timer.text = "0,00";
             _shieldButton.gameObject.SetActive(false);
@@ -78,14 +76,12 @@ namespace DeliveryRush.Location.UI
 
         private void SetActiveBoost(WorldEvent objectEvent)
         {
-            switch (objectEvent._typeBoost) {
+            switch (objectEvent.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
                     _shieldButton.gameObject.SetActive(true);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
                     _speedButton.gameObject.SetActive(true);
-                    break;
-                default:
                     break;
             }
         }
@@ -111,14 +107,14 @@ namespace DeliveryRush.Location.UI
 
         private void UiUpdate(WorldEvent objectEvent)
         {
-            SetStats(objectEvent._dronStats);
+            SetStats(objectEvent.DronStats);
         }
 
         private void SetStats(DronStats dronStats)
         {
             _countChips.text = dronStats._countChips.ToString();
             _countEnergy.text = dronStats._energy.ToString("F0");
-            _durability.text = ((dronStats._durability / _MaxDurability) * 100).ToString("F0") + "%";
+            _durability.text = ((dronStats._durability / _maxDurability) * 100).ToString("F0") + "%";
         }
 
         [UIOnClick("PauseButton")]

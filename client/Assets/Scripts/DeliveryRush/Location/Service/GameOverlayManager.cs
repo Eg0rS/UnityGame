@@ -23,25 +23,12 @@ namespace DeliveryRush.Location.Service
         {
             return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>(dronStats)).Then(Attach);
         }
-
-        public bool GameOverlayEnabled
-        {
-            get { return _gameOverlay.gameObject.activeSelf; }
-            set
-            {
-                if (_gameOverlay == null) {
-                    return;
-                }
-                _gameOverlay.gameObject.SetActive(value);
-            }
-        }
         
         private IPromise Attach(GameOverlay arg)
         {
             Promise promise = new Promise();
             _gameOverlay = arg;
             _screenStructureManager.AttachToSafeArea(_gameOverlay.gameObject);
-            GameOverlayEnabled = true;
             promise.Resolve();
             return promise;
         }

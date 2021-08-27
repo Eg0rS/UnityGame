@@ -30,9 +30,7 @@ namespace DeliveryRush.Location.UI.Screen
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
-            _gameOverlayManager.LoadGameOverlay(worldEvent._dronStats);
+            _gameOverlayManager.LoadGameOverlay(worldEvent.DronStats);
         }
-
-        //(overlay locationScreen) locationService create world gameservice run dron in worlkd createdron
     }
 }

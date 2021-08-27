@@ -5,12 +5,9 @@ using DeliveryRush.Core;
 using DeliveryRush.Resource.Descriptor;
 using DeliveryRush.Location.Service.Builder;
 using DeliveryRush.Location.UI.Screen;
-using DeliveryRush.World;
 using DeliveryRush.World.Event;
 using IoC.Attribute;
 using IoC.Util;
-using RSG;
-using UnityEngine;
 
 namespace DeliveryRush.Location.Service
 {
@@ -26,9 +23,6 @@ namespace DeliveryRush.Location.Service
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
 
-        // [Inject]
-        // private GameService _gameService;
-        
         public void SwitchLocation(LevelDescriptor levelDescriptor)
         {
             _overlayManager.Require().ShowPreloader();
