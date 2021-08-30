@@ -56,7 +56,7 @@ namespace DeliveryRush.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private IGestureService _gestureService;
+        private GestureService _gestureService;
 
         [Inject]
         private LevelService _levelService;
@@ -94,7 +94,7 @@ namespace DeliveryRush.Location.Service
             _dronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gestureService.AddTapHandler(OnTap, false);
+            _gestureService.AddListener<WorldObjectEvent>(WorldObjectEvent.SWIPE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
             SetStartOptionsDron();
@@ -125,13 +125,12 @@ namespace DeliveryRush.Location.Service
             CreateDrone(_dronId);
         }
 
-        private void OnTap(Tap tap)
+        private void OnSwipe(WorldObjectEvent worldObjectEvent)
         {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.START_GAME, gameObject));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.START_GAME));
             _isPlay = true;
             StartCoroutine(FallEnergy());
             _startTime = Time.time;
-            _gestureService.RemoveTapHandler(OnTap);
         }
 
         private void OnDronCollision(WorldEvent worldEvent)

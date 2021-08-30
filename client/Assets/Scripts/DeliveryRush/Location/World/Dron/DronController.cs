@@ -59,6 +59,13 @@ namespace DeliveryRush.Location.World.Dron
             _bezier.speed = _levelSpeed;
         }
 
+        private void OnDestroy()
+        {
+            _gestureService.RemoveListener<WorldObjectEvent>(WorldObjectEvent.SWIPE, OnSwiped);
+            _gestureService.RemoveListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
+            _gestureService.RemoveListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
+        }
+
         private void OnSwiped(WorldObjectEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
