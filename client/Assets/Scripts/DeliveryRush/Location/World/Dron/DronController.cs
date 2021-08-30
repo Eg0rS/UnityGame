@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using AgkCommons.Event;
 using IoC.Attribute;
 using BezierSolution;
@@ -14,10 +15,13 @@ namespace DeliveryRush.Location.World.Dron
     public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
     {
         private BezierWalkerWithSpeed _bezier;
-        private float _levelSpeed = 10;
+        private float _levelSpeed = 8;
         private const float ACCELERATION = 0.2f;
-        private bool _isGameRun = false;
-        private float _boostSpeed = 0;
+        private bool _isGameRun;
+        private float _boostSpeed;
+        private Vector3 _currentPosition;
+        private float _shiftSpeed = 0.03f;
+        private Coroutine _isMoving;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -34,6 +38,7 @@ namespace DeliveryRush.Location.World.Dron
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
             _gestureService.AddListener<WorldObjectEvent>(WorldObjectEvent.SWIPE, OnSwiped);
+            _currentPosition = transform.localPosition;
         }
 
         private void StartGame(WorldObjectEvent worldObjectEvent)
@@ -58,16 +63,37 @@ namespace DeliveryRush.Location.World.Dron
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
             if (IsPossibleSwipe(swipe)) {
-                transform.localPosition += swipe;
+                _currentPosition += swipe;
+                MoveTo(_currentPosition);
             }
         }
 
         private bool IsPossibleSwipe(Vector3 swipe)
         {
-            Vector3 newPos = transform.localPosition + swipe;
+            Vector3 newPos = _currentPosition + swipe;
             return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
         }
 
+        private void MoveTo(Vector3 newPos)
+        {
+            if (_isMoving != null) {
+                StopCoroutine(_isMoving);
+            }
+            _isMoving = StartCoroutine(Moving(newPos));
+        }
+
+        private IEnumerator Moving(Vector3 newPos)
+        {
+            Vector3 prevPos = transform.localPosition;
+            float shiftingСoefficient = 0;
+            while (shiftingСoefficient < 1) {
+                shiftingСoefficient += _shiftSpeed;
+                transform.localPosition = Vector3.Lerp(prevPos, newPos, shiftingСoefficient);
+                yield return new WaitForSeconds(0.01f);
+            }
+            _isMoving = null;
+        }
+        
         private void OnCollisionEnter(Collision other)
         {
             _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ON_COLLISION, other.gameObject));
