@@ -36,8 +36,6 @@ namespace DeliveryRush.Location.Service
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
             CreatedWorld(levelDescriptor, dronId);
-            Light lightOnLevel = GameObject.Find("DirectionalLight").GetComponent<Light>();
-            lightOnLevel.color = Resources.Load<Material>(levelDescriptor.Color).color;
             RenderSettings.skybox = Resources.Load<Material>(levelDescriptor.Skybox);
             DynamicGI.UpdateEnvironment();
         }
@@ -50,7 +48,7 @@ namespace DeliveryRush.Location.Service
                                    .Build()
                                    .Then(() => {
                                        SetDrone(dronId);
-                                        _gameService.Require().StartGame(levelDescriptor, dronId);
+                                       _gameService.Require().StartGame(levelDescriptor, dronId);
                                    })
                                    .Done();
         }
