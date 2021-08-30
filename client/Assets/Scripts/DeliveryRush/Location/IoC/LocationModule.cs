@@ -8,10 +8,11 @@ namespace DeliveryRush.Location.IoC
     {
         public void Configure(IIoCContainer container)
         {
+            container.RegisterSingleton<GameService>();
             container.RegisterSingleton<LocationService>();
             container.RegisterSingleton<LocationBuilderManager>();
             container.RegisterSingleton<CreateObjectService>();
-            container.RegisterSingleton<GameService>();
+            container.RegisterSingleton<GameOverlayManager>();
         }
     }
 }

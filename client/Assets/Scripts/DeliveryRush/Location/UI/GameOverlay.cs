@@ -16,7 +16,7 @@ using UnityEngine;
 
 namespace DeliveryRush.Location.UI
 {
-    [UIController("UI/Dialog/pfDronState@embeded")]
+    [UIController("UI/Dialog/pfGameOverlay@embeded")]
     public class GameOverlay : MonoBehaviour
     {
         [Inject]
@@ -49,25 +49,23 @@ namespace DeliveryRush.Location.UI
         [UIObjectBinding("ShieldActive")]
         private GameObject _shieldActive;
 
-        private float _time = 0;
-
-        private bool _isGame = false;
-
-        private float _MaxDurability = 0;
+        private float _time;
+        private float _maxDurability;
+        private bool _isGame;
 
         [UICreated]
         private void Init(DronStats dronStats)
         {
-            _MaxDurability = dronStats._durability; //для вывода в процентах
+            _maxDurability = dronStats._durability; //для вывода в процентах
             SetStats(dronStats);
             _timer.text = "0,00";
             _shieldButton.gameObject.SetActive(false);
             _speedButton.gameObject.SetActive(false);
             _shieldActive.SetActive(false);
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.UI_UPDATE, UiUpdate);
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.END_GAME, EndGame);
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.TAKE_BOOST, SetActiveBoost);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.UI_UPDATE, UiUpdate);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_BOOST, SetActiveBoost);
         }
 
         private void PlaySound(Sound sound)
@@ -76,26 +74,24 @@ namespace DeliveryRush.Location.UI
             _soundService.PlaySound(sound);
         }
 
-        private void SetActiveBoost(WorldObjectEvent objectEvent)
+        private void SetActiveBoost(WorldEvent objectEvent)
         {
-            switch (objectEvent._typeBoost) {
+            switch (objectEvent.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
                     _shieldButton.gameObject.SetActive(true);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
                     _speedButton.gameObject.SetActive(true);
                     break;
-                default:
-                    break;
             }
         }
 
-        private void EndGame(WorldObjectEvent objectEvent)
+        private void EndGame(WorldEvent objectEvent)
         {
             _isGame = false;
         }
 
-        private void StartGame(WorldObjectEvent objectEvent)
+        private void StartGame(WorldEvent objectEvent)
         {
             _isGame = true;
         }
@@ -109,16 +105,16 @@ namespace DeliveryRush.Location.UI
             _timer.text = _time.ToString("F2");
         }
 
-        private void UiUpdate(WorldObjectEvent objectEvent)
+        private void UiUpdate(WorldEvent objectEvent)
         {
-            SetStats(objectEvent._dronStats);
+            SetStats(objectEvent.DronStats);
         }
 
         private void SetStats(DronStats dronStats)
         {
             _countChips.text = dronStats._countChips.ToString();
             _countEnergy.text = dronStats._energy.ToString("F0");
-            _durability.text = ((dronStats._durability / _MaxDurability) * 100).ToString("F0") + "%";
+            _durability.text = ((dronStats._durability / _maxDurability) * 100).ToString("F0") + "%";
         }
 
         [UIOnClick("PauseButton")]
@@ -131,7 +127,7 @@ namespace DeliveryRush.Location.UI
         private void OnShieldButton()
         {
             PlaySound(GameSounds.SHIELD_ACTIVATED);
-            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, WorldObjectType.SHIELD_BUSTER));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ACTIVATE_BOOST, WorldObjectType.SHIELD_BUSTER));
             _shieldButton.gameObject.SetActive(false);
             _shieldActive.SetActive(true);
             Invoke(nameof(DisableShieldImage), 5);
@@ -146,7 +142,7 @@ namespace DeliveryRush.Location.UI
         private void OnSpeedButton()
         {
             PlaySound(GameSounds.SPEED_ACTIVATED);
-            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ACTIVATE_BOOST, WorldObjectType.SPEED_BUSTER));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ACTIVATE_BOOST, WorldObjectType.SPEED_BUSTER));
             _speedButton.gameObject.SetActive(false);
         }
     }

@@ -28,7 +28,7 @@ namespace DeliveryRush.World
             go.transform.SetParent(parentContainer, worldPositionStays);
             
             go.GetOrCreateComponent<GameEventDispatcher>()
-              .Dispatch(new WorldObjectEvent(WorldObjectEvent.ADDED, go));
+              .Dispatch(new WorldEvent(WorldEvent.ADDED, go));
         }
 
         public void RemoveGameObject(string id)

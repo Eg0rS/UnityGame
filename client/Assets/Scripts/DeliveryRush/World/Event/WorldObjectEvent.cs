@@ -18,6 +18,8 @@ namespace DeliveryRush.World.Event
         public const string START_GAME = "StartGame";
         public const string END_GAME = "EndGame";
         public const string DRON_BOOST_SPEED = "DronBoostSpeed";
+        public const string SWIPE = "Swipe";
+
 
         public GameObject _collisionObject;
         public DronStats _dronStats;
@@ -27,6 +29,8 @@ namespace DeliveryRush.World.Event
 
         public float SpeedBoostTime;
 
+        public Vector2 Swipe;
+
         public WorldObjectEvent(string name, GameObject target) : base(name, target)
         {
             _collisionObject = target;
@@ -35,6 +39,11 @@ namespace DeliveryRush.World.Event
         public WorldObjectEvent(string name, DronStats dronStats) : base(name)
         {
             _dronStats = dronStats;
+        }
+        
+        public WorldObjectEvent(string name, Vector2 swipe) : base(name)
+        {
+            Swipe =swipe ;
         }
 
         public WorldObjectEvent(string name, WorldObjectType type): base(name)
