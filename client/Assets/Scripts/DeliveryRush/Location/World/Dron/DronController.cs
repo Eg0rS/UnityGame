@@ -65,7 +65,6 @@ namespace DeliveryRush.Location.World.Dron
         private bool IsPossibleSwipe(Vector3 swipe)
         {
             Vector3 newPos = transform.localPosition + swipe;
-            Debug.Log(newPos);Debug.Log((newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f));
             return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
         }
 
