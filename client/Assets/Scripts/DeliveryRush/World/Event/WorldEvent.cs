@@ -21,6 +21,7 @@ namespace DeliveryRush.World.Event
         public const string DRON_BOOST_SPEED = "DronBoostSpeed";
         public const string WORLD_CREATED = "WorldCreated";
         public const string CREATE_WORLD = "CreateWorld";
+        public const string SWIPE = "Swipe";
 
         public GameObject CollisionObject { get; private set; }
         public LevelDescriptor LevelDescriptor { get; private set; }
@@ -29,7 +30,8 @@ namespace DeliveryRush.World.Event
         public string DronId { get; private set; }
         public float SpeedBoost { get; private set; }
         public float SpeedBoostTime { get; private set; }
-
+        public Vector2 Swipe { get; private set; }
+        
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
             CollisionObject = target;
@@ -55,6 +57,11 @@ namespace DeliveryRush.World.Event
         {
             LevelDescriptor = levelDescriptor;
             DronId = dronId;
+        }
+        
+        public WorldEvent(string name, Vector2 swipe) : base(name)
+        {
+            Swipe =swipe ;
         }
 
         public WorldEvent(string name) : base(name)

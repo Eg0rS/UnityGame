@@ -44,7 +44,7 @@ namespace DeliveryRush.Location.Service
             if (lengthX >= SWIPE_THRESHOLDX || lengthY >= SWIPE_THRESHOLDY) {
                 swipeVector = RoundVector(swipeVector);
                 _startTouch = _currentTouch;
-                Dispatch(new WorldObjectEvent(WorldObjectEvent.SWIPE, swipeVector));
+                Dispatch(new WorldEvent(WorldEvent.SWIPE, swipeVector));
             }
         }
         

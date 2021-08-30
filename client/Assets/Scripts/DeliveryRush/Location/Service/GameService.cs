@@ -94,7 +94,7 @@ namespace DeliveryRush.Location.Service
             _dronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gestureService.AddListener<WorldObjectEvent>(WorldObjectEvent.SWIPE, OnSwipe);
+            _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
             SetStartOptionsDron();
@@ -125,7 +125,7 @@ namespace DeliveryRush.Location.Service
             CreateDrone(_dronId);
         }
 
-        private void OnSwipe(WorldObjectEvent worldObjectEvent)
+        private void OnSwipe(WorldEvent worldObjectEvent)
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.START_GAME));
             _isPlay = true;
