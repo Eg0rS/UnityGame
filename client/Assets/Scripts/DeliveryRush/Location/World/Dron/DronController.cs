@@ -35,13 +35,13 @@ namespace DeliveryRush.Location.World.Dron
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
-            _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
-            _gestureService.AddListener<WorldObjectEvent>(WorldObjectEvent.SWIPE, OnSwiped);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+            _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
             _currentPosition = transform.localPosition;
         }
 
-        private void StartGame(WorldObjectEvent worldObjectEvent)
+        private void StartGame(WorldEvent worldObjectEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
@@ -59,7 +59,14 @@ namespace DeliveryRush.Location.World.Dron
             _bezier.speed = _levelSpeed;
         }
 
-        private void OnSwiped(WorldObjectEvent objectEvent)
+        private void OnDestroy()
+        {
+            _gestureService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
+            _gestureService.RemoveListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gestureService.RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+        }
+
+        private void OnSwiped(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
             if (IsPossibleSwipe(swipe)) {
@@ -96,10 +103,10 @@ namespace DeliveryRush.Location.World.Dron
         
         private void OnCollisionEnter(Collision other)
         {
-            _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.ON_COLLISION, other.gameObject));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
         }
 
-        private void Acceleration(WorldObjectEvent objectEvent)
+        private void Acceleration(WorldEvent objectEvent)
         {
             _boostSpeed = objectEvent.SpeedBoost;
             _levelSpeed += _boostSpeed;

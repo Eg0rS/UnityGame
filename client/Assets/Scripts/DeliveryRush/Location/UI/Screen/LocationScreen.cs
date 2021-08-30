@@ -1,5 +1,8 @@
+using AgkCommons.Event;
+using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
-using DeliveryRush.Core;
+using DeliveryRush.Location.Service;
+using DeliveryRush.World.Event;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -9,23 +12,25 @@ namespace DeliveryRush.Location.UI.Screen
     public class LocationScreen : MonoBehaviour
     {
         [Inject]
-        private OverlayManager _overlayManager;
+        private GameOverlayManager _gameOverlayManager;
 
         [UICreated]
         private void Init()
         {
+            gameObject.GetComponent<GameEventDispatcher>().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void OnDestroy()
         {
+            if (this.IsDestroyed()) {
+                return;
+            }
+            gameObject.GetComponent<GameEventDispatcher>().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
-        private void OnWorldCreated()
+        private void OnWorldCreated(WorldEvent worldEvent)
         {
-        }
-
-        private void AddUIScreenLoader()
-        {
+            _gameOverlayManager.LoadGameOverlay(worldEvent.DronStats);
         }
     }
 }
