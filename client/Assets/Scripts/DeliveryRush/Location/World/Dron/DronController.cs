@@ -18,15 +18,12 @@ namespace DeliveryRush.Location.World.Dron
         private const float ACCELERATION = 0.2f;
         private bool _isGameRun = false;
         private float _boostSpeed = 0;
-        private float _speedShift = 1f;
-        private Vector2 _currentPos;
-        private Vector2 _newPos;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
         public WorldObjectType ObjectType { get; }
-        
+
         [Inject]
         private GestureService _gestureService;
 
@@ -36,7 +33,7 @@ namespace DeliveryRush.Location.World.Dron
             _bezier.enabled = false;
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.DRON_BOOST_SPEED, Acceleration);
-            _gestureService = gameObject.AddComponent<GestureService>();
+            _gestureService.AddListener<WorldObjectEvent>(WorldObjectEvent.SWIPE, OnSwiped);
         }
 
         private void StartGame(WorldObjectEvent worldObjectEvent)
@@ -47,26 +44,29 @@ namespace DeliveryRush.Location.World.Dron
 
         public void Update()
         {
-            if (!_isGameRun) return;
+            if (!_isGameRun) {
+                return;
+            }
 
             if (_bezier.NormalizedT < 0.5f) {
                 _levelSpeed += ACCELERATION * Time.deltaTime;
             }
             _bezier.speed = _levelSpeed;
-            
-            Vector3 swipe = new Vector3(_gestureService._swipeVector.x, _gestureService._swipeVector.y, 0f);
-            if (CheckPossibilitySwipe(swipe)) {
-                transform.localPosition += swipe;
-            }
-            Debug.Log(transform.localPosition);
         }
 
-        private bool CheckPossibilitySwipe(Vector3 swipe)
+        private void OnSwiped(WorldObjectEvent objectEvent)
         {
-            Vector2 Max = new Vector2(1, 1);
-            Vector2 Min = new Vector2(-1, -1);
-            Vector3 NewPos = transform.localPosition + swipe;
-            return NewPos.x <= Max.x && NewPos.y <= Max.y && NewPos.x >= Min.x && NewPos.y >= Min.y;
+            Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
+            if (IsPossibleSwipe(swipe)) {
+                transform.localPosition += swipe;
+            }
+        }
+
+        private bool IsPossibleSwipe(Vector3 swipe)
+        {
+            Vector3 newPos = transform.localPosition + swipe;
+            Debug.Log(newPos);Debug.Log((newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f));
+            return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
         }
 
         private void OnCollisionEnter(Collision other)
