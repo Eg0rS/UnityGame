@@ -23,7 +23,6 @@ using DeliveryRush.World;
 using DeliveryRush.World.Event;
 using IoC.Attribute;
 using IoC.Util;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace DeliveryRush.Location.Service
@@ -75,6 +74,7 @@ namespace DeliveryRush.Location.Service
         private string _dronId;
         private float _startTime;
         private int _speedShift;
+        private Coroutine _fallingEnergy;
 
         public bool IsPlay
         {
@@ -113,7 +113,7 @@ namespace DeliveryRush.Location.Service
             _dronStats._maxDurability = dronDescriptor.Durability;
             _dronStats._energy = dronDescriptor.Energy;
             _dronStats._countChips = 0;
-            _dronStats._energyFall = 0.15f;
+            _dronStats._energyFall = 0.05f;
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
@@ -126,9 +126,12 @@ namespace DeliveryRush.Location.Service
 
         private void OnSwipe(WorldEvent worldEvent)
         {
+            if (_isPlay) {
+                return;
+            }
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.START_GAME));
             _isPlay = true;
-            StartCoroutine(FallEnergy());
+            _fallingEnergy = StartCoroutine(FallEnergy());
             _startTime = Time.time;
         }
 
@@ -231,6 +234,7 @@ namespace DeliveryRush.Location.Service
         
         public void EndGame()
         {
+            StopCoroutine(_fallingEnergy);
             IsPlay = false;
             Time.timeScale = 0f;
             _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
@@ -260,7 +264,6 @@ namespace DeliveryRush.Location.Service
             CalculateStats(false);
             EndGame();
             _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
-            _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void CreateDrone(string dronId)
@@ -297,6 +300,7 @@ namespace DeliveryRush.Location.Service
                     DronFailed(1);
                 } else {
                     UiUpdate();
+                    Debug.Log(_dronStats._energy);
                     yield return new WaitForSeconds(1f);
                 }
             }
