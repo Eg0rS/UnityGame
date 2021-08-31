@@ -34,8 +34,9 @@ public class ScrollViewPanel
 
 public class EndlessScrollView : MonoBehaviour
 {
+    [FormerlySerializedAs("_scrollpanels")]
     [SerializeField]
-    private List<GameObject> _scrollpanels = new List<GameObject>();
+    private List<GameObject> _scrollPanels = new List<GameObject>();
 
     [FormerlySerializedAs("_centralelement")]
     [SerializeField]
@@ -63,11 +64,11 @@ public class EndlessScrollView : MonoBehaviour
 
     private void InitScroll(Vector3 initCoords)
     {
-        foreach (GameObject panel in _scrollpanels) {
+        foreach (GameObject panel in _scrollPanels) {
             panel.transform.localPosition = initCoords;
         }
-        List<GameObject> leftList = _scrollpanels.GetRange(0, _selectedElement);
-        List<GameObject> rightList = _scrollpanels.GetRange(_selectedElement + 1, _scrollpanels.Count - _selectedElement - 1);
+        List<GameObject> leftList = _scrollPanels.GetRange(0, _selectedElement);
+        List<GameObject> rightList = _scrollPanels.GetRange(_selectedElement + 1, _scrollPanels.Count - _selectedElement - 1);
         int countLeftPanel = leftList.Count;
         foreach (GameObject scrollpanel in leftList) {
             Vector3 localPosition = scrollpanel.transform.localPosition;
@@ -85,21 +86,21 @@ public class EndlessScrollView : MonoBehaviour
             countRightPanels++;
         }
 
-        foreach (GameObject panel in _scrollpanels) {
+        foreach (GameObject panel in _scrollPanels) {
             _panelList.Add(new ScrollViewPanel(panel.transform.localPosition, new Vector3(0, 0, 0), panel));
         }
     }
 
     private void UpdateRightScroll()
     {
-        Vector3 newCoords = new Vector3(_initCoords.x + (_scrollpanels[0].GetComponent<RectTransform>().sizeDelta.x + _offset), 0, 0);
+        Vector3 newCoords = new Vector3(_initCoords.x + (_scrollPanels[0].GetComponent<RectTransform>().sizeDelta.x + _offset), 0, 0);
         InitScroll(newCoords);
         MoveLeft(false);
     }
 
     private void UpdateLeftScroll()
     {
-        Vector3 newCoords = new Vector3(_initCoords.x - (_scrollpanels[0].GetComponent<RectTransform>().sizeDelta.x + _offset), 0, 0);
+        Vector3 newCoords = new Vector3(_initCoords.x - (_scrollPanels[0].GetComponent<RectTransform>().sizeDelta.x + _offset), 0, 0);
         InitScroll(newCoords);
         MoveRight(false);
     }
@@ -120,7 +121,7 @@ public class EndlessScrollView : MonoBehaviour
             StopCoroutine(_coroutine);
         }
         if (_selectedElement - 1 < 0) {
-            _selectedElement = _scrollpanels.Count - 1;
+            _selectedElement = _scrollPanels.Count - 1;
             UpdateLeftScroll();
             return;
         }
@@ -147,7 +148,7 @@ public class EndlessScrollView : MonoBehaviour
         if (_isMoving) {
             StopCoroutine(_coroutine);
         }
-        if (_selectedElement + 1 > _scrollpanels.Count - 1) {
+        if (_selectedElement + 1 > _scrollPanels.Count - 1) {
             _selectedElement = 0;
             UpdateRightScroll();
             return;
