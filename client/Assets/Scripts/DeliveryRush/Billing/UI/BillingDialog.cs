@@ -9,13 +9,11 @@ using Adept.Logger;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Element.Text;
-using CircularScrollingList;
 using DeliveryRush.Billing.Descriptor;
 using DeliveryRush.Billing.Event;
 using DeliveryRush.Billing.IoC;
 using DeliveryRush.Billing.Service;
 using DeliveryRush.Core.UI.Dialog;
-using DeliveryRush.Shop.UI;
 using UnityEngine;
 
 namespace DeliveryRush.Billing.UI
@@ -42,7 +40,6 @@ namespace DeliveryRush.Billing.UI
         private UILabel _countChips;
 
         private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
-        private ListPositionCtrl _listPositionCtrl;
 
         [UICreated]
         public void Init()
@@ -60,9 +57,7 @@ namespace DeliveryRush.Billing.UI
                           .Then(controller => { _billingItemControllers.Add(controller); })
                           .Done();
             }
-            _uiService.Create<BillingScrollController>(UiModel.Create<BillingScrollController>(_billingItemControllers).Container(itemContainer))
-                      .Then(controller => { _listPositionCtrl = controller.Control; })
-                      .Done();
+            
         }
 
         private void UpdateCredits()
