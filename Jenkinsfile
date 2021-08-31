@@ -118,7 +118,7 @@ pipeline {
                 
                         stage("build") {
                             steps {
-                                buildAppClient(BuildContext, PlatformType.WINDOWS,  params.forceBuildLib)
+                                buildAppClient(BuildContext, PlatformType.WINDOWS,  parameters.forceBuildLib)
                             }
                         }
 
@@ -139,7 +139,7 @@ pipeline {
                     stages {                   
                         stage("build-client") {
                             steps {
-                                buildAppClient(BuildContext, PlatformType.ANDROID, params.forceBuildLib)
+                                buildAppClient(BuildContext, PlatformType.ANDROID, parameters.forceBuildLib)
                             }
                         }
 
@@ -172,8 +172,8 @@ pipeline {
 }
 
 private void fillActiveBuilds() {
-    BuildContext.activeBuilds['android'] = params.androidBuild
-    BuildContext.activeBuilds['windows'] = params.windowsBuild
+    BuildContext.activeBuilds['android'] = parameters.androidBuild
+    BuildContext.activeBuilds['windows'] = parameters.windowsBuild
 }
 
 private static boolean checkBuild(String type) {
