@@ -94,9 +94,10 @@ namespace DeliveryRush.Location.World.Dron
         private IEnumerator Moving(Vector3 newPos)
         {
             Vector3 prevPos = transform.localPosition;
+            float distance = (newPos - prevPos).magnitude;
             float shiftingСoefficient = 0;
             while (shiftingСoefficient < 1) {
-                shiftingСoefficient += _shiftSpeed;
+                shiftingСoefficient += _shiftSpeed / distance;
                 transform.localPosition = Vector3.Lerp(prevPos, newPos, shiftingСoefficient);
                 yield return new WaitForSeconds(0.01f);
             }
