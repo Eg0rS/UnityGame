@@ -40,11 +40,9 @@ public class EndlessScrollView : MonoBehaviour
     [FormerlySerializedAs("_centralelement")]
     [SerializeField]
     private int _defaultCentralElement;
-    [FormerlySerializedAs("_centralElement")]
-    [SerializeField]
     private int _selectedElement;
     [SerializeField]
-    [UnityEngine.Range(0, 1000)]
+    [Range(0, 1000)]
     private float _offset;
     [SerializeField]
     private float _scrollSpeed;
@@ -56,7 +54,7 @@ public class EndlessScrollView : MonoBehaviour
     private IEnumerator _coroutine;
 
     private readonly List<Panel> _panelList = new List<Panel>();
-
+    
     public void Start()
     {
         _selectedElement = _defaultCentralElement;
@@ -185,5 +183,10 @@ public class EndlessScrollView : MonoBehaviour
             yield return null;
         }
         _isMoving = false;
+    }
+
+    public int MiddleElement
+    {
+        get { return _selectedElement; }
     }
 }
