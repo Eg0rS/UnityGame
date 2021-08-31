@@ -1,6 +1,7 @@
 ﻿using AgkCommons.Event;
+using DeliveryRush.LevelMap.Levels.Descriptor;
 using DeliveryRush.Location.Model;
-using DeliveryRush.Resource.Descriptor;
+using DeliveryRush.Location.Service;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -27,11 +28,11 @@ namespace DeliveryRush.World.Event
         public LevelDescriptor LevelDescriptor { get; private set; }
         public DronStats DronStats { get; private set; }
         public WorldObjectType TypeBoost { get; private set; }
+        public Vector2 Swipe { get; private set; }
         public string DronId { get; private set; }
         public float SpeedBoost { get; private set; }
         public float SpeedBoostTime { get; private set; }
-        public Vector2 Swipe { get; private set; }
-        
+
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
             CollisionObject = target;
@@ -58,10 +59,10 @@ namespace DeliveryRush.World.Event
             LevelDescriptor = levelDescriptor;
             DronId = dronId;
         }
-        
+
         public WorldEvent(string name, Vector2 swipe) : base(name)
         {
-            Swipe =swipe ;
+            Swipe = swipe;
         }
 
         public WorldEvent(string name) : base(name)

@@ -35,7 +35,7 @@ namespace DeliveryRush.Shop.Descriptor
         {
             try {
                 return GetShopItems().FirstOrDefault(x => x.Id == itemId);
-            } catch (Exception e) {
+            } catch (Exception) {
                 return null;
             }
         }

@@ -12,16 +12,15 @@ using DeliveryRush.Core.Audio;
 using DeliveryRush.Core.Audio.Model;
 using DeliveryRush.Core.Audio.Service;
 using DeliveryRush.Core.UI.Dialog;
+using DeliveryRush.LevelMap.Levels.IoC;
+using DeliveryRush.LevelMap.Levels.Model;
+using DeliveryRush.LevelMap.Levels.Service;
 using DeliveryRush.MainMenu.UI.Screen;
-using DeliveryRush.Resource.UI;
-using DeliveryRush.Resource.IoC;
-using DeliveryRush.Resource.Model;
-using DeliveryRush.Resource.Service;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace DeliveryRush.Resource.LevelDialogs
+namespace DeliveryRush.LevelMap.LevelDialogs
 {
     [UIController(PREFAB_NAME)]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
@@ -128,7 +127,6 @@ namespace DeliveryRush.Resource.LevelDialogs
             SetDialogStars();
             SetDialogLabels();
             SetButtons();
-            PlaySound(GameSounds.VICTORY);
         }
 
         private void PlaySound(Sound sound)

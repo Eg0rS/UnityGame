@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AgkUI.Binding.Attributes;
+using CircularScrollingList;
 using UnityEngine;
 
 namespace DeliveryRush.Billing.UI

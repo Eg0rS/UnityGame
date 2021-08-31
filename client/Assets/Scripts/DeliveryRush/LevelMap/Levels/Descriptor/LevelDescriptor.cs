@@ -1,6 +1,6 @@
 ﻿using AgkCommons.Configurations;
 
-namespace DeliveryRush.Resource.Descriptor
+namespace DeliveryRush.LevelMap.Levels.Descriptor
 {
     public class LevelDescriptor
     {

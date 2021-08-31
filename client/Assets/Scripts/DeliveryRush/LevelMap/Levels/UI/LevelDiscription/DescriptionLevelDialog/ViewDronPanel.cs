@@ -6,7 +6,7 @@ using IoC.Attribute;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DeliveryRush.Resource.UI
+namespace DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
 {
     [UIController(PREFAB_NAME)]
     public class ViewDronPanel : MonoBehaviour

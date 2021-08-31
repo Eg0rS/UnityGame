@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using AgkUI.Binding.Attributes;
+using CircularScrollingList;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace DeliveryRush.Resource.UI
+namespace DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
 {
     [UIController("UI/Scrolls/pfScrollViewDroneStore@embeded")]
     public class ScrollControllerForDescriptionDialog : MonoBehaviour

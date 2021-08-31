@@ -6,8 +6,9 @@ using AgkUI.Element.Text;
 using DeliveryRush.Core.Audio;
 using DeliveryRush.Core.Audio.Model;
 using DeliveryRush.Core.Audio.Service;
-using DeliveryRush.Resource.LevelDialogs;
+using DeliveryRush.LevelMap.LevelDialogs;
 using DeliveryRush.Location.Model;
+using DeliveryRush.Location.Service;
 using DeliveryRush.World;
 using DeliveryRush.World.Event;
 using IoC.Attribute;
@@ -126,7 +127,6 @@ namespace DeliveryRush.Location.UI
         [UIOnClick("ShieldButton")]
         private void OnShieldButton()
         {
-            PlaySound(GameSounds.SHIELD_ACTIVATED);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ACTIVATE_BOOST, WorldObjectType.SHIELD_BUSTER));
             _shieldButton.gameObject.SetActive(false);
             _shieldActive.SetActive(true);
@@ -141,7 +141,6 @@ namespace DeliveryRush.Location.UI
         [UIOnClick("SpeedButton")]
         private void OnSpeedButton()
         {
-            PlaySound(GameSounds.SPEED_ACTIVATED);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ACTIVATE_BOOST, WorldObjectType.SPEED_BUSTER));
             _speedButton.gameObject.SetActive(false);
         }

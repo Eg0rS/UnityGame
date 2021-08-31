@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace AnimationCurveExtend
+namespace CircularScrollingList.AnimationCurveExtend
 {
 /* The curve for evaluating the value by providing the delta time.
  * It has a counter to accumulate the time passed since a new evaluation period.

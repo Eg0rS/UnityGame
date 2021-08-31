@@ -10,12 +10,12 @@ using DeliveryRush.Core.Audio;
 using DeliveryRush.Core.Audio.Model;
 using DeliveryRush.Core.Audio.Service;
 using DeliveryRush.Core.UI.Dialog;
+using DeliveryRush.LevelMap.Levels.Service;
 using DeliveryRush.MainMenu.UI.Screen;
-using DeliveryRush.Resource.Service;
 using IoC.Attribute;
 using IoC.Util;
 
-namespace DeliveryRush.Resource.LevelDialogs
+namespace DeliveryRush.LevelMap.LevelDialogs
 {
     [UIController(PREFAB_NAME)]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
@@ -52,7 +52,6 @@ namespace DeliveryRush.Resource.LevelDialogs
 
             _failReason = failReason;
             SetDialogLabels();
-            PlaySound(GameSounds.FAILED);
         }
 
         private void PlaySound(Sound sound)
