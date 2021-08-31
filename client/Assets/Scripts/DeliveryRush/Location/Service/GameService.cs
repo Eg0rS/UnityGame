@@ -141,27 +141,21 @@ namespace DeliveryRush.Location.Service
             switch (collisionObject.GetComponent<PrefabModel>().ObjectType) {
                 case WorldObjectType.OBSTACLE:
                     OnDronCrash(collisionObject.GetComponent<ObstacleModel>());
-                    PlaySound(GameSounds.COLLISION);
                     break;
                 case WorldObjectType.Battery:
                     OnTakeBattery(collisionObject.GetComponent<BatteryModel>());
-                    PlaySound(GameSounds.BOOSTER_PICKUP);
                     break;
                 case WorldObjectType.BONUS_CHIPS:
                     OnTakeChip(collisionObject.GetComponent<BonusChipsModel>());
-                    PlaySound(GameSounds.CHIP_PICKUP);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
                     OnTakeSpeed(collisionObject.GetComponent<SpeedBoosterModel>());
-                    PlaySound(GameSounds.BOOSTER_PICKUP);
                     break;
                 case WorldObjectType.SHIELD_BUSTER:
                     OnTakeShield(collisionObject.GetComponent<ShieldBoosterModel>());
-                    PlaySound(GameSounds.BOOSTER_PICKUP);
                     break;
                 case WorldObjectType.FINISH:
                     Victory(collisionObject.GetComponent<FinishModel>());
-                    PlaySound(GameSounds.SHOW_DIALOG);
                     break;
             }
         }

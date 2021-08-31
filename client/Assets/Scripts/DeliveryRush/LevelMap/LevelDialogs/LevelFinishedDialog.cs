@@ -127,7 +127,6 @@ namespace DeliveryRush.LevelMap.LevelDialogs
             SetDialogStars();
             SetDialogLabels();
             SetButtons();
-            PlaySound(GameSounds.VICTORY);
         }
 
         private void PlaySound(Sound sound)

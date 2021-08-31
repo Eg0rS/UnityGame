@@ -52,7 +52,6 @@ namespace DeliveryRush.LevelMap.LevelDialogs
 
             _failReason = failReason;
             SetDialogLabels();
-            PlaySound(GameSounds.FAILED);
         }
 
         private void PlaySound(Sound sound)

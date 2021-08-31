@@ -10,7 +10,7 @@ namespace DeliveryRush.Location.Service
         private Vector2 _startTouch;
         private float _width;
         private float _height;
-        public const float SWIPE_THRESHOLD = 0.095f;
+        private const float SWIPE_THRESHOLD = 0.095f;
         
         private void Awake()
         {
@@ -44,11 +44,12 @@ namespace DeliveryRush.Location.Service
             float lengthX = Mathf.Abs(swipeVector.x / _width);
             float lengthY = Mathf.Abs(swipeVector.y / _height);
 
-            if (lengthX >= SWIPE_THRESHOLD || lengthY >= SWIPE_THRESHOLD) {
-                swipeVector = RoundVector(swipeVector);
-                _startTouch = _currentTouch;
-                Dispatch(new WorldEvent(WorldEvent.SWIPE, swipeVector));
+            if (!(lengthX >= SWIPE_THRESHOLD) && !(lengthY >= SWIPE_THRESHOLD)) {
+                return;
             }
+            swipeVector = RoundVector(swipeVector);
+            _startTouch = _currentTouch;
+            Dispatch(new WorldEvent(WorldEvent.SWIPE, swipeVector));
         }
 
         private Vector2 RoundVector(Vector2 vector)
