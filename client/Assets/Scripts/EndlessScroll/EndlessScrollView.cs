@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class Panel
+public class ScrollViewPanel
 {
     private Vector3 _startPosition;
     private Vector3 _moveToPosition;
     private readonly GameObject _object;
 
-    public Panel(Vector3 startPosition, Vector3 moveToPosition, GameObject gameObject)
+    public ScrollViewPanel(Vector3 startPosition, Vector3 moveToPosition, GameObject gameObject)
     {
         _startPosition = startPosition;
         _moveToPosition = moveToPosition;
@@ -53,7 +53,7 @@ public class EndlessScrollView : MonoBehaviour
 
     private IEnumerator _coroutine;
 
-    private readonly List<Panel> _panelList = new List<Panel>();
+    private readonly List<ScrollViewPanel> _panelList = new List<ScrollViewPanel>();
     
     public void Start()
     {
@@ -86,7 +86,7 @@ public class EndlessScrollView : MonoBehaviour
         }
 
         foreach (GameObject panel in _scrollpanels) {
-            _panelList.Add(new Panel(panel.transform.localPosition, new Vector3(0, 0, 0), panel));
+            _panelList.Add(new ScrollViewPanel(panel.transform.localPosition, new Vector3(0, 0, 0), panel));
         }
     }
 
@@ -128,14 +128,14 @@ public class EndlessScrollView : MonoBehaviour
             _selectedElement--;
         }
         Debug.Log("Right Move");
-        List<Panel> currentPanels = new List<Panel>();
-        foreach (Panel scrollpanel in _panelList) {
+        List<ScrollViewPanel> currentPanels = new List<ScrollViewPanel>();
+        foreach (ScrollViewPanel scrollpanel in _panelList) {
             Vector3 startPosition = scrollpanel.StartPosition;
             Vector3 moveToPosition = new Vector3(startPosition.x + scrollpanel.Object.GetComponent<RectTransform>().sizeDelta.x + _offset,
                                                  startPosition.y, startPosition.z);
             Vector3 currentPosition = scrollpanel.Object.transform.transform.localPosition;
-            Panel currentPanel = new Panel(currentPosition, moveToPosition, scrollpanel.Object);
-            currentPanels.Add(currentPanel);
+            ScrollViewPanel currentScrollViewPanel = new ScrollViewPanel(currentPosition, moveToPosition, scrollpanel.Object);
+            currentPanels.Add(currentScrollViewPanel);
             scrollpanel.StartPosition = moveToPosition;
         }
         _coroutine = MoveScrollPanels(currentPanels);
@@ -156,28 +156,28 @@ public class EndlessScrollView : MonoBehaviour
             _selectedElement++;
         }
         Debug.Log("Left Move");
-        List<Panel> currentPanels = new List<Panel>();
-        foreach (Panel scrollpanel in _panelList) {
+        List<ScrollViewPanel> currentPanels = new List<ScrollViewPanel>();
+        foreach (ScrollViewPanel scrollpanel in _panelList) {
             Vector3 startPosition = scrollpanel.StartPosition;
             Vector3 moveToPosition = new Vector3(startPosition.x - (scrollpanel.Object.GetComponent<RectTransform>().sizeDelta.x + _offset),
                                                  startPosition.y, startPosition.z);
             Vector3 currentPosition = scrollpanel.Object.transform.transform.localPosition;
-            Panel currentPanel = new Panel(currentPosition, moveToPosition, scrollpanel.Object);
-            currentPanels.Add(currentPanel);
+            ScrollViewPanel currentScrollViewPanel = new ScrollViewPanel(currentPosition, moveToPosition, scrollpanel.Object);
+            currentPanels.Add(currentScrollViewPanel);
             scrollpanel.StartPosition = moveToPosition;
         }
         _coroutine = MoveScrollPanels(currentPanels);
         StartCoroutine(_coroutine);
     }
 
-    private IEnumerator MoveScrollPanels(List<Panel> panels)
+    private IEnumerator MoveScrollPanels(List<ScrollViewPanel> panels)
     {
         _isMoving = true;
         float i = 0.0f;
         float rate = 1.0f / _scrollSpeed;
         while (i < 1.0) {
             i += Time.deltaTime * rate;
-            foreach (Panel panel in panels) {
+            foreach (ScrollViewPanel panel in panels) {
                 panel.Object.transform.localPosition = Vector3.Lerp(panel.StartPosition, panel.MoveToPosition, i);
             }
             yield return null;
