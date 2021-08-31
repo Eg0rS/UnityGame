@@ -2,7 +2,7 @@ using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Screens.Service;
 using DeliveryRush.Core;
-using DeliveryRush.Resource.Descriptor;
+using DeliveryRush.LevelMap.Levels.Descriptor;
 using DeliveryRush.Location.Service.Builder;
 using DeliveryRush.Location.UI.Screen;
 using DeliveryRush.World.Event;

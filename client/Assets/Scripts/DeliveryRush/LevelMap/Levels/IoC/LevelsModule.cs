@@ -1,8 +1,8 @@
-﻿using DeliveryRush.Resource.Repository;
-using DeliveryRush.Resource.Service;
+﻿using DeliveryRush.LevelMap.Levels.Repository;
+using DeliveryRush.LevelMap.Levels.Service;
 using IoC.Api;
 
-namespace DeliveryRush.Resource.IoC
+namespace DeliveryRush.LevelMap.Levels.IoC
 {
     public class LevelsModule : IIoCModule
     {

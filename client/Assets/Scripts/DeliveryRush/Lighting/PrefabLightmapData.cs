@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // ReSharper disable IdentifierTypo
-namespace DeliveryRush.PrefabLightmap
+namespace DeliveryRush.Lighting
 {
     [ExecuteAlways]
     [ExecuteInEditMode]

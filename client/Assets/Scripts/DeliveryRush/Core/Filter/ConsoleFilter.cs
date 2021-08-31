@@ -1,7 +1,7 @@
 using DeliveryRush.Core.Configurations;
-using IngameDebugConsole.Console.Service;
 using IoC.Attribute;
 using IoC.Util;
+using Plugins.IngameDebugConsole.Scripts.Console.Service;
 
 namespace DeliveryRush.Core.Filter
 {

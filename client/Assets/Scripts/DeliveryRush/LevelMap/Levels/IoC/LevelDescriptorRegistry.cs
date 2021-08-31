@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using DeliveryRush.Resource.Descriptor;
+using DeliveryRush.LevelMap.Levels.Descriptor;
 
-namespace DeliveryRush.Resource.IoC
+namespace DeliveryRush.LevelMap.Levels.IoC
 {
     public class LevelDescriptorRegistry
     {

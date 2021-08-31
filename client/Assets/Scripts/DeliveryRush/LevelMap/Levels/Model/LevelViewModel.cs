@@ -1,7 +1,6 @@
-﻿using DeliveryRush.Resource.Descriptor;
-using DeliveryRush.Resource.IoC;
+﻿using DeliveryRush.LevelMap.Levels.Descriptor;
 
-namespace DeliveryRush.Resource.Model
+namespace DeliveryRush.LevelMap.Levels.Model
 {
     public class LevelViewModel
     {

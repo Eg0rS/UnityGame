@@ -1,5 +1,5 @@
-using IngameDebugConsole.Console.Service;
 using IoC.Api;
+using Plugins.IngameDebugConsole.Scripts.Console.Service;
 
 namespace DeliveryRush.Console.IoC
 {

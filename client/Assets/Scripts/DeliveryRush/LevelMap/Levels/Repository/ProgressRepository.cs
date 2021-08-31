@@ -1,7 +1,7 @@
 ﻿using DeliveryRush.Core.Repository;
-using DeliveryRush.Resource.Model;
+using DeliveryRush.LevelMap.Levels.Model;
 
-namespace DeliveryRush.Resource.Repository
+namespace DeliveryRush.LevelMap.Levels.Repository
 {
     public class ProgressRepository : LocalPrefsSingleRepository<PlayerProgressModel>
     {

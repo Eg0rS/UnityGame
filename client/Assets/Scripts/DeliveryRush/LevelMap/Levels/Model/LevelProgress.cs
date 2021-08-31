@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace DeliveryRush.Resource.Model
+﻿namespace DeliveryRush.LevelMap.Levels.Model
 {
     public class LevelProgress
     {

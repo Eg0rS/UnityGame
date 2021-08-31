@@ -1,12 +1,13 @@
 using System.Collections.Generic;
+using DeliveryRush.Lighting;
 using UnityEditor;
 using UnityEngine;
 
 // ReSharper disable IdentifierTypo
-namespace DeliveryRush.PrefabLightmap
+namespace Editor
 {
     [CustomEditor(typeof(BakingPrefabLightmap))]
-    public class PrefabLightmapEditor : Editor
+    public class PrefabLightmapEditor : UnityEditor.Editor
     {
         private const string BAKE_BUTTON_NAME = "Bake";
         private const string CHANGE_SCALE_IN_LIGHTMAP_BUTTON_NAME = "Change scale";

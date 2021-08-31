@@ -1,11 +1,14 @@
 using UnityEngine;
 
-public class Rotate : MonoBehaviour
+namespace DeliveryRush
 {
-    [SerializeField] public float speed = 0; 
-  
-    void Update()
+    public class Rotate : MonoBehaviour
     {
-        transform.Rotate(0, speed * Time.deltaTime, 0, Space.Self); 
+        [SerializeField] public float speed = 0; 
+  
+        void Update()
+        {
+            transform.Rotate(0, speed * Time.deltaTime, 0, Space.Self); 
+        }
     }
 }

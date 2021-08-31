@@ -37,11 +37,12 @@ namespace DeliveryRush.Location.World.Dron
             _bezier.enabled = false;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
             _currentPosition = transform.localPosition;
         }
 
-        private void StartGame(WorldEvent worldObjectEvent)
+        private void StartGame(WorldEvent worldEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
@@ -59,11 +60,12 @@ namespace DeliveryRush.Location.World.Dron
             _bezier.speed = _levelSpeed;
         }
 
-        private void OnDestroy()
+        private void EndGame(WorldEvent worldEvent)
         {
             _gestureService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
-            _gestureService.RemoveListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
-            _gestureService.RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
 
         private void OnSwiped(WorldEvent objectEvent)
@@ -100,7 +102,7 @@ namespace DeliveryRush.Location.World.Dron
             }
             _isMoving = null;
         }
-        
+
         private void OnCollisionEnter(Collision other)
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));

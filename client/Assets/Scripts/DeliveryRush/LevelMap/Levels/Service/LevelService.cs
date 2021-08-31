@@ -6,17 +6,16 @@ using AgkCommons.Resources;
 using AgkUI.Dialog.Service;
 using DeliveryRush.Billing.Service;
 using DeliveryRush.Core.Filter;
+using DeliveryRush.LevelMap.Levels.Descriptor;
+using DeliveryRush.LevelMap.Levels.Event;
+using DeliveryRush.LevelMap.Levels.IoC;
+using DeliveryRush.LevelMap.Levels.Model;
+using DeliveryRush.LevelMap.Levels.Repository;
 using DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog;
-using DeliveryRush.Resource.Descriptor;
-using DeliveryRush.Resource.Event;
-using DeliveryRush.Resource.IoC;
-using DeliveryRush.Resource.Model;
-using DeliveryRush.Resource.Repository;
-using DeliveryRush.Resource.UI;
 using IoC.Attribute;
 using IoC.Util;
 
-namespace DeliveryRush.Resource.Service
+namespace DeliveryRush.LevelMap.Levels.Service
 {
     public class LevelService : GameEventDispatcher, IInitable
     {
