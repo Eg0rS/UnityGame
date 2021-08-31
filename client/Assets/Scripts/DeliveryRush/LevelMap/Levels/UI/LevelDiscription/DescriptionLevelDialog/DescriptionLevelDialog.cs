@@ -61,11 +61,8 @@ namespace DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialo
 
         [UIObjectBinding("CargoImage")]
         private GameObject _cargoImage;
-
         private LevelDescriptor _levelDescriptor;
-        private List<ViewDronPanel> _viewDronPanels = new List<ViewDronPanel>();
-        private ListPositionCtrl _listPositionCtrl;
-        private float _screenWidth;
+        private EndlessScrollView _endlessScroll;
 
         [UICreated]
         public void Init(LevelDescriptor levelDescriptor)
@@ -79,7 +76,6 @@ namespace DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialo
             DisplayImage();
             DisplayTasks(chipText, durabilityText, timeText);
             CreateChoiseDron();
-            _screenWidth = Screen.width;
         }
 
         private void DisplayTitle()
@@ -107,42 +103,29 @@ namespace DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialo
         private void CreateChoiseDron()
         {
             GameObject itemContainer = GameObject.Find("ScrollContainer");
+            _endlessScroll = itemContainer.GetComponent<EndlessScrollView>();
             foreach (InventoryItemModel item in _inventoryService.Inventory.Items) {
                 _uiService.Create<ViewDronPanel>(UiModel.Create<ViewDronPanel>(item).Container(itemContainer))
-                          .Then(controller => { _viewDronPanels.Add(controller); })
+                          .Then(controller => { _endlessScroll.ScrollPanelList.Add(controller.gameObject); })
+                          .Then(() => { _endlessScroll.Init(); })
                           .Done();
             }
-            _uiService.Create<ScrollControllerForDescriptionDialog>(UiModel.Create<ScrollControllerForDescriptionDialog>(_viewDronPanels)
-                                                                           .Container(itemContainer))
-                      .Then(controller => {
-                          _listPositionCtrl = controller._control;
-                          if (_inventoryService.Inventory.Items.Count % 2 == 0) {
-                              itemContainer.GetComponent<RectTransform>().localPosition = new Vector3(400, 0, 0);
-                          }
-                      })
-                      .Done();
         }
 
         private void MoveLeft()
         {
-            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(1);
+            _endlessScroll.MoveRight();
         }
 
         private void MoveRight()
         {
-            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);
+            _endlessScroll.MoveLeft();
         }
 
         [UIOnClick("StartGameButton")]
         private void OnStartGameButton()
         {
-            string dronId = "";
-            foreach (ViewDronPanel panel in _viewDronPanels) {
-                RectTransform transform = panel.gameObject.GetComponent<RectTransform>();
-                if (transform.position.x >= _screenWidth / 3 && transform.position.x <= _screenWidth) {
-                    dronId = panel.ItemId;
-                }
-            }
+            string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronPanel>().ItemId;
             _levelService.CurrentLevelId = _levelDescriptor.Id;
             _gameService.StartGame(_levelDescriptor, dronId);
         }

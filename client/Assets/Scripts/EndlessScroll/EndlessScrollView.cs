@@ -56,7 +56,7 @@ public class EndlessScrollView : MonoBehaviour
 
     private readonly List<ScrollViewPanel> _panelList = new List<ScrollViewPanel>();
     
-    public void Start()
+    public void Init()
     {
         _selectedElement = _defaultCentralElement;
         InitScroll(_initCoords);
@@ -70,11 +70,11 @@ public class EndlessScrollView : MonoBehaviour
         List<GameObject> leftList = _scrollPanels.GetRange(0, _selectedElement);
         List<GameObject> rightList = _scrollPanels.GetRange(_selectedElement + 1, _scrollPanels.Count - _selectedElement - 1);
         int countLeftPanel = leftList.Count;
-        foreach (GameObject scrollpanel in leftList) {
-            Vector3 localPosition = scrollpanel.transform.localPosition;
-            localPosition = new Vector3(localPosition.x - (scrollpanel.GetComponent<RectTransform>().sizeDelta.x + _offset) * countLeftPanel,
+        foreach (GameObject scrollPanel in leftList) {
+            Vector3 localPosition = scrollPanel.transform.localPosition;
+            localPosition = new Vector3(localPosition.x - (scrollPanel.GetComponent<RectTransform>().sizeDelta.x + _offset) * countLeftPanel,
                                         localPosition.y, localPosition.z);
-            scrollpanel.transform.localPosition = localPosition;
+            scrollPanel.transform.localPosition = localPosition;
             countLeftPanel--;
         }
         int countRightPanels = 1;
@@ -105,17 +105,7 @@ public class EndlessScrollView : MonoBehaviour
         MoveRight(false);
     }
 
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-            MoveRight();
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow)) {
-            MoveLeft();
-        }
-    }
-
-    private void MoveRight(bool isLastElement = true)
+    public void MoveRight(bool isLastElement = true)
     {
         if (_isMoving) {
             StopCoroutine(_coroutine);
@@ -130,20 +120,20 @@ public class EndlessScrollView : MonoBehaviour
         }
         Debug.Log("Right Move");
         List<ScrollViewPanel> currentPanels = new List<ScrollViewPanel>();
-        foreach (ScrollViewPanel scrollpanel in _panelList) {
-            Vector3 startPosition = scrollpanel.StartPosition;
-            Vector3 moveToPosition = new Vector3(startPosition.x + scrollpanel.Object.GetComponent<RectTransform>().sizeDelta.x + _offset,
+        foreach (ScrollViewPanel scrollPanel in _panelList) {
+            Vector3 startPosition = scrollPanel.StartPosition;
+            Vector3 moveToPosition = new Vector3(startPosition.x + scrollPanel.Object.GetComponent<RectTransform>().sizeDelta.x + _offset,
                                                  startPosition.y, startPosition.z);
-            Vector3 currentPosition = scrollpanel.Object.transform.transform.localPosition;
-            ScrollViewPanel currentScrollViewPanel = new ScrollViewPanel(currentPosition, moveToPosition, scrollpanel.Object);
+            Vector3 currentPosition = scrollPanel.Object.transform.transform.localPosition;
+            ScrollViewPanel currentScrollViewPanel = new ScrollViewPanel(currentPosition, moveToPosition, scrollPanel.Object);
             currentPanels.Add(currentScrollViewPanel);
-            scrollpanel.StartPosition = moveToPosition;
+            scrollPanel.StartPosition = moveToPosition;
         }
         _coroutine = MoveScrollPanels(currentPanels);
         StartCoroutine(_coroutine);
     }
 
-    private void MoveLeft(bool isLastElement = true)
+    public void MoveLeft(bool isLastElement = true)
     {
         if (_isMoving) {
             StopCoroutine(_coroutine);
@@ -158,14 +148,14 @@ public class EndlessScrollView : MonoBehaviour
         }
         Debug.Log("Left Move");
         List<ScrollViewPanel> currentPanels = new List<ScrollViewPanel>();
-        foreach (ScrollViewPanel scrollpanel in _panelList) {
-            Vector3 startPosition = scrollpanel.StartPosition;
-            Vector3 moveToPosition = new Vector3(startPosition.x - (scrollpanel.Object.GetComponent<RectTransform>().sizeDelta.x + _offset),
+        foreach (ScrollViewPanel scrollPanel in _panelList) {
+            Vector3 startPosition = scrollPanel.StartPosition;
+            Vector3 moveToPosition = new Vector3(startPosition.x - (scrollPanel.Object.GetComponent<RectTransform>().sizeDelta.x + _offset),
                                                  startPosition.y, startPosition.z);
-            Vector3 currentPosition = scrollpanel.Object.transform.transform.localPosition;
-            ScrollViewPanel currentScrollViewPanel = new ScrollViewPanel(currentPosition, moveToPosition, scrollpanel.Object);
+            Vector3 currentPosition = scrollPanel.Object.transform.transform.localPosition;
+            ScrollViewPanel currentScrollViewPanel = new ScrollViewPanel(currentPosition, moveToPosition, scrollPanel.Object);
             currentPanels.Add(currentScrollViewPanel);
-            scrollpanel.StartPosition = moveToPosition;
+            scrollPanel.StartPosition = moveToPosition;
         }
         _coroutine = MoveScrollPanels(currentPanels);
         StartCoroutine(_coroutine);
@@ -186,8 +176,13 @@ public class EndlessScrollView : MonoBehaviour
         _isMoving = false;
     }
 
-    public int MiddleElement
+    public GameObject MiddleElement
     {
-        get { return _selectedElement; }
+        get { return _scrollPanels[_selectedElement]; }
     }
+    public List<GameObject> ScrollPanelList
+    {
+        get { return _scrollPanels; }
+        set { _scrollPanels = value; }
+    } 
 }

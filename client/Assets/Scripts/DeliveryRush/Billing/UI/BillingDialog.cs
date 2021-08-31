@@ -41,7 +41,6 @@ namespace DeliveryRush.Billing.UI
         private UILabel _countChips;
 
         private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
-        private ListPositionCtrl _listPositionCtrl;
 
         [UICreated]
         public void Init()
@@ -59,9 +58,7 @@ namespace DeliveryRush.Billing.UI
                           .Then(controller => { _billingItemControllers.Add(controller); })
                           .Done();
             }
-            _uiService.Create<BillingScrollController>(UiModel.Create<BillingScrollController>(_billingItemControllers).Container(itemContainer))
-                      .Then(controller => { _listPositionCtrl = controller.Control; })
-                      .Done();
+            
         }
 
         private void UpdateCredits()

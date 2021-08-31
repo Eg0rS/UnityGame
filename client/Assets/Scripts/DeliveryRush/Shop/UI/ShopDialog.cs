@@ -6,7 +6,6 @@ using AgkUI.Dialog.Service;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
-using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkCommons.Input.Gesture.Service;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
@@ -50,8 +49,7 @@ namespace DeliveryRush.Shop.UI
         [Inject]
         private IGestureService _gestureService;
 
-        private ListPositionCtrl _listPositionCtrl;
-        private readonly List<ShopItemPanel> _shopItemPanels = new List<ShopItemPanel>();
+        private EndlessScrollView _endlessScroll;
 
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
@@ -84,42 +82,30 @@ namespace DeliveryRush.Shop.UI
         {
             List<ShopItemDescriptor> shopItemDescriptors = _shopDescriptor.ShopItemDescriptors;
             GameObject itemContainer = GameObject.Find("ScrollContainer");
+            _endlessScroll = itemContainer.GetComponent<EndlessScrollView>();
             foreach (ShopItemDescriptor itemDescriptor in shopItemDescriptors) {
                 bool isHasItem = _inventoryService.Inventory.HasItem(itemDescriptor.Id);
                 _uiService.Create<ShopItemPanel>(UiModel.Create<ShopItemPanel>(itemDescriptor, isHasItem).Container(itemContainer))
-                          .Then(controller => { _shopItemPanels.Add(controller); })
+                          .Then(controller => { _endlessScroll.ScrollPanelList.Add(controller.gameObject); })
+                          .Then(() => { _endlessScroll.Init(); })
                           .Done();
             }
-            _uiService.Create<ScrollController>(UiModel.Create<ScrollController>(_shopItemPanels).Container(itemContainer))
-                      .Then(controller => { _listPositionCtrl = controller.Control; })
-                      .Done();
         }
 
         [UIOnClick("LeftButton")]
         private void OnLeftClick()
         {
             _logger.Debug("clickLeft");
-            MoveLeft();
+            _endlessScroll.MoveRight();
         }
 
         [UIOnClick("RightButton")]
         private void OnRightClick()
         {
             _logger.Debug("clickRight");
-            MoveRight();
+            _endlessScroll.MoveLeft();
         }
-
-        private void MoveLeft()
-        {
-            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(1);
-        }
-
-        private void MoveRight()
-        {
-            _listPositionCtrl.gameObject.GetComponent<ListPositionCtrl>().SetUnitMove(-1);
-            ;
-        }
-
+        
         [UIOnClick("CloseButton")]
         private void CloseButton()
         {
