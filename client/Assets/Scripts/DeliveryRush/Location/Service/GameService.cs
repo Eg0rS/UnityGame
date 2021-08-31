@@ -231,7 +231,7 @@ namespace DeliveryRush.Location.Service
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _dronStats));
         }
-        
+
         public void EndGame()
         {
             StopCoroutine(_fallingEnergy);
@@ -300,7 +300,6 @@ namespace DeliveryRush.Location.Service
                     DronFailed(1);
                 } else {
                     UiUpdate();
-                    Debug.Log(_dronStats._energy);
                     yield return new WaitForSeconds(1f);
                 }
             }
