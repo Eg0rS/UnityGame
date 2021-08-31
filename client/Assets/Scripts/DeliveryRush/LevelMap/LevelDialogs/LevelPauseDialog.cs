@@ -11,7 +11,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace DeliveryRush.Resource.LevelDialogs
+namespace DeliveryRush.LevelMap.LevelDialogs
 {
     [UIController(PREFAB_NAME)]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
@@ -39,9 +39,9 @@ namespace DeliveryRush.Resource.LevelDialogs
         [UIOnClick("LevelMapButton")]
         private void LevelMapButtonClicked()
         {
+            _gameService.EndGame();
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _gameService.IsPlay = false;
         }
 
         [UIOnClick("ContinueButton")]

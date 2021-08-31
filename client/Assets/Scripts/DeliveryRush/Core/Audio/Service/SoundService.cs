@@ -4,11 +4,9 @@ using Adept.Logger;
 using AgkCommons.CodeStyle;
 using AgkCommons.Resources;
 using DeliveryRush.Core.Audio.Model;
-using DeliveryRush.Resource;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using UnityEngine;
-using DeliveryRush.Core.Audio;
 
 namespace DeliveryRush.Core.Audio.Service
 {
@@ -16,7 +14,6 @@ namespace DeliveryRush.Core.Audio.Service
     public class SoundService : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<SoundService>();
-
 
         [Inject]
         private readonly ResourceService _resourceService;
@@ -44,12 +41,11 @@ namespace DeliveryRush.Core.Audio.Service
                 return;
             }
             AudioClip clip = _soundClips[actualSoundName];
-            
+
             _sounds.Add(sound);
-            foreach (Sound item in _sounds)
-            {
+            foreach (Sound item in _sounds) {
             }
-            
+
             _audioService.PlaySound(clip, sound.Track, sound.Looped);
         }
 
@@ -92,22 +88,10 @@ namespace DeliveryRush.Core.Audio.Service
         private void LoadEmbededSounds()
         {
             List<Sound> embededSounds = new List<Sound> {
-                    GameSounds.CHIP_PICKUP,
-                    GameSounds.BOOSTER_PICKUP,
-                    GameSounds.SHIELD_ACTIVATED,
-                    GameSounds.SPEED_ACTIVATED,
-                    GameSounds.COLLISION,
-                    GameSounds.DRON_CRASHED,
-                    GameSounds.DRON_TAKEOFF,
-                    GameSounds.DRON_LANDING,
-                    GameSounds.SHOW_DIALOG,
-                    GameSounds.SHIFT,
-                    GameSounds.FAILED,
-                    GameSounds.VICTORY
             };
             foreach (Sound sound in embededSounds) {
                 string soundName = sound.SoundName;
-              
+
                 _resourceService.LoadAudioClip(sound.SoundPath, (loadedClip, loadedParams) => {
                     if (loadedClip == null) {
                         _logger.Warn("Sound not loaded: prefab=" + sound.SoundPath);
@@ -122,6 +106,4 @@ namespace DeliveryRush.Core.Audio.Service
             }
         }
     }
-
-    
 }

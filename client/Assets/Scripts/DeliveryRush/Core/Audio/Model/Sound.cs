@@ -1,5 +1,5 @@
 ﻿namespace DeliveryRush.Core.Audio.Model
-{
+{ 
     public class Sound
     {
         private readonly string _soundName;

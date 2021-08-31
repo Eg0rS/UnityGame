@@ -1,6 +1,6 @@
 ﻿using AgkCommons.Event;
 
-namespace DeliveryRush.Resource.Event
+namespace DeliveryRush.LevelMap.Levels.Event
 {
     public class LevelEvent : GameEvent
     {

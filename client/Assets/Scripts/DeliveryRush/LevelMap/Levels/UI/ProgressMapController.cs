@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
+using AgkUI.Core.Model;
 using AgkUI.Core.Service;
+using DeliveryRush.LevelMap.Levels.Descriptor;
+using DeliveryRush.LevelMap.Levels.Event;
+using DeliveryRush.LevelMap.Levels.Model;
+using DeliveryRush.LevelMap.Levels.Service;
+using DeliveryRush.MainMenu.UI.Panel;
 using IoC.Attribute;
 using UnityEngine;
-using AgkUI.Core.Model;
-using DeliveryRush.MainMenu.UI.Panel;
-using DeliveryRush.Resource.Descriptor;
-using DeliveryRush.Resource.Event;
-using DeliveryRush.Resource.Model;
-using DeliveryRush.Resource.Service;
 
-namespace DeliveryRush.Resource.UI
+namespace DeliveryRush.LevelMap.Levels.UI
 {
     [UIController("UI/Panel/pfMiddlePanel@embeded")]
     public class ProgressMapController : MonoBehaviour

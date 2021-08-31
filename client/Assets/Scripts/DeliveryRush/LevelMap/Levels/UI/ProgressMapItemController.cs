@@ -4,14 +4,14 @@ using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Element.Text;
+using DeliveryRush.LevelMap.Levels.Model;
+using DeliveryRush.LevelMap.Levels.Service;
 using DeliveryRush.MainMenu.UI.Panel;
-using DeliveryRush.Resource.Model;
-using DeliveryRush.Resource.Service;
 using IoC.Attribute;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DeliveryRush.Resource.UI
+namespace DeliveryRush.LevelMap.Levels.UI
 {
     [UIController("UI/Panel/pfLevelProgressItemPanel@embeded")]
     public class ProgressMapItemController : MonoBehaviour

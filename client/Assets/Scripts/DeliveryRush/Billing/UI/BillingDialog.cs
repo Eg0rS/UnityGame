@@ -14,7 +14,6 @@ using DeliveryRush.Billing.Event;
 using DeliveryRush.Billing.IoC;
 using DeliveryRush.Billing.Service;
 using DeliveryRush.Core.UI.Dialog;
-using DeliveryRush.Shop.UI;
 using UnityEngine;
 
 namespace DeliveryRush.Billing.UI

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using AgkCommons.Input.Gesture.Model;
 using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkUI.Binding.Attributes;
@@ -12,10 +11,9 @@ using AgkUI.Element.Text;
 using DeliveryRush.Core.UI.Dialog;
 using DeliveryRush.Inventory.Model;
 using DeliveryRush.Inventory.Service;
+using DeliveryRush.LevelMap.Levels.Descriptor;
+using DeliveryRush.LevelMap.Levels.Service;
 using DeliveryRush.Location.Service;
-using DeliveryRush.Resource.Descriptor;
-using DeliveryRush.Resource.Service;
-using DeliveryRush.Resource.UI;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
