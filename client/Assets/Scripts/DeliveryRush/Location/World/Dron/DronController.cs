@@ -14,9 +14,9 @@ namespace DeliveryRush.Location.World.Dron
 {
     public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
     {
+        private const float ACCELERATION = 0.2f;
         private BezierWalkerWithSpeed _bezier;
         private float _levelSpeed = 8;
-        private const float ACCELERATION = 0.2f;
         private bool _isGameRun;
         private float _boostSpeed;
         private Vector3 _currentPosition;

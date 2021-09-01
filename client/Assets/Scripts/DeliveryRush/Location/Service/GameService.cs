@@ -265,8 +265,7 @@ namespace DeliveryRush.Location.Service
         private void CreateDrone(string dronId)
         {
             GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform.position,
-                        Quaternion.Euler(0, 0, 0), parent.transform);
+            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);
         }
 
         private int CalculateStars(float timeInGame)

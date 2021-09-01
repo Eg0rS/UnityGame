@@ -14,7 +14,7 @@ namespace DeliveryRush.Location.Service
     [Injectable]
     public class LocationService : GameEventDispatcher
     {
-        [Inject]
+        [Inject] 
         private ScreenManager _screenManager;
 
         [Inject]
