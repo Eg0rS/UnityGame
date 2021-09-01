@@ -6,12 +6,12 @@ namespace DeliveryRush.Location.Service
 {
     public class GestureService : GameEventDispatcher
     {
+        private const float SWIPE_THRESHOLD = 0.095f;
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
         private float _width;
         private float _height;
-        private const float SWIPE_THRESHOLD = 0.095f;
-        
+
         private void Awake()
         {
             _width = Screen.width;

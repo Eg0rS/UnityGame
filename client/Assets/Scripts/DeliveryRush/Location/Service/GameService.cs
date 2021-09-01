@@ -120,7 +120,7 @@ namespace DeliveryRush.Location.Service
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, ActivateBoost);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
             CreateDrone(_dronId);
         }
 
@@ -200,7 +200,7 @@ namespace DeliveryRush.Location.Service
             UiUpdate();
         }
 
-        private void ActivateBoost(WorldEvent @event)
+        private void OnActivateBoost(WorldEvent @event)
         {
             switch (@event.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
@@ -228,7 +228,9 @@ namespace DeliveryRush.Location.Service
 
         public void EndGame()
         {
-            StopCoroutine(_fallingEnergy);
+            if (_fallingEnergy != null) {
+                StopCoroutine(_fallingEnergy);
+            }
             IsPlay = false;
             Time.timeScale = 0f;
             _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
