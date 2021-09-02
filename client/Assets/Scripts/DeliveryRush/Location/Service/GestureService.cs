@@ -22,20 +22,32 @@ namespace DeliveryRush.Location.Service
 
         private void Update()
         {
-            if (Input.touchCount <= 0) {
-                return;
+            if (Input.touchCount > 0) {
+                Touch touch = Input.touches[0];
+                if (touch.phase == TouchPhase.Began) {
+                    _startTouch = touch.position;
+                    _currentTouch = touch.position;
+                } else if (touch.phase == TouchPhase.Moved) {
+                    _currentTouch = touch.position;
+                    DetectSwipe();
+                } else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
+                    _startTouch = Vector2.zero;
+                    _currentTouch = Vector2.zero;
+                }
+#if UNITY_EDITOR
+            } else {    
+                if (Input.GetMouseButtonDown(0)) {
+                    _startTouch = Input.mousePosition;
+                    _currentTouch = Input.mousePosition;
+                } else if (Input.GetMouseButton(0)) {
+                    _currentTouch = Input.mousePosition;
+                    DetectSwipe();
+                } else if (Input.GetMouseButtonUp(0)) {
+                    _startTouch = Vector2.zero;
+                    _currentTouch = Vector2.zero;
+                }
             }
-            Touch touch = Input.touches[0];
-            if (touch.phase == TouchPhase.Began) {
-                _startTouch = touch.position;
-                _currentTouch = touch.position;
-            } else if (touch.phase == TouchPhase.Moved) {
-                _currentTouch = touch.position;
-                DetectSwipe();
-            } else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
-                _startTouch = Vector2.zero;
-                _currentTouch = Vector2.zero;
-            }
+#endif
         }
 
         private void DetectSwipe()
