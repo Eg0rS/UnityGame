@@ -20,7 +20,7 @@ namespace DeliveryRush.Location.World.Dron
         private bool _isGameRun;
         private float _boostSpeed;
         private Vector3 _currentPosition;
-        private float _shiftSpeed = 0.03f;
+        private float _shiftSpeed = 0.055f;
         private Coroutine _isMoving;
 
         [Inject]

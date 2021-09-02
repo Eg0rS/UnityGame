@@ -6,7 +6,7 @@ namespace DeliveryRush.Location.Service
 {
     public class GestureService : GameEventDispatcher
     {
-        private const float SWIPE_THRESHOLD = 0.095f;
+        private const float SWIPE_THRESHOLD = 0.1f;
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
         private float _width;
@@ -34,8 +34,9 @@ namespace DeliveryRush.Location.Service
                     _startTouch = Vector2.zero;
                     _currentTouch = Vector2.zero;
                 }
+            }
 #if UNITY_EDITOR
-            } else {    
+            else {
                 if (Input.GetMouseButtonDown(0)) {
                     _startTouch = Input.mousePosition;
                     _currentTouch = Input.mousePosition;
