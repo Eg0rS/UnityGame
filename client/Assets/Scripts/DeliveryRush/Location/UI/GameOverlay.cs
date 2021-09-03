@@ -64,7 +64,7 @@ namespace DeliveryRush.Location.UI
             _speedButton.gameObject.SetActive(false);
             _shieldActive.SetActive(false);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.UI_UPDATE, UiUpdate);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_BOOST, SetActiveBoost);
         }

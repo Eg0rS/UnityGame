@@ -17,7 +17,7 @@ namespace DeliveryRush.World.Event
         public const string UI_UPDATE = "UiUpdate";
         public const string ACTIVATE_BOOST = "ActivateBoost";
         public const string TAKE_BOOST = "TakeBoost";
-        public const string START_GAME = "StartGame";
+        public const string START_FLIGHT = "StartFlight";
         public const string END_GAME = "EndGame";
         public const string DRON_BOOST_SPEED = "DronBoostSpeed";
         public const string WORLD_CREATED = "WorldCreated";

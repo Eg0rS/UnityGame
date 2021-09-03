@@ -14,28 +14,28 @@ namespace DeliveryRush.Location.World.Dron
 {
     public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
     {
+        [Inject]
+        private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject]
+        private GestureService _gestureService;
+
+        public WorldObjectType ObjectType { get; }
+        
         private const float ACCELERATION = 0.2f;
+        private const float SHIFT_SPEED = 0.055f;
         private BezierWalkerWithSpeed _bezier;
         private float _levelSpeed = 8;
         private bool _isGameRun;
         private float _boostSpeed;
         private Vector3 _currentPosition;
-        private float _shiftSpeed = 0.055f;
         private Coroutine _isMoving;
-
-        [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
-
-        public WorldObjectType ObjectType { get; }
-
-        [Inject]
-        private GestureService _gestureService;
 
         public void Init(DronModel model)
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
@@ -63,7 +63,7 @@ namespace DeliveryRush.Location.World.Dron
         private void EndGame(WorldEvent worldEvent)
         {
             _gestureService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_GAME, StartGame);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
@@ -97,7 +97,7 @@ namespace DeliveryRush.Location.World.Dron
             float distance = (newPos - prevPos).magnitude;
             float shiftingСoefficient = 0;
             while (shiftingСoefficient < 1) {
-                shiftingСoefficient += _shiftSpeed / distance;
+                shiftingСoefficient += SHIFT_SPEED / distance;
                 transform.localPosition = Vector3.Lerp(prevPos, newPos, shiftingСoefficient);
                 yield return new WaitForSeconds(0.01f);
             }

@@ -6,11 +6,9 @@ using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
-using DeliveryRush.Core.Audio;
-using DeliveryRush.Core.Audio.Model;
-using DeliveryRush.Core.Audio.Service;
 using DeliveryRush.Core.UI.Dialog;
 using DeliveryRush.LevelMap.Levels.Service;
+using DeliveryRush.Location.Service;
 using DeliveryRush.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
@@ -25,9 +23,7 @@ namespace DeliveryRush.LevelMap.LevelDialogs
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedCompactDialog@embeded";
 
         private string _levelId;
-        private short _failReason = 0;
-        // "Закончилась энергия"
-        // "Дрон разбился"
+        private FailedReasons _failReason;
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
@@ -38,26 +34,17 @@ namespace DeliveryRush.LevelMap.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
-        [Inject]
-        private SoundService _soundService;
-
         [UIComponentBinding("FailReasonTitle")]
         private UILabel _failReasonLabel;
 
         [UICreated]
-        public void Init(short failReason)
+        public void Init(FailedReasons failReason)
         {
             _logger.Debug("[LevelFailedCompactDialog] Init()...");
             _levelId = _levelService.CurrentLevelId;
 
             _failReason = failReason;
             SetDialogLabels();
-        }
-
-        private void PlaySound(Sound sound)
-        {
-            _soundService.StopAllSounds();
-            _soundService.PlaySound(sound);
         }
 
         [UIOnClick("RestartButton")]
@@ -78,14 +65,11 @@ namespace DeliveryRush.LevelMap.LevelDialogs
         private void SetDialogLabels()
         {
             switch (_failReason) {
-                case 0:
+                case FailedReasons.Crashed:
                     _failReasonLabel.text = "Дрон разбился";
                     break;
-                case 1:
+                case FailedReasons.EnergyFalled:
                     _failReasonLabel.text = "Закончилась энергия";
-                    break;
-                default:
-                    _failReasonLabel.text = "Дрон разбился";
                     break;
             }
         }
