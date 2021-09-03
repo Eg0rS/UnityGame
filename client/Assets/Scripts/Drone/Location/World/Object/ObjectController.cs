@@ -1,0 +1,16 @@
+﻿using Drone.Location.Model;
+using Drone.Location.Model.Object;
+using UnityEngine;
+
+namespace Drone.Location.World.Object
+{
+    public class ObjectController : MonoBehaviour, IWorldObjectController<ObjectModel>
+    {
+        public WorldObjectType ObjectType { get; private set; }
+
+        public void Init(ObjectModel model)
+        {
+            ObjectType = model.ObjectType;
+        }
+    }
+}
