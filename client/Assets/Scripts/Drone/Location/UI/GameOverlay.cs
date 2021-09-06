@@ -57,7 +57,7 @@ namespace Drone.Location.UI
         [UICreated]
         private void Init(DronStats dronStats)
         {
-            _maxDurability = dronStats._durability; //для вывода в процентах
+            _maxDurability = dronStats.durability; //для вывода в процентах
             SetStats(dronStats);
             _timer.text = "0,00";
             _shieldButton.gameObject.SetActive(false);
@@ -113,9 +113,9 @@ namespace Drone.Location.UI
 
         private void SetStats(DronStats dronStats)
         {
-            _countChips.text = dronStats._countChips.ToString();
-            _countEnergy.text = dronStats._energy.ToString("F0");
-            _durability.text = ((dronStats._durability / _maxDurability) * 100).ToString("F0") + "%";
+            _countChips.text = dronStats.countChips.ToString();
+            _countEnergy.text = dronStats.energy.ToString("F0");
+            _durability.text = ((dronStats.durability / _maxDurability) * 100).ToString("F0") + "%";
         }
 
         [UIOnClick("PauseButton")]

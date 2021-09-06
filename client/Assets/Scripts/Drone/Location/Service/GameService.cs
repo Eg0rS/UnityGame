@@ -26,16 +26,16 @@ namespace Drone.Location.Service
 {
     public struct DronStats
     {
-        public float _durability;
-        public float _energy;
-        public int _countChips;
-        public float _boostSpeedValue;
-        public float _boostShieldTime;
-        public float _boostSpeedTime;
-        public bool _onActiveShield;
-        public float _energyFall;
-        public float _energyForSpeed;
-        public float _maxDurability;
+        public float durability;
+        public float energy;
+        public int countChips;
+        public float boostSpeedValue;
+        public float boostShieldTime;
+        public float boostSpeedTime;
+        public bool onActiveShield;
+        public float energyFall;
+        public float energyForSpeed;
+        public float maxDurability;
     }
 
     public enum FailedReasons
@@ -94,11 +94,11 @@ namespace Drone.Location.Service
         private void SetStartOptionsDron()
         {
             DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-            _dronStats._durability = dronDescriptor.Durability;
-            _dronStats._maxDurability = dronDescriptor.Durability;
-            _dronStats._energy = dronDescriptor.Energy;
-            _dronStats._countChips = 0;
-            _dronStats._energyFall = 0.05f;
+            _dronStats.durability = dronDescriptor.Durability;
+            _dronStats.maxDurability = dronDescriptor.Durability;
+            _dronStats.energy = dronDescriptor.Energy;
+            _dronStats.countChips = 0;
+            _dronStats.energyFall = 0.05f;
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
@@ -147,41 +147,41 @@ namespace Drone.Location.Service
 
         private void OnTakeBattery(BatteryModel component)
         {
-            _dronStats._energy += component.Energy;
+            _dronStats.energy += component.Energy;
             component.gameObject.SetActive(false);
         }
 
         private void OnTakeShield(ShieldBoosterModel component)
         {
-            _dronStats._boostShieldTime = component.Duration;
+            _dronStats.boostShieldTime = component.Duration;
             component.gameObject.SetActive(false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
 
         private void OnTakeSpeed(SpeedBoosterModel component)
         {
-            _dronStats._boostSpeedTime = component.Duration;
-            _dronStats._boostSpeedValue = component.SpeedBoost;
-            _dronStats._energyForSpeed = component.NeedsEnergy;
+            _dronStats.boostSpeedTime = component.Duration;
+            _dronStats.boostSpeedValue = component.SpeedBoost;
+            _dronStats.energyForSpeed = component.NeedsEnergy;
             component.gameObject.SetActive(false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
 
         private void OnTakeChip(BonusChipsModel component)
         {
-            _dronStats._countChips++;
+            _dronStats.countChips++;
             component.gameObject.SetActive(false);
             UiUpdate();
         }
 
         private void OnDronCrash(ObstacleModel component)
         {
-            if (_dronStats._onActiveShield) {
+            if (_dronStats.onActiveShield) {
                 return;
             }
-            _dronStats._durability -= component.Damage;
-            if (_dronStats._durability <= 0) {
-                _dronStats._durability = 0;
+            _dronStats.durability -= component.Damage;
+            if (_dronStats.durability <= 0) {
+                _dronStats.durability = 0;
                 DronFailed(FailedReasons.Crashed);
             }
             UiUpdate();
@@ -191,21 +191,21 @@ namespace Drone.Location.Service
         {
             switch (@event.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
-                    _dronStats._onActiveShield = true;
-                    Invoke(nameof(DisableShield), _dronStats._boostShieldTime);
+                    _dronStats.onActiveShield = true;
+                    Invoke(nameof(DisableShield), _dronStats.boostShieldTime);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
-                    _dronStats._energy -= _dronStats._energyForSpeed;
-                    Invoke("DisableSpeed", _dronStats._boostSpeedTime);
+                    _dronStats.energy -= _dronStats.energyForSpeed;
+                    Invoke("DisableSpeed", _dronStats.boostSpeedTime);
                     _gameWorld.Require()
-                              .Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats._boostSpeedValue, _dronStats._boostSpeedTime));
+                              .Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue, _dronStats.boostSpeedTime));
                     break;
             }
         }
 
         private void DisableShield()
         {
-            _dronStats._onActiveShield = false;
+            _dronStats.onActiveShield = false;
         }
 
         private void UiUpdate()
@@ -229,8 +229,8 @@ namespace Drone.Location.Service
         {
             float timeInGame = Time.time - _startTime;
             if (isWin) {
-                _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats._countChips, timeInGame,
-                                               (int) ((_dronStats._durability / _dronStats._maxDurability) * 100));
+                _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats.countChips, timeInGame,
+                                               (int) ((_dronStats.durability / _dronStats.maxDurability) * 100));
             }
         }
 
@@ -259,10 +259,10 @@ namespace Drone.Location.Service
         {
             int countStars = 0;
 
-            if (_dronStats._durability >= _levelDescriptor.NecessaryDurability) {
+            if (_dronStats.durability >= _levelDescriptor.NecessaryDurability) {
                 countStars++;
             }
-            if (_dronStats._countChips >= _levelDescriptor.NecessaryCountChips) {
+            if (_dronStats.countChips >= _levelDescriptor.NecessaryCountChips) {
                 countStars++;
             }
             if (timeInGame <= _levelDescriptor.NecessaryTime) {
@@ -275,9 +275,9 @@ namespace Drone.Location.Service
         private IEnumerator FallEnergy()
         {
             while (_isPlay) {
-                _dronStats._energy -= _dronStats._energyFall;
-                if (_dronStats._energy <= 0) {
-                    _dronStats._energy = 0;
+                _dronStats.energy -= _dronStats.energyFall;
+                if (_dronStats.energy <= 0) {
+                    _dronStats.energy = 0;
                     UiUpdate();
                     DronFailed(FailedReasons.EnergyFalled);
                 } else {
