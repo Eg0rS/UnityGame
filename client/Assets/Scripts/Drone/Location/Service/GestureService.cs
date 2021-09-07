@@ -6,7 +6,7 @@ namespace Drone.Location.Service
 {
     public class GestureService : GameEventDispatcher
     {
-        private const float SWIPE_THRESHOLD = 0.1f;
+        private const float SwipeThreshold = 0.05f;
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
         private float _width;
@@ -22,28 +22,40 @@ namespace Drone.Location.Service
 
         private void Update()
         {
-            if (Input.touchCount > 0) {
+            if (Input.touchCount > 0)
+            {
                 Touch touch = Input.touches[0];
-                if (touch.phase == TouchPhase.Began) {
+                if (touch.phase == TouchPhase.Began)
+                {
                     _startTouch = touch.position;
                     _currentTouch = touch.position;
-                } else if (touch.phase == TouchPhase.Moved) {
+                }
+                else if (touch.phase == TouchPhase.Moved)
+                {
                     _currentTouch = touch.position;
                     DetectSwipe();
-                } else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
+                }
+                else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                {
                     _startTouch = Vector2.zero;
                     _currentTouch = Vector2.zero;
                 }
             }
 #if UNITY_EDITOR
-            else {
-                if (Input.GetMouseButtonDown(0)) {
+            else
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
                     _startTouch = Input.mousePosition;
                     _currentTouch = Input.mousePosition;
-                } else if (Input.GetMouseButton(0)) {
+                }
+                else if (Input.GetMouseButton(0))
+                {
                     _currentTouch = Input.mousePosition;
                     DetectSwipe();
-                } else if (Input.GetMouseButtonUp(0)) {
+                }
+                else if (Input.GetMouseButtonUp(0))
+                {
                     _startTouch = Vector2.zero;
                     _currentTouch = Vector2.zero;
                 }
@@ -57,9 +69,11 @@ namespace Drone.Location.Service
             float lengthX = Mathf.Abs(swipeVector.x / _width);
             float lengthY = Mathf.Abs(swipeVector.y / _height);
 
-            if (!(lengthX >= SWIPE_THRESHOLD) && !(lengthY >= SWIPE_THRESHOLD)) {
+            if (lengthX <= SwipeThreshold && lengthY <= SwipeThreshold)
+            {
                 return;
             }
+
             swipeVector = RoundVector(swipeVector);
             _startTouch = _currentTouch;
             Dispatch(new WorldEvent(WorldEvent.SWIPE, swipeVector));

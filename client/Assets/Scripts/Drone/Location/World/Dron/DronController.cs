@@ -22,8 +22,8 @@ namespace Drone.Location.World.Dron
 
         public WorldObjectType ObjectType { get; }
         
-        private const float ACCELERATION = 0.2f;
-        private const float SHIFT_SPEED = 0.055f;
+        private const float AccelerationCoefficient = 0.2f;
+        private const float ShiftSpeed = 0.05f;
         private BezierWalkerWithSpeed _bezier;
         private float _levelSpeed = 8;
         private bool _isGameRun;
@@ -55,7 +55,7 @@ namespace Drone.Location.World.Dron
             }
 
             if (_bezier.NormalizedT < 0.5f) {
-                _levelSpeed += ACCELERATION * Time.deltaTime;
+                _levelSpeed += AccelerationCoefficient * Time.deltaTime;
             }
             _bezier.speed = _levelSpeed;
         }
@@ -95,11 +95,12 @@ namespace Drone.Location.World.Dron
         {
             Vector3 prevPos = transform.localPosition;
             float distance = (newPos - prevPos).magnitude;
-            float shiftingСoefficient = 0;
-            while (shiftingСoefficient < 1) {
-                shiftingСoefficient += SHIFT_SPEED / distance;
-                transform.localPosition = Vector3.Lerp(prevPos, newPos, shiftingСoefficient);
-                yield return new WaitForSeconds(0.01f);
+            float shiftingCoefficient = 0;
+            while (shiftingCoefficient < 1) {
+                shiftingCoefficient += ShiftSpeed / distance;
+                transform.localPosition = Vector3.Lerp(prevPos, newPos, shiftingCoefficient);
+                yield return null;
+                //yield return new WaitForSeconds(0.01f);
             }
             _isMoving = null;
         }
