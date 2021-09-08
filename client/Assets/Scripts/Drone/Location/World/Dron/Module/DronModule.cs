@@ -11,7 +11,6 @@ namespace Drone.Location.World.Dron.Module
         {
             container.RegisterSingleton<GestureService>();
             container.RegisterSingleton<DronService>();
-            container.RegisterSingleton<DronRepository>();
             container.RegisterSingleton<DronDescriptorRegistry>();
         }
     }

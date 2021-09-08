@@ -27,11 +27,11 @@ namespace Drone.Billing.Service
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
-        [Inject]
-        private BillingDescriptor _billingDescriptor;
-
+        private PlayerResourceModel _resourceModel;
+        
         public void Init()
         {
+            _resourceModel = RequirePlayerResourceModel();
             _resourceService.LoadConfiguration("Configs/Billing@embeded", OnConfigLoaded);
         }
 
@@ -42,12 +42,6 @@ namespace Drone.Billing.Service
                 shopItemDescriptor.Configure(temp);
                 _billingDescriptorRegistry.BillingDescriptors.Add(shopItemDescriptor);
             }
-        }
-
-        private void UpdateSettings()
-        {
-            PlayerResourceModel playerResourceModel = RequirePlayerResourceModel();
-            SetCreditsCount(playerResourceModel.CreditsCount);
         }
 
         public PlayerResourceModel RequirePlayerResourceModel()
@@ -69,27 +63,45 @@ namespace Drone.Billing.Service
             if (!HasCreditShopModel()) {
                 PlayerResourceModel playerResourceModel = new PlayerResourceModel();
                 playerResourceModel.CreditsCount = 0;
+                playerResourceModel.CryptoCount = 0;
                 _creditShopRepository.Set(playerResourceModel);
             }
-            UpdateSettings();
+            SetCreditsCount(_resourceModel.CreditsCount);
+            SetCryptoCount(_resourceModel.CryptoCount);
         }
 
         public void SetCreditsCount(int count)
         {
-            PlayerResourceModel playerResourceModel = RequirePlayerResourceModel();
-            playerResourceModel.CreditsCount = count;
-            _creditShopRepository.Set(playerResourceModel);
+            _resourceModel.CreditsCount = count;
+            _creditShopRepository.Set(_resourceModel);
+            Dispatch(new BillingEvent(BillingEvent.UPDATED));
+        }
+        
+        public void SetCryptoCount(int count)
+        {
+            _resourceModel.CryptoCount = count;
+            _creditShopRepository.Set(_resourceModel);
             Dispatch(new BillingEvent(BillingEvent.UPDATED));
         }
 
         public int GetCreditsCount()
         {
-            return RequirePlayerResourceModel().CreditsCount;
+            return _resourceModel.CreditsCount;
+        }
+
+        public int GetCryptoCount()
+        {
+            return _resourceModel.CryptoCount;
         }
 
         public void AddCredits(int count)
         {
             SetCreditsCount(GetCreditsCount() + count);
+        }
+        
+        public void AddCrypto(int count)
+        {
+            SetCryptoCount(GetCryptoCount() + count);
         }
 
         public void ShowDronStoreDialog()

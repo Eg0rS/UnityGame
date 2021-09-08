@@ -29,6 +29,7 @@ namespace Drone.Shop.Service
 
         [Inject]
         private BillingService _billingService;
+        
         [Inject]
         private PlayerResourceModel _resourceModel;
 

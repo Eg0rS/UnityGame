@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Adept.Logger;
+﻿using Adept.Logger;
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using Drone.Core.Filter;

@@ -56,5 +56,6 @@ namespace Drone.Billing.UI
         {
             _billingService.AddCredits(_billingDescriptor.Credits);
         }
+        
     }
 }

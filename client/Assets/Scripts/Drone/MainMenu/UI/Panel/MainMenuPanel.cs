@@ -1,5 +1,4 @@
-﻿using System;
-using Adept.Logger;
+﻿using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
@@ -16,7 +15,6 @@ using Drone.Shop.UI;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using LocationService = Drone.Location.Service.LocationService;
 
 namespace Drone.MainMenu.UI.Panel
 {
@@ -43,7 +41,10 @@ namespace Drone.MainMenu.UI.Panel
 
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
-
+        
+        [UIComponentBinding("CountCrypto")]
+        private UILabel _countCrypto;
+        
         public void Init()
         {
             _overlayManager.Require().HideLoadingOverlay(true);
@@ -61,6 +62,7 @@ namespace Drone.MainMenu.UI.Panel
         private void UpdateCredits()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
+            _countCrypto.text = _billingService.GetCryptoCount().ToString();
         }
 
         private void OnResourceUpdated(BillingEvent resourceEvent)
@@ -85,8 +87,14 @@ namespace Drone.MainMenu.UI.Panel
         [UIOnClick("StoreChipsButton")]
         private void OnCreditsPanel()
         {
-            _logger.Debug("Click on credits");
             _dialogManager.Require().Show<CreditShopDialog>();
+        }
+        
+        // todo удалить
+        [UIOnClick("StoreCryptoButton")]
+        private void OnCryptoPanel()
+        {
+            _billingService.SetCryptoCount(_billingService.GetCryptoCount() + 5);
         }
     }
 }

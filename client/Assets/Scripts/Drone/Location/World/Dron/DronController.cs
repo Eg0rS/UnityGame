@@ -23,7 +23,7 @@ namespace Drone.Location.World.Dron
         public WorldObjectType ObjectType { get; }
         
         private const float AccelerationCoefficient = 0.2f;
-        private const float ShiftSpeed = 0.05f;
+        private const float ShiftSpeed = 0.08f;
         private BezierWalkerWithSpeed _bezier;
         private float _levelSpeed = 8;
         private bool _isGameRun;
@@ -100,7 +100,6 @@ namespace Drone.Location.World.Dron
                 shiftingCoefficient += ShiftSpeed / distance;
                 transform.localPosition = Vector3.Lerp(prevPos, newPos, shiftingCoefficient);
                 yield return null;
-                //yield return new WaitForSeconds(0.01f);
             }
             _isMoving = null;
         }

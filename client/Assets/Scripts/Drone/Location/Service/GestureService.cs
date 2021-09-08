@@ -75,7 +75,7 @@ namespace Drone.Location.Service
             }
 
             swipeVector = RoundVector(swipeVector);
-            _startTouch = _currentTouch;
+            //_startTouch = _currentTouch;
             Dispatch(new WorldEvent(WorldEvent.SWIPE, swipeVector));
         }
 
