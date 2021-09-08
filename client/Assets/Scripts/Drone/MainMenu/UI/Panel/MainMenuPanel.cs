@@ -87,14 +87,8 @@ namespace Drone.MainMenu.UI.Panel
         [UIOnClick("StoreChipsButton")]
         private void OnCreditsPanel()
         {
-            _dialogManager.Require().Show<CreditShopDialog>();
+            _dialogManager.Require().Show<BillingDialog>();
         }
         
-        // todo удалить
-        [UIOnClick("StoreCryptoButton")]
-        private void OnCryptoPanel()
-        {
-            _billingService.SetCryptoCount(_billingService.GetCryptoCount() + 5);
-        }
     }
 }

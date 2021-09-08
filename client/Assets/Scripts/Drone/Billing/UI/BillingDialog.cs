@@ -20,9 +20,9 @@ namespace Drone.Billing.UI
 {
     [UIController("UI/Dialog/pfCreditShopDialog@embeded")]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
-    public class CreditShopDialog : MonoBehaviour
+    public class BillingDialog : MonoBehaviour
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreditShopDialog>();
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<BillingDialog>();
 
         [Inject]
         private BillingService _billingService;
@@ -38,6 +38,9 @@ namespace Drone.Billing.UI
 
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
+
+        [UIComponentBinding("CountCrypto")]
+        private UILabel _countCrypto;
 
         private readonly List<BillingItemController> _billingItemControllers = new List<BillingItemController>();
 
@@ -57,12 +60,12 @@ namespace Drone.Billing.UI
                           .Then(controller => { _billingItemControllers.Add(controller); })
                           .Done();
             }
-            
         }
 
         private void UpdateCredits()
         {
             _countChips.text = _billingService.GetCreditsCount().ToString();
+            _countCrypto.text = _billingService.GetCryptoCount().ToString();
         }
 
         private void OnResourceUpdated(BillingEvent resourceEvent)
@@ -87,6 +90,12 @@ namespace Drone.Billing.UI
         {
             CloseDialog();
             _billingService.ShowDronStoreDialog();
+        }
+        
+        [UIOnClick("StoreCryptoButton")]
+        private void OnCryptoPanel()
+        {
+            _billingService.SetCryptoCount(_billingService.GetCryptoCount() + 5);
         }
     }
 }

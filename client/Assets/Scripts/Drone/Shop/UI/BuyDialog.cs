@@ -62,7 +62,7 @@ namespace Drone.Shop.UI
             if (!_trasaction) {
                 _shopService.RemoveListener();
                 _dialogManager.Require().Hide(GameObject.Find("pfShopDialog(Clone)"));
-                _dialogManager.Require().ShowModal<CreditShopDialog>();
+                _dialogManager.Require().ShowModal<BillingDialog>();
             }
         }
     }

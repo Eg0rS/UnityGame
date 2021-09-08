@@ -27,12 +27,15 @@ namespace Drone.Billing.UI
         [UIObjectBinding("IconChip")]
         private GameObject _iconChip;
 
+        private int price;
+
         [UICreated]
         private void Init(BillingDescriptor descriptor)
         {
             SetIcon(descriptor.Icon);
             SetPrice(descriptor.Price);
             SetCredits(descriptor.Credits);
+            price = (int) descriptor.Price;
             _billingDescriptor = descriptor;
         }
 
@@ -43,9 +46,9 @@ namespace Drone.Billing.UI
 
         private void SetPrice(double itemPrice)
         {
-            _price.GetComponent<UILabel>().text = "$" + itemPrice;
+            _price.GetComponent<UILabel>().text = "*" + itemPrice;
         }
-
+        
         private void SetCredits(int creditsCount)
         {
             _creditCount.GetComponent<UILabel>().text = creditsCount.ToString();
@@ -54,8 +57,11 @@ namespace Drone.Billing.UI
         [UIOnClick("Container")]
         private void BuyCredits()
         {
+            if (_billingService.GetCryptoCount() < price) {
+                return;
+            }
             _billingService.AddCredits(_billingDescriptor.Credits);
+            _billingService.SetCryptoCount(_billingService.GetCryptoCount() - price);
         }
-        
     }
 }

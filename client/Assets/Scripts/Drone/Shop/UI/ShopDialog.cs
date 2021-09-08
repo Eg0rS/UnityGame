@@ -53,6 +53,9 @@ namespace Drone.Shop.UI
 
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
+        
+        [UIComponentBinding("CountCrypto")]
+        private UILabel _countCrypto;
 
         [UICreated]
         public void Init()
@@ -61,6 +64,7 @@ namespace Drone.Shop.UI
             _shopService.AddListener<ShopEvent>(ShopEvent.CLOSE_DIALOG, OnCloseUpdated);
             UpdateCredits();
             CreateShopItem();
+            _countCrypto.text = _billingService.GetCryptoCount().ToString();
         }
 
         private void OnCloseUpdated(ShopEvent dialogEvent)
@@ -124,7 +128,7 @@ namespace Drone.Shop.UI
         {
             CloseDialog();
             _logger.Debug("Click on credits");
-            _dialogManager.Require().Show<CreditShopDialog>();
+            _dialogManager.Require().Show<BillingDialog>();
         }
     }
 }
