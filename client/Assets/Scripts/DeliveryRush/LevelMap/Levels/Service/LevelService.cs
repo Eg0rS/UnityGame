@@ -12,6 +12,8 @@ using DeliveryRush.LevelMap.Levels.IoC;
 using DeliveryRush.LevelMap.Levels.Model;
 using DeliveryRush.LevelMap.Levels.Repository;
 using DeliveryRush.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog;
+using DeliveryRush.LevelMap.Regions.Descriptor;
+using DeliveryRush.LevelMap.Regions.IoC;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -29,6 +31,9 @@ namespace DeliveryRush.LevelMap.Levels.Service
         private LevelDescriptorRegistry _levelDescriptorRegistry;
 
         [Inject]
+        private RegionDescriptorRegistry _regionDescriptorRegistry;
+
+        [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
@@ -41,6 +46,9 @@ namespace DeliveryRush.LevelMap.Levels.Service
         {
             if (_levelDescriptorRegistry.LevelDescriptors.Count == 0) {
                 _resourceService.LoadConfiguration("Configs/levels@embeded", OnConfigLoaded);
+            }
+            if (_regionDescriptorRegistry.RegionDescriptors.Count == 0) {
+                _resourceService.LoadConfiguration("Configs/regions@embeded", LoadRegionsDescriptors);
             }
         }
 
@@ -146,6 +154,15 @@ namespace DeliveryRush.LevelMap.Levels.Service
             }
         }
 
+        private void LoadRegionsDescriptors(Configuration config, object[] loadparameters)
+        {
+            foreach (Configuration temp in config.GetList<Configuration>("regions.region")) {
+                RegionDescriptor regionDescriptor = new RegionDescriptor();
+                regionDescriptor.Configure(temp);
+                _regionDescriptorRegistry.RegionDescriptors.Add(regionDescriptor);
+            }
+        }
+
         private void SaveProgress(PlayerProgressModel model)
         {
             _progressRepository.Set(model);
@@ -155,5 +172,7 @@ namespace DeliveryRush.LevelMap.Levels.Service
         {
             return _progressRepository.Exists();
         }
+        
+        //TODO попробовать сделать списки левлов и зон readonly и к ним добавить методы добавления и удаления
     }
 }
