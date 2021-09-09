@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3581141423304011290}
   - component: {fileID: 440542096398999999}
   - component: {fileID: 2448245133316396405}
-  - component: {fileID: 4532508780404931227}
   - component: {fileID: 1341962955172394971}
   - component: {fileID: 1693515701697980615}
+  - component: {fileID: 1000078436191705270}
   m_Layer: 0
   m_Name: pfBanner1
   m_TagString: Untagged
@@ -84,19 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4532508780404931227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4249451405863597216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88c69ec894a249e293d16e38c16a7d4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _objectType: 2
 --- !u!65 &1341962955172394971
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -123,3 +110,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.603361, y: 2.3364923, z: 0.3895446}
   m_Center: {x: 0, y: 4.304895, z: -0.038068324}
+--- !u!114 &1000078436191705270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4249451405863597216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectType: 2
