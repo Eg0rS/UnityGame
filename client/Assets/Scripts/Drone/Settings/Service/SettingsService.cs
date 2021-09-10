@@ -3,6 +3,7 @@ using Drone.Core.Audio.Service;
 using Drone.Core.Filter;
 using Drone.Inventory.Service;
 using Drone.LevelMap.Levels.Service;
+using Drone.Location.Service;
 using Drone.Settings.Model;
 using IoC.Attribute;
 
@@ -24,6 +25,9 @@ namespace Drone.Settings.Service
 
         [Inject]
         private AudioService _audioService;
+        
+        [Inject]
+        private GestureService _gestureService;
 
         private void UpdateSettings()
         {
@@ -55,6 +59,7 @@ namespace Drone.Settings.Service
                 _settingsRepository.Set(settingsModel);
             }
             UpdateSettings();
+            _gestureService.EnableSwipe = RequireSettingsModel().IsSwipe;
         }
 
         public bool GetMusicMute()
@@ -88,6 +93,19 @@ namespace Drone.Settings.Service
             _inventoryService.ResetInventory();
             _levelService.ResetPlayerProgress();
             _billingService.SetCreditsCount(0);
+        }
+        
+        public void SetSwipeMute(bool isMute)
+        {
+            SettingsModel settingsModel = RequireSettingsModel();
+            settingsModel.IsSwipe = isMute;
+            _gestureService.EnableSwipe = isMute;
+            _settingsRepository.Set(settingsModel);
+        }
+        
+        public bool GetSwipe()
+        {
+            return RequireSettingsModel().IsSwipe;
         }
     }
 }

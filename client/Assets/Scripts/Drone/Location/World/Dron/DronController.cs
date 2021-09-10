@@ -23,7 +23,7 @@ namespace Drone.Location.World.Dron
         public WorldObjectType ObjectType { get; }
         
         private const float AccelerationCoefficient = 0.2f;
-        private const float ShiftSpeed = 0.08f;
+        private float ShiftSpeed = 0.13f;
         private BezierWalkerWithSpeed _bezier;
         private float _levelSpeed = 8;
         private bool _isGameRun;
@@ -40,6 +40,8 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
             _currentPosition = transform.localPosition;
+
+            ShiftSpeed = !_gestureService.EnableSwipe ? 0.075f : 0.13f;
         }
 
         private void StartGame(WorldEvent worldEvent)
