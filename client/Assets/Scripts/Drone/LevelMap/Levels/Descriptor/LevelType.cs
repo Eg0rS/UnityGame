@@ -1,4 +1,4 @@
-﻿namespace DeliveryRush.LevelMap.Levels.Descriptor
+﻿namespace Drone.LevelMap.Levels.Descriptor
 {
     public enum LevelType
     {

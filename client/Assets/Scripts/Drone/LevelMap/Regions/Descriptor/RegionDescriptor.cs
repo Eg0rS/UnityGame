@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 using AgkCommons.Configurations;
 
-namespace DeliveryRush.LevelMap.Regions.Descriptor
+namespace Drone.LevelMap.Regions.Descriptor
 {
     public class RegionDescriptor
     {
@@ -17,7 +16,7 @@ namespace DeliveryRush.LevelMap.Regions.Descriptor
             Id = config.GetString("id");
             PreviousRegionId = config.GetString("previousId");
             Title = config.GetString("title");
-            LevelId = config.GetList<string>("levelsId");
+            LevelId = config.GetList<string>("levelsId.levelId");
             CountStars = config.GetInt("countStars");
         }
     }

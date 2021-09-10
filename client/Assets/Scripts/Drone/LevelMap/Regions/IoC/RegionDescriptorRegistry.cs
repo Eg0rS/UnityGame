@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using DeliveryRush.LevelMap.Regions.Descriptor;
+using Drone.LevelMap.Regions.Descriptor;
 
-namespace DeliveryRush.LevelMap.Regions.IoC
+namespace Drone.LevelMap.Regions.IoC
 {
     public class RegionDescriptorRegistry
     {

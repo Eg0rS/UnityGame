@@ -12,6 +12,8 @@ using Drone.LevelMap.Levels.IoC;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Repository;
 using Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog;
+using Drone.LevelMap.Regions.Descriptor;
+using Drone.LevelMap.Regions.IoC;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -29,6 +31,9 @@ namespace Drone.LevelMap.Levels.Service
         private LevelDescriptorRegistry _levelDescriptorRegistry;
 
         [Inject]
+        private RegionDescriptorRegistry _regionDescriptorRegistry;
+
+        [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
@@ -39,9 +44,11 @@ namespace Drone.LevelMap.Levels.Service
 
         public void Init()
         {
-            if (_levelDescriptorRegistry.LevelDescriptors.Count == 0) {
-                _resourceService.LoadConfiguration("Configs/levels@embeded", OnConfigLoaded);
+            if (_levelDescriptorRegistry.LevelDescriptors.Count != 0 && _regionDescriptorRegistry.RegionDescriptors.Count != 0) {
+                return;
             }
+            _resourceService.LoadConfiguration("Configs/levels@embeded", OnConfigLoaded);
+            _resourceService.LoadConfiguration("Configs/regions@embeded", LoadRegionsDescriptors);
         }
 
         public void ShowStartLevelDialog(string leveId)
@@ -143,6 +150,15 @@ namespace Drone.LevelMap.Levels.Service
                 LevelDescriptor levelDescriptor = new LevelDescriptor();
                 levelDescriptor.Configure(temp);
                 _levelDescriptorRegistry.LevelDescriptors.Add(levelDescriptor);
+            }
+        }
+
+        private void LoadRegionsDescriptors(Configuration config, object[] loadparameters)
+        {
+            foreach (Configuration configuration in config.GetList<Configuration>("regions.region")) {
+                RegionDescriptor regionDescriptor = new RegionDescriptor();
+                regionDescriptor.Configure(configuration);
+                _regionDescriptorRegistry.RegionDescriptors.Add(regionDescriptor);
             }
         }
 
