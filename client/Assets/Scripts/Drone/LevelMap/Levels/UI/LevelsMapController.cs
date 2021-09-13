@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AgkCommons.Event;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Core.Model;
@@ -16,7 +15,7 @@ using UnityEngine;
 namespace Drone.LevelMap.Levels.UI
 {
     [UIController("UI/Panel/pfMiddlePanel@embeded")]
-    public class LevelsMapController : GameEventDispatcher
+    public class LevelsMapController : MonoBehaviour
     {
         [Inject]
         private LevelService _levelService;
@@ -33,8 +32,8 @@ namespace Drone.LevelMap.Levels.UI
         [UICreated]
         public void Init()
         {
-            _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
             CreateRegions();
+            _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
         }
 
         private void OnLevelMapUpdated(LevelEvent levelEvent)
@@ -47,13 +46,12 @@ namespace Drone.LevelMap.Levels.UI
             _levelViewModels = _levelService.GetLevels();
             _regionDescriptors = _levelService.GetRegionDescriptors();
             foreach (RegionDescriptor regionDescriptor in _regionDescriptors) {
-                GameObject regionContainer = GameObject.Find($"Region{regionDescriptor.Id}");
-                if (int.Parse(regionDescriptor.Id) > int.Parse(_levelService.GetCurrentRegionId())) {
-                    regionContainer.GetChildren().Find(x => x.name == "Fog").SetActive(true);
-                    regionContainer.GetChildren().Find(x => x.name == "PlateWithDescription").SetActive(true);
+                if (_levelService.GetIntRegionId(regionDescriptor.Id) > _levelService.GetIntRegionId(_levelService.GetCurrentRegionId())) {
+                    SetActiveRegion(regionDescriptor.Id, true);
                     continue;
                 }
                 CreateLevels(regionDescriptor, _levelViewModels);
+                //UpdateRegions();
             }
         }
 
@@ -63,17 +61,22 @@ namespace Drone.LevelMap.Levels.UI
             RegionDescriptor regionDescriptor = _levelService.GetRegionDescriptorById(model.CurrentRegionId);
             _levelViewModels = _levelService.GetLevels();
             UpdateLevels(_levelViewModels);
-            if (_levelService.CalculateCountStarsRegion(regionDescriptor.Id) < regionDescriptor.CountStars
-                || !_levelService.PassedBoss(regionDescriptor.Id)) {
-                return;
-            }
-            RegionDescriptor nextRegion = _regionDescriptors.Find(x => x.Id.Equals(Convert.ToString(int.Parse(regionDescriptor.Id) + 1)));
+
+            //TODO пофиксить nextRegion
+            RegionDescriptor nextRegion = _regionDescriptors.Find(x => x.Id.Equals(_levelService.GetNextRegionId(regionDescriptor.Id)));
+            //TODO пофиксить nextRegion
             if (nextRegion == null) {
                 return;
             }
-            GameObject regionContainer = GameObject.Find($"Region{regionDescriptor.Id}");
-            regionContainer.GetChildren().Find(x => x.name == "Fog").SetActive(false);
-            regionContainer.GetChildren().Find(x => x.name == "PlateWithDescription").SetActive(false);
+            if (model.LevelsProgress.Count == 0) {
+                SetActiveRegion(nextRegion.Id, true);
+            }
+            if (_levelService.CalculateCountStarsRegion(regionDescriptor.Id) < nextRegion.CountStars
+                || !_levelService.PassedBoss(regionDescriptor.Id)) {
+                return;
+            }
+
+            SetActiveRegion(nextRegion.Id, false);
             CreateLevels(nextRegion, _levelViewModels);
             model.CurrentRegionId = nextRegion.Id;
             _levelService.SaveProgress(model);
@@ -100,6 +103,13 @@ namespace Drone.LevelMap.Levels.UI
                           .Then(controller => progressMapItemController.Add(controller))
                           .Done();
             }
+        }
+
+        private void SetActiveRegion(string regionId, bool value)
+        {
+            GameObject regionContainer = GameObject.Find(regionId);
+            regionContainer.GetChildren().Find(x => x.name == "Fog").SetActive(value);
+            regionContainer.GetChildren().Find(x => x.name == "PlateWithDescription").SetActive(value);
         }
     }
 }

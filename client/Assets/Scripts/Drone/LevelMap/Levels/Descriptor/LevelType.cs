@@ -2,8 +2,8 @@
 {
     public enum LevelType
     {
-        Normal,
-        Boss,
-        Additional
+        Normal = 1,
+        Additional = 2,
+        Boss = 3
     }
 }

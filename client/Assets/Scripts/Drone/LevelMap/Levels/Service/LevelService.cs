@@ -16,6 +16,7 @@ using Drone.LevelMap.Regions.Descriptor;
 using Drone.LevelMap.Regions.IoC;
 using IoC.Attribute;
 using IoC.Util;
+using JetBrains.Annotations;
 
 namespace Drone.LevelMap.Levels.Service
 {
@@ -80,7 +81,6 @@ namespace Drone.LevelMap.Levels.Service
                 };
                 model.LevelsProgress.Add(levelProgress);
             }
-            //model.LevelsProgress.Find(x => x.id == )
             levelProgress.CountChips = countChips;
             if (levelProgress.CountStars < countStars) {
                 levelProgress.CountStars = countStars;
@@ -89,25 +89,12 @@ namespace Drone.LevelMap.Levels.Service
             levelProgress.Durability = durability;
             _billingService.AddCredits(countChips);
             SaveProgress(model);
-            //Dispatch(new LevelEvent(LevelEvent.UPDATED));
-        }
-
-        public void SetRegionId(string id)
-        {
-            PlayerProgressModel model = GetPlayerProgressModel();
-            model.CurrentRegionId = id;
-            SaveProgress(model);
         }
 
         public string GetCurrentRegionId()
         {
             PlayerProgressModel model = GetPlayerProgressModel();
             return model.CurrentRegionId;
-        }
-
-        public LevelProgress GetLevelProgress(string levelId)
-        {
-            return GetLevelProgressById(levelId);
         }
 
         public int GetChipsCount(string levelId)
@@ -147,6 +134,16 @@ namespace Drone.LevelMap.Levels.Service
         {
             return _regionDescriptorRegistry.RegionDescriptors.Find(x => x.Id.Equals(id));
         }
+        
+        [NotNull]
+        public string GetNextRegionId(string regionId)
+        {
+            // int id = GetIntRegionId(regionId);
+            // string result = $"region{++id}";
+            return "region2";
+        }
+        
+        
 
         public int CalculateCountStarsRegion(string regionId)
         {
@@ -155,10 +152,10 @@ namespace Drone.LevelMap.Levels.Service
                 return 0;
             }
             int result = 0;
-            foreach (string level in regionDescriptor.LevelId) {
-                LevelProgress levelProgress = GetLevelProgressById(level);
+            foreach (string levelId in regionDescriptor.LevelId) {
+                LevelProgress levelProgress = GetLevelProgressById($"level{levelId}");
                 if (levelProgress != null) {
-                    result += GetLevelProgressById(level).CountStars;
+                    result += GetLevelProgressById($"level{levelId}").CountStars;
                 }
             }
             return result;
@@ -168,8 +165,20 @@ namespace Drone.LevelMap.Levels.Service
         {
             PlayerProgressModel model = GetPlayerProgressModel();
             RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
-            LevelProgress levelProgress = model.LevelsProgress.Find(x => x.Id.Equals(regionDescriptor.LevelId[regionDescriptor.LevelId.Count - 1]));
-            return levelProgress != null; //Todo здесь мб ошибка
+            foreach (string levelId in regionDescriptor.LevelId) {
+                if (_levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals($"level{levelId}")).Type != LevelType.Boss) {
+                    continue;
+                }
+                LevelProgress levelProgress = model.LevelsProgress.Find(x => x.Id.Equals($"level{levelId}"));
+                return levelProgress != null;
+            }
+            return false;
+        }
+        
+        public int GetIntRegionId(string regionId)
+        {
+            int.TryParse(string.Join("", regionId.Where(char.IsDigit)), out int value);
+            return value;
         }
 
         public void ResetPlayerProgress()

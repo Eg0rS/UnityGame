@@ -46,8 +46,9 @@ namespace Drone.LevelMap.Levels.UI
         private GameObject _thirdStar;
 
         private LevelViewModel _levelViewModel;
+
         private bool _isCurrentLevel;
-        
+
         public LevelViewModel LevelViewModel
         {
             get => _levelViewModel;
@@ -83,10 +84,11 @@ namespace Drone.LevelMap.Levels.UI
         [UIOnClick("pfLocationItemSpot")]
         private void SelectLevel()
         {
-            if (_levelViewModel.LevelProgress != null || _isCurrentLevel) {
-                _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);
-                _logger.Debug("start dialog: " + _levelViewModel.LevelDescriptor.Id);
+            if (_levelViewModel.LevelProgress == null && !_isCurrentLevel) {
+                return;
             }
+            _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);
+            _logger.Debug("start dialog: " + _levelViewModel.LevelDescriptor.Id);
         }
 
         private List<GameObject> GetStarsImage()
