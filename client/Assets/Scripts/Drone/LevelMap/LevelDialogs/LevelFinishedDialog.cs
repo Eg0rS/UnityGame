@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
@@ -14,10 +13,12 @@ using Drone.Core.UI.Dialog;
 using Drone.LevelMap.Levels.IoC;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Service;
+using Drone.LevelMap.Regions.Descriptor;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using static System.String;
 
 namespace Drone.LevelMap.LevelDialogs
 {
@@ -147,15 +148,26 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetDialogLabels()
         {
-            _tasksCompletedLabel.text = String.Format(TASKS_COMPLETED, _tasksCompletedCount);
-            _chipsTaskLabel.text = String.Format(CHIPS_TASK_FULL, _chipsLevelResult, _chipsGoal);
-            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK, _durabilityGoal);
-            _timeTaskLabel.text = String.Format(TIME_TASK, _timeGoal);
+            _tasksCompletedLabel.text = Format(TASKS_COMPLETED, _tasksCompletedCount);
+            _chipsTaskLabel.text = Format(CHIPS_TASK_FULL, _chipsLevelResult, _chipsGoal);
+            _durabilityTaskLabel.text = Format(DURABILITY_TASK, _durabilityGoal);
+            _timeTaskLabel.text = Format(TIME_TASK, _timeGoal);
         }
 
         private void SetButtons()
         {
-            _nextLevelButton.gameObject.SetActive(_levelService.GetNextLevel() != 0);
+            RegionDescriptor regionDescriptor = _levelService.GetRegionDescriptors().Find(x => x.LevelId.Contains(_levelViewModel.LevelProgress.Id));
+            RegionDescriptor nextRegionDescriptor = _levelService.GetRegionDescriptorById(_levelService.GetNextRegionId(regionDescriptor.Id));
+            if (_levelService.GetNextLevel() == 0) {
+                _nextLevelButton.gameObject.SetActive(false);
+                return;
+            }
+            if (_levelService.CompletedRegionConditions(regionDescriptor.Id, nextRegionDescriptor.CountStars)) {
+                _nextLevelButton.gameObject.SetActive(false);
+                return;
+            }
+            _nextLevelButton.gameObject.SetActive(true);
+            //todo доработать
         }
 
         [UIOnClick("RestartButton")]
@@ -172,7 +184,7 @@ namespace Drone.LevelMap.LevelDialogs
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
             _levelService.ShowStartLevelDialog(_levelDescriptorRegistry.LevelDescriptors.FirstOrDefault(a => a.Order == _levelService.GetNextLevel())
-                                                                       .Id);
+                                                                       ?.Id);
         }
 
         [UIOnClick("LevelMapButton")]

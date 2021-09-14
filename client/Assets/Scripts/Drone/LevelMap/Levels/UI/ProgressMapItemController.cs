@@ -51,18 +51,11 @@ namespace Drone.LevelMap.Levels.UI
 
         public LevelViewModel LevelViewModel
         {
-            get => _levelViewModel;
+            get { return _levelViewModel; }
         }
-
-        [UICreated]
-        public void Init(LevelViewModel levelViewModel, bool isCurrentLevel, bool isBossLevel)
+        
+        public void UpdateSpot(LevelViewModel levelViewModel, bool isCurrentLevel)
         {
-            if (isBossLevel) {
-                _nextLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txCurrentLevelBoss", typeof(Sprite)) as Sprite;
-                _completedLevelImage.GetComponent<Image>().sprite =
-                        Resources.Load("Embeded/UI/Texture/txCompletedLevelBoss", typeof(Sprite)) as Sprite;
-                _lockedLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txLockedLevelBoss", typeof(Sprite)) as Sprite;
-            }
             DisableStars();
             DisableProgressImages();
             _levelViewModel = levelViewModel;
@@ -81,6 +74,18 @@ namespace Drone.LevelMap.Levels.UI
             }
         }
 
+        [UICreated]
+        private void Init(LevelViewModel levelViewModel, bool isCurrentLevel, bool isBossLevel)
+        {
+            if (isBossLevel) {
+                _nextLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txCurrentLevelBoss", typeof(Sprite)) as Sprite;
+                _completedLevelImage.GetComponent<Image>().sprite =
+                        Resources.Load("Embeded/UI/Texture/txCompletedLevelBoss", typeof(Sprite)) as Sprite;
+                _lockedLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txLockedLevelBoss", typeof(Sprite)) as Sprite;
+            }
+            UpdateSpot(levelViewModel, isCurrentLevel);
+        }
+        
         [UIOnClick("pfLocationItemSpot")]
         private void SelectLevel()
         {
@@ -101,7 +106,7 @@ namespace Drone.LevelMap.Levels.UI
         {
             List<GameObject> stars = GetStarsImage();
             for (int i = 0; i < countStars; i++) {
-                stars[i].SetActive(true);
+                stars[i].SetActive(!stars[i].activeInHierarchy);
             }
         }
 
@@ -116,26 +121,6 @@ namespace Drone.LevelMap.Levels.UI
         {
             _completedLevelImage.SetActive(false);
             _nextLevelImage.SetActive(false);
-        }
-
-        public void UpdateSpot(LevelViewModel levelViewModel, bool isCurrentLevel)
-        {
-            DisableStars();
-            DisableProgressImages();
-            _levelViewModel = levelViewModel;
-            _isCurrentLevel = isCurrentLevel;
-            _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
-            if (levelViewModel.LevelProgress == null && !isCurrentLevel) {
-                _lockedLevelImage.SetActive(true);
-            } else {
-                _lockedLevelImage.SetActive(false);
-                if (isCurrentLevel) {
-                    _nextLevelImage.SetActive(true);
-                    return;
-                }
-                _completedLevelImage.SetActive(true);
-                SetStars(levelViewModel.LevelProgress.CountStars);
-            }
         }
     }
 }

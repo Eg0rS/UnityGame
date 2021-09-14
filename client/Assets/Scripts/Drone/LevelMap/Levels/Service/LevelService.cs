@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Configurations;
 using AgkCommons.Event;
@@ -16,7 +17,6 @@ using Drone.LevelMap.Regions.Descriptor;
 using Drone.LevelMap.Regions.IoC;
 using IoC.Attribute;
 using IoC.Util;
-using JetBrains.Annotations;
 
 namespace Drone.LevelMap.Levels.Service
 {
@@ -48,7 +48,7 @@ namespace Drone.LevelMap.Levels.Service
             if (_levelDescriptorRegistry.LevelDescriptors.Count != 0 && _regionDescriptorRegistry.RegionDescriptors.Count != 0) {
                 return;
             }
-            _resourceService.LoadConfiguration("Configs/levels@embeded", OnConfigLoaded);
+            _resourceService.LoadConfiguration("Configs/levels@embeded", LoadLevelsDescriptors);
             _resourceService.LoadConfiguration("Configs/regions@embeded", LoadRegionsDescriptors);
         }
 
@@ -116,10 +116,11 @@ namespace Drone.LevelMap.Levels.Service
         {
             _levelsViewModels = new List<LevelViewModel>();
             PlayerProgressModel playerProgressModel = GetPlayerProgressModel();
-            foreach (LevelDescriptor item in _levelDescriptorRegistry.LevelDescriptors) {
-                LevelViewModel levelViewModel = new LevelViewModel();
-                levelViewModel.LevelDescriptor = item;
-                levelViewModel.LevelProgress = playerProgressModel.LevelsProgress.Find(x => x.Id.Equals(item.Id));
+            foreach (LevelDescriptor descriptor in _levelDescriptorRegistry.LevelDescriptors) {
+                LevelViewModel levelViewModel = new LevelViewModel {
+                        LevelDescriptor = descriptor,
+                        LevelProgress = playerProgressModel.LevelsProgress.Find(x => x.Id.Equals(descriptor.Id))
+                };
                 _levelsViewModels.Add(levelViewModel);
             }
             return _levelsViewModels;
@@ -134,47 +135,25 @@ namespace Drone.LevelMap.Levels.Service
         {
             return _regionDescriptorRegistry.RegionDescriptors.Find(x => x.Id.Equals(id));
         }
-        
-        [NotNull]
+
         public string GetNextRegionId(string regionId)
         {
-            // int id = GetIntRegionId(regionId);
-            // string result = $"region{++id}";
-            return "region2";
-        }
-        
-        
-
-        public int CalculateCountStarsRegion(string regionId)
-        {
-            RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
-            if (regionDescriptor == null) {
-                return 0;
+            int nextId = GetIntRegionId(regionId) + 1;
+            try {
+                return _regionDescriptorRegistry.RegionDescriptors.Find(x => x.Id.Equals($"region{nextId}")).Id;
+            } catch (Exception) {
+                return null;
             }
-            int result = 0;
-            foreach (string levelId in regionDescriptor.LevelId) {
-                LevelProgress levelProgress = GetLevelProgressById($"level{levelId}");
-                if (levelProgress != null) {
-                    result += GetLevelProgressById($"level{levelId}").CountStars;
-                }
-            }
-            return result;
+            //без try catch кладётся
         }
 
-        public bool PassedBoss(string regionId)
+        public void SaveCurrentRegionId(string regionId)
         {
             PlayerProgressModel model = GetPlayerProgressModel();
-            RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
-            foreach (string levelId in regionDescriptor.LevelId) {
-                if (_levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals($"level{levelId}")).Type != LevelType.Boss) {
-                    continue;
-                }
-                LevelProgress levelProgress = model.LevelsProgress.Find(x => x.Id.Equals($"level{levelId}"));
-                return levelProgress != null;
-            }
-            return false;
+            model.CurrentRegionId = regionId;
+            SaveProgress(model);
         }
-        
+
         public int GetIntRegionId(string regionId)
         {
             int.TryParse(string.Join("", regionId.Where(char.IsDigit)), out int value);
@@ -199,16 +178,56 @@ namespace Drone.LevelMap.Levels.Service
             return !HasPlayerProgress() ? new PlayerProgressModel() : _progressRepository.Require();
         }
 
-        public void SaveProgress(PlayerProgressModel model)
+        public bool CompletedRegionConditions(string regionId, int needCountStars)
+        {
+            return CalculateCountStarsRegion(regionId) >= needCountStars && PassedBoss(regionId);
+        }
+
+        private bool HasPlayerProgress()
+        {
+            return _progressRepository.Exists();
+        }
+
+        private int CalculateCountStarsRegion(string regionId)
+        {
+            RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
+            if (regionDescriptor == null) {
+                return 0;
+            }
+            int result = 0;
+            foreach (string levelId in regionDescriptor.LevelId) {
+                LevelProgress levelProgress = GetLevelProgressById(levelId);
+                if (levelProgress != null) {
+                    result += GetLevelProgressById(levelId).CountStars;
+                }
+            }
+            return result;
+        }
+
+        private bool PassedBoss(string regionId)
+        {
+            PlayerProgressModel model = GetPlayerProgressModel();
+            RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
+            foreach (string levelId in regionDescriptor.LevelId) {
+                if (_levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(levelId)).Type != LevelType.Boss) {
+                    continue;
+                }
+                LevelProgress levelProgress = model.LevelsProgress.Find(x => x.Id.Equals(levelId));
+                return levelProgress != null;
+            }
+            return false;
+        }
+
+        private void SaveProgress(PlayerProgressModel model)
         {
             _progressRepository.Set(model);
         }
 
-        private void OnConfigLoaded(Configuration config, object[] loadparameters)
+        private void LoadLevelsDescriptors(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration temp in config.GetList<Configuration>("levels.level")) {
+            foreach (Configuration configuration in config.GetList<Configuration>("levels.level")) {
                 LevelDescriptor levelDescriptor = new LevelDescriptor();
-                levelDescriptor.Configure(temp);
+                levelDescriptor.Configure(configuration);
                 _levelDescriptorRegistry.LevelDescriptors.Add(levelDescriptor);
             }
         }
@@ -220,11 +239,6 @@ namespace Drone.LevelMap.Levels.Service
                 regionDescriptor.Configure(configuration);
                 _regionDescriptorRegistry.RegionDescriptors.Add(regionDescriptor);
             }
-        }
-
-        private bool HasPlayerProgress()
-        {
-            return _progressRepository.Exists();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Drone.LevelMap.Levels.Model
     {
         private List<LevelProgress> _levelsProgress = new List<LevelProgress>();
 
-        private string _currentRegionId = "1";
+        private string _currentRegionId = "region1";
 
         public List<LevelProgress> LevelsProgress
         {
