@@ -66,7 +66,7 @@ namespace Drone.LevelMap.Levels.UI
                 GameObject levelContainer = GameObject.Find($"level{levelViewModel.LevelDescriptor.Order}");
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,
                                                                         levelViewModel.LevelDescriptor.Order == _levelService.GetNextLevel(),
-                                                                        levelViewModel.LevelDescriptor.Type == LevelType.Boss)
+                                                                        levelViewModel.LevelDescriptor.Type == LevelType.BOSS)
                                                                     .Container(levelContainer))
                           .Then(controller => progressMapItemController.Add(controller))
                           .Done();

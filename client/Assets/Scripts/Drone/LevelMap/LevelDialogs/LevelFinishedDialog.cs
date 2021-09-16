@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Adept.Logger;
+﻿using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
@@ -10,7 +9,7 @@ using AgkUI.Screens.Service;
 using Drone.Core.Audio.Model;
 using Drone.Core.Audio.Service;
 using Drone.Core.UI.Dialog;
-using Drone.LevelMap.Levels.IoC;
+using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Service;
 using Drone.LevelMap.Regions.Descriptor;
@@ -59,9 +58,6 @@ namespace Drone.LevelMap.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
-        [Inject]
-        private LevelDescriptorRegistry _levelDescriptorRegistry;
-
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
 
@@ -96,11 +92,6 @@ namespace Drone.LevelMap.LevelDialogs
             _logger.Debug("[LevelFinishedDialog] Init()...");
             _levelViewModel = _levelService.GetLevels().Find(it => it.LevelProgress.Id.Equals(_levelId));
 
-            _chipsTaskCompleted = false;
-            _durabilityTaskCompleted = false;
-            _timeTaskCompleted = false;
-            _tasksCompletedCount = 0;
-
             _chipsGoal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
             _durabilityGoal = _levelViewModel.LevelDescriptor.NecessaryDurability;
             _timeGoal = _levelViewModel.LevelDescriptor.NecessaryTime;
@@ -126,7 +117,7 @@ namespace Drone.LevelMap.LevelDialogs
 
             SetDialogStars();
             SetDialogLabels();
-            SetButtons();
+            SetButtonNextActivity();
         }
 
         private void PlaySound(Sound sound)
@@ -154,20 +145,23 @@ namespace Drone.LevelMap.LevelDialogs
             _timeTaskLabel.text = Format(TIME_TASK, _timeGoal);
         }
 
-        private void SetButtons()
+        private void SetButtonNextActivity()
         {
             RegionDescriptor regionDescriptor = _levelService.GetRegionDescriptors().Find(x => x.LevelId.Contains(_levelViewModel.LevelProgress.Id));
             RegionDescriptor nextRegionDescriptor = _levelService.GetRegionDescriptorById(_levelService.GetNextRegionId(regionDescriptor.Id));
-            if (_levelService.GetNextLevel() == 0) {
+            if (_levelService.GetNextLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
                 _nextLevelButton.gameObject.SetActive(false);
                 return;
             }
-            if (_levelService.CompletedRegionConditions(regionDescriptor.Id, nextRegionDescriptor.CountStars)) {
-                _nextLevelButton.gameObject.SetActive(false);
+            if (nextRegionDescriptor == null) {
+                _nextLevelButton.gameObject.SetActive(true);
+                return;
+            }
+            if (_levelViewModel.LevelDescriptor.Type == LevelType.BOSS) {
+                _nextLevelButton.gameObject.SetActive(_levelService.CompletedRegionConditions(regionDescriptor.Id, nextRegionDescriptor.CountStars));
                 return;
             }
             _nextLevelButton.gameObject.SetActive(true);
-            //todo доработать
         }
 
         [UIOnClick("RestartButton")]
@@ -183,8 +177,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _levelService.ShowStartLevelDialog(_levelDescriptorRegistry.LevelDescriptors.FirstOrDefault(a => a.Order == _levelService.GetNextLevel())
-                                                                       ?.Id);
+            _levelService.ShowStartLevelDialog(_levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id));
         }
 
         [UIOnClick("LevelMapButton")]
