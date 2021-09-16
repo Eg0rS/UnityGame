@@ -12,7 +12,7 @@ using Drone.Core.UI.Dialog;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Service;
-using Drone.LevelMap.Regions.Descriptor;
+using Drone.LevelMap.Zones.Descriptor;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
@@ -147,18 +147,18 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetButtonNextActivity()
         {
-            RegionDescriptor regionDescriptor = _levelService.GetRegionDescriptors().Find(x => x.LevelId.Contains(_levelViewModel.LevelProgress.Id));
-            RegionDescriptor nextRegionDescriptor = _levelService.GetRegionDescriptorById(_levelService.GetNextRegionId(regionDescriptor.Id));
+            ZoneDescriptor zoneDescriptor = _levelService.GetZonesDescriptors().Find(x => x.LevelId.Contains(_levelViewModel.LevelProgress.Id));
+            ZoneDescriptor nextZoneDescriptor = _levelService.GetZoneDescriptorById(_levelService.GetNextZoneId(zoneDescriptor.Id));
             if (_levelService.GetNextLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
                 _nextLevelButton.gameObject.SetActive(false);
                 return;
             }
-            if (nextRegionDescriptor == null) {
+            if (nextZoneDescriptor == null) {
                 _nextLevelButton.gameObject.SetActive(true);
                 return;
             }
             if (_levelViewModel.LevelDescriptor.Type == LevelType.BOSS) {
-                _nextLevelButton.gameObject.SetActive(_levelService.CompletedRegionConditions(regionDescriptor.Id, nextRegionDescriptor.CountStars));
+                _nextLevelButton.gameObject.SetActive(_levelService.CompletedZoneConditions(zoneDescriptor.Id, nextZoneDescriptor.CountStars));
                 return;
             }
             _nextLevelButton.gameObject.SetActive(true);

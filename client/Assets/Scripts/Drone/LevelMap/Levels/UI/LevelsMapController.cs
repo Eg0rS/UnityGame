@@ -7,7 +7,7 @@ using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Event;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Service;
-using Drone.LevelMap.Regions.Descriptor;
+using Drone.LevelMap.Zones.Descriptor;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -24,15 +24,17 @@ namespace Drone.LevelMap.Levels.UI
 
         private List<LevelViewModel> _levelViewModels;
 
-        private List<RegionDescriptor> _regionDescriptors;
+        private List<ZoneDescriptor> _zoneDescriptors;
 
         private List<ProgressMapItemController> progressMapItemController = new List<ProgressMapItemController>();
+
+        private string _currentZoneId;
 
         [UICreated]
         private void Init()
         {
             _levelService.AddListener<LevelEvent>(LevelEvent.UPDATED, OnLevelMapUpdated);
-            CreateRegions();
+            CreateZones();
         }
 
         private void OnDestroy()
@@ -42,26 +44,27 @@ namespace Drone.LevelMap.Levels.UI
 
         private void OnLevelMapUpdated(LevelEvent levelEvent)
         {
-            UpdateRegions();
+            UpdateZones();
         }
 
-        private void CreateRegions()
+        private void CreateZones()
         {
             _levelViewModels = _levelService.GetLevels();
-            _regionDescriptors = _levelService.GetRegionDescriptors();
-            foreach (RegionDescriptor regionDescriptor in _regionDescriptors) {
-                if (_levelService.GetIntRegionId(regionDescriptor.Id) > _levelService.GetIntRegionId(_levelService.GetCurrentRegionId())) {
-                    SetRegionActivity(regionDescriptor.Id, true);
+            _zoneDescriptors = _levelService.GetZonesDescriptors();
+            _currentZoneId = _levelService.GetCurrentZoneId();
+            foreach (ZoneDescriptor zoneDescriptor in _zoneDescriptors) {
+                if (_levelService.GetIntZoneId(zoneDescriptor.Id) > _levelService.GetIntZoneId(_currentZoneId)) {
+                    SetZoneActivity(zoneDescriptor.Id, true);
                     continue;
                 }
-                CreateLevels(regionDescriptor, _levelViewModels);
+                CreateLevels(zoneDescriptor, _levelViewModels);
             }
-            UpdateRegions();
+            UpdateZones();
         }
 
-        private void CreateLevels(RegionDescriptor regionDescriptor, List<LevelViewModel> viewModels)
+        private void CreateLevels(ZoneDescriptor zoneDescriptor, List<LevelViewModel> viewModels)
         {
-            foreach (string levelId in regionDescriptor.LevelId) {
+            foreach (string levelId in zoneDescriptor.LevelId) {
                 LevelViewModel levelViewModel = viewModels.Find(x => x.LevelDescriptor.Id.Equals(levelId));
                 GameObject levelContainer = GameObject.Find($"level{levelViewModel.LevelDescriptor.Order}");
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,
@@ -73,29 +76,29 @@ namespace Drone.LevelMap.Levels.UI
             }
         }
 
-        private void UpdateRegions()
+        private void UpdateZones()
         {
-            PlayerProgressModel model = _levelService.GetPlayerProgressModel();
-            RegionDescriptor regionDescriptor = _levelService.GetRegionDescriptorById(model.CurrentRegionId);
-            RegionDescriptor nextRegion = _regionDescriptors.Find(x => x.Id.Equals(_levelService.GetNextRegionId(regionDescriptor.Id)));
             _levelViewModels = _levelService.GetLevels();
+            _currentZoneId = _levelService.GetCurrentZoneId();
+            PlayerProgressModel model = _levelService.GetPlayerProgressModel();
+            ZoneDescriptor zoneDescriptor = _levelService.GetZoneDescriptorById(_currentZoneId);
+            ZoneDescriptor nextZone = _zoneDescriptors.Find(x => x.Id.Equals(_levelService.GetNextZoneId(zoneDescriptor.Id)));
             UpdateLevels(_levelViewModels);
 
-            if (nextRegion == null) {
+            if (nextZone == null) {
                 return;
             }
 
             if (model.LevelsProgress.Count == 0) {
-                SetRegionActivity(nextRegion.Id, true);
+                SetZoneActivity(nextZone.Id, true);
             }
 
-            if (!_levelService.CompletedRegionConditions(regionDescriptor.Id, nextRegion.CountStars)) {
+            if (!_levelService.CompletedZoneConditions(zoneDescriptor.Id, nextZone.CountStars)) {
                 return;
             }
 
-            SetRegionActivity(nextRegion.Id, false);
-            CreateLevels(nextRegion, _levelViewModels);
-            _levelService.SaveCurrentRegionId(nextRegion.Id);
+            SetZoneActivity(nextZone.Id, false);
+            CreateLevels(nextZone, _levelViewModels);
         }
 
         private void UpdateLevels(List<LevelViewModel> levelViewModels)
@@ -107,11 +110,11 @@ namespace Drone.LevelMap.Levels.UI
             }
         }
 
-        private void SetRegionActivity(string regionId, bool value)
+        private void SetZoneActivity(string zoneId, bool value)
         {
-            GameObject regionContainer = GameObject.Find(regionId);
-            regionContainer.GetChildren().Find(x => x.name == "Fog").SetActive(value);
-            regionContainer.GetChildren().Find(x => x.name == "PlateWithDescription").SetActive(value);
+            GameObject zoneContainer = GameObject.Find(zoneId);
+            zoneContainer.GetChildren().Find(x => x.name == "Fog").SetActive(value);
+            zoneContainer.GetChildren().Find(x => x.name == "PlateWithDescription").SetActive(value);
         }
     }
 }

@@ -36,13 +36,13 @@ namespace Drone.LevelMap.Levels.UI
         [UIObjectBinding("LevelNumber")]
         private GameObject _levelNumber;
 
-        [UIObjectBinding("OneStar")]
+        [UIObjectBinding("FirstStar")]
         private GameObject _firstStar;
 
-        [UIObjectBinding("TwoStar")]
+        [UIObjectBinding("SecondStar")]
         private GameObject _secondStar;
 
-        [UIObjectBinding("ThreeStar")]
+        [UIObjectBinding("ThirdStar")]
         private GameObject _thirdStar;
 
         private LevelViewModel _levelViewModel;

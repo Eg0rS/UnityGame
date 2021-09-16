@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using AgkCommons.Configurations;
 
-namespace Drone.LevelMap.Regions.Descriptor
+namespace Drone.LevelMap.Zones.Descriptor
 {
-    public class RegionDescriptor
+    public class ZoneDescriptor
     {
         public string Id { get; private set; }
         public string Title { get; private set; }

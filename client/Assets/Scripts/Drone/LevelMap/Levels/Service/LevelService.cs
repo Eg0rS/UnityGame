@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using AgkCommons.Configurations;
 using AgkCommons.Event;
 using AgkCommons.Resources;
@@ -13,8 +14,8 @@ using Drone.LevelMap.Levels.IoC;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Repository;
 using Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog;
-using Drone.LevelMap.Regions.Descriptor;
-using Drone.LevelMap.Regions.IoC;
+using Drone.LevelMap.Zones.Descriptor;
+using Drone.LevelMap.Zones.IoC;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -32,7 +33,7 @@ namespace Drone.LevelMap.Levels.Service
         private LevelDescriptorRegistry _levelDescriptorRegistry;
 
         [Inject]
-        private RegionDescriptorRegistry _regionDescriptorRegistry;
+        private ZoneDescriptorRegistry _zoneDescriptorRegistry;
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
@@ -45,11 +46,11 @@ namespace Drone.LevelMap.Levels.Service
 
         public void Init()
         {
-            if (_levelDescriptorRegistry.LevelDescriptors.Count != 0 && _regionDescriptorRegistry.RegionDescriptors.Count != 0) {
+            if (_levelDescriptorRegistry.LevelDescriptors.Count != 0 && _zoneDescriptorRegistry.ZoneDescriptors.Count != 0) {
                 return;
             }
             _resourceService.LoadConfiguration("Configs/levels@embeded", LoadLevelsDescriptors);
-            _resourceService.LoadConfiguration("Configs/regions@embeded", LoadRegionsDescriptors);
+            _resourceService.LoadConfiguration("Configs/zones@embeded", LoadZonesDescriptors);
         }
 
         public void ShowStartLevelDialog(string leveId)
@@ -57,7 +58,7 @@ namespace Drone.LevelMap.Levels.Service
             LevelDescriptor levelDescriptor = _levelsViewModels.Find(x => x.LevelDescriptor.Id.Equals(leveId)).LevelDescriptor;
             _dialogManager.Require().Show<DescriptionLevelDialog>(levelDescriptor);
         }
-        
+
         public void SetLevelProgress(string levelId, int countStars, int countChips, float transitTime, int durability)
         {
             PlayerProgressModel model = GetPlayerProgressModel();
@@ -77,36 +78,23 @@ namespace Drone.LevelMap.Levels.Service
             _billingService.AddCredits(countChips);
             SaveProgress(model);
         }
-        
-        public void SaveCurrentRegionId(string regionId)
-        {
-            PlayerProgressModel model = GetPlayerProgressModel();
-            model.CurrentRegionId = regionId;
-            SaveProgress(model);
-        }
-        
+
         public void ResetPlayerProgress()
         {
             _progressRepository.Delete();
             Dispatch(new LevelEvent(LevelEvent.UPDATED));
         }
 
-        public string GetCurrentRegionId()
+        public string GetNextZoneId(string regionId)
         {
-            PlayerProgressModel model = GetPlayerProgressModel();
-            return model.CurrentRegionId;
-        }
-        
-        public string GetNextRegionId(string regionId)
-        {
-            int nextId = GetIntRegionId(regionId) + 1;
+            int nextId = GetIntZoneId(regionId) + 1;
             try {
-                return _regionDescriptorRegistry.RegionDescriptors.Find(x => x.Id.Equals($"region{nextId}")).Id;
+                return _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.Id.Equals($"region{nextId}")).Id;
             } catch (Exception) {
                 return null;
             }
         }
-        
+
         public string GetNextLevelId(string levelId)
         {
             LevelDescriptor levelDescriptor = _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id == levelId);
@@ -123,8 +111,8 @@ namespace Drone.LevelMap.Levels.Service
         {
             return GetLevelProgressById(levelId).CountStars;
         }
-        
-        public int GetIntRegionId(string regionId)
+
+        public int GetIntZoneId(string regionId)
         {
             int.TryParse(string.Join("", regionId.Where(char.IsDigit)), out int value);
             return value;
@@ -141,7 +129,7 @@ namespace Drone.LevelMap.Levels.Service
             }
             return 0;
         }
-        
+
         public float GetTransitTime(string levelId)
         {
             return GetLevelProgressById(levelId).TransitTime;
@@ -161,16 +149,16 @@ namespace Drone.LevelMap.Levels.Service
             return _levelsViewModels;
         }
 
-        public List<RegionDescriptor> GetRegionDescriptors()
+        public List<ZoneDescriptor> GetZonesDescriptors()
         {
-            return _regionDescriptorRegistry.RegionDescriptors;
+            return _zoneDescriptorRegistry.ZoneDescriptors;
         }
 
-        public RegionDescriptor GetRegionDescriptorById(string id)
+        public ZoneDescriptor GetZoneDescriptorById(string zoneId)
         {
-            return _regionDescriptorRegistry.RegionDescriptors.Find(x => x.Id.Equals(id));
+            return _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.Id.Equals(zoneId));
         }
-        
+
         public LevelDescriptor GetLevelDescriptorById(string levelId)
         {
             return _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id == levelId);
@@ -183,14 +171,33 @@ namespace Drone.LevelMap.Levels.Service
             return level;
         }
 
+        public string GetCurrentZoneId()
+        {
+            string prevId = "";
+            foreach (LevelViewModel model in _levelsViewModels) {
+                if (model.LevelProgress != null) {
+                    prevId = model.LevelDescriptor.Id;
+                    continue;
+                }
+                ZoneDescriptor zoneDescriptor = _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.LevelId.Contains(model.LevelDescriptor.Id));
+                string nextZoneId = GetNextZoneId(zoneDescriptor.Id);
+                ZoneDescriptor nextZone = GetZoneDescriptorById(nextZoneId);
+                if (nextZone != null) {
+                    return CompletedZoneConditions(zoneDescriptor.Id, nextZone.CountStars) ? nextZone.Id : zoneDescriptor.Id;
+                }
+                return _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.LevelId.Contains(prevId)).Id;
+            }
+            return _zoneDescriptorRegistry.ZoneDescriptors[_zoneDescriptorRegistry.ZoneDescriptors.Count - 1].Id;
+        }
+
         public PlayerProgressModel GetPlayerProgressModel()
         {
             return !HasPlayerProgress() ? new PlayerProgressModel() : _progressRepository.Require();
         }
 
-        public bool CompletedRegionConditions(string regionId, int needCountStars)
+        public bool CompletedZoneConditions(string zoneId, int needCountStars)
         {
-            return CalculateCountStarsRegion(regionId) >= needCountStars && PassedBoss(regionId);
+            return CalculateCountStarsZone(zoneId) >= needCountStars && PassedBoss(zoneId);
         }
 
         private bool HasPlayerProgress()
@@ -198,14 +205,14 @@ namespace Drone.LevelMap.Levels.Service
             return _progressRepository.Exists();
         }
 
-        private int CalculateCountStarsRegion(string regionId)
+        private int CalculateCountStarsZone(string regionId)
         {
-            RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
-            if (regionDescriptor == null) {
+            ZoneDescriptor zoneDescriptor = GetZoneDescriptorById(regionId);
+            if (zoneDescriptor == null) {
                 return 0;
             }
             int result = 0;
-            foreach (string levelId in regionDescriptor.LevelId) {
+            foreach (string levelId in zoneDescriptor.LevelId) {
                 LevelProgress levelProgress = GetLevelProgressById(levelId);
                 if (levelProgress != null) {
                     result += GetLevelProgressById(levelId).CountStars;
@@ -217,8 +224,8 @@ namespace Drone.LevelMap.Levels.Service
         private bool PassedBoss(string regionId)
         {
             PlayerProgressModel model = GetPlayerProgressModel();
-            RegionDescriptor regionDescriptor = GetRegionDescriptorById(regionId);
-            foreach (string levelId in regionDescriptor.LevelId) {
+            ZoneDescriptor zoneDescriptor = GetZoneDescriptorById(regionId);
+            foreach (string levelId in zoneDescriptor.LevelId) {
                 if (_levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(levelId)).Type != LevelType.BOSS) {
                     continue;
                 }
@@ -242,12 +249,12 @@ namespace Drone.LevelMap.Levels.Service
             }
         }
 
-        private void LoadRegionsDescriptors(Configuration config, object[] loadparameters)
+        private void LoadZonesDescriptors(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration configuration in config.GetList<Configuration>("regions.region")) {
-                RegionDescriptor regionDescriptor = new RegionDescriptor();
-                regionDescriptor.Configure(configuration);
-                _regionDescriptorRegistry.RegionDescriptors.Add(regionDescriptor);
+            foreach (Configuration configuration in config.GetList<Configuration>("zones.zone")) {
+                ZoneDescriptor zoneDescriptor = new ZoneDescriptor();
+                zoneDescriptor.Configure(configuration);
+                _zoneDescriptorRegistry.ZoneDescriptors.Add(zoneDescriptor);
             }
         }
     }
