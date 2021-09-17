@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using AgkCommons.Configurations;
 using AgkCommons.Event;
 using AgkCommons.Resources;
@@ -46,9 +45,6 @@ namespace Drone.LevelMap.Levels.Service
 
         public void Init()
         {
-            if (_levelDescriptorRegistry.LevelDescriptors.Count != 0 && _zoneDescriptorRegistry.ZoneDescriptors.Count != 0) {
-                return;
-            }
             _resourceService.LoadConfiguration("Configs/levels@embeded", LoadLevelsDescriptors);
             _resourceService.LoadConfiguration("Configs/zones@embeded", LoadZonesDescriptors);
         }
