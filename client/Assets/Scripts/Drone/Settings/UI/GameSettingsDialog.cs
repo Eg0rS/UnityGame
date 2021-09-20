@@ -62,11 +62,5 @@ namespace Drone.Settings.UI
             _logger.Debug("Reset");
             _settingsService.ResetAllProgress();
         }
-
-        [UIOnClick("Info")]
-        private void OnInfoClick()
-        {
-            _dialogManager.Require().ShowModal<DownloadedDialog>();
-        }
     }
 }
