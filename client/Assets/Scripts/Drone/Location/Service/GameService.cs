@@ -57,7 +57,7 @@ namespace Drone.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private GestureService _gestureService;
+        private DronControlService _dronControlService;
 
         [Inject]
         private LevelService _levelService;
@@ -85,7 +85,7 @@ namespace Drone.Location.Service
             _dronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
+            _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
             SetStartOptionsDron();
@@ -221,7 +221,7 @@ namespace Drone.Location.Service
             IsPlay = false;
             Time.timeScale = 0f;
             _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gestureService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
+            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
 

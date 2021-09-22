@@ -39,10 +39,8 @@ namespace Drone.Location.World.Dron
         private float _levelSpeed = 8;
         private bool _isGameRun;
         private float _boostSpeed;
-        private Vector3 _currentPosition;
         private Coroutine _isMoving;
-        private float _shiftCoeficient=0;
-
+        
         public void Init(DronModel model)
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
@@ -51,7 +49,6 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
-            _currentPosition = transform.localPosition;
 
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
             ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
@@ -87,14 +84,14 @@ namespace Drone.Location.World.Dron
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
             if (IsPossibleSwipe(swipe)) {
-                _currentPosition += swipe;
-                MoveTo(_currentPosition);
+                Vector3 newPosition = transform.localPosition + swipe;
+                MoveTo(newPosition);
             }
         }
 
         private bool IsPossibleSwipe(Vector3 swipe)
         {
-            Vector3 newPos = _currentPosition + swipe;
+            Vector3 newPos = transform.localPosition + swipe;
             return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
         }
 
@@ -120,7 +117,6 @@ namespace Drone.Location.World.Dron
             
             bool upDirection = targetPosition.y > startPosition.y;
             bool rightDirection = targetPosition.x > startPosition.x;
-            _shiftCoeficient += ShiftSpeed * UPDATE_TIME;
             
             while (!complete) {
                 Vector3 currentPosition = transform.localPosition;

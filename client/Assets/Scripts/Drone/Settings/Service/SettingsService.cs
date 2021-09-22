@@ -26,9 +26,6 @@ namespace Drone.Settings.Service
         [Inject]
         private AudioService _audioService;
         
-        [Inject]
-        private GestureService _gestureService;
-
         private void UpdateSettings()
         {
             SettingsModel settingsModel = RequireSettingsModel();
@@ -59,7 +56,6 @@ namespace Drone.Settings.Service
                 _settingsRepository.Set(settingsModel);
             }
             UpdateSettings();
-            _gestureService.EnableSwipe = RequireSettingsModel().IsSwipe;
         }
 
         public bool GetMusicMute()
@@ -95,15 +91,14 @@ namespace Drone.Settings.Service
             _billingService.SetCreditsCount(0);
         }
         
-        public void SetSwipeMute(bool isMute)
+        public void SetSwipeControl(bool value)
         {
             SettingsModel settingsModel = RequireSettingsModel();
-            settingsModel.IsSwipe = isMute;
-            _gestureService.EnableSwipe = isMute;
+            settingsModel.IsSwipe = value;
             _settingsRepository.Set(settingsModel);
         }
         
-        public bool GetSwipe()
+        public bool GetSwipeControl()
         {
             return RequireSettingsModel().IsSwipe;
         }

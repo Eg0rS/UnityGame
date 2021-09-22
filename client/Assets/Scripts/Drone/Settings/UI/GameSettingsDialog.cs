@@ -38,7 +38,7 @@ namespace Drone.Settings.UI
         {
             _toggleMusicButton.IsOn = _settingsService.GetMusicMute();
             _toggleSoundButton.IsOn = _settingsService.GetSoundMute();
-            _swipeButton.IsOn = _settingsService.GetSwipe();
+            _swipeButton.IsOn = _settingsService.GetSwipeControl();
         }
 
         [UIOnClick("CloseButton")]
@@ -57,7 +57,7 @@ namespace Drone.Settings.UI
         [UIOnClick("SwipeToggleButton")]
         private void OnSwipeButton()
         {
-            _settingsService.SetSwipeMute(_swipeButton.IsOn);
+            _settingsService.SetSwipeControl(_swipeButton.IsOn);
         }
 
         [UIOnClick("MusicToggleButton")]
