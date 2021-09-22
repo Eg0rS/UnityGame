@@ -8,16 +8,16 @@ namespace Drone.Location.Service
 {
     public class DronControlService : GameEventDispatcher
     {
-        private const float SWIPE_TRESHOLD = 0.077f;
+        private const float SWIPE_TRESHOLD = 0.005f;
+        private const float END_MOVE_TRESHOLD = 0.08f;
         private float _width;
         private float _height;
 
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
         private bool OnSwiping;
-
-        [Inject]
-        private SettingsService _settingsService;
+        private bool _isMoving = false;
+        private Vector2 _movingVector;
 
         private void Awake()
         {
@@ -29,10 +29,6 @@ namespace Drone.Location.Service
 
         private void Update()
         {
-            // if (_settingsService.GetSwipeControl()) {
-            //     return;
-            // }
-
             if (Input.touchCount <= 0) {
                 return;
             }
@@ -51,8 +47,7 @@ namespace Drone.Location.Service
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
                     OnSwiping = false;
-                    _startTouch = Vector2.zero;
-                    _currentTouch = Vector2.zero;
+                    Dispatch(new WorldEvent(WorldEvent.SWIPE_END)); // swipe ended
                     break;
                 case TouchPhase.Stationary:
                     break;
@@ -61,17 +56,30 @@ namespace Drone.Location.Service
 
         private void DetectSwipe()
         {
-            Vector2 swipeVector = _currentTouch - _startTouch;
-            float lengthX = Mathf.Abs(swipeVector.x / _width);
-            float lengthY = Mathf.Abs(swipeVector.y / _height);
+            Vector2 currentSwipeVector = _currentTouch - _startTouch;
+            float lengthX = Mathf.Abs(currentSwipeVector.x / _width);
+            float lengthY = Mathf.Abs(currentSwipeVector.y / _height);
 
             if (lengthX <= SWIPE_TRESHOLD && lengthY <= SWIPE_TRESHOLD) {
                 return;
             }
-            _startTouch = _currentTouch;
             
-            swipeVector = RoundVector(swipeVector);
-            Dispatch(new WorldEvent(WorldEvent.SWIPE, swipeVector));
+            currentSwipeVector = RoundVector(currentSwipeVector);
+            
+            if (lengthX >= END_MOVE_TRESHOLD || lengthY >= END_MOVE_TRESHOLD) {
+                _startTouch = _currentTouch;
+                _isMoving = false;
+                Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+                return;
+            }
+
+            if ((lengthX >= SWIPE_TRESHOLD || lengthY >= SWIPE_TRESHOLD) && (!_isMoving || !_movingVector.Equals(currentSwipeVector))) {
+                _startTouch = _currentTouch;
+                _isMoving = true;
+                _movingVector = currentSwipeVector;
+                Dispatch(new WorldEvent(WorldEvent.START_MOVE, currentSwipeVector));
+                return;
+            }
         }
 
         private Vector2 RoundVector(Vector2 vector)

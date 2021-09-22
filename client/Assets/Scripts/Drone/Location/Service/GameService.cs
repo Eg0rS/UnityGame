@@ -85,7 +85,7 @@ namespace Drone.Location.Service
             _dronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
+            _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
             SetStartOptionsDron();
@@ -94,9 +94,11 @@ namespace Drone.Location.Service
         private void SetStartOptionsDron()
         {
             DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-            _dronStats.durability = dronDescriptor.Durability;
+         //   _dronStats.durability = dronDescriptor.Durability;
+         //   _dronStats.energy = dronDescriptor.Energy;
+            _dronStats.durability = 999999;
+            _dronStats.energy = 9999999;
             _dronStats.maxDurability = dronDescriptor.Durability;
-            _dronStats.energy = dronDescriptor.Energy;
             _dronStats.countChips = 0;
             _dronStats.energyFall = 0.05f;
         }

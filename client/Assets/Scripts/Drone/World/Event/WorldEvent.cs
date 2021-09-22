@@ -23,6 +23,9 @@ namespace Drone.World.Event
         public const string WORLD_CREATED = "WorldCreated";
         public const string CREATE_WORLD = "CreateWorld";
         public const string SWIPE = "Swipe";
+        public const string START_MOVE = "start";
+        public const string END_MOVE = "end";
+        public const string SWIPE_END = "swipeEnd";
 
         public GameObject CollisionObject { get; private set; }
         public LevelDescriptor LevelDescriptor { get; private set; }

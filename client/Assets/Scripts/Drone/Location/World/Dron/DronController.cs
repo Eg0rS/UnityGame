@@ -19,20 +19,16 @@ namespace Drone.Location.World.Dron
 {
     public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
     {
-
         private const float UPDATE_TIME = 0.1f;
-        
+
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
         [Inject]
         private DronControlService _dronControlService;
-        
-        [Inject]
-        private SettingsService _settingsService;
 
         public WorldObjectType ObjectType { get; }
-        
+
         private const float AccelerationCoefficient = 0.2f;
         private float ShiftSpeed = 0.13f;
         private BezierWalkerWithSpeed _bezier;
@@ -40,7 +36,8 @@ namespace Drone.Location.World.Dron
         private bool _isGameRun;
         private float _boostSpeed;
         private Coroutine _isMoving;
-        
+        private Vector3 _droneTargetPosition = Vector3.zero;
+
         public void Init(DronModel model)
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
@@ -48,7 +45,9 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
+            _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
+            _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
+            _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
 
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
             ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
@@ -58,6 +57,7 @@ namespace Drone.Location.World.Dron
         {
             _isGameRun = true;
             _bezier.enabled = true;
+            _bezier.speed = _levelSpeed;
         }
 
         public void Update()
@@ -66,32 +66,53 @@ namespace Drone.Location.World.Dron
                 return;
             }
 
-            if (_bezier.NormalizedT < 0.5f) {
-                _levelSpeed += AccelerationCoefficient * Time.deltaTime;
-            }
-            _bezier.speed = _levelSpeed;
+            // if (_bezier.NormalizedT < 0.5f) {
+            //     _levelSpeed += AccelerationCoefficient * Time.deltaTime;
+            // }
+            // _bezier.speed = _levelSpeed;
         }
 
         private void EndGame(WorldEvent worldEvent)
         {
-            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwiped);
+            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
+            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
+            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
 
+        private void OnSwipedEnd(WorldEvent obj)
+        {
+            if (!transform.localPosition.Equals(_droneTargetPosition)) {
+                MoveTo(_droneTargetPosition);
+            }
+        }
+
+        private void OnStart(WorldEvent objectEvent)
+        {
+            Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
+
+            if (IsPossibleSwipe(swipe)) {
+                Vector3 newPosition = _droneTargetPosition + swipe;
+                MoveTo(newPosition);
+            }
+        }
+
         private void OnSwiped(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
+
             if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = transform.localPosition + swipe;
+                Vector3 newPosition = _droneTargetPosition + swipe;
+                _droneTargetPosition = newPosition;
                 MoveTo(newPosition);
             }
         }
 
         private bool IsPossibleSwipe(Vector3 swipe)
         {
-            Vector3 newPos = transform.localPosition + swipe;
+            Vector3 newPos = _droneTargetPosition + swipe;
             return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
         }
 
@@ -113,11 +134,10 @@ namespace Drone.Location.World.Dron
             float deltaX = move.x / updateCount;
             float deltaY = move.y / updateCount;
             bool complete = false;
-            // float delta = 0;
-            
+
             bool upDirection = targetPosition.y > startPosition.y;
             bool rightDirection = targetPosition.x > startPosition.x;
-            
+
             while (!complete) {
                 Vector3 currentPosition = transform.localPosition;
                 float xPos = currentPosition.x += deltaX;
@@ -143,11 +163,13 @@ namespace Drone.Location.World.Dron
                 }
 
                 transform.localPosition = new Vector3(xPos, yPos, currentPosition.z);
-                
-                if (currentPosition == targetPosition) {
+
+                if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
+
+                    _droneTargetPosition = targetPosition;
                 }
-                
+
                 yield return 0.1;
             }
             _isMoving = null;
@@ -169,24 +191,17 @@ namespace Drone.Location.World.Dron
         {
             _levelSpeed -= _boostSpeed;
         }
-        
+
         private void RotateSelf(Swipe swipe, float angleRotate)
         {
-            if (swipe.Check(HorizontalSwipeDirection.LEFT))
-            {
-                transform.localRotation = Quaternion.Euler(0,0, angleRotate);
-            }
-            else if (swipe.Check(HorizontalSwipeDirection.RIGHT))
-            {
-                transform.localRotation = Quaternion.Euler(0,0, -angleRotate);
-            }
-            else if (swipe.Check(VerticalSwipeDirection.DOWN))
-            {
-                transform.localRotation = Quaternion.Euler(angleRotate * 0.5f, 0,0);
-            }
-            else if (swipe.Check(VerticalSwipeDirection.UP))
-            {
-                transform.localRotation = Quaternion.Euler( -angleRotate * 0.5f, 0,0);
+            if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
+                transform.localRotation = Quaternion.Euler(0, 0, angleRotate);
+            } else if (swipe.Check(HorizontalSwipeDirection.RIGHT)) {
+                transform.localRotation = Quaternion.Euler(0, 0, -angleRotate);
+            } else if (swipe.Check(VerticalSwipeDirection.DOWN)) {
+                transform.localRotation = Quaternion.Euler(angleRotate * 0.5f, 0, 0);
+            } else if (swipe.Check(VerticalSwipeDirection.UP)) {
+                transform.localRotation = Quaternion.Euler(-angleRotate * 0.5f, 0, 0);
             }
         }
     }
