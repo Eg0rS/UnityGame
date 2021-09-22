@@ -9,7 +9,7 @@ namespace Drone.Location.Service
     public class DronControlService : GameEventDispatcher
     {
         private const float SWIPE_TRESHOLD = 0.005f;
-        private const float END_MOVE_TRESHOLD = 0.08f;
+        private const float END_MOVE_TRESHOLD = 0.12f;
         private float _width;
         private float _height;
 
@@ -23,8 +23,8 @@ namespace Drone.Location.Service
         {
             _width = Screen.width;
             _height = Screen.height;
-            _width *= _height / _width;
-            _height *= _height / _width;
+            // _width *= _height / _width;
+            // _height *= _height / _width;
         }
 
         private void Update()
