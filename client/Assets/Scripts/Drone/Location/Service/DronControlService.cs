@@ -1,7 +1,5 @@
 ﻿using AgkCommons.Event;
-using Drone.Settings.Service;
 using Drone.World.Event;
-using IoC.Attribute;
 using UnityEngine;
 
 namespace Drone.Location.Service
