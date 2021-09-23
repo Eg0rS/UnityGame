@@ -6,11 +6,9 @@ using AgkCommons.Input.Gesture.Model;
 using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using BezierSolution;
-using Cinemachine.Utility;
 using Drone.Location.Model;
 using Drone.Location.Model.Dron;
 using Drone.Location.Service;
-using Drone.Settings.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
@@ -23,6 +21,9 @@ namespace Drone.Location.World.Dron
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject]
+        private GameService _gameService;
 
         [Inject]
         private DronControlService _dronControlService;
@@ -40,6 +41,7 @@ namespace Drone.Location.World.Dron
 
         public void Init(DronModel model)
         {
+            DronModel dronModel = _gameService.GetDroneModelById();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
@@ -52,6 +54,7 @@ namespace Drone.Location.World.Dron
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
            // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
            ShiftSpeed = 0.4f;
+           ShiftSpeed = dronModel.Mobility;
         }
 
         private void StartGame(WorldEvent worldEvent)
