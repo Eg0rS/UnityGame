@@ -28,9 +28,9 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         private void Init(InventoryItemModel item)
         {
             ItemId = item.Id;
-            ShopItemDescriptor title = _shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId));
-            SetItemLabel(title.Name);
-            //SetItemModel(_shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId)).Model);
+            ShopItemDescriptor descriptor = _shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId));
+            SetItemLabel(descriptor.Name);
+            SetItemModel(descriptor.Model);
         }
 
         private void SetItemModel(string model)

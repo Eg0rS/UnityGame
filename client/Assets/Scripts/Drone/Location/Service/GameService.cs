@@ -68,7 +68,7 @@ namespace Drone.Location.Service
 
         [Inject]
         private LocationService _locationService;
-        
+
         private LevelDescriptor _levelDescriptor;
         private DronStats _dronStats;
         private bool _isPlay;
@@ -102,11 +102,11 @@ namespace Drone.Location.Service
         private void SetStartOptionsDron()
         {
             DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-         //   _dronStats.durability = dronDescriptor.Durability;
-         //   _dronStats.energy = dronDescriptor.Energy;
+            //   _dronStats.durability = dronDescriptor.Durability;
+            //   _dronStats.energy = dronDescriptor.Energy;
             _dronStats.durability = 999999;
             _dronStats.energy = 9999999;
-            _dronStats.maxDurability = dronDescriptor.Durability; //todo ошибочка
+            _dronStats.maxDurability = dronDescriptor.Durability;
             _dronStats.countChips = 0;
             _dronStats.energyFall = 0.05f;
         }
@@ -207,8 +207,7 @@ namespace Drone.Location.Service
                 case WorldObjectType.SPEED_BUSTER:
                     _dronStats.energy -= _dronStats.energyForSpeed;
                     Invoke("DisableSpeed", _dronStats.boostSpeedTime);
-                    _gameWorld.Require()
-                              .Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue, _dronStats.boostSpeedTime));
+                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue, _dronStats.boostSpeedTime));
                     break;
             }
         }
@@ -263,7 +262,7 @@ namespace Drone.Location.Service
         private void CreateDrone(string dronId)
         {
             GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);//TODO ошибочка
+            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);
         }
 
         private int CalculateStars(float timeInGame)
