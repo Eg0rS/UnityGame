@@ -2,7 +2,7 @@
 
 namespace Drone.Location.World.Dron.Descriptor
 {
-    public class DronDescriptor
+    public class DroneDescriptor
     {
         private string _id;
         private string _title;

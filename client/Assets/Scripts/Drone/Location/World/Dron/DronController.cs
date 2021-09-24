@@ -7,20 +7,26 @@ using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
-using Drone.Location.Model.Dron;
+using Drone.Location.Model.Drone;
 using Drone.Location.Service;
+using Drone.Location.World.Dron.Descriptor;
+using Drone.Location.World.Dron.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
 
 namespace Drone.Location.World.Dron
 {
-    public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
+    public class DronController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
         private const float UPDATE_TIME = 0.1f;
+        private const float AccelerationCoefficient = 0.2f;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject]
+        private DronService _droneService;
 
         [Inject]
         private GameService _gameService;
@@ -29,19 +35,16 @@ namespace Drone.Location.World.Dron
         private DronControlService _dronControlService;
 
         public WorldObjectType ObjectType { get; }
-
-        private const float AccelerationCoefficient = 0.2f;
-        private float ShiftSpeed = 0.13f;
         private BezierWalkerWithSpeed _bezier;
-        private float _levelSpeed = 8;
-        private bool _isGameRun;
-        private float _boostSpeed;
         private Coroutine _isMoving;
         private Vector3 _droneTargetPosition = Vector3.zero;
+        private float _mobility;
+        private float _boostSpeed;
+        private float _levelSpeed = 8;
+        private bool _isGameRun;
 
-        public void Init(DronModel model)
+        public void Init(DroneModel model)
         {
-            DronModel dronModel = _gameService.GetDroneModelById();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
@@ -50,11 +53,9 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
-
-            // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-           // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-           ShiftSpeed = 0.4f;
-           ShiftSpeed = dronModel.Mobility;
+            DroneDescriptor droneDescriptor = _droneService.GetDroneById(_gameService.DroneId).DroneDescriptor;
+            model.SetDroneParameters(droneDescriptor.Mobility, droneDescriptor.Durability, droneDescriptor.Energy);
+            _mobility = model.Mobility;
         }
 
         private void StartGame(WorldEvent worldEvent)
@@ -133,7 +134,7 @@ namespace Drone.Location.World.Dron
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
-            float time = distance / ShiftSpeed;
+            float time = distance / _mobility;
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
             float deltaX = move.x / updateCount;
             float deltaY = move.y / updateCount;

@@ -12,19 +12,13 @@ namespace Drone.Location.World.Dron.Service
     public class DronService : IInitable
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DronService>();
-        private string _currentDronId;
 
         [Inject]
         private DronDescriptorRegistry _dronDescriptorRegistry;
 
         [Inject]
         private ResourceService _resourceService;
-
-        public string CurrentDronId
-        {
-            get => _currentDronId;
-        }
-
+        
         public void Init()
         {
             if (_dronDescriptorRegistry.DronDescriptors.Count == 0) {
@@ -36,19 +30,19 @@ namespace Drone.Location.World.Dron.Service
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
             foreach (Configuration conf in config.GetList<Configuration>("drons.dron")) {
-                DronDescriptor dronDescriptor = new DronDescriptor();
-                dronDescriptor.Configure(conf);
-                _dronDescriptorRegistry.DronDescriptors.Add(dronDescriptor);
+                DroneDescriptor droneDescriptor = new DroneDescriptor();
+                droneDescriptor.Configure(conf);
+                _dronDescriptorRegistry.DronDescriptors.Add(droneDescriptor);
             }
             _logger.Debug("[DronService] Теперь количество элементов в _dronDescriptorRegistry.DronDescriptors = "
                           + _dronDescriptorRegistry.DronDescriptors.Count);
         }
 
-        public DronViewModel GetDronById(string dronId)
+        public DroneViewModel GetDroneById(string droneId)
         {
-            DronViewModel dronViewModel = new DronViewModel();
-            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId));
-            return dronViewModel;
+            DroneViewModel droneViewModel = new DroneViewModel();
+            droneViewModel.DroneDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(droneId));
+            return droneViewModel;
         }
     }
 }

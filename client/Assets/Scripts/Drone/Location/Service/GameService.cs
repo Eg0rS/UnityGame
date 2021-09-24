@@ -10,7 +10,6 @@ using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Battery;
 using Drone.Location.Model.BonusChips;
-using Drone.Location.Model.Dron;
 using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
@@ -64,7 +63,7 @@ namespace Drone.Location.Service
         private LevelService _levelService;
 
         [Inject]
-        private DronService _dronService;
+        private DronService _droneService;
 
         [Inject]
         private LocationService _locationService;
@@ -72,7 +71,6 @@ namespace Drone.Location.Service
         private LevelDescriptor _levelDescriptor;
         private DronStats _dronStats;
         private bool _isPlay;
-        private string _dronId;
         private float _startTime;
         private Coroutine _fallingEnergy;
 
@@ -80,33 +78,28 @@ namespace Drone.Location.Service
         {
             set { _isPlay = value; }
         }
-
-        public DronModel GetDroneModelById()
-        {
-            DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-            return new DronModel(dronDescriptor.Mobility, dronDescriptor.Durability, dronDescriptor.Energy);
-        }
+        public string DroneId { get; private set; }
 
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            _dronId = dronId;
+            DroneId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwipe);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
-            SetStartOptionsDron();
+            SetStartDroneParameters();
         }
 
-        private void SetStartOptionsDron()
+        private void SetStartDroneParameters()
         {
-            DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
+            DroneDescriptor droneDescriptor = _droneService.GetDroneById(DroneId).DroneDescriptor;
             //   _dronStats.durability = dronDescriptor.Durability;
             //   _dronStats.energy = dronDescriptor.Energy;
             _dronStats.durability = 999999;
             _dronStats.energy = 9999999;
-            _dronStats.maxDurability = dronDescriptor.Durability;
+            _dronStats.maxDurability = droneDescriptor.Durability;
             _dronStats.countChips = 0;
             _dronStats.energyFall = 0.05f;
         }
@@ -116,7 +109,7 @@ namespace Drone.Location.Service
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
-            CreateDrone(_dronId);
+            CreateDrone(DroneId);
         }
 
         private void OnSwipe(WorldEvent worldEvent)
@@ -261,7 +254,7 @@ namespace Drone.Location.Service
         private void CreateDrone(string dronId)
         {
             GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);
+            Instantiate(Resources.Load<GameObject>(_droneService.GetDroneById(dronId).DroneDescriptor.Prefab), parent.transform);
         }
 
         private int CalculateStars(float timeInGame)
