@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Adept.Logger;
+﻿using Adept.Logger;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
@@ -8,17 +6,18 @@ using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
-using Drone.Core.Audio;
 using Drone.Core.Audio.Model;
 using Drone.Core.Audio.Service;
 using Drone.Core.UI.Dialog;
-using Drone.LevelMap.Levels.IoC;
+using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Service;
+using Drone.LevelMap.Zones.Descriptor;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using static System.String;
 
 namespace Drone.LevelMap.LevelDialogs
 {
@@ -59,9 +58,6 @@ namespace Drone.LevelMap.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
-        [Inject]
-        private LevelDescriptorRegistry _levelDescriptorRegistry;
-
         [UIComponentBinding("ChipsStar")]
         private ToggleButton _chipsStar;
 
@@ -96,11 +92,6 @@ namespace Drone.LevelMap.LevelDialogs
             _logger.Debug("[LevelFinishedDialog] Init()...");
             _levelViewModel = _levelService.GetLevels().Find(it => it.LevelProgress.Id.Equals(_levelId));
 
-            _chipsTaskCompleted = false;
-            _durabilityTaskCompleted = false;
-            _timeTaskCompleted = false;
-            _tasksCompletedCount = 0;
-
             _chipsGoal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
             _durabilityGoal = _levelViewModel.LevelDescriptor.NecessaryDurability;
             _timeGoal = _levelViewModel.LevelDescriptor.NecessaryTime;
@@ -126,7 +117,7 @@ namespace Drone.LevelMap.LevelDialogs
 
             SetDialogStars();
             SetDialogLabels();
-            SetButtons();
+            SetButtonNextActivity();
         }
 
         private void PlaySound(Sound sound)
@@ -148,15 +139,29 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetDialogLabels()
         {
-            _tasksCompletedLabel.text = String.Format(TASKS_COMPLETED, _tasksCompletedCount);
-            _chipsTaskLabel.text = String.Format(CHIPS_TASK_FULL, _chipsLevelResult, _chipsGoal);
-            _durabilityTaskLabel.text = String.Format(DURABILITY_TASK, _durabilityGoal);
-            _timeTaskLabel.text = String.Format(TIME_TASK, _timeGoal);
+            _tasksCompletedLabel.text = Format(TASKS_COMPLETED, _tasksCompletedCount);
+            _chipsTaskLabel.text = Format(CHIPS_TASK_FULL, _chipsLevelResult, _chipsGoal);
+            _durabilityTaskLabel.text = Format(DURABILITY_TASK, _durabilityGoal);
+            _timeTaskLabel.text = Format(TIME_TASK, _timeGoal);
         }
 
-        private void SetButtons()
+        private void SetButtonNextActivity()
         {
-            _nextLevelButton.gameObject.SetActive(_levelService.GetNextLevel() != 0);
+            ZoneDescriptor zoneDescriptor = _levelService.GetZonesDescriptors().Find(x => x.LevelId.Contains(_levelViewModel.LevelProgress.Id));
+            ZoneDescriptor nextZoneDescriptor = _levelService.GetZoneDescriptorById(_levelService.GetNextZoneId(zoneDescriptor.Id));
+            if (_levelService.GetNextLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
+                _nextLevelButton.gameObject.SetActive(false);
+                return;
+            }
+            if (nextZoneDescriptor == null) {
+                _nextLevelButton.gameObject.SetActive(true);
+                return;
+            }
+            if (_levelViewModel.LevelDescriptor.Type == LevelType.BOSS) {
+                _nextLevelButton.gameObject.SetActive(_levelService.CompletedZoneConditions(zoneDescriptor.Id, nextZoneDescriptor.CountStars));
+                return;
+            }
+            _nextLevelButton.gameObject.SetActive(true);
         }
 
         [UIOnClick("RestartButton")]
@@ -172,8 +177,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _levelService.ShowStartLevelDialog(_levelDescriptorRegistry.LevelDescriptors.FirstOrDefault(a => a.Order == _levelService.GetNextLevel())
-                                                                       .Id);
+            _levelService.ShowStartLevelDialog(_levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id));
         }
 
         [UIOnClick("LevelMapButton")]

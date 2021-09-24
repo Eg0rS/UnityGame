@@ -7,15 +7,14 @@ namespace Drone.LevelMap.Levels.IoC
     {
         private List<LevelDescriptor> _levelDescriptors;
 
-        public List<LevelDescriptor> LevelDescriptors
-        {
-            get => _levelDescriptors;
-            set => _levelDescriptors = value;
-        }
-
         public LevelDescriptorRegistry()
         {
             _levelDescriptors = new List<LevelDescriptor>();
+        }
+
+        public List<LevelDescriptor> LevelDescriptors
+        {
+            get { return _levelDescriptors; }
         }
     }
 }

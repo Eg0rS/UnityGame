@@ -10,12 +10,10 @@ namespace Drone.LevelMap.Levels.Descriptor
         public int NecessaryCountChips { get; private set; }
         public int NecessaryTime { get; private set; }
         public int NecessaryDurability { get; private set; }
-        public string LevelTitle { get; private set; }
-        public string LevelDescription { get; private set; }
-        public string LevelImage { get; private set; }
-        public string Skybox { get; private set; }
-        public string Color { get; private set; }
-        public float Intensity { get; private set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
+        public string Image { get; private set; }
+        public LevelType Type { get; private set; }
 
         public void Configure(Configuration config)
         {
@@ -25,12 +23,11 @@ namespace Drone.LevelMap.Levels.Descriptor
             NecessaryCountChips = config.GetInt("chips");
             NecessaryTime = config.GetInt("time");
             NecessaryDurability = config.GetInt("durability");
-            LevelTitle = config.GetString("title");
-            LevelDescription = config.GetString("description");
-            LevelImage = config.GetString("image");
-            Skybox = config.GetString("skybox");
-            Intensity = config.GetFloat("intensity");
-            Color = config.GetString("color");
+            Title = config.GetString("title");
+            Description = config.GetString("description");
+            Image = config.GetString("image");
+            int type = config.GetInt("type");
+            Type = (LevelType) type;
         }
     }
 }
