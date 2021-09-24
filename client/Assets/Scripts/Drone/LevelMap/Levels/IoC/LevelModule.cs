@@ -5,7 +5,7 @@ using IoC.Api;
 
 namespace Drone.LevelMap.Levels.IoC
 {
-    public class LevelsModule : IIoCModule
+    public class LevelModule : IIoCModule
     {
         public void Configure(IIoCContainer container)
         {
