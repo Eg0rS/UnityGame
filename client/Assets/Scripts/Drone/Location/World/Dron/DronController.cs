@@ -50,8 +50,8 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
 
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-           // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-           ShiftSpeed = 0.4f;
+            // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
+            ShiftSpeed = 0.4f;
         }
 
         private void StartGame(WorldEvent worldEvent)
@@ -93,9 +93,9 @@ namespace Drone.Location.World.Dron
         private void OnStart(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
-
+            // new possible
             if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = _droneTargetPosition + swipe;
+                Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
                 MoveTo(newPosition);
             }
         }
@@ -105,16 +105,36 @@ namespace Drone.Location.World.Dron
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
 
             if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = _droneTargetPosition + swipe;
+                Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
                 _droneTargetPosition = newPosition;
                 MoveTo(newPosition);
             }
         }
 
+        private Vector3 NewPosition(Vector3 dronPos, Vector3 swipe)
+        {
+            Vector3 newPos = dronPos + swipe;
+            if (newPos.x > 1.0f) {
+                swipe.x = 0.0f;
+            }
+            if (newPos.x < -1.0f) {
+                swipe.x = 0.0f;
+            }
+            if (newPos.y > 1.0f) {
+                swipe.y = 0.0f;
+            }
+            if (newPos.y < -1.0f) {
+                swipe.y = 0.0f;
+            }
+            Vector3 newPosition = dronPos + swipe;
+            return newPosition;
+        }
+
         private bool IsPossibleSwipe(Vector3 swipe)
         {
             Vector3 newPos = _droneTargetPosition + swipe;
-            return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
+
+            return (newPos.x < 1.0f && newPos.x > -1.0f) || (newPos.y < 1.0f && newPos.y > -1.0f);
         }
 
         private void MoveTo(Vector3 newPos)
