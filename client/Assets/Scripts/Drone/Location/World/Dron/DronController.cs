@@ -2,15 +2,10 @@
 using System.Collections;
 using UnityEngine;
 using AgkCommons.Event;
-using AgkCommons.Input.Gesture.Model;
-using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using BezierSolution;
-using Cinemachine.Utility;
 using Drone.Location.Model;
 using Drone.Location.Model.Dron;
-using Drone.Location.Service;
-using Drone.Settings.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
@@ -24,15 +19,14 @@ namespace Drone.Location.World.Dron
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        [Inject]
         private DronControlService _dronControlService;
 
         public WorldObjectType ObjectType { get; }
 
-        private float Acceleration = 0.1f; // прибавление в секунду
-        private float MaxSpeed = 20; 
-        private float ShiftSpeed = 0.4f;
+        private const float AccelerationCoefficient = 0.2f;
+        private float ShiftSpeed = 0.13f;
         private BezierWalkerWithSpeed _bezier;
+        private float _levelSpeed = 8;
         private bool _isGameRun;
         private float _boostSpeed;
         private Coroutine _isMoving;
@@ -40,12 +34,12 @@ namespace Drone.Location.World.Dron
 
         public void Init(DronModel model)
         {
-            
+            _dronControlService = gameObject.AddComponent<DronControlService>();
+
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
-            _bezier.speed = 0;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, BoostSpeed);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
@@ -53,23 +47,20 @@ namespace Drone.Location.World.Dron
 
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
             // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-            ShiftSpeed = 0.7f;
+            ShiftSpeed = 0.4f;
         }
 
         private void StartGame(WorldEvent worldEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
+            _bezier.speed = _levelSpeed;
         }
 
         public void Update()
         {
             if (!_isGameRun) {
                 return;
-            }
-
-            if (_bezier.speed < MaxSpeed) { 
-                _bezier.speed += Acceleration * Time.deltaTime;
             }
         }
 
@@ -79,7 +70,7 @@ namespace Drone.Location.World.Dron
             _dronControlService.RemoveListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
             _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, BoostSpeed);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
 
@@ -196,21 +187,16 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
         }
 
-        private void Deceleration()
-        {
-            _bezier.speed /= 2;
-        }
-
-        private void BoostSpeed(WorldEvent objectEvent)
+        private void Acceleration(WorldEvent objectEvent)
         {
             _boostSpeed = objectEvent.SpeedBoost;
-            _bezier.speed += _boostSpeed;
+            _levelSpeed += _boostSpeed;
             Invoke(nameof(DisableAcceleration), objectEvent.SpeedBoostTime);
         }
 
         private void DisableAcceleration()
         {
-            _bezier.speed -= _boostSpeed;
+            _levelSpeed -= _boostSpeed;
         }
     }
 }

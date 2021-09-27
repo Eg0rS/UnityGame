@@ -1,20 +1,23 @@
-﻿using System;
-using AgkCommons.Event;
-using Drone.Location.World.Dron;
-using Drone.Settings.Service;
+﻿using AgkCommons.Event;
 using Drone.World.Event;
-using IoC.Attribute;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using TouchPhase = UnityEngine.TouchPhase;
 
-namespace Drone.Location.Service
+namespace Drone.Location.World.Dron
 {
     public class DronControlService : GameEventDispatcher
     {
-        private const float SWIPE_TRESHOLD = 0.05f;
-        private const float END_MOVE_TRESHOLD = 0.1f;
-        private const float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
+        #region const
+
+        [SerializeField]
+        private float SWIPE_TRESHOLD = 0.05f;
+        [SerializeField]
+        private float END_MOVE_TRESHOLD = 0.1f;
+        [SerializeField]
+        private float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
+
+        #endregion
+
         private float _width;
         private float _height;
 
@@ -50,7 +53,6 @@ namespace Drone.Location.Service
                     break;
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
-                    // Dispatch(new WorldEvent(WorldEvent.SWIPE_END)); // swipe ended
                     break;
                 case TouchPhase.Stationary:
                     break;
