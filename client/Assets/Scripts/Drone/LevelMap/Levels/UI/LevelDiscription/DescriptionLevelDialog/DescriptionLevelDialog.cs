@@ -78,12 +78,12 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
 
         private void DisplayTitle()
         {
-            _title.text = _levelDescriptor.LevelTitle;
+            _title.text = _levelDescriptor.Title;
         }
 
         private void DisplayDescription()
         {
-            _description.text = _levelDescriptor.LevelDescription;
+            _description.text = _levelDescriptor.Description;
         }
 
         private void DisplayTasks(string chipText, string durabilityText, string timeText)
@@ -95,7 +95,7 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
 
         private void DisplayImage()
         {
-            _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.LevelImage, typeof(Sprite)) as Sprite;
+            _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.Image, typeof(Sprite)) as Sprite;
         }
 
         private void CreateChoiseDron()
