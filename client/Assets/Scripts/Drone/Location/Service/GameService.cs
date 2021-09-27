@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
@@ -27,7 +26,7 @@ using UnityEngine;
 
 namespace Drone.Location.Service
 {
-    public struct DronStats
+    public struct DronStats //todo сделать отдельным объектом
     {
         public float durability;
         public float energy;
@@ -39,7 +38,12 @@ namespace Drone.Location.Service
         public float energyFall;
         public float energyForSpeed;
         public float maxDurability;
-        public int maxSpeed;
+    }
+
+    public struct DronParameters  //todo сделать отдельным объектом
+    {
+        public float maxSpeed;
+        public float acceleration;
     }
 
     public enum FailedReasons
@@ -74,6 +78,7 @@ namespace Drone.Location.Service
 
         private LevelDescriptor _levelDescriptor;
         private DronStats _dronStats;
+        private DronParameters _dronParameters;
         private bool _isPlay;
         private string _dronId;
         private float _startTime;
@@ -97,19 +102,22 @@ namespace Drone.Location.Service
         private void SetStartOptionsDron()
         {
             DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-            //   _dronStats.durability = dronDescriptor.Durability;
+            //   _dronStats.durability = dronDescriptor.Durability; todo вернуть 
             //   _dronStats.energy = dronDescriptor.Energy;
             _dronStats.durability = 999999;
             _dronStats.energy = 9999999;
             _dronStats.maxDurability = dronDescriptor.Durability;
             _dronStats.countChips = 0;
             _dronStats.energyFall = 0.05f;
+            _dronParameters.maxSpeed = dronDescriptor.MaxSpeed;
+            _dronParameters.acceleration = dronDescriptor.Acceleration;
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
             _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _dronParameters));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
             CreateDrone(_dronId);
