@@ -12,10 +12,6 @@ namespace Drone.Location.Service
 {
     public class DronControlService : GameEventDispatcher
     {
-        //
-        // private DroneMovement _droneMovement;
-        //
-
         private const float SWIPE_TRESHOLD = 0.05f;
         private const float END_MOVE_TRESHOLD = 0.1f;
         private const float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
@@ -24,7 +20,6 @@ namespace Drone.Location.Service
 
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
-        private bool OnSwiping;
         private bool _isMoving;
         private bool _firstSwipeDone;
         private Vector2 _movingVector;
@@ -33,41 +28,9 @@ namespace Drone.Location.Service
 
         private void Awake()
         {
-            //
-            //   _droneMovement = new DroneMovement();
-            //
             _width = Screen.width;
             _height = Screen.height;
-            // _width *= _height / _width;
-            // _height *= _height / _width;
         }
-
-        // private void OnEnable()
-        // {
-        //     _droneMovement.Enable();
-        // }
-        //
-        // private void OnDisable()
-        // {
-        //     _droneMovement.Disable();
-        // }
-        //
-        // private void Start()
-        // {
-        //     _droneMovement.Touch.Contact.started += ctx => StartTouchContact(ctx);
-        //     _droneMovement.Touch.Contact.canceled += ctx => EndTouchContact(ctx);
-        //
-        // }
-
-        // private void EndTouchContact(InputAction.CallbackContext context)
-        // {
-        //     Debug.Log("contact started " + _droneMovement.Touch.Position.ReadValue<Vector2>());
-        // }
-        //
-        // private void StartTouchContact(InputAction.CallbackContext context)
-        // {
-        //     Debug.Log("contact ended " + _droneMovement.Touch.Position.ReadValue<Vector2>());
-        // }
 
         private void Update()
         {
@@ -89,7 +52,7 @@ namespace Drone.Location.Service
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
                     OnSwiping = false;
-                    Dispatch(new WorldEvent(WorldEvent.SWIPE_END)); // swipe ended
+                    // Dispatch(new WorldEvent(WorldEvent.SWIPE_END)); // swipe ended
                     break;
                 case TouchPhase.Stationary:
                     break;
@@ -115,12 +78,12 @@ namespace Drone.Location.Service
                 _isMoving = false;
                 _movingVector = currentSwipeVector;
             }
-            
+
             if ((lengthX >= SWIPE_TRESHOLD || lengthY >= SWIPE_TRESHOLD) && !_isMoving) {
                 _startTouch = _currentTouch;
                 _isMoving = true;
-               
-                Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+
+                Dispatch(new WorldEvent(WorldEvent.START_MOVE, currentSwipeVector));
                 Debug.Log("Start move: " + currentSwipeVector);
                 return;
             }
@@ -129,6 +92,7 @@ namespace Drone.Location.Service
                 if (lengthX >= END_MOVE_TRESHOLD || lengthY >= END_MOVE_TRESHOLD) {
                     _startTouch = _currentTouch;
                     _firstSwipeDone = true;
+                    _isMoving = false;
                     _swipeVector = currentSwipeVector;
                     _movingVector = currentSwipeVector;
                     Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
@@ -140,6 +104,7 @@ namespace Drone.Location.Service
 
             if (currentSwipeVector.Equals(_swipeVector) && lengthX >= DOUBLE_END_MOVE_TRESHOLD || lengthY >= DOUBLE_END_MOVE_TRESHOLD) {
                 _startTouch = _currentTouch;
+                _isMoving = false;
                 Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
                 Debug.Log("Double swape: " + currentSwipeVector);
             }

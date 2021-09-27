@@ -93,22 +93,24 @@ namespace Drone.Location.World.Dron
         private void OnStart(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
-            // new possible
-            if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
-                MoveTo(newPosition);
+            Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
+            if (_droneTargetPosition.Equals(newPosition)) {
+                return;
             }
+            Debug.Log(_droneTargetPosition);
+            MoveTo(newPosition);
         }
 
         private void OnSwiped(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
-
-            if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
-                _droneTargetPosition = newPosition;
-                MoveTo(newPosition);
+            Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
+            if (_droneTargetPosition.Equals(newPosition)) {
+                return;
             }
+            _droneTargetPosition = newPosition;
+            Debug.Log(_droneTargetPosition);
+            MoveTo(newPosition);
         }
 
         private Vector3 NewPosition(Vector3 dronPos, Vector3 swipe)
@@ -128,13 +130,6 @@ namespace Drone.Location.World.Dron
             }
             Vector3 newPosition = dronPos + swipe;
             return newPosition;
-        }
-
-        private bool IsPossibleSwipe(Vector3 swipe)
-        {
-            Vector3 newPos = _droneTargetPosition + swipe;
-
-            return (newPos.x < 1.0f && newPos.x > -1.0f) || (newPos.y < 1.0f && newPos.y > -1.0f);
         }
 
         private void MoveTo(Vector3 newPos)
@@ -183,7 +178,7 @@ namespace Drone.Location.World.Dron
                     }
                 }
 
-                transform.localPosition = new Vector3(xPos, yPos, currentPosition.z);
+                transform.localPosition = new Vector3(xPos, yPos, 0);
 
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
@@ -211,19 +206,6 @@ namespace Drone.Location.World.Dron
         private void DisableAcceleration()
         {
             _levelSpeed -= _boostSpeed;
-        }
-
-        private void RotateSelf(Swipe swipe, float angleRotate)
-        {
-            if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
-                transform.localRotation = Quaternion.Euler(0, 0, angleRotate);
-            } else if (swipe.Check(HorizontalSwipeDirection.RIGHT)) {
-                transform.localRotation = Quaternion.Euler(0, 0, -angleRotate);
-            } else if (swipe.Check(VerticalSwipeDirection.DOWN)) {
-                transform.localRotation = Quaternion.Euler(angleRotate * 0.5f, 0, 0);
-            } else if (swipe.Check(VerticalSwipeDirection.UP)) {
-                transform.localRotation = Quaternion.Euler(-angleRotate * 0.5f, 0, 0);
-            }
         }
     }
 }
