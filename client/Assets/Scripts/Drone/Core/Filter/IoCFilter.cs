@@ -43,11 +43,11 @@ namespace Drone.Core.Filter
             context.RegisterModule(new CoreModule());
             context.RegisterModule(new DescriptorModule());
             context.RegisterModule(new LocationModule());
+            context.RegisterModule(new InventoryModule());
+            context.RegisterModule(new LevelModule());
             context.RegisterModule(new SettingsModule());
-            context.RegisterModule(new LevelsModule());
             context.RegisterModule(new BillingModule());
             context.RegisterModule(new ShopModule());
-            context.RegisterModule(new InventoryModule());
             context.RegisterModule(new DronModule());
         }
     }

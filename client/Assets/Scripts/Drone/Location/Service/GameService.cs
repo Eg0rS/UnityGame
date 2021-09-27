@@ -242,7 +242,6 @@ namespace Drone.Location.Service
             SetStatsInProgress(true);
             EndGame();
             _dialogManager.Require().ShowModal<LevelFinishedDialog>();
-            _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void DronFailed(FailedReasons failReason)

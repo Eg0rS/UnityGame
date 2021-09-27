@@ -48,7 +48,7 @@ namespace Drone.MainMenu.UI.Panel
         public void Init()
         {
             _overlayManager.Require().HideLoadingOverlay(true);
-            _uiService.Create<ProgressMapController>(UiModel.Create<ProgressMapController>().Container(_middlePanel)).Done();
+            _uiService.Create<LevelsMapController>(UiModel.Create<LevelsMapController>().Container(_middlePanel)).Done();
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             UpdateCredits();
             _logger.Debug("MainMenuPanel start init");
