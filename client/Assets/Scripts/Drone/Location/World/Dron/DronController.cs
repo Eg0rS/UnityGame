@@ -29,10 +29,10 @@ namespace Drone.Location.World.Dron
 
         public WorldObjectType ObjectType { get; }
 
-        private const float AccelerationCoefficient = 0.2f;
-        private float ShiftSpeed = 0.13f;
+        private float Acceleration = 0.1f; // прибавление в секунду
+        private float MaxSpeed = 20; 
+        private float ShiftSpeed = 0.4f;
         private BezierWalkerWithSpeed _bezier;
-        private float _levelSpeed = 8;
         private bool _isGameRun;
         private float _boostSpeed;
         private Coroutine _isMoving;
@@ -40,10 +40,12 @@ namespace Drone.Location.World.Dron
 
         public void Init(DronModel model)
         {
+            
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
+            _bezier.speed = 0;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, BoostSpeed);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
@@ -51,14 +53,13 @@ namespace Drone.Location.World.Dron
 
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
             // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-            ShiftSpeed = 0.4f;
+            ShiftSpeed = 0.7f;
         }
 
         private void StartGame(WorldEvent worldEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
-            _bezier.speed = _levelSpeed;
         }
 
         public void Update()
@@ -67,10 +68,9 @@ namespace Drone.Location.World.Dron
                 return;
             }
 
-            // if (_bezier.NormalizedT < 0.5f) {
-            //     _levelSpeed += AccelerationCoefficient * Time.deltaTime;
-            // }
-            // _bezier.speed = _levelSpeed;
+            if (_bezier.speed < MaxSpeed) { 
+                _bezier.speed += Acceleration * Time.deltaTime;
+            }
         }
 
         private void EndGame(WorldEvent worldEvent)
@@ -79,7 +79,7 @@ namespace Drone.Location.World.Dron
             _dronControlService.RemoveListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
             _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, Acceleration);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, BoostSpeed);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
 
@@ -196,16 +196,21 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
         }
 
-        private void Acceleration(WorldEvent objectEvent)
+        private void Deceleration()
+        {
+            _bezier.speed /= 2;
+        }
+
+        private void BoostSpeed(WorldEvent objectEvent)
         {
             _boostSpeed = objectEvent.SpeedBoost;
-            _levelSpeed += _boostSpeed;
+            _bezier.speed += _boostSpeed;
             Invoke(nameof(DisableAcceleration), objectEvent.SpeedBoostTime);
         }
 
         private void DisableAcceleration()
         {
-            _levelSpeed -= _boostSpeed;
+            _bezier.speed -= _boostSpeed;
         }
     }
 }

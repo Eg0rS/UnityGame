@@ -47,11 +47,9 @@ namespace Drone.Location.Service
                 case TouchPhase.Moved:
                     _currentTouch = touch.position;
                     DetectSwipe();
-                    OnSwiping = true;
                     break;
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
-                    OnSwiping = false;
                     // Dispatch(new WorldEvent(WorldEvent.SWIPE_END)); // swipe ended
                     break;
                 case TouchPhase.Stationary:

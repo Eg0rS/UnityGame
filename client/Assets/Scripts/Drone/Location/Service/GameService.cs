@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
@@ -36,6 +37,7 @@ namespace Drone.Location.Service
         public float energyFall;
         public float energyForSpeed;
         public float maxDurability;
+        public int maxSpeed;
     }
 
     public enum FailedReasons
