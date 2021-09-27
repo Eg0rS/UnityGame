@@ -41,7 +41,7 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
@@ -200,13 +200,7 @@ namespace Drone.Location.World.Dron
         }
         private void SpeedBoost(WorldEvent objectEvent)
         {
-            //todo логика подбора бустера
-            Invoke(nameof(DisableSpeedBoost), objectEvent.SpeedBoostTime);
-        }
-
-        private void DisableSpeedBoost()
-        {
-            
+            _maxSpeed += objectEvent.SpeedBoost;
         }
     }
 }

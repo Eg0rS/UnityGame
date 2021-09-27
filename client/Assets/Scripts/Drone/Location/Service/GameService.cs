@@ -33,7 +33,6 @@ namespace Drone.Location.Service
         public int countChips;
         public float boostSpeedValue;
         public float boostShieldTime;
-        public float boostSpeedTime;
         public bool onActiveShield;
         public float energyFall;
         public float energyForSpeed;
@@ -174,7 +173,6 @@ namespace Drone.Location.Service
 
         private void OnTakeSpeed(SpeedBoosterModel component)
         {
-            _dronStats.boostSpeedTime = component.Duration;
             _dronStats.boostSpeedValue = component.SpeedBoost;
             _dronStats.energyForSpeed = component.NeedsEnergy;
             component.gameObject.SetActive(false);
@@ -210,8 +208,7 @@ namespace Drone.Location.Service
                     break;
                 case WorldObjectType.SPEED_BUSTER:
                     _dronStats.energy -= _dronStats.energyForSpeed;
-                    Invoke("DisableSpeed", _dronStats.boostSpeedTime);
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue, _dronStats.boostSpeedTime));
+                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue));
                     break;
             }
         }
