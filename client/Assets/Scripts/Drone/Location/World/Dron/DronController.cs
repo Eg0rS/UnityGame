@@ -34,6 +34,8 @@ namespace Drone.Location.World.Dron
         [Inject]
         private DronControlService _dronControlService;
 
+        private Animator _animator;
+
         public WorldObjectType ObjectType { get; }
         private BezierWalkerWithSpeed _bezier;
         private Coroutine _isMoving;
@@ -56,6 +58,8 @@ namespace Drone.Location.World.Dron
             DroneDescriptor droneDescriptor = _droneService.GetDroneById(_gameService.DroneId).DroneDescriptor;
             model.SetDroneParameters(droneDescriptor.Mobility, droneDescriptor.Durability, droneDescriptor.Energy);
             _mobility = model.Mobility;
+
+            _animator = transform.GetComponentInParent<Animator>();
         }
 
         private void StartGame(WorldEvent worldEvent)
@@ -131,6 +135,17 @@ namespace Drone.Location.World.Dron
 
         private IEnumerator Moving(Vector3 targetPosition)
         {
+            
+            // if (_animator.GetInteger("moveDirection") != GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y))) {
+            //     _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
+            //     _animator.SetFloat("x", targetPosition.x);
+            //     _animator.SetFloat("y", targetPosition.y);
+            // }
+            
+            _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
+            _animator.SetFloat("x", targetPosition.x);
+            _animator.SetFloat("y", targetPosition.y);
+            
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
@@ -208,6 +223,35 @@ namespace Drone.Location.World.Dron
             } else if (swipe.Check(VerticalSwipeDirection.UP)) {
                 transform.localRotation = Quaternion.Euler(-angleRotate * 0.5f, 0, 0);
             }
+        }
+
+        private int GetMoveDirection(Vector2 position)
+        {
+            if (position == Vector2.right) {
+                return 2;
+            }
+            if (position == Vector2.up) {
+                return 1;
+            }
+            if (position == Vector2.left) {
+                return 4;
+            }
+            if (position == Vector2.down) {
+                return 3;
+            }
+            if (position == new Vector2(-1, 1)) {
+                return 5;
+            }
+            if (position == new Vector2(1, 1)) {
+                return 6;
+            }
+            if (position == new Vector2(-1, -1)) {
+                return 7;
+            }
+            if (position == new Vector2(1, -1)) {
+                return 8;
+            }
+            return 0;
         }
     }
 }

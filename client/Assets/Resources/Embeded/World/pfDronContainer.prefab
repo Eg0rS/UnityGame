@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 7203058195922755626}
   - component: {fileID: 4816063555861607130}
   - component: {fileID: 4463336640678877510}
-  - component: {fileID: 1750121112195645289}
+  - component: {fileID: 5404844835674757007}
   m_Layer: 0
   m_Name: DronCube
   m_TagString: Untagged
@@ -152,9 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectType: 1
-  SpeedShift: 2.5
-  durability: 10
-  Energy: 10
 --- !u!135 &4816063555861607130
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -184,7 +181,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!95 &1750121112195645289
+--- !u!95 &5404844835674757007
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -194,7 +191,7 @@ Animator:
   m_GameObject: {fileID: 6019808304011269422}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d2ef00031f03ad14395b50cbc33864bd, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -315,7 +312,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8258802452847754172}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.12012601, z: -1.28}
+  m_LocalPosition: {x: 0, y: 0.12, z: -1.28}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8526087615248615053}
@@ -427,8 +424,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8712546077286463687}
-  m_LocalRotation: {x: 0.001824589, y: 0.0012492342, z: -0.0000022778393, w: 0.99999756}
-  m_LocalPosition: {x: 0.000000023717348, y: 1.1199999, z: -1.28}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.12, z: -1.28}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3395788657807914715}
