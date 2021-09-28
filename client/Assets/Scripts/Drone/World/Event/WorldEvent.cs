@@ -36,6 +36,7 @@ namespace Drone.World.Event
         public Vector2 Swipe { get; private set; }
         public string DronId { get; private set; }
         public float SpeedBoost { get; private set; }
+        public float AccelerationBoost { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
@@ -57,9 +58,11 @@ namespace Drone.World.Event
             TypeBoost = type;
         }
 
-        public WorldEvent(string name, float speedBoost) : base(name)
+        public WorldEvent(string name, float speedBoost, float accelerationBoost) : base(name)
         {
             SpeedBoost = speedBoost;
+            AccelerationBoost = accelerationBoost;
+
         }
 
         public WorldEvent(string name, LevelDescriptor levelDescriptor, string dronId) : base(name)

@@ -201,6 +201,7 @@ namespace Drone.Location.World.Dron
         private void SpeedBoost(WorldEvent objectEvent)
         {
             _maxSpeed += objectEvent.SpeedBoost;
+            _acceleration += objectEvent.AccelerationBoost;
         }
     }
 }

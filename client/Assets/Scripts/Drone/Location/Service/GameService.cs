@@ -23,6 +23,7 @@ using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Drone.Location.Service
 {
@@ -31,11 +32,7 @@ namespace Drone.Location.Service
         public float durability;
         public float energy;
         public int countChips;
-        public float boostSpeedValue;
-        public float boostShieldTime;
-        public bool onActiveShield;
         public float energyFall;
-        public float energyForSpeed;
         public float maxDurability;
     }
 
@@ -82,6 +79,11 @@ namespace Drone.Location.Service
         private string _dronId;
         private float _startTime;
         private Coroutine _fallingEnergy;
+        public float _energyForSpeed;
+        public float _speedBoost;
+        public float _accelerationBoost;
+        public float _boostShieldTime;
+        public bool _onActiveShield;
 
         private bool IsPlay
         {
@@ -166,15 +168,16 @@ namespace Drone.Location.Service
 
         private void OnTakeShield(ShieldBoosterModel component)
         {
-            _dronStats.boostShieldTime = component.Duration;
+            _boostShieldTime = component.Duration;
             component.gameObject.SetActive(false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
 
         private void OnTakeSpeed(SpeedBoosterModel component)
         {
-            _dronStats.boostSpeedValue = component.SpeedBoost;
-            _dronStats.energyForSpeed = component.NeedsEnergy;
+            _speedBoost = component.SpeedBoost;
+            _accelerationBoost= component.AccelerationBoost;
+            _energyForSpeed = component.NeedsEnergy;
             component.gameObject.SetActive(false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
@@ -188,7 +191,7 @@ namespace Drone.Location.Service
 
         private void OnDronCrash(ObstacleModel component)
         {
-            if (_dronStats.onActiveShield) {
+            if (_onActiveShield) {
                 return;
             }
             _dronStats.durability -= component.Damage;
@@ -203,19 +206,19 @@ namespace Drone.Location.Service
         {
             switch (@event.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
-                    _dronStats.onActiveShield = true;
-                    Invoke(nameof(DisableShield), _dronStats.boostShieldTime);
+                    _onActiveShield = true;
+                    Invoke(nameof(DisableShield), _boostShieldTime);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
-                    _dronStats.energy -= _dronStats.energyForSpeed;
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue));
+                    _dronStats.energy -= _energyForSpeed;
+                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _speedBoost, _accelerationBoost));
                     break;
             }
         }
 
         private void DisableShield()
         {
-            _dronStats.onActiveShield = false;
+            _onActiveShield = false;
         }
 
         private void UiUpdate()
