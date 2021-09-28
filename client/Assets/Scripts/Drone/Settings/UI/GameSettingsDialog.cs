@@ -7,6 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
 using Drone.Core.UI.Dialog;
+using Drone.Location.Service;
 using Drone.Settings.Service;
 using UnityEngine;
 
@@ -23,6 +24,9 @@ namespace Drone.Settings.UI
 
         [UIComponentBinding("MusicToggleButton")]
         private ToggleButton _toggleMusicButton;
+        
+        [UIComponentBinding("SwipeToggleButton")]
+        private ToggleButton _swipeButton;
 
         [Inject]
         private SettingsService _settingsService;
@@ -34,6 +38,7 @@ namespace Drone.Settings.UI
         {
             _toggleMusicButton.IsOn = _settingsService.GetMusicMute();
             _toggleSoundButton.IsOn = _settingsService.GetSoundMute();
+            _swipeButton.IsOn = _settingsService.GetSwipeControl();
         }
 
         [UIOnClick("CloseButton")]
@@ -48,6 +53,12 @@ namespace Drone.Settings.UI
             _logger.Debug("MuteSound");
             _settingsService.SetSoundMute(_toggleSoundButton.IsOn);
         }
+        
+        [UIOnClick("SwipeToggleButton")]
+        private void OnSwipeButton()
+        {
+            _settingsService.SetSwipeControl(_swipeButton.IsOn);
+        }
 
         [UIOnClick("MusicToggleButton")]
         private void OnMusicButton()
@@ -61,12 +72,6 @@ namespace Drone.Settings.UI
         {
             _logger.Debug("Reset");
             _settingsService.ResetAllProgress();
-        }
-
-        [UIOnClick("Info")]
-        private void OnInfoClick()
-        {
-            _dialogManager.Require().ShowModal<DownloadedDialog>();
         }
     }
 }

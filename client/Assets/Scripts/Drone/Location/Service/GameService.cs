@@ -1,6 +1,8 @@
 using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
+using AgkCommons.Input.Gesture.Model.Gestures;
+using AgkCommons.Input.Gesture.Service;
 using AgkUI.Dialog.Service;
 using Drone.Core;
 using Drone.LevelMap.LevelDialogs;
@@ -57,7 +59,7 @@ namespace Drone.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private GestureService _gestureService;
+        private IGestureService _gestureService;
 
         [Inject]
         private LevelService _levelService;
@@ -67,7 +69,7 @@ namespace Drone.Location.Service
 
         [Inject]
         private LocationService _locationService;
-        
+
         private LevelDescriptor _levelDescriptor;
         private DronStats _dronStats;
         private bool _isPlay;
@@ -85,7 +87,6 @@ namespace Drone.Location.Service
             _dronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gestureService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
             SetStartOptionsDron();
@@ -94,22 +95,25 @@ namespace Drone.Location.Service
         private void SetStartOptionsDron()
         {
             DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-            _dronStats.durability = dronDescriptor.Durability;
+            //   _dronStats.durability = dronDescriptor.Durability;
+            //   _dronStats.energy = dronDescriptor.Energy;
+            _dronStats.durability = 999999;
+            _dronStats.energy = 9999999;
             _dronStats.maxDurability = dronDescriptor.Durability;
-            _dronStats.energy = dronDescriptor.Energy;
             _dronStats.countChips = 0;
             _dronStats.energyFall = 0.05f;
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
+            _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
             CreateDrone(_dronId);
         }
 
-        private void OnSwipe(WorldEvent worldEvent)
+        private void OnAnyTouch(AnyTouch anyTouch)
         {
             if (_isPlay) {
                 return;
@@ -197,8 +201,7 @@ namespace Drone.Location.Service
                 case WorldObjectType.SPEED_BUSTER:
                     _dronStats.energy -= _dronStats.energyForSpeed;
                     Invoke("DisableSpeed", _dronStats.boostSpeedTime);
-                    _gameWorld.Require()
-                              .Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue, _dronStats.boostSpeedTime));
+                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _dronStats.boostSpeedValue, _dronStats.boostSpeedTime));
                     break;
             }
         }
@@ -221,7 +224,7 @@ namespace Drone.Location.Service
             IsPlay = false;
             Time.timeScale = 0f;
             _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gestureService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
+            _gestureService.RemoveAnyTouchHandler(OnAnyTouch);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
 
@@ -239,7 +242,6 @@ namespace Drone.Location.Service
             SetStatsInProgress(true);
             EndGame();
             _dialogManager.Require().ShowModal<LevelFinishedDialog>();
-            _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void DronFailed(FailedReasons failReason)
