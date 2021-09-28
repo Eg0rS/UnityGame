@@ -1,4 +1,7 @@
-﻿using AgkCommons.Event;
+﻿using System;
+using AgkCommons.Event;
+using AgkCommons.Extension;
+using Drone.Location.World.Dron.Event;
 using Drone.World.Event;
 using UnityEngine;
 using TouchPhase = UnityEngine.TouchPhase;
@@ -23,6 +26,17 @@ namespace Drone.Location.World.Dron
         [Range(0.0f, 1.0f)]
         [SerializeField]
         private float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
+
+        [Header("default value = 0.80")]
+        [Range(0.0f, 0.90f)]
+        [SerializeField]
+        private double HORISONTAL_SWIPE_ANGLE = 0.80;
+        
+        [Header("default value = 0.50")]
+        [Range(0.0f, .90f)]
+        [SerializeField]
+        private double VERTICAL_SWIPE_ANGLE = 0.50;
+
 
         #endregion
 
@@ -91,7 +105,7 @@ namespace Drone.Location.World.Dron
                 _startTouch = _currentTouch;
                 _isMoving = true;
 
-                Dispatch(new WorldEvent(WorldEvent.START_MOVE, currentSwipeVector));
+                Dispatch(new ControllEvent(ControllEvent.START_MOVE, currentSwipeVector));
                 Debug.Log("Start move: " + currentSwipeVector);
                 return;
             }
@@ -103,7 +117,7 @@ namespace Drone.Location.World.Dron
                     _isMoving = false;
                     _swipeVector = currentSwipeVector;
                     _movingVector = currentSwipeVector;
-                    Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+                    Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
                     Debug.Log("Swape: " + currentSwipeVector);
                 }
 
@@ -113,7 +127,7 @@ namespace Drone.Location.World.Dron
             if (currentSwipeVector.Equals(_swipeVector) && lengthX >= DOUBLE_END_MOVE_TRESHOLD || lengthY >= DOUBLE_END_MOVE_TRESHOLD) {
                 _startTouch = _currentTouch;
                 _isMoving = false;
-                Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+                Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
                 Debug.Log("Double swape: " + currentSwipeVector);
             }
         }
@@ -122,10 +136,27 @@ namespace Drone.Location.World.Dron
         {
             vector = vector.normalized;
 
-            vector.x = Mathf.Round(vector.x);
-            vector.y = Mathf.Round(vector.y);
+            int xSign = Math.Sign(vector.x);
+            int ySign = Math.Sign(vector.y);
+            Vector2 absVector = vector.Abs();
 
-            return vector;
+            float hypotenuse = Vector2.Distance(new Vector2(0, 0), absVector);
+
+            double angle = Math.Sin(absVector.y / hypotenuse);
+            Vector2 swipeVector = new Vector2();
+            if (angle > 0.00 && angle <= HORISONTAL_SWIPE_ANGLE) {
+                swipeVector.x = 1 * xSign;
+                swipeVector.y = 0;
+            } else if (angle > HORISONTAL_SWIPE_ANGLE && angle <= VERTICAL_SWIPE_ANGLE) {
+                swipeVector.x = 1 * xSign;
+                swipeVector.y = 1 * ySign;
+                
+            } else if (angle > VERTICAL_SWIPE_ANGLE && angle <= 0.90) {
+                swipeVector.x = 0;
+                swipeVector.y = 1 * ySign;
+            }
+            
+            return swipeVector;
         }
     }
 }
