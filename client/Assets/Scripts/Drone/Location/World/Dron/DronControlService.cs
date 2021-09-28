@@ -9,10 +9,18 @@ namespace Drone.Location.World.Dron
     {
         #region const
 
+        [Header("default value = 0.05")]
+        [Range(0.0f, 1.0f)]
         [SerializeField]
         private float SWIPE_TRESHOLD = 0.05f;
+
+        [Header("default value = 0.1")]
+        [Range(0.0f, 1.0f)]
         [SerializeField]
         private float END_MOVE_TRESHOLD = 0.1f;
+
+        [Header("default value = 0.35")]
+        [Range(0.0f, 1.0f)]
         [SerializeField]
         private float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
 
