@@ -4,6 +4,7 @@ using AgkCommons.Extension;
 using Drone.Location.World.Dron.Event;
 using Drone.World.Event;
 using UnityEngine;
+using UnityEngine.Serialization;
 using TouchPhase = UnityEngine.TouchPhase;
 
 namespace Drone.Location.World.Dron
@@ -12,30 +13,35 @@ namespace Drone.Location.World.Dron
     {
         #region const
 
+        [FormerlySerializedAs("SWIPE_TRESHOLD")]
         [Header("default value = 0.05")]
         [Range(0.0f, 1.0f)]
         [SerializeField]
-        private float SWIPE_TRESHOLD = 0.05f;
+        private float _swipeTreshold = 0.05f;
 
+        [FormerlySerializedAs("END_MOVE_TRESHOLD")]
         [Header("default value = 0.1")]
         [Range(0.0f, 1.0f)]
         [SerializeField]
-        private float END_MOVE_TRESHOLD = 0.1f;
+        private float _endMoveTreshold = 0.1f;
 
+        [FormerlySerializedAs("DOUBLE_END_MOVE_TRESHOLD")]
         [Header("default value = 0.35")]
         [Range(0.0f, 1.0f)]
         [SerializeField]
-        private float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
+        private float _doubleEndMoveTreshold = 0.35f;
 
+        [FormerlySerializedAs("HORISONTAL_SWIPE_ANGLE")]
         [Header("default value = 0.80")]
         [Range(0.0f, 0.90f)]
         [SerializeField]
-        private double HORISONTAL_SWIPE_ANGLE = 0.80;
+        private double _horisontalSwipeAngle = 0.80;
         
+        [FormerlySerializedAs("VERTICAL_SWIPE_ANGLE")]
         [Header("default value = 0.50")]
         [Range(0.0f, .90f)]
         [SerializeField]
-        private double VERTICAL_SWIPE_ANGLE = 0.50;
+        private double _verticalSwipeAngle = 0.50;
 
 
         #endregion
@@ -87,7 +93,7 @@ namespace Drone.Location.World.Dron
             float lengthX = Mathf.Abs(currentSwipeVector.x / _width);
             float lengthY = Mathf.Abs(currentSwipeVector.y / _height);
 
-            if (lengthX <= SWIPE_TRESHOLD && lengthY <= SWIPE_TRESHOLD) {
+            if (lengthX <= _swipeTreshold && lengthY <= _swipeTreshold) {
                 return;
             }
 
@@ -101,7 +107,7 @@ namespace Drone.Location.World.Dron
                 _movingVector = currentSwipeVector;
             }
 
-            if ((lengthX >= SWIPE_TRESHOLD || lengthY >= SWIPE_TRESHOLD) && !_isMoving) {
+            if ((lengthX >= _swipeTreshold || lengthY >= _swipeTreshold) && !_isMoving) {
                 _startTouch = _currentTouch;
                 _isMoving = true;
 
@@ -111,7 +117,7 @@ namespace Drone.Location.World.Dron
             }
 
             if (!_firstSwipeDone) {
-                if (lengthX >= END_MOVE_TRESHOLD || lengthY >= END_MOVE_TRESHOLD) {
+                if (lengthX >= _endMoveTreshold || lengthY >= _endMoveTreshold) {
                     _startTouch = _currentTouch;
                     _firstSwipeDone = true;
                     _isMoving = false;
@@ -124,7 +130,7 @@ namespace Drone.Location.World.Dron
                 return;
             }
 
-            if (currentSwipeVector.Equals(_swipeVector) && lengthX >= DOUBLE_END_MOVE_TRESHOLD || lengthY >= DOUBLE_END_MOVE_TRESHOLD) {
+            if (currentSwipeVector.Equals(_swipeVector) && lengthX >= _doubleEndMoveTreshold || lengthY >= _doubleEndMoveTreshold) {
                 _startTouch = _currentTouch;
                 _isMoving = false;
                 Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
@@ -144,14 +150,14 @@ namespace Drone.Location.World.Dron
 
             double angle = Math.Sin(absVector.y / hypotenuse);
             Vector2 swipeVector = new Vector2();
-            if (angle > 0.00 && angle <= HORISONTAL_SWIPE_ANGLE) {
+            if (angle > 0.00 && angle <= _horisontalSwipeAngle) {
                 swipeVector.x = 1 * xSign;
                 swipeVector.y = 0;
-            } else if (angle > HORISONTAL_SWIPE_ANGLE && angle <= VERTICAL_SWIPE_ANGLE) {
+            } else if (angle > _horisontalSwipeAngle && angle <= _verticalSwipeAngle) {
                 swipeVector.x = 1 * xSign;
                 swipeVector.y = 1 * ySign;
                 
-            } else if (angle > VERTICAL_SWIPE_ANGLE && angle <= 0.90) {
+            } else if (angle > _verticalSwipeAngle && angle <= 0.90) {
                 swipeVector.x = 0;
                 swipeVector.y = 1 * ySign;
             }
