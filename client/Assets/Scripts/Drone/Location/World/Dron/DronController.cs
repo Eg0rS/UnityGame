@@ -148,17 +148,9 @@ namespace Drone.Location.World.Dron
 
         private IEnumerator Moving(Vector3 targetPosition)
         {
-            int moveDirection = GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y));
-            
-            if (_animator.GetInteger("moveDirection") == moveDirection) {
-                _animator.SetInteger("moveDirection", 0);
-                _animator.SetFloat("x", 0);
-                _animator.SetFloat("y", 0);
-            } else {
-                _animator.SetInteger("moveDirection", moveDirection);
-                _animator.SetFloat("x", targetPosition.x);
-                _animator.SetFloat("y", targetPosition.y);
-            }
+            _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
+            _animator.SetFloat("x", targetPosition.x);
+            _animator.SetFloat("y", targetPosition.y);
 
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
@@ -200,7 +192,7 @@ namespace Drone.Location.World.Dron
 
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
-
+                    _animator.SetInteger("moveDirection", 0);
                     _droneTargetPosition = targetPosition;
                 }
 
