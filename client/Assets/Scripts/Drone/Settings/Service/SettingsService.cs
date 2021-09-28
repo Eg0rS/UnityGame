@@ -3,6 +3,7 @@ using Drone.Core.Audio.Service;
 using Drone.Core.Filter;
 using Drone.Inventory.Service;
 using Drone.LevelMap.Levels.Service;
+using Drone.Location.Service;
 using Drone.Settings.Model;
 using IoC.Attribute;
 
@@ -24,7 +25,7 @@ namespace Drone.Settings.Service
 
         [Inject]
         private AudioService _audioService;
-
+        
         private void UpdateSettings()
         {
             SettingsModel settingsModel = RequireSettingsModel();
@@ -88,6 +89,18 @@ namespace Drone.Settings.Service
             _inventoryService.ResetInventory();
             _levelService.ResetPlayerProgress();
             _billingService.SetCreditsCount(0);
+        }
+        
+        public void SetSwipeControl(bool value)
+        {
+            SettingsModel settingsModel = RequireSettingsModel();
+            settingsModel.IsSwipe = value;
+            _settingsRepository.Set(settingsModel);
+        }
+        
+        public bool GetSwipeControl()
+        {
+            return RequireSettingsModel().IsSwipe;
         }
     }
 }

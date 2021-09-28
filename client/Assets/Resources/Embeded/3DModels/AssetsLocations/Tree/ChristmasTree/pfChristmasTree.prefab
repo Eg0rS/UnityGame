@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 7074831483256371401}
   - component: {fileID: 6161208147772045164}
   - component: {fileID: 8243264499883246502}
-  - component: {fileID: 2953255172463264320}
   - component: {fileID: 462196002708714286}
+  - component: {fileID: -7033415531693434575}
   m_Layer: 0
   m_Name: pfChristmasTree
   m_TagString: Untagged
@@ -83,20 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2953255172463264320
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7594486325576639091}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 6049959359099248206, guid: 5620129c0da0e674fbf8b0e9436ceab9, type: 3}
 --- !u!114 &462196002708714286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,3 +96,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectType: 2
+--- !u!114 &-7033415531693434575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7594486325576639091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33aa90e441a9e6f45b63e7556e66f0a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
