@@ -1,23 +1,33 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using AgkCommons.Event;
 using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
-using Drone.Location.Model.Dron;
+using Drone.Location.Model.Drone;
+using Drone.Location.Service;
+using Drone.Location.World.Dron.Descriptor;
+using Drone.Location.World.Dron.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
 
 namespace Drone.Location.World.Dron
 {
-    public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
+    public class DronController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
         private const float UPDATE_TIME = 0.1f;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject]
+        private DronService _droneService;
+
+        [Inject]
+        private GameService _gameService;
 
         private DronControlService _dronControlService;
 
@@ -32,7 +42,9 @@ namespace Drone.Location.World.Dron
         private Coroutine _isMoving;
         private Vector3 _droneTargetPosition = Vector3.zero;
 
-        public void Init(DronModel model)
+        private Animator _animator;
+
+        public void Init(DroneModel model)
         {
             _dronControlService = gameObject.AddComponent<DronControlService>();
 
@@ -47,7 +59,10 @@ namespace Drone.Location.World.Dron
 
             // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
             // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-            ShiftSpeed = 0.4f;
+            DroneDescriptor droneDescriptor = _droneService.GetDroneById(_gameService.DroneId).DroneDescriptor;
+            model.SetDroneParameters(droneDescriptor.Mobility, droneDescriptor.Durability, droneDescriptor.Energy);
+            ShiftSpeed = model.Mobility;
+            _animator = transform.GetComponentInParent<Animator>();
         }
 
         private void StartGame(WorldEvent worldEvent)
@@ -133,6 +148,10 @@ namespace Drone.Location.World.Dron
 
         private IEnumerator Moving(Vector3 targetPosition)
         {
+            _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
+            _animator.SetFloat("x", targetPosition.x);
+            _animator.SetFloat("y", targetPosition.y);
+
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
@@ -197,6 +216,35 @@ namespace Drone.Location.World.Dron
         private void DisableAcceleration()
         {
             _levelSpeed -= _boostSpeed;
+        }
+
+        private int GetMoveDirection(Vector2 position)
+        {
+            if (position == Vector2.up) {
+                return 1;
+            }
+            if (position == Vector2.right) {
+                return 2;
+            }
+            if (position == Vector2.down) {
+                return 3;
+            }
+            if (position == Vector2.left) {
+                return 4;
+            }
+            if (position == new Vector2(-1, 1)) {
+                return 5;
+            }
+            if (position == new Vector2(1, 1)) {
+                return 6;
+            }
+            if (position == new Vector2(-1, -1)) {
+                return 7;
+            }
+            if (position == new Vector2(1, -1)) {
+                return 8;
+            }
+            return 0;
         }
     }
 }
