@@ -2,51 +2,40 @@
 using System.Collections;
 using UnityEngine;
 using AgkCommons.Event;
-using AgkCommons.Input.Gesture.Model;
-using AgkCommons.Input.Gesture.Model.Gestures;
 using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
-using Drone.Location.Model.Drone;
-using Drone.Location.Service;
-using Drone.Location.World.Dron.Descriptor;
-using Drone.Location.World.Dron.Service;
+using Drone.Location.Model.Dron;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
 
 namespace Drone.Location.World.Dron
 {
-    public class DronController : GameEventDispatcher, IWorldObjectController<DroneModel>
+    public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
     {
         private const float UPDATE_TIME = 0.1f;
-        private const float AccelerationCoefficient = 0.2f;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        [Inject]
-        private DronService _droneService;
-
-        [Inject]
-        private GameService _gameService;
-
-        [Inject]
         private DronControlService _dronControlService;
 
-        private Animator _animator;
-
         public WorldObjectType ObjectType { get; }
+
+        private const float AccelerationCoefficient = 0.2f;
+        private float ShiftSpeed = 0.13f;
         private BezierWalkerWithSpeed _bezier;
-        private Coroutine _isMoving;
-        private Vector3 _droneTargetPosition = Vector3.zero;
-        private float _mobility;
-        private float _boostSpeed;
         private float _levelSpeed = 8;
         private bool _isGameRun;
+        private float _boostSpeed;
+        private Coroutine _isMoving;
+        private Vector3 _droneTargetPosition = Vector3.zero;
 
-        public void Init(DroneModel model)
+        public void Init(DronModel model)
         {
+            _dronControlService = gameObject.AddComponent<DronControlService>();
+
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
@@ -55,11 +44,10 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
-            DroneDescriptor droneDescriptor = _droneService.GetDroneById(_gameService.DroneId).DroneDescriptor;
-            model.SetDroneParameters(droneDescriptor.Mobility, droneDescriptor.Durability, droneDescriptor.Energy);
-            _mobility = model.Mobility;
 
-            _animator = transform.GetComponentInParent<Animator>();
+            // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
+            // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
+            ShiftSpeed = 0.4f;
         }
 
         private void StartGame(WorldEvent worldEvent)
@@ -74,11 +62,6 @@ namespace Drone.Location.World.Dron
             if (!_isGameRun) {
                 return;
             }
-
-            // if (_bezier.NormalizedT < 0.5f) {
-            //     _levelSpeed += AccelerationCoefficient * Time.deltaTime;
-            // }
-            // _bezier.speed = _levelSpeed;
         }
 
         private void EndGame(WorldEvent worldEvent)
@@ -101,28 +84,43 @@ namespace Drone.Location.World.Dron
         private void OnStart(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
-
-            if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = _droneTargetPosition + swipe;
-                MoveTo(newPosition);
+            Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
+            if (_droneTargetPosition.Equals(newPosition)) {
+                return;
             }
+            Debug.Log(_droneTargetPosition);
+            MoveTo(newPosition);
         }
 
         private void OnSwiped(WorldEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
-
-            if (IsPossibleSwipe(swipe)) {
-                Vector3 newPosition = _droneTargetPosition + swipe;
-                _droneTargetPosition = newPosition;
-                MoveTo(newPosition);
+            Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
+            if (_droneTargetPosition.Equals(newPosition)) {
+                return;
             }
+            _droneTargetPosition = newPosition;
+            Debug.Log(_droneTargetPosition);
+            MoveTo(newPosition);
         }
 
-        private bool IsPossibleSwipe(Vector3 swipe)
+        private Vector3 NewPosition(Vector3 dronPos, Vector3 swipe)
         {
-            Vector3 newPos = _droneTargetPosition + swipe;
-            return (newPos.x <= 1.1f && newPos.x >= -1.1f) && (newPos.y <= 1.1f && newPos.y >= -1.1f);
+            Vector3 newPos = dronPos + swipe;
+            if (newPos.x > 1.0f) {
+                swipe.x = 0.0f;
+            }
+            if (newPos.x < -1.0f) {
+                swipe.x = 0.0f;
+            }
+            if (newPos.y > 1.0f) {
+                swipe.y = 0.0f;
+            }
+            if (newPos.y < -1.0f) {
+                swipe.y = 0.0f;
+            }
+            Vector3 newPosition = dronPos + swipe;
+            return newPosition;
         }
 
         private void MoveTo(Vector3 newPos)
@@ -135,21 +133,10 @@ namespace Drone.Location.World.Dron
 
         private IEnumerator Moving(Vector3 targetPosition)
         {
-            
-            // if (_animator.GetInteger("moveDirection") != GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y))) {
-            //     _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
-            //     _animator.SetFloat("x", targetPosition.x);
-            //     _animator.SetFloat("y", targetPosition.y);
-            // }
-            
-            _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
-            _animator.SetFloat("x", targetPosition.x);
-            _animator.SetFloat("y", targetPosition.y);
-            
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
-            float time = distance / _mobility;
+            float time = distance / ShiftSpeed;
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
             float deltaX = move.x / updateCount;
             float deltaY = move.y / updateCount;
@@ -182,7 +169,7 @@ namespace Drone.Location.World.Dron
                     }
                 }
 
-                transform.localPosition = new Vector3(xPos, yPos, currentPosition.z);
+                transform.localPosition = new Vector3(xPos, yPos, 0);
 
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
@@ -210,48 +197,6 @@ namespace Drone.Location.World.Dron
         private void DisableAcceleration()
         {
             _levelSpeed -= _boostSpeed;
-        }
-
-        private void RotateSelf(Swipe swipe, float angleRotate)
-        {
-            if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
-                transform.localRotation = Quaternion.Euler(0, 0, angleRotate);
-            } else if (swipe.Check(HorizontalSwipeDirection.RIGHT)) {
-                transform.localRotation = Quaternion.Euler(0, 0, -angleRotate);
-            } else if (swipe.Check(VerticalSwipeDirection.DOWN)) {
-                transform.localRotation = Quaternion.Euler(angleRotate * 0.5f, 0, 0);
-            } else if (swipe.Check(VerticalSwipeDirection.UP)) {
-                transform.localRotation = Quaternion.Euler(-angleRotate * 0.5f, 0, 0);
-            }
-        }
-
-        private int GetMoveDirection(Vector2 position)
-        {
-            if (position == Vector2.right) {
-                return 2;
-            }
-            if (position == Vector2.up) {
-                return 1;
-            }
-            if (position == Vector2.left) {
-                return 4;
-            }
-            if (position == Vector2.down) {
-                return 3;
-            }
-            if (position == new Vector2(-1, 1)) {
-                return 5;
-            }
-            if (position == new Vector2(1, 1)) {
-                return 6;
-            }
-            if (position == new Vector2(-1, -1)) {
-                return 7;
-            }
-            if (position == new Vector2(1, -1)) {
-                return 8;
-            }
-            return 0;
         }
     }
 }

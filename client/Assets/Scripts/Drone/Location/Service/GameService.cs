@@ -1,6 +1,8 @@
 using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
+using AgkCommons.Input.Gesture.Model.Gestures;
+using AgkCommons.Input.Gesture.Service;
 using AgkUI.Dialog.Service;
 using Drone.Core;
 using Drone.LevelMap.LevelDialogs;
@@ -57,13 +59,13 @@ namespace Drone.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private DronControlService _dronControlService;
+        private IGestureService _gestureService;
 
         [Inject]
         private LevelService _levelService;
 
         [Inject]
-        private DronService _droneService;
+        private DronService _dronService;
 
         [Inject]
         private LocationService _locationService;
@@ -71,6 +73,7 @@ namespace Drone.Location.Service
         private LevelDescriptor _levelDescriptor;
         private DronStats _dronStats;
         private bool _isPlay;
+        private string _dronId;
         private float _startTime;
         private Coroutine _fallingEnergy;
 
@@ -78,41 +81,39 @@ namespace Drone.Location.Service
         {
             set { _isPlay = value; }
         }
-        public string DroneId { get; private set; }
 
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            DroneId = dronId;
+            _dronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwipe);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
-            SetStartDroneParameters();
+            SetStartOptionsDron();
         }
 
-        private void SetStartDroneParameters()
+        private void SetStartOptionsDron()
         {
-            DroneDescriptor droneDescriptor = _droneService.GetDroneById(DroneId).DroneDescriptor;
+            DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
             //   _dronStats.durability = dronDescriptor.Durability;
             //   _dronStats.energy = dronDescriptor.Energy;
             _dronStats.durability = 999999;
             _dronStats.energy = 9999999;
-            _dronStats.maxDurability = droneDescriptor.Durability;
+            _dronStats.maxDurability = dronDescriptor.Durability;
             _dronStats.countChips = 0;
             _dronStats.energyFall = 0.05f;
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
+            _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
-            CreateDrone(DroneId);
+            CreateDrone(_dronId);
         }
 
-        private void OnSwipe(WorldEvent worldEvent)
+        private void OnAnyTouch(AnyTouch anyTouch)
         {
             if (_isPlay) {
                 return;
@@ -223,8 +224,7 @@ namespace Drone.Location.Service
             IsPlay = false;
             Time.timeScale = 0f;
             _locationService.RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE, OnSwipe);
-            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.END_MOVE, OnSwipe);
+            _gestureService.RemoveAnyTouchHandler(OnAnyTouch);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
 
@@ -254,7 +254,7 @@ namespace Drone.Location.Service
         private void CreateDrone(string dronId)
         {
             GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_droneService.GetDroneById(dronId).DroneDescriptor.Prefab), parent.transform);
+            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);
         }
 
         private int CalculateStars(float timeInGame)

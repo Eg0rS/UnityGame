@@ -1,28 +1,38 @@
 ﻿using AgkCommons.Event;
 using Drone.World.Event;
 using UnityEngine;
+using TouchPhase = UnityEngine.TouchPhase;
 
-namespace Drone.Location.Service
+namespace Drone.Location.World.Dron
 {
     public class DronControlService : GameEventDispatcher
     {
-        private const float SWIPE_TRESHOLD = 0.005f;
-        private const float END_MOVE_TRESHOLD = 0.12f;
+        #region const
+
+        [SerializeField]
+        private float SWIPE_TRESHOLD = 0.05f;
+        [SerializeField]
+        private float END_MOVE_TRESHOLD = 0.1f;
+        [SerializeField]
+        private float DOUBLE_END_MOVE_TRESHOLD = 0.35f;
+
+        #endregion
+
         private float _width;
         private float _height;
 
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
-        private bool OnSwiping;
-        private bool _isMoving = false;
+        private bool _isMoving;
+        private bool _firstSwipeDone;
         private Vector2 _movingVector;
+
+        private Vector2 _swipeVector;
 
         private void Awake()
         {
             _width = Screen.width;
             _height = Screen.height;
-            // _width *= _height / _width;
-            // _height *= _height / _width;
         }
 
         private void Update()
@@ -40,12 +50,9 @@ namespace Drone.Location.Service
                 case TouchPhase.Moved:
                     _currentTouch = touch.position;
                     DetectSwipe();
-                    OnSwiping = true;
                     break;
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
-                    OnSwiping = false;
-                    Dispatch(new WorldEvent(WorldEvent.SWIPE_END)); // swipe ended
                     break;
                 case TouchPhase.Stationary:
                     break;
@@ -61,22 +68,45 @@ namespace Drone.Location.Service
             if (lengthX <= SWIPE_TRESHOLD && lengthY <= SWIPE_TRESHOLD) {
                 return;
             }
-            
+
             currentSwipeVector = RoundVector(currentSwipeVector);
-            
-            if (lengthX >= END_MOVE_TRESHOLD || lengthY >= END_MOVE_TRESHOLD) {
-                _startTouch = _currentTouch;
+
+            bool vectorChanged = !_movingVector.Equals(currentSwipeVector);
+            if (vectorChanged) {
+                _firstSwipeDone = false;
+                _swipeVector = Vector2.zero;
                 _isMoving = false;
-                Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+                _movingVector = currentSwipeVector;
+            }
+
+            if ((lengthX >= SWIPE_TRESHOLD || lengthY >= SWIPE_TRESHOLD) && !_isMoving) {
+                _startTouch = _currentTouch;
+                _isMoving = true;
+
+                Dispatch(new WorldEvent(WorldEvent.START_MOVE, currentSwipeVector));
+                Debug.Log("Start move: " + currentSwipeVector);
                 return;
             }
 
-            if ((lengthX >= SWIPE_TRESHOLD || lengthY >= SWIPE_TRESHOLD) && (!_isMoving || !_movingVector.Equals(currentSwipeVector))) {
-                _startTouch = _currentTouch;
-                _isMoving = true;
-                _movingVector = currentSwipeVector;
-                Dispatch(new WorldEvent(WorldEvent.START_MOVE, currentSwipeVector));
+            if (!_firstSwipeDone) {
+                if (lengthX >= END_MOVE_TRESHOLD || lengthY >= END_MOVE_TRESHOLD) {
+                    _startTouch = _currentTouch;
+                    _firstSwipeDone = true;
+                    _isMoving = false;
+                    _swipeVector = currentSwipeVector;
+                    _movingVector = currentSwipeVector;
+                    Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+                    Debug.Log("Swape: " + currentSwipeVector);
+                }
+
                 return;
+            }
+
+            if (currentSwipeVector.Equals(_swipeVector) && lengthX >= DOUBLE_END_MOVE_TRESHOLD || lengthY >= DOUBLE_END_MOVE_TRESHOLD) {
+                _startTouch = _currentTouch;
+                _isMoving = false;
+                Dispatch(new WorldEvent(WorldEvent.END_MOVE, currentSwipeVector));
+                Debug.Log("Double swape: " + currentSwipeVector);
             }
         }
 
