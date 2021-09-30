@@ -6,6 +6,7 @@ using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Dron;
+using Drone.Location.World.Dron.Event;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
@@ -41,10 +42,9 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
+            _dronControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
+            _dronControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
-            _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
             _shiftSpeed = 0.4f;
         }
 
@@ -52,6 +52,7 @@ namespace Drone.Location.World.Dron
         {
             _maxSpeed = worldEvent.DronParams.maxSpeed;
             _acceleration = worldEvent.DronParams.acceleration;
+
         }
 
         private void StartGame(WorldEvent worldEvent)
@@ -73,22 +74,14 @@ namespace Drone.Location.World.Dron
 
         private void EndGame(WorldEvent worldEvent)
         {
-            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
-            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
-            _dronControlService.RemoveListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
+            _dronControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
+            _dronControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
 
-        private void OnSwipedEnd(WorldEvent obj)
-        {
-            if (!transform.localPosition.Equals(_droneTargetPosition)) {
-                MoveTo(_droneTargetPosition);
-            }
-        }
-
-        private void OnStart(WorldEvent objectEvent)
+        private void OnStart(ControllEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
             Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
@@ -99,7 +92,7 @@ namespace Drone.Location.World.Dron
             MoveTo(newPosition);
         }
 
-        private void OnSwiped(WorldEvent objectEvent)
+        private void OnSwiped(ControllEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
             Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
