@@ -12,9 +12,9 @@ namespace Drone.Location.Model.SpeedBooster
         public void Awake()
         {
             ObjectType = WorldObjectType.SPEED_BUSTER;
-            SpeedBoost = 5f;
-            AccelerationBoost = 32;
-            NeedsEnergy = 3f;
+            SpeedBoost = 1.5f;
+            AccelerationBoost = 1.5f;
+            NeedsEnergy = 3;
             Duration = 4;
         }
     }
