@@ -9,6 +9,8 @@ namespace Drone.Location.World.Dron.Descriptor
         private int _energy;
         private int _durability;
         private int _mobility;
+        private float _maxSpeed;
+        private float _acceleration;
         private string _prefab;
 
         public void Configure(Configuration config)
@@ -18,6 +20,8 @@ namespace Drone.Location.World.Dron.Descriptor
             Energy = config.GetInt("energy");
             Durability = config.GetInt("durability");
             Mobility = config.GetInt("mobility");
+            MaxSpeed = config.GetFloat("maxSpeed");
+            Acceleration = config.GetFloat("acceleration");
             Prefab = config.GetString("prefab");
         }
 
@@ -48,6 +52,17 @@ namespace Drone.Location.World.Dron.Descriptor
         {
             get => _mobility;
             private set => _mobility = value;
+        }
+        public float MaxSpeed
+        {
+            get => _maxSpeed;
+            private set => _maxSpeed = value;
+        }
+        
+        public float Acceleration
+        {
+            get => _acceleration;
+            private set => _acceleration = value;
         }
 
         public string Prefab

@@ -21,6 +21,7 @@ namespace Drone.World.Event
         public const string END_GAME = "EndGame";
         public const string DRON_BOOST_SPEED = "DronBoostSpeed";
         public const string WORLD_CREATED = "WorldCreated";
+        public const string SET_DRON_PARAMETERS = "SetDronOptions";
         public const string CREATE_WORLD = "CreateWorld";
         public const string SWIPE = "Swipe";
         public const string START_MOVE = "start";
@@ -30,11 +31,12 @@ namespace Drone.World.Event
         public GameObject CollisionObject { get; private set; }
         public LevelDescriptor LevelDescriptor { get; private set; }
         public DronStats DronStats { get; private set; }
+        public DronParameters DronParams { get; private set; }
         public WorldObjectType TypeBoost { get; private set; }
         public Vector2 Swipe { get; private set; }
         public string DronId { get; private set; }
         public float SpeedBoost { get; private set; }
-        public float SpeedBoostTime { get; private set; }
+        public float AccelerationBoost { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
@@ -45,16 +47,22 @@ namespace Drone.World.Event
         {
             DronStats = dronStats;
         }
+        
+        public WorldEvent(string name, DronParameters dronParams) : base(name)
+        {
+            DronParams = dronParams;
+        }
 
         public WorldEvent(string name, WorldObjectType type) : base(name)
         {
             TypeBoost = type;
         }
 
-        public WorldEvent(string name, float speedBoost, float speedBoostTime) : base(name)
+        public WorldEvent(string name, float speedBoost, float accelerationBoost) : base(name)
         {
             SpeedBoost = speedBoost;
-            SpeedBoostTime = speedBoostTime;
+            AccelerationBoost = accelerationBoost;
+
         }
 
         public WorldEvent(string name, LevelDescriptor levelDescriptor, string dronId) : base(name)
