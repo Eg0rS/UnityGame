@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using AgkCommons.Event;
 using IoC.Attribute;
@@ -19,6 +18,7 @@ namespace Drone.Location.World.Dron
     public class DronController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
         private const float UPDATE_TIME = 0.1f;
+        private const float AccelerationCoefficient = 0.2f;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -29,20 +29,17 @@ namespace Drone.Location.World.Dron
         [Inject]
         private GameService _gameService;
 
+        private Vector3 _droneTargetPosition = Vector3.zero;
         private DronControlService _dronControlService;
+        private BezierWalkerWithSpeed _bezier;
+        private Coroutine _isMoving;
+        private Animator _animator;
+        private float _levelSpeed = 8;
+        private float _mobility;
+        private float _boostSpeed;
+        private bool _isGameRun;
 
         public WorldObjectType ObjectType { get; }
-
-        private const float AccelerationCoefficient = 0.2f;
-        private float ShiftSpeed = 0.13f;
-        private BezierWalkerWithSpeed _bezier;
-        private float _levelSpeed = 8;
-        private bool _isGameRun;
-        private float _boostSpeed;
-        private Coroutine _isMoving;
-        private Vector3 _droneTargetPosition = Vector3.zero;
-
-        private Animator _animator;
 
         public void Init(DroneModel model)
         {
@@ -56,12 +53,10 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<WorldEvent>(WorldEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.END_MOVE, OnSwiped);
             _dronControlService.AddListener<WorldEvent>(WorldEvent.SWIPE_END, OnSwipedEnd);
-
-            // ShiftSpeed = model.SpeedShift; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
-            // ShiftSpeed = 0.2f; // !_settingsService.GetSwipeControl() ? 0.075f : 0.13f; 
+            
             DroneDescriptor droneDescriptor = _droneService.GetDroneById(_gameService.DroneId).DroneDescriptor;
             model.SetDroneParameters(droneDescriptor.Mobility, droneDescriptor.Durability, droneDescriptor.Energy);
-            ShiftSpeed = model.Mobility;
+            _mobility = model.Mobility;
             _animator = transform.GetComponentInParent<Animator>();
         }
 
@@ -148,14 +143,17 @@ namespace Drone.Location.World.Dron
 
         private IEnumerator Moving(Vector3 targetPosition)
         {
-            _animator.SetInteger("moveDirection", GetMoveDirection(new Vector2(targetPosition.x, targetPosition.y)));
-            _animator.SetFloat("x", targetPosition.x);
-            _animator.SetFloat("y", targetPosition.y);
-
             Vector3 startPosition = transform.localPosition;
+            if (targetPosition == Vector3.zero) {
+                _animator.SetFloat("x", -startPosition.x);
+                _animator.SetFloat("y", -startPosition.y);
+            } else {
+                _animator.SetFloat("x", targetPosition.x);
+                _animator.SetFloat("y", targetPosition.y);
+            }
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
-            float time = distance / ShiftSpeed;
+            float time = distance / _mobility;
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
             float deltaX = move.x / updateCount;
             float deltaY = move.y / updateCount;
@@ -192,7 +190,8 @@ namespace Drone.Location.World.Dron
 
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
-                    _animator.SetInteger("moveDirection", 0);
+                    _animator.SetFloat("x", 0);
+                    _animator.SetFloat("y", 0);
                     _droneTargetPosition = targetPosition;
                 }
 
@@ -216,35 +215,6 @@ namespace Drone.Location.World.Dron
         private void DisableAcceleration()
         {
             _levelSpeed -= _boostSpeed;
-        }
-
-        private int GetMoveDirection(Vector2 position)
-        {
-            if (position == Vector2.up) {
-                return 1;
-            }
-            if (position == Vector2.right) {
-                return 2;
-            }
-            if (position == Vector2.down) {
-                return 3;
-            }
-            if (position == Vector2.left) {
-                return 4;
-            }
-            if (position == new Vector2(-1, 1)) {
-                return 5;
-            }
-            if (position == new Vector2(1, 1)) {
-                return 6;
-            }
-            if (position == new Vector2(-1, -1)) {
-                return 7;
-            }
-            if (position == new Vector2(1, -1)) {
-                return 8;
-            }
-            return 0;
         }
     }
 }
