@@ -18,30 +18,15 @@ using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
 using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.Service;
+using Drone.Location.World.Dron.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Drone.Location.Service
 {
-    public struct DronStats //todo сделать отдельным объектом
-    {
-        public float durability;
-        public float energy;
-        public int countChips;
-        public float energyFall;
-        public float maxDurability;
-    }
-
-    public struct DronParameters  //todo сделать отдельным объектом
-    {
-        public float maxSpeed;
-        public float acceleration;
-    }
-
     public enum FailedReasons
     {
         Crashed,
@@ -72,9 +57,10 @@ namespace Drone.Location.Service
         [Inject]
         private LocationService _locationService;
 
+        private DroneModel _droneModel;
+        
+        
         private LevelDescriptor _levelDescriptor;
-        private DronStats _dronStats;
-        private DronParameters _dronParameters;
         private bool _isPlay;
         private string _dronId;
         private float _startTime;
@@ -102,23 +88,14 @@ namespace Drone.Location.Service
 
         private void SetStartOptionsDron()
         {
-            DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
-            //   _dronStats.durability = dronDescriptor.Durability; todo вернуть 
-            //   _dronStats.energy = dronDescriptor.Energy;
-            _dronStats.durability = 999999;
-            _dronStats.energy = 9999999;
-            _dronStats.maxDurability = dronDescriptor.Durability;
-            _dronStats.countChips = 0;
-            _dronStats.energyFall = 0.05f;
-            _dronParameters.maxSpeed = dronDescriptor.MaxSpeed;
-            _dronParameters.acceleration = dronDescriptor.Acceleration;
+            _droneModel = new DroneModel(_dronService.GetDronById(_dronId).DronDescriptor);
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
             _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _dronStats));
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _dronParameters));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _droneModel));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
             CreateDrone(_dronId);
@@ -162,7 +139,7 @@ namespace Drone.Location.Service
 
         private void OnTakeBattery(BatteryModel component)
         {
-            _dronStats.energy += component.Energy;
+            _droneModel.energy += component.Energy;
             component.gameObject.SetActive(false);
         }
 
@@ -184,7 +161,7 @@ namespace Drone.Location.Service
 
         private void OnTakeChip(BonusChipsModel component)
         {
-            _dronStats.countChips++;
+            _droneModel.countChips++;
             component.gameObject.SetActive(false);
             UiUpdate();
         }
@@ -194,9 +171,10 @@ namespace Drone.Location.Service
             if (_onActiveShield) {
                 return;
             }
-            _dronStats.durability -= component.Damage;
-            if (_dronStats.durability <= 0) {
-                _dronStats.durability = 0;
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH));
+            _droneModel.durability -= component.Damage;
+            if (_droneModel.durability <= 0) {
+                _droneModel.durability = 0;
                 DronFailed(FailedReasons.Crashed);
             }
             UiUpdate();
@@ -210,7 +188,7 @@ namespace Drone.Location.Service
                     Invoke(nameof(DisableShield), _boostShieldTime);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
-                    _dronStats.energy -= _energyForSpeed;
+                    _droneModel.energy -= _energyForSpeed;
                     _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _speedBoost, _accelerationBoost));
                     break;
             }
@@ -223,7 +201,7 @@ namespace Drone.Location.Service
 
         private void UiUpdate()
         {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _dronStats));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
         }
 
         public void EndGame()
@@ -242,8 +220,8 @@ namespace Drone.Location.Service
         {
             float timeInGame = Time.time - _startTime;
             if (isWin) {
-                _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _dronStats.countChips, timeInGame,
-                                               (int) ((_dronStats.durability / _dronStats.maxDurability) * 100));
+                _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), _droneModel.countChips, timeInGame,
+                                               (int) ((_droneModel.durability / _droneModel.maxDurability) * 100));
             }
         }
 
@@ -271,10 +249,10 @@ namespace Drone.Location.Service
         {
             int countStars = 0;
 
-            if (_dronStats.durability >= _levelDescriptor.NecessaryDurability) {
+            if (_droneModel.durability >= _levelDescriptor.NecessaryDurability) {
                 countStars++;
             }
-            if (_dronStats.countChips >= _levelDescriptor.NecessaryCountChips) {
+            if (_droneModel.countChips >= _levelDescriptor.NecessaryCountChips) {
                 countStars++;
             }
             if (timeInGame <= _levelDescriptor.NecessaryTime) {
@@ -287,9 +265,9 @@ namespace Drone.Location.Service
         private IEnumerator FallEnergy()
         {
             while (_isPlay) {
-                _dronStats.energy -= _dronStats.energyFall;
-                if (_dronStats.energy <= 0) {
-                    _dronStats.energy = 0;
+                _droneModel.energy -= _droneModel.energyFall;
+                if (_droneModel.energy <= 0) {
+                    _droneModel.energy = 0;
                     UiUpdate();
                     DronFailed(FailedReasons.EnergyFalled);
                 } else {
