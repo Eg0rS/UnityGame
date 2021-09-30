@@ -1,6 +1,8 @@
 ﻿using AgkCommons.Event;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.Location.Model;
+using Drone.Location.Model.ShieldBooster;
+using Drone.Location.Model.SpeedBooster;
 using Drone.Location.Service;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -30,9 +32,8 @@ namespace Drone.World.Event
         public DronParameters DronParams { get; private set; }
         public WorldObjectType TypeBoost { get; private set; }
         public string DronId { get; private set; }
-        public float SpeedBoost { get; private set; }
-        public float AccelerationBoost { get; private set; }
-
+        public SpeedBoosterModel SpeedBooster{ get; private set; }
+       
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
             CollisionObject = target;
@@ -53,11 +54,9 @@ namespace Drone.World.Event
             TypeBoost = type;
         }
 
-        public WorldEvent(string name, float speedBoost, float accelerationBoost) : base(name)
+        public WorldEvent(string name, SpeedBoosterModel speedBoosterModel) : base(name)
         {
-            SpeedBoost = speedBoost;
-            AccelerationBoost = accelerationBoost;
-
+            SpeedBooster = speedBoosterModel;
         }
 
         public WorldEvent(string name, LevelDescriptor levelDescriptor, string dronId) : base(name)

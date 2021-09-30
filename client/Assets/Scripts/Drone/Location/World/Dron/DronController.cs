@@ -16,23 +16,22 @@ namespace Drone.Location.World.Dron
     public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
     {
         private const float UPDATE_TIME = 0.1f;
-
+        
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-
+        
         private DronControlService _dronControlService;
-
+        
         public WorldObjectType ObjectType { get; }
-
+        
         private float _acceleration = 0.2f;
         private float _maxSpeed;
         private float _shiftSpeed = 0.13f;
         private BezierWalkerWithSpeed _bezier;
         private bool _isGameRun;
-        private float _boostSpeed;
         private Coroutine _isMoving;
         private Vector3 _droneTargetPosition = Vector3.zero;
-
+        
         public void Init(DronModel model)
         {
             _dronControlService = gameObject.AddComponent<DronControlService>();
@@ -47,31 +46,34 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _shiftSpeed = 0.4f;
         }
-
+        
         private void SetParameters(WorldEvent worldEvent)
         {
             _maxSpeed = worldEvent.DronParams.maxSpeed;
             _acceleration = worldEvent.DronParams.acceleration;
 
         }
-
+        
         private void StartGame(WorldEvent worldEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
         }
-
+        
         public void Update()
         {
             if (!_isGameRun) {
                 return;
             }
-
+            
             if (_bezier.speed < _maxSpeed) {
                 _bezier.speed += _acceleration * Time.deltaTime;
             }
+            else if (_bezier.speed > _maxSpeed) {
+                _bezier.speed -= _acceleration * Time.deltaTime;
+            }
         }
-
+        
         private void EndGame(WorldEvent worldEvent)
         {
             _dronControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
@@ -80,7 +82,7 @@ namespace Drone.Location.World.Dron
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
-
+        
         private void OnStart(ControllEvent objectEvent)
         {
             Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
@@ -103,7 +105,7 @@ namespace Drone.Location.World.Dron
             Debug.Log(_droneTargetPosition);
             MoveTo(newPosition);
         }
-
+        
         private Vector3 NewPosition(Vector3 dronPos, Vector3 swipe)
         {
             Vector3 newPos = dronPos + swipe;
@@ -122,7 +124,7 @@ namespace Drone.Location.World.Dron
             Vector3 newPosition = dronPos + swipe;
             return newPosition;
         }
-
+        
         private void MoveTo(Vector3 newPos)
         {
             if (_isMoving != null) {
@@ -130,7 +132,7 @@ namespace Drone.Location.World.Dron
             }
             _isMoving = StartCoroutine(Moving(newPos));
         }
-
+        
         private IEnumerator Moving(Vector3 targetPosition)
         {
             Vector3 startPosition = transform.localPosition;
@@ -181,20 +183,28 @@ namespace Drone.Location.World.Dron
             }
             _isMoving = null;
         }
-
+        
         private void OnCollisionEnter(Collision other)
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
         }
-
+        
         private void Deceleration(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;
         }
         private void SpeedBoost(WorldEvent objectEvent)
         {
-            _maxSpeed += objectEvent.SpeedBoost;
-            _acceleration += objectEvent.AccelerationBoost;
+            _maxSpeed += objectEvent.SpeedBooster.SpeedBoost;
+            _acceleration += objectEvent.SpeedBooster.AccelerationBoost;
+            StartCoroutine(DisableSpeedBoost(objectEvent));
+        }
+        
+        private IEnumerator DisableSpeedBoost(WorldEvent objectEvent)
+        {
+            yield return new WaitForSeconds(objectEvent.SpeedBooster.Duration);
+            _maxSpeed -= objectEvent.SpeedBooster.SpeedBoost;
+            _acceleration -= objectEvent.SpeedBooster.AccelerationBoost;
         }
     }
 }
