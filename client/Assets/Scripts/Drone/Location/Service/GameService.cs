@@ -4,6 +4,7 @@ using AgkCommons.Event;
 using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkCommons.Input.Gesture.Service;
 using AgkUI.Dialog.Service;
+using Cinemachine;
 using Drone.Core;
 using Drone.LevelMap.LevelDialogs;
 using Drone.LevelMap.Levels.Descriptor;
@@ -16,7 +17,6 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
-using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.Service;
 using Drone.Location.World.Dron.Model;
 using Drone.World;
@@ -241,8 +241,12 @@ namespace Drone.Location.Service
 
         private void CreateDrone(string dronId)
         {
-            GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);
+            GameObject parent = _gameWorld.Require().GetGameObjectByName("DronCube");
+            GameObject drone = Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab));
+            _gameWorld.Require().AddGameObject(drone, parent);
+            CinemachineVirtualCamera camera = _gameWorld.Require().GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
+            camera.Follow = drone.transform;
+            camera.LookAt = drone.transform;
         }
 
         private int CalculateStars(float timeInGame)
