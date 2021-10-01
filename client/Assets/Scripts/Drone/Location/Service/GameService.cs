@@ -23,7 +23,6 @@ using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Drone.Location.Service
 {

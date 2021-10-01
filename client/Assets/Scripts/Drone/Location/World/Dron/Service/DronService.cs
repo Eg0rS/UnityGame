@@ -6,6 +6,7 @@ using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.IoC;
 using Drone.Location.World.Dron.Model;
 using IoC.Attribute;
+using JetBrains.Annotations;
 
 namespace Drone.Location.World.Dron.Service
 {
@@ -27,10 +28,11 @@ namespace Drone.Location.World.Dron.Service
 
         public void Init()
         {
-            if (_dronDescriptorRegistry.DronDescriptors.Count == 0) {
-                _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
-                _resourceService.LoadConfiguration("Configs/drons@embeded", OnConfigLoaded);
+            if (_dronDescriptorRegistry.DronDescriptors.Count != 0) {
+                return;
             }
+            _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
+            _resourceService.LoadConfiguration("Configs/drons@embeded", OnConfigLoaded);
         }
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
@@ -44,6 +46,7 @@ namespace Drone.Location.World.Dron.Service
                           + _dronDescriptorRegistry.DronDescriptors.Count);
         }
 
+        [NotNull]
         public DronViewModel GetDronById(string dronId)
         {
             DronViewModel dronViewModel = new DronViewModel();

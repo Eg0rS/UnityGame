@@ -5,7 +5,7 @@ namespace Drone.Location.World.Dron.Model
     public class DronViewModel
     {
         private DronDescriptor _dronDescriptor;
-
+        
         public DronDescriptor DronDescriptor
         {
             get => _dronDescriptor;
