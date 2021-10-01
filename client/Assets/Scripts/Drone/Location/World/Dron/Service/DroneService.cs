@@ -30,7 +30,7 @@ namespace Drone.Location.World.Dron.Service
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
             foreach (Configuration conf in config.GetList<Configuration>("drons.dron")) {
-                DroneDescriptor droneDescriptor = new DroneDescriptor();
+                DronDescriptor droneDescriptor = new DronDescriptor();
                 droneDescriptor.Configure(conf);
                 _dronDescriptorRegistry.DronDescriptors.Add(droneDescriptor);
             }

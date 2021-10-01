@@ -5,23 +5,32 @@ using AgkCommons.Event;
 using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
-using Drone.Location.Model.Dron;
+using Drone.Location.Model.Drone;
+using Drone.Location.Service;
+using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.Event;
+using Drone.Location.World.Dron.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
 
 namespace Drone.Location.World.Dron
 {
-    public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
+    public class DronController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
         private const float UPDATE_TIME = 0.1f;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        private DronControlService _dronControlService;
+        [Inject]
+        private DronService _dronService;
 
+        [Inject]
+        private GameService _gameService;
+
+        private DronControlService _dronControlService;
+        
         public WorldObjectType ObjectType { get; }
 
         private float _acceleration = 0.2f;
@@ -33,7 +42,9 @@ namespace Drone.Location.World.Dron
         private Coroutine _isMoving;
         private Vector3 _droneTargetPosition = Vector3.zero;
 
-        public void Init(DronModel model)
+        private Animator _animator;
+
+        public void Init(DroneModel model)
         {
             _dronControlService = gameObject.AddComponent<DronControlService>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
@@ -45,20 +56,25 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
-            _shiftSpeed = 0.4f;
+            DronDescriptor dronDescriptor = _dronService.GetDroneById(_gameService.DronId).DroneDescriptor;
+            model.SetDroneParameters(dronDescriptor.Mobility, dronDescriptor.Durability, dronDescriptor.Energy);
+            _shiftSpeed = model.Mobility;
+            _animator = GetComponent<Animator>();
+            _animator.speed = _shiftSpeed;
         }
 
         private void SetParameters(WorldEvent worldEvent)
         {
             _maxSpeed = worldEvent.DronParams.maxSpeed;
             _acceleration = worldEvent.DronParams.acceleration;
-
         }
 
         private void StartGame(WorldEvent worldEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
+            // _animator = GetComponentInChildren<Animator>();
+            // _animator.speed = _shiftSpeed;
         }
 
         public void Update()
@@ -135,6 +151,17 @@ namespace Drone.Location.World.Dron
         {
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
+            
+            if (transform.localPosition.x > 0.9f) {
+                transform.localPosition = new Vector3(1, transform.localPosition.y, transform.localPosition.z);
+            }
+            if (transform.localPosition.x < -1.3f) {
+                transform.localPosition = new Vector3(-1, transform.localPosition.y, transform.localPosition.z);
+            }
+            
+            _animator.SetFloat("x", move.x);
+            _animator.SetFloat("y", move.y);
+
             float distance = (move).magnitude;
             float time = distance / _shiftSpeed;
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
@@ -173,7 +200,8 @@ namespace Drone.Location.World.Dron
 
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
-
+                    _animator.SetFloat("x", 0);
+                    _animator.SetFloat("y", 0);
                     _droneTargetPosition = targetPosition;
                 }
 
@@ -191,6 +219,7 @@ namespace Drone.Location.World.Dron
         {
             _bezier.speed /= 2;
         }
+
         private void SpeedBoost(WorldEvent objectEvent)
         {
             _maxSpeed += objectEvent.SpeedBoost;

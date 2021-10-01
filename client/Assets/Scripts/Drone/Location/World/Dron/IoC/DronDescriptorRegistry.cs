@@ -5,14 +5,14 @@ namespace Drone.Location.World.Dron.IoC
 {
     public class DronDescriptorRegistry
     {
-        private readonly List<DroneDescriptor> _dronDescriptors;
+        private readonly List<DronDescriptor> _dronDescriptors;
 
         public DronDescriptorRegistry()
         {
-            _dronDescriptors = new List<DroneDescriptor>();
+            _dronDescriptors = new List<DronDescriptor>();
         }
 
-        public List<DroneDescriptor> DronDescriptors
+        public List<DronDescriptor> DronDescriptors
         {
             get => _dronDescriptors;
         }

@@ -23,7 +23,6 @@ using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Drone.Location.Service
 {
@@ -76,7 +75,6 @@ namespace Drone.Location.Service
         private DronStats _dronStats;
         private DronParameters _dronParameters;
         private bool _isPlay;
-        private string _dronId;
         private float _startTime;
         private Coroutine _fallingEnergy;
         public float _energyForSpeed;
@@ -84,6 +82,8 @@ namespace Drone.Location.Service
         public float _accelerationBoost;
         public float _boostShieldTime;
         public bool _onActiveShield;
+        
+        public string DronId { get; private set; }
 
         private bool IsPlay
         {
@@ -92,7 +92,7 @@ namespace Drone.Location.Service
 
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            _dronId = dronId;
+            DronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
             _locationService.SwitchLocation(levelDescriptor);
@@ -102,7 +102,7 @@ namespace Drone.Location.Service
 
         private void SetStartOptionsDron()
         {
-            DronDescriptor dronDescriptor = _dronService.GetDronById(_dronId).DronDescriptor;
+            DronDescriptor dronDescriptor = _dronService.GetDroneById(DronId).DroneDescriptor;
             //   _dronStats.durability = dronDescriptor.Durability; todo вернуть 
             //   _dronStats.energy = dronDescriptor.Energy;
             _dronStats.durability = 999999;
@@ -121,7 +121,7 @@ namespace Drone.Location.Service
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _dronParameters));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
-            CreateDrone(_dronId);
+            CreateDrone(DronId);
         }
 
         private void OnAnyTouch(AnyTouch anyTouch)
@@ -264,7 +264,9 @@ namespace Drone.Location.Service
         private void CreateDrone(string dronId)
         {
             GameObject parent = GameObject.Find("DronCube");
-            Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab), parent.transform);
+            GameObject drone = Instantiate(Resources.Load<GameObject>(_dronService.GetDroneById(dronId).DroneDescriptor.Prefab), parent.transform);
+            // AnimatorController animatorController = Resources.Load<AnimatorController>(("Embeded/Animations/droneController"));
+            // drone.AddComponent<Animator>().runtimeAnimatorController = animatorController;
         }
 
         private int CalculateStars(float timeInGame)
