@@ -45,14 +45,14 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
             _shiftSpeed = 0.4f;
         }
 
         private void SetParameters(WorldEvent worldEvent)
         {
-            _maxSpeed = worldEvent.DronParams.maxSpeed;
-            _acceleration = worldEvent.DronParams.acceleration;
-
+            _maxSpeed = worldEvent.DroneModel.maxSpeed;
+            _acceleration = worldEvent.DroneModel.acceleration;
         }
 
         private void StartGame(WorldEvent worldEvent)

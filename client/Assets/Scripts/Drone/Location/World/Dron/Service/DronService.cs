@@ -6,6 +6,7 @@ using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.IoC;
 using Drone.Location.World.Dron.Model;
 using IoC.Attribute;
+using JetBrains.Annotations;
 
 namespace Drone.Location.World.Dron.Service
 {
@@ -44,11 +45,10 @@ namespace Drone.Location.World.Dron.Service
                           + _dronDescriptorRegistry.DronDescriptors.Count);
         }
 
-        public DronViewModel GetDronById(string dronId)
+        [NotNull]
+        public DroneModel GetDronById(string dronId)
         {
-            DronViewModel dronViewModel = new DronViewModel();
-            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId));
-            return dronViewModel;
+            return new DroneModel(_dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId)));
         }
     }
 }
