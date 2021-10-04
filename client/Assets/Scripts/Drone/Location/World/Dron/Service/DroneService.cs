@@ -6,19 +6,26 @@ using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.IoC;
 using Drone.Location.World.Dron.Model;
 using IoC.Attribute;
+using JetBrains.Annotations;
 
 namespace Drone.Location.World.Dron.Service
 {
     public class DronService : IInitable
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DronService>();
+        private string _currentDronId;
 
         [Inject]
         private DronDescriptorRegistry _dronDescriptorRegistry;
 
         [Inject]
         private ResourceService _resourceService;
-        
+
+        public string CurrentDronId
+        {
+            get => _currentDronId;
+        }
+
         public void Init()
         {
             if (_dronDescriptorRegistry.DronDescriptors.Count == 0) {
@@ -30,19 +37,18 @@ namespace Drone.Location.World.Dron.Service
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
             foreach (Configuration conf in config.GetList<Configuration>("drons.dron")) {
-                DronDescriptor droneDescriptor = new DronDescriptor();
-                droneDescriptor.Configure(conf);
-                _dronDescriptorRegistry.DronDescriptors.Add(droneDescriptor);
+                DronDescriptor dronDescriptor = new DronDescriptor();
+                dronDescriptor.Configure(conf);
+                _dronDescriptorRegistry.DronDescriptors.Add(dronDescriptor);
             }
             _logger.Debug("[DronService] Теперь количество элементов в _dronDescriptorRegistry.DronDescriptors = "
                           + _dronDescriptorRegistry.DronDescriptors.Count);
         }
 
-        public DroneViewModel GetDroneById(string droneId)
+        [NotNull]
+        public DroneModel GetDronById(string dronId)
         {
-            DroneViewModel droneViewModel = new DroneViewModel();
-            droneViewModel.DroneDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(droneId));
-            return droneViewModel;
+            return new DroneModel(_dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId)));
         }
     }
 }

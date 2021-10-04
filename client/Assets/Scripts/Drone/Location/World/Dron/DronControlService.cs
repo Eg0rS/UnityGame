@@ -2,7 +2,6 @@
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Drone.Location.World.Dron.Event;
-using Drone.World.Event;
 using UnityEngine;
 using UnityEngine.Serialization;
 using TouchPhase = UnityEngine.TouchPhase;
@@ -32,16 +31,16 @@ namespace Drone.Location.World.Dron
         private float _doubleEndMoveTreshold = 0.35f;
 
         [FormerlySerializedAs("HORISONTAL_SWIPE_ANGLE")]
-        [Header("default value = 0.80")]
+        [Header("default value = 0.30")]
         [Range(0.0f, 0.90f)]
         [SerializeField]
-        private double _horisontalSwipeAngle = 0.80;
+        private double _horisontalSwipeAngle = 0.30;
         
         [FormerlySerializedAs("VERTICAL_SWIPE_ANGLE")]
-        [Header("default value = 0.50")]
+        [Header("default value = 0.70")]
         [Range(0.0f, .90f)]
         [SerializeField]
-        private double _verticalSwipeAngle = 0.50;
+        private double _verticalSwipeAngle = 0.70;
 
 
         #endregion
