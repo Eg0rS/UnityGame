@@ -30,7 +30,7 @@ namespace Drone.Location.World.Dron
         private GameService _gameService;
 
         private DronControlService _dronControlService;
-        
+
         public WorldObjectType ObjectType { get; }
 
         private float _acceleration = 0.2f;
@@ -43,6 +43,8 @@ namespace Drone.Location.World.Dron
         private Vector3 _droneTargetPosition = Vector3.zero;
 
         private Animator _animator;
+        private int _prevDirection;
+        private bool _isIs;
 
         public void Init(DroneModel model)
         {
@@ -60,7 +62,7 @@ namespace Drone.Location.World.Dron
             model.SetDroneParameters(dronDescriptor.Mobility, dronDescriptor.Durability, dronDescriptor.Energy);
             _shiftSpeed = model.Mobility;
             _animator = GetComponent<Animator>();
-            _animator.speed = _shiftSpeed;
+            _animator.speed /= _shiftSpeed;
         }
 
         private void SetParameters(WorldEvent worldEvent)
@@ -73,8 +75,6 @@ namespace Drone.Location.World.Dron
         {
             _isGameRun = true;
             _bezier.enabled = true;
-            // _animator = GetComponentInChildren<Animator>();
-            // _animator.speed = _shiftSpeed;
         }
 
         public void Update()
@@ -151,16 +151,20 @@ namespace Drone.Location.World.Dron
         {
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
-            
-            if (transform.localPosition.x > 0.9f) {
-                transform.localPosition = new Vector3(1, transform.localPosition.y, transform.localPosition.z);
-            }
-            if (transform.localPosition.x < -1.3f) {
-                transform.localPosition = new Vector3(-1, transform.localPosition.y, transform.localPosition.z);
-            }
-            
-            _animator.SetFloat("x", move.x);
-            _animator.SetFloat("y", move.y);
+
+            int direction = GetMoveDirection(targetPosition);
+
+            Debug.Log(_prevDirection);
+            _animator.SetInteger("moveDirection", targetPosition == Vector3.zero ? GetMoveDirection(-startPosition) : direction);
+
+            // if (targetPosition == Vector3.zero) {
+            //     _isIdleState = true;
+            //     _animator.SetBool("isIdleState", _isIdleState);
+            //     _animator.SetInteger("moveDirection", GetMoveDirection(-startPosition));
+            // } else {
+            //     _animator.SetBool("isIdleState", _isIdleState);
+            //     _animator.SetInteger("moveDirection", direction);
+            // }
 
             float distance = (move).magnitude;
             float time = distance / _shiftSpeed;
@@ -200,15 +204,91 @@ namespace Drone.Location.World.Dron
 
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
-                    _animator.SetFloat("x", 0);
-                    _animator.SetFloat("y", 0);
+                    _animator.SetInteger("moveDirection", 0);
                     _droneTargetPosition = targetPosition;
                 }
 
                 yield return 0.1;
             }
+            _prevDirection = direction;
             _isMoving = null;
         }
+
+        private int GetMoveDirection(Vector2 position)
+        {
+            int result = 0;
+            if (position == Vector2.up) {
+                result = 1;
+            }
+            if (position == Vector2.down) {
+                result = 2;
+            }
+            if (position == Vector2.left) {
+                result = 3;
+            }
+            if (position == Vector2.right) {
+                result = 4;
+            }
+            
+            
+            if (position == new Vector2(-1, 1) && (_prevDirection != 1 || _prevDirection != 3)) { //(_prevDirection != 1 || _prevDirection != 3)
+                result = 5;
+            }
+            if (position == new Vector2(-1, -1) && (_prevDirection != 2 || _prevDirection != 3)) { //(_prevDirection != 2 || _prevDirection != 3)
+                result = 6;
+            }
+            if (position == new Vector2(1, -1) && (_prevDirection != 2 || _prevDirection != 4)) { //(_prevDirection != 2 || _prevDirection != 4)
+                result = 7;
+            }
+            if (position == new Vector2(1, 1) && (_prevDirection != 1 || _prevDirection != 4)) { //(_prevDirection != 1 || _prevDirection != 4)
+                result = 8;
+            }
+
+            return result;
+        }
+
+        // private int GetMoveDirection(Vector2 position) //&& _prevDirection == 0
+        // {
+        //     if ((position == Vector2.up && _prevDirection == 0)) { //|| (_prevDirection == 2 && position == Vector2.zero)
+        //         //(_prevDirection != 5 && _prevDirection != 8)
+        //         return 1;
+        //     }
+        //     if ((position == Vector2.down && _prevDirection == 0)) { //|| (_prevDirection == 1 && position == Vector2.zero)
+        //         //(_prevDirection != 6 && _prevDirection != 7)
+        //         return 2;
+        //     }
+        //     switch (_prevDirection) {
+        //         case 1 when position == new Vector2(-1, 1):
+        //         case 8 when position == Vector2.up:
+        //         case 0 when position == Vector2.left:
+        //         case 4 when position == Vector2.zero:
+        //         case 2 when position == new Vector2(-1, -1):
+        //         case 7 when position == Vector2.down:
+        //             return 3;
+        //         case 5 when position == Vector2.up:
+        //         case 1 when position == new Vector2(1, 1):
+        //         case 3 when position == Vector2.zero:
+        //         case 0 when position == Vector2.right:
+        //         case 6 when position == Vector2.down:
+        //         case 2 when position == new Vector2(1, -1):
+        //             return 4;
+        //     }
+        //
+        //     if (position == new Vector2(-1, 1) && (_prevDirection != 1 || _prevDirection != 3)) { //(_prevDirection != 1 || _prevDirection != 3)
+        //         return 5;
+        //     }
+        //     if (position == new Vector2(-1, -1) && (_prevDirection != 2 || _prevDirection != 3)) { //(_prevDirection != 2 || _prevDirection != 3)
+        //         return 6;
+        //     }
+        //     if (position == new Vector2(1, -1) && (_prevDirection != 2 || _prevDirection != 4)) { //(_prevDirection != 2 || _prevDirection != 4)
+        //         return 7;
+        //     }
+        //     if (position == new Vector2(1, 1) && (_prevDirection != 1 || _prevDirection != 4)) { //(_prevDirection != 1 || _prevDirection != 4)
+        //         return 8;
+        //     }
+        //
+        //     return 0;
+        // }
 
         private void OnCollisionEnter(Collision other)
         {
