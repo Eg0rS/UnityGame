@@ -9,7 +9,6 @@ namespace Drone.Location.World.Dron.Module
     {
         public void Configure(IIoCContainer container)
         {
-            container.RegisterSingleton<DronControlService>();
             container.RegisterSingleton<DronService>();
             container.RegisterSingleton<DronDescriptorRegistry>();
         }

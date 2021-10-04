@@ -28,10 +28,11 @@ namespace Drone.Location.World.Dron.Service
 
         public void Init()
         {
-            if (_dronDescriptorRegistry.DronDescriptors.Count == 0) {
-                _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
-                _resourceService.LoadConfiguration("Configs/drons@embeded", OnConfigLoaded);
+            if (_dronDescriptorRegistry.DronDescriptors.Count != 0) {
+                return;
             }
+            _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
+            _resourceService.LoadConfiguration("Configs/drons@embeded", OnConfigLoaded);
         }
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
@@ -46,6 +47,7 @@ namespace Drone.Location.World.Dron.Service
         }
 
         [NotNull]
+
         public DroneModel GetDronById(string dronId)
         {
             return new DroneModel(_dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId)));

@@ -49,6 +49,7 @@ namespace Drone.Core.Filter
             context.RegisterModule(new BillingModule());
             context.RegisterModule(new ShopModule());
             context.RegisterModule(new DronModule());
+            context.RegisterModule(new BoosterModule());
         }
     }
 }

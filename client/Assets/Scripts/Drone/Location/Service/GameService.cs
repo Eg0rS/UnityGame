@@ -64,12 +64,14 @@ namespace Drone.Location.Service
         private bool _isPlay;
         private string _dronId;
         private float _startTime;
+        private bool _onActiveShield;
         private Coroutine _fallingEnergy;
-        public float _energyForSpeed;
-        public float _speedBoost;
-        public float _accelerationBoost;
-        public float _boostShieldTime;
-        public bool _onActiveShield;
+
+        private BatteryModel _batteryModel;
+        private ShieldBoosterModel _shieldBoosterModel;
+        private SpeedBoosterModel _speedBoosterModel;
+        private ObstacleModel _obstacleModel;
+        private BonusChipsModel _bonusChipsModel;
 
         private bool IsPlay
         {
@@ -145,16 +147,14 @@ namespace Drone.Location.Service
 
         private void OnTakeShield(ShieldBoosterModel component)
         {
-            _boostShieldTime = component.Duration;
+            _shieldBoosterModel = component;
             component.gameObject.SetActive(false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
 
         private void OnTakeSpeed(SpeedBoosterModel component)
         {
-            _speedBoost = component.SpeedBoost;
-            _accelerationBoost= component.AccelerationBoost;
-            _energyForSpeed = component.NeedsEnergy;
+            _speedBoosterModel = component;
             component.gameObject.SetActive(false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
         }
@@ -180,16 +180,17 @@ namespace Drone.Location.Service
             UiUpdate();
         }
 
-        private void OnActivateBoost(WorldEvent @event)
+        private void OnActivateBoost(WorldEvent objectEvent)
         {
-            switch (@event.TypeBoost) {
+            switch (objectEvent.TypeBoost) {
                 case WorldObjectType.SHIELD_BUSTER:
                     _onActiveShield = true;
-                    Invoke(nameof(DisableShield), _boostShieldTime);
+                    Invoke(nameof(DisableShield), _shieldBoosterModel.Duration);
                     break;
                 case WorldObjectType.SPEED_BUSTER:
-                    _droneModel.energy -= _energyForSpeed;
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _speedBoost, _accelerationBoost));
+                    _droneModel.energy -= _speedBoosterModel.NeedsEnergy;
+                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _speedBoosterModel));
+
                     break;
             }
         }
