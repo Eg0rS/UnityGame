@@ -1,6 +1,7 @@
 using Adept.Logger;
 using AgkCommons.IoC;
 using Drone.Billing.IoC;
+using Drone.Booster.Module;
 using Drone.Console.IoC;
 using Drone.Core.Audio.IoC;
 using Drone.Core.IoC;

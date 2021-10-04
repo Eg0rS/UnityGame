@@ -195,16 +195,16 @@ namespace Drone.Location.World.Dron
         }
         private void SpeedBoost(WorldEvent objectEvent)
         {
-            _maxSpeed *= objectEvent.SpeedBooster.SpeedBoost;
-            _acceleration *= objectEvent.SpeedBooster.AccelerationBoost;
+            _maxSpeed *= (float) objectEvent.SpeedBooster.Params["MaxSpeed"];
+            _acceleration *= (float) objectEvent.SpeedBooster.Params["Acceleration"];;
             StartCoroutine(DisableSpeedBoost(objectEvent));
         }
         
         private IEnumerator DisableSpeedBoost(WorldEvent objectEvent)
         {
-            yield return new WaitForSeconds(objectEvent.SpeedBooster.Duration);
-            _maxSpeed /= objectEvent.SpeedBooster.SpeedBoost;
-            _acceleration /= objectEvent.SpeedBooster.AccelerationBoost;
+            yield return new WaitForSeconds((float) objectEvent.SpeedBooster.Params["Duration"]);
+            _maxSpeed /= (float) objectEvent.SpeedBooster.Params["MaxSpeed"];
+            _acceleration /= (float) objectEvent.SpeedBooster.Params["Acceleration"];
         }
     }
 }

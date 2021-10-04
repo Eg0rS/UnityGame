@@ -1,4 +1,5 @@
 ﻿using Drone.Location.Model;
+using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.BonusChips;
 using UnityEngine;
 
@@ -11,6 +12,12 @@ namespace Drone.Location.World.BonusChips
         public void Init(BonusChipsModel model)
         {
             ObjectType = model.ObjectType;
+        }
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.GetComponent<PrefabModel>().ObjectType == (WorldObjectType.DRON)) {
+                other.gameObject.SetActive(false);
+            }
         }
     }
 }

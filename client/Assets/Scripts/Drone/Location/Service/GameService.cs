@@ -92,14 +92,13 @@ namespace Drone.Location.Service
         {
             _droneModel = new DroneModel(_dronService.GetDronById(_dronId).DronDescriptor);
         }
-
+        
         private void OnWorldCreated(WorldEvent worldEvent)
         {
             _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _droneModel));
+            Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, _droneModel));
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
             CreateDrone(_dronId);
         }
 
@@ -121,17 +120,11 @@ namespace Drone.Location.Service
                 case WorldObjectType.OBSTACLE:
                     OnDronCrash(collisionObject.GetComponent<ObstacleModel>());
                     break;
-                case WorldObjectType.Battery:
+                case WorldObjectType.BATTERY:
                     OnTakeBattery(collisionObject.GetComponent<BatteryModel>());
                     break;
                 case WorldObjectType.BONUS_CHIPS:
                     OnTakeChip(collisionObject.GetComponent<BonusChipsModel>());
-                    break;
-                case WorldObjectType.SPEED_BUSTER:
-                    OnTakeSpeed(collisionObject.GetComponent<SpeedBoosterModel>());
-                    break;
-                case WorldObjectType.SHIELD_BUSTER:
-                    OnTakeShield(collisionObject.GetComponent<ShieldBoosterModel>());
                     break;
                 case WorldObjectType.FINISH:
                     Victory(collisionObject.GetComponent<FinishModel>());
@@ -142,27 +135,11 @@ namespace Drone.Location.Service
         private void OnTakeBattery(BatteryModel component)
         {
             _droneModel.energy += component.Energy;
-            component.gameObject.SetActive(false);
         }
-
-        private void OnTakeShield(ShieldBoosterModel component)
-        {
-            _shieldBoosterModel = component;
-            component.gameObject.SetActive(false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
-        }
-
-        private void OnTakeSpeed(SpeedBoosterModel component)
-        {
-            _speedBoosterModel = component;
-            component.gameObject.SetActive(false);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BOOST, component.ObjectType));
-        }
-
+        
         private void OnTakeChip(BonusChipsModel component)
         {
             _droneModel.countChips++;
-            component.gameObject.SetActive(false);
             UiUpdate();
         }
 
@@ -178,26 +155,6 @@ namespace Drone.Location.Service
                 DronFailed(FailedReasons.Crashed);
             }
             UiUpdate();
-        }
-
-        private void OnActivateBoost(WorldEvent objectEvent)
-        {
-            switch (objectEvent.TypeBoost) {
-                case WorldObjectType.SHIELD_BUSTER:
-                    _onActiveShield = true;
-                    Invoke(nameof(DisableShield), _shieldBoosterModel.Duration);
-                    break;
-                case WorldObjectType.SPEED_BUSTER:
-                    _droneModel.energy -= _speedBoosterModel.NeedsEnergy;
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, _speedBoosterModel));
-
-                    break;
-            }
-        }
-
-        private void DisableShield()
-        {
-            _onActiveShield = false;
         }
 
         private void UiUpdate()

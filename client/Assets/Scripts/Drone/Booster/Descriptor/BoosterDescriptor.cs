@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AgkCommons.Configurations;
 
-namespace Drone.Location.World.SpeedBooster.Descriptor
+namespace Drone.Booster.Descriptor
 {
     public class BoosterDescriptor
     {
         private string _id;
         private string _type;
-        public Dictionary<string, object> _params = new Dictionary<string, object>();
+        private Dictionary<string, object> _params = new Dictionary<string, object>();
 
         public void Configure(Configuration config)
         {
@@ -28,6 +27,12 @@ namespace Drone.Location.World.SpeedBooster.Descriptor
         {
             get { return _type; }
             private set { _type = value; }
+        }
+        
+        public Dictionary<string, object> Params
+        {
+            get { return _params; }
+            private set { _params = value; }
         }
     }
 }

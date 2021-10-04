@@ -1,14 +1,17 @@
-﻿namespace Drone.Location.Model
+﻿using System.Runtime.Serialization;
+
+namespace Drone.Location.Model
 {
+    [DataContract]
     public enum WorldObjectType
     {
         NONE,
         DRON,
         OBSTACLE,
-        Battery,
+        BATTERY,
         BONUS_CHIPS,
-        SPEED_BUSTER,
-        SHIELD_BUSTER,
+        SPEED_BOOSTER,
+        SHIELD_BOOSTER,
         FINISH
     }
 }
