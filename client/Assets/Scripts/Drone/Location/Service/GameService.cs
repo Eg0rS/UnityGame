@@ -62,7 +62,6 @@ namespace Drone.Location.Service
         
         private LevelDescriptor _levelDescriptor;
         private bool _isPlay;
-        private string _dronId;
         private float _startTime;
         private Coroutine _fallingEnergy;
         public float _energyForSpeed;
@@ -70,7 +69,7 @@ namespace Drone.Location.Service
         public float _accelerationBoost;
         public float _boostShieldTime;
         public bool _onActiveShield;
-
+        public string DronId { get; private set; }
         private bool IsPlay
         {
             set { _isPlay = value; }
@@ -78,7 +77,7 @@ namespace Drone.Location.Service
 
         public void StartGame(LevelDescriptor levelDescriptor, string dronId)
         {
-            _dronId = dronId;
+            DronId = dronId;
             _levelDescriptor = levelDescriptor;
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
             _locationService.SwitchLocation(levelDescriptor);
@@ -88,7 +87,7 @@ namespace Drone.Location.Service
 
         private void SetStartOptionsDron()
         {
-            _droneModel = new DroneModel(_dronService.GetDronById(_dronId).DronDescriptor);
+            _droneModel = new DroneModel(_dronService.GetDronById(DronId).DronDescriptor);
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
@@ -98,7 +97,7 @@ namespace Drone.Location.Service
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ACTIVATE_BOOST, OnActivateBoost);
-            CreateDrone(_dronId);
+            CreateDrone(DronId);
         }
 
         private void OnAnyTouch(AnyTouch anyTouch)

@@ -58,7 +58,7 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _dronControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
-            DronDescriptor dronDescriptor = _dronService.GetDroneById(_gameService.DronId).DroneDescriptor;
+            DronDescriptor dronDescriptor = _dronService.GetDronById(_gameService.DronId).DronDescriptor;
             model.SetDroneParameters(dronDescriptor.Mobility, dronDescriptor.Durability, dronDescriptor.Energy);
             _shiftSpeed = model.Mobility;
             _animator = GetComponent<Animator>();
@@ -67,8 +67,8 @@ namespace Drone.Location.World.Dron
 
         private void SetParameters(WorldEvent worldEvent)
         {
-            _maxSpeed = worldEvent.DronParams.maxSpeed;
-            _acceleration = worldEvent.DronParams.acceleration;
+            _maxSpeed = worldEvent.DroneModel.maxSpeed;
+            _acceleration = worldEvent.DroneModel.acceleration;
         }
 
         private void StartGame(WorldEvent worldEvent)
