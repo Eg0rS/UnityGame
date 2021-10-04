@@ -47,11 +47,10 @@ namespace Drone.Location.World.Dron.Service
         }
 
         [NotNull]
-        public DronViewModel GetDronById(string dronId)
+
+        public DroneModel GetDronById(string dronId)
         {
-            DronViewModel dronViewModel = new DronViewModel();
-            dronViewModel.DronDescriptor = _dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId));
-            return dronViewModel;
+            return new DroneModel(_dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId)));
         }
     }
 }

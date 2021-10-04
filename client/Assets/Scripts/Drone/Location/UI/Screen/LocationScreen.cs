@@ -30,7 +30,7 @@ namespace Drone.Location.UI.Screen
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
-            _gameOverlayManager.LoadGameOverlay(worldEvent.DronStats);
+            _gameOverlayManager.LoadGameOverlay(worldEvent.DroneModel);
         }
     }
 }

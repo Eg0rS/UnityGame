@@ -3,6 +3,7 @@ using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Screens.Service;
 using Drone.Location.UI;
+using Drone.Location.World.Dron.Model;
 using IoC.Attribute;
 using RSG;
 
@@ -19,9 +20,9 @@ namespace Drone.Location.Service
 
         private GameOverlay _gameOverlay;
 
-        public IPromise LoadGameOverlay(DronStats dronStats)
+        public IPromise LoadGameOverlay(DroneModel droneModel)
         {
-            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>(dronStats)).Then(Attach);
+            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>(droneModel)).Then(Attach);
         }
         
         private IPromise Attach(GameOverlay arg)

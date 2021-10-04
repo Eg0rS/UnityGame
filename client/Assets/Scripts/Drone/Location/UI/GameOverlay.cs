@@ -9,6 +9,7 @@ using Drone.Core.Audio.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Location.Model;
 using Drone.Location.Service;
+using Drone.Location.World.Dron.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
@@ -55,10 +56,10 @@ namespace Drone.Location.UI
         private bool _isGame;
 
         [UICreated]
-        private void Init(DronStats dronStats)
+        private void Init(DroneModel droneModel)
         {
-            _maxDurability = dronStats.durability; //для вывода в процентах
-            SetStats(dronStats);
+            _maxDurability = droneModel.durability; //для вывода в процентах
+            SetStats(droneModel);
             _timer.text = "0,00";
             _shieldButton.gameObject.SetActive(false);
             _speedButton.gameObject.SetActive(false);
@@ -108,10 +109,10 @@ namespace Drone.Location.UI
 
         private void UiUpdate(WorldEvent objectEvent)
         {
-            SetStats(objectEvent.DronStats);
+            SetStats(objectEvent.DroneModel);
         }
 
-        private void SetStats(DronStats dronStats)
+        private void SetStats(DroneModel dronStats)
         {
             _countChips.text = dronStats.countChips.ToString();
             _countEnergy.text = dronStats.energy.ToString("F0");

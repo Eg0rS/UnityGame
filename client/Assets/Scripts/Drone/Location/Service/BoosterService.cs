@@ -23,7 +23,7 @@ namespace Drone.Location.Service.Builder
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration conf in config.GetList<Configuration>("Boosters.booster")) {
+            foreach (Configuration conf in config.GetList<Configuration>("boosters.booster")) {
                 BoosterDescriptor boosterDescriptor = new BoosterDescriptor();
                 boosterDescriptor.Configure(conf);
                 _boosterDescriptorRegistry.BoosterDescriptors.Add(boosterDescriptor);

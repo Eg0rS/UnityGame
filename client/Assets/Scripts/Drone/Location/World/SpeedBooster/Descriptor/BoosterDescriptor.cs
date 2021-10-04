@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AgkCommons.Configurations;
 
 namespace Drone.Location.World.SpeedBooster.Descriptor
@@ -6,23 +7,27 @@ namespace Drone.Location.World.SpeedBooster.Descriptor
     public class BoosterDescriptor
     {
         private string _id;
-        public Dictionary<string, float> _params = new Dictionary<string, float>();
+        private string _type;
+        public Dictionary<string, object> _params = new Dictionary<string, object>();
 
         public void Configure(Configuration config)
         {
             Id = config.GetString("id");
-
-            for (int i = 1; i < config.GetNames().Count; i++) {
-                string key = config.GetNames()[i];
-                float value = config.GetList<float>("boosters")[i];
-                _params.Add(key, value);
+            Type = config.GetString("type");
+            foreach (Configuration conf in config.GetList<Configuration>("params.param")) {
+                _params.Add(conf.GetString("key"), conf.GetString("value"));
             }
         }
 
         public string Id
         {
-            get => _id;
-            private set => _id = value;
+            get { return _id; }
+            private set { _id = value; }
+        }
+        public string Type
+        {
+            get { return _type; }
+            private set { _type = value; }
         }
     }
 }

@@ -13,16 +13,16 @@ namespace Drone.Location.Model.SpeedBooster
         public float AccelerationBoost { get; private set; }
         public float NeedsEnergy { get; private set; }
         public float Duration { get; private set; }
-        
+
         public void Awake()
         {
             ObjectType = WorldObjectType.SPEED_BUSTER;
 
             BoosterDescriptor descriptor = _boosterService.GetDescriptorById("SpeedBooster");
-            SpeedBoost = descriptor._params["SpeedBoost"];
-            SpeedBoost = descriptor._params["AccelerationBoost"];
-            SpeedBoost = descriptor._params["NeedsEnergy"];
-            SpeedBoost = descriptor._params["Duration"];
+            SpeedBoost = (float) descriptor._params["SpeedBoost"];
+            AccelerationBoost = (float) descriptor._params["AccelerationBoost"];
+            NeedsEnergy = (float) descriptor._params["NeedsEnergy"];
+            Duration = (float) descriptor._params["Duration"];
         }
     }
 }
