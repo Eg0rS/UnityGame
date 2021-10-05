@@ -104,7 +104,7 @@ namespace Drone.Location.World.Dron
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
             }
-            Debug.Log(_droneTargetPosition);
+           // Debug.Log(_droneTargetPosition);
             MoveTo(newPosition);
         }
 
@@ -116,7 +116,7 @@ namespace Drone.Location.World.Dron
                 return;
             }
             _droneTargetPosition = newPosition;
-            Debug.Log(_droneTargetPosition);
+            //Debug.Log(_droneTargetPosition);
             MoveTo(newPosition);
         }
 
@@ -144,6 +144,7 @@ namespace Drone.Location.World.Dron
             if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
+            _isIs = true;
             _isMoving = StartCoroutine(Moving(newPos));
         }
 
@@ -152,10 +153,13 @@ namespace Drone.Location.World.Dron
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
 
-            int direction = GetMoveDirection(targetPosition);
+            if (_isIs) {
+                int direction = GetMoveDirection(targetPosition);
+                _animator.SetInteger("moveDirection", targetPosition == Vector3.zero ? GetMoveDirection(-startPosition) : direction);
+                _isIs = false;
+            }
 
-            Debug.Log(_prevDirection);
-            _animator.SetInteger("moveDirection", targetPosition == Vector3.zero ? GetMoveDirection(-startPosition) : direction);
+            // проверку в метод вернуть ну нулевой
 
             // if (targetPosition == Vector3.zero) {
             //     _isIdleState = true;
@@ -210,85 +214,177 @@ namespace Drone.Location.World.Dron
 
                 yield return 0.1;
             }
-            _prevDirection = direction;
+            // _prevDirection = direction;
             _isMoving = null;
         }
 
+        // private int GetMoveDirection(Vector2 position)
+        // {
+        //     int result = 0;
+        //     
+        //     if (position == Vector2.up) {
+        //         result = 1;
+        //     }
+        //     if (position == Vector2.down) {
+        //         result = 2;
+        //     }
+        //     if (position == Vector2.left) {
+        //         result = 3;
+        //     }
+        //     if (position == Vector2.right) {
+        //         result = 4;
+        //     }
+        //     
+        //     
+        //     if (position == new Vector2(-1, 1)) //&& (_prevDirection != 1 || _prevDirection != 3)) 
+        //     { //(_prevDirection != 1 || _prevDirection != 3)
+        //         result = 5;
+        //     }
+        //     if (position == new Vector2(-1, -1))
+        //     { //&& (_prevDirection != 2 || _prevDirection != 3)) { //(_prevDirection != 2 || _prevDirection != 3)
+        //         result = 6;
+        //     }
+        //     if (position == new Vector2(1, -1))
+        //     {
+        //         //&& (_prevDirection != 2 || _prevDirection != 4)) { //(_prevDirection != 2 || _prevDirection != 4)
+        //         result = 7;
+        //     }
+        //     if (position == new Vector2(1, 1)){ //&& (_prevDirection != 1 || _prevDirection != 4)) { //(_prevDirection != 1 || _prevDirection != 4)
+        //         result = 8;
+        //     }
+        //     
+        //
+        //     return result;
+        // }
+
+        // private int GetMoveDirection(Vector2 position)
+        // {
+        //     Vector2 currentPos = transform.localPosition;
+        //     Vector2 move = position - currentPos;
+        //     int result = 0;
+        //
+        //     if (position == Vector2.up || (_prevDirection == 2 && position == Vector2.zero)) {
+        //         result = 1;
+        //     }
+        //     if (position == Vector2.down || (_prevDirection == 1 && position == Vector2.zero)) {
+        //         result = 2;
+        //     }
+        //     if (position == Vector2.left) {
+        //         result = 3;
+        //     }
+        //     if (position == Vector2.right) {
+        //         result = 4;
+        //     }
+        //
+        //     if (position == new Vector2(-1, 1) && (Vector2) transform.localPosition != new Vector2(0, 1)) {
+        //         result = 5;
+        //     }
+        //     if (position == new Vector2(-1, -1) && (Vector2) transform.localPosition != new Vector2(0, -1)) {
+        //         result = 6;
+        //     }
+        //     if (result == 0) {
+        //         return 3;
+        //     }
+        //
+        //     if (position == new Vector2(1, -1) && (Vector2) transform.localPosition != new Vector2(0, -1)) {
+        //         result = 7;
+        //     }
+        //     if (position == new Vector2(1, 1) && (Vector2) transform.localPosition != new Vector2(0, 1)) {
+        //         result = 8;
+        //     }
+        //     
+        //
+        //     return result;
+        // }
+
         private int GetMoveDirection(Vector2 position)
         {
-            int result = 0;
-            if (position == Vector2.up) {
-                result = 1;
-            }
-            if (position == Vector2.down) {
-                result = 2;
-            }
-            if (position == Vector2.left) {
-                result = 3;
-            }
-            if (position == Vector2.right) {
-                result = 4;
-            }
             
-            
-            if (position == new Vector2(-1, 1) && (_prevDirection != 1 || _prevDirection != 3)) { //(_prevDirection != 1 || _prevDirection != 3)
-                result = 5;
-            }
-            if (position == new Vector2(-1, -1) && (_prevDirection != 2 || _prevDirection != 3)) { //(_prevDirection != 2 || _prevDirection != 3)
-                result = 6;
-            }
-            if (position == new Vector2(1, -1) && (_prevDirection != 2 || _prevDirection != 4)) { //(_prevDirection != 2 || _prevDirection != 4)
-                result = 7;
-            }
-            if (position == new Vector2(1, 1) && (_prevDirection != 1 || _prevDirection != 4)) { //(_prevDirection != 1 || _prevDirection != 4)
-                result = 8;
-            }
+            Vector2 currentPos = transform.localPosition;
+            Vector2 move = position - currentPos;
 
-            return result;
+            if ((move.x > 0 && move.x < 1) || move.x > 1) {
+                move.x = 1;
+            }
+            if (move.x < -1 || (move.x > -1 && move.x < 0)) {
+                move.x = -1;
+            }
+            
+            if ((move.y > 0 && move.y < 1) || move.y > 1) {
+                move.y = 1;
+            }
+            if (move.y < -1 || (move.y > -1 && move.y < 0)) {
+                move.y = -1;
+            }
+            
+            
+            Debug.Log(move + "MOVE");
+            if (move == Vector2.up) {
+                return 1;
+            }
+            if (move == Vector2.down) {
+                return 2;
+            }
+            if (move == Vector2.left) {
+                return 3;
+            }
+            if (move == Vector2.right) {
+                return 4;
+            }
+            
+            
+            // if (position == Vector2.up) {
+            //     return 1;
+            // }
+            // if (position == Vector2.down) {
+            //     return 2;
+            // }
+            // if (position == Vector2.left) {
+            //     return 3;
+            // }
+            // if (position == Vector2.right) {
+            //     return 4;
+            // }
+            if (position == new Vector2(-1, 1)) {
+                return 5;
+            }
+            if (position == new Vector2(-1, -1)) {
+                return 6;
+            }
+            if (position == new Vector2(1, -1)) {
+                return 7;
+            }
+            if (position == new Vector2(1, 1)) {
+                return 8;
+            }
+            
+
+            // //A3 build
+            // Vector2 currentPos = transform.localPosition;
+            // Vector2 targetPos = Vector2.zero;
+            // if (position.x < 0 || position.y < 0) {
+            //     targetPos = position.normalized;
+            //     targetPos *= -1;
+            // }
+            // //targetPos
+            // Vector2 move = new Vector2((position.x - currentPos.x), Math.Abs(position.y - currentPos.y));
+            // Debug.Log(move + "Mv");
+            // if (move == Vector2.up) {
+            //     return 1;
+            // }
+            // if (move == Vector2.down) {
+            //     return 2;
+            // }
+            // if (move == Vector2.left) {
+            //     return 3;
+            // }
+            // if (move == Vector2.right) {
+            //     return 4;
+            // }
+
+            return 0;
+            //A3 build
         }
-
-        // private int GetMoveDirection(Vector2 position) //&& _prevDirection == 0
-        // {
-        //     if ((position == Vector2.up && _prevDirection == 0)) { //|| (_prevDirection == 2 && position == Vector2.zero)
-        //         //(_prevDirection != 5 && _prevDirection != 8)
-        //         return 1;
-        //     }
-        //     if ((position == Vector2.down && _prevDirection == 0)) { //|| (_prevDirection == 1 && position == Vector2.zero)
-        //         //(_prevDirection != 6 && _prevDirection != 7)
-        //         return 2;
-        //     }
-        //     switch (_prevDirection) {
-        //         case 1 when position == new Vector2(-1, 1):
-        //         case 8 when position == Vector2.up:
-        //         case 0 when position == Vector2.left:
-        //         case 4 when position == Vector2.zero:
-        //         case 2 when position == new Vector2(-1, -1):
-        //         case 7 when position == Vector2.down:
-        //             return 3;
-        //         case 5 when position == Vector2.up:
-        //         case 1 when position == new Vector2(1, 1):
-        //         case 3 when position == Vector2.zero:
-        //         case 0 when position == Vector2.right:
-        //         case 6 when position == Vector2.down:
-        //         case 2 when position == new Vector2(1, -1):
-        //             return 4;
-        //     }
-        //
-        //     if (position == new Vector2(-1, 1) && (_prevDirection != 1 || _prevDirection != 3)) { //(_prevDirection != 1 || _prevDirection != 3)
-        //         return 5;
-        //     }
-        //     if (position == new Vector2(-1, -1) && (_prevDirection != 2 || _prevDirection != 3)) { //(_prevDirection != 2 || _prevDirection != 3)
-        //         return 6;
-        //     }
-        //     if (position == new Vector2(1, -1) && (_prevDirection != 2 || _prevDirection != 4)) { //(_prevDirection != 2 || _prevDirection != 4)
-        //         return 7;
-        //     }
-        //     if (position == new Vector2(1, 1) && (_prevDirection != 1 || _prevDirection != 4)) { //(_prevDirection != 1 || _prevDirection != 4)
-        //         return 8;
-        //     }
-        //
-        //     return 0;
-        // }
 
         private void OnCollisionEnter(Collision other)
         {
