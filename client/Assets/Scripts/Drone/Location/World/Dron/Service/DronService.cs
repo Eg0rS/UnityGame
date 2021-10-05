@@ -2,6 +2,7 @@
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using Drone.Core.Filter;
+using Drone.Inventory.Service;
 using Drone.Location.World.Dron.Descriptor;
 using Drone.Location.World.Dron.IoC;
 using Drone.Location.World.Dron.Model;
@@ -20,6 +21,8 @@ namespace Drone.Location.World.Dron.Service
 
         [Inject]
         private ResourceService _resourceService;
+        [Inject]
+        private InventoryService _inventoryService;
 
         public string CurrentDronId
         {
@@ -32,10 +35,14 @@ namespace Drone.Location.World.Dron.Service
                 return;
             }
             _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
-            _resourceService.LoadConfiguration("Configs/drons@embeded", OnConfigLoaded);
+            _resourceService.LoadConfiguration("Configs/drons@embeded")
+                            .Then(x => {
+                                OnConfigLoaded(x);
+                                _inventoryService.AddAllDrones();
+                            });
         }
 
-        private void OnConfigLoaded(Configuration config, object[] loadparameters)
+        private void OnConfigLoaded(Configuration config)
         {
             foreach (Configuration conf in config.GetList<Configuration>("drons.dron")) {
                 DronDescriptor dronDescriptor = new DronDescriptor();
@@ -47,7 +54,6 @@ namespace Drone.Location.World.Dron.Service
         }
 
         [NotNull]
-
         public DroneModel GetDronById(string dronId)
         {
             return new DroneModel(_dronDescriptorRegistry.DronDescriptors.Find(it => it.Id.Equals(dronId)));
