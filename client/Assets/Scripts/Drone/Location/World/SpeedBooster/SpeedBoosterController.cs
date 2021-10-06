@@ -16,8 +16,8 @@ namespace Drone.Location.World.SpeedBooster
         
         private void OnCollisionEnter(Collision other)
         {
-            if (other.gameObject.GetComponent<PrefabModel>().ObjectType == (WorldObjectType.DRON)) {
-                other.gameObject.SetActive(false);
+            if (other.gameObject.GetComponent<PrefabModel>().ObjectType == (WorldObjectType.DRON)) {   
+                gameObject.SetActive(false);
             }
         }
     }

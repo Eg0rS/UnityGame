@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AgkCommons.Configurations;
+using AgkCommons.Event;
 using AgkCommons.Resources;
 using Drone.Booster.Descriptor;
 using Drone.Core.Filter;
@@ -17,7 +18,7 @@ using UnityEngine;
 
 namespace Drone.Booster.Service
 {
-    public class BoosterService : MonoBehaviour, IInitable
+    public class BoosterService : GameEventDispatcher, IInitable
     {
         [Inject]
         private ResourceService _resourceService;
@@ -58,7 +59,6 @@ namespace Drone.Booster.Service
                     return boosterDescriptor;
                 }
             }
-            Debug.Log("a");
             throw new Exception("BoosterDescriptor not found");
         }
 
@@ -83,13 +83,15 @@ namespace Drone.Booster.Service
 
         private void OnTakeShield(BoosterDescriptor shieldBoosterDescriptor)
         {
+            Debug.Log(shieldBoosterDescriptor.Id);
             _onActiveShield = true;
-            Invoke(nameof(DisableShield), (float) shieldBoosterDescriptor.Params["Duration"]);
+            Invoke(nameof(DisableShield), float.Parse(shieldBoosterDescriptor.Params["Duration"]));
         }
 
         private void OnTakeSpeed(BoosterDescriptor speedBoosterDescriptor)
         {
-            _droneModel.energy -= (float) speedBoosterDescriptor.Params["NeedsEnergy"];
+            Debug.Log(speedBoosterDescriptor.Id);
+            _droneModel.energy -= float.Parse(speedBoosterDescriptor.Params["NeedsEnergy"]);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, speedBoosterDescriptor));
         }
 

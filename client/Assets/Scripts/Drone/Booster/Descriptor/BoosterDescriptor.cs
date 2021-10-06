@@ -7,7 +7,7 @@ namespace Drone.Booster.Descriptor
     {
         private string _id;
         private string _type;
-        private Dictionary<string, object> _params = new Dictionary<string, object>();
+        private Dictionary<string, string> _params = new Dictionary<string, string>();
 
         public void Configure(Configuration config)
         {
@@ -29,7 +29,7 @@ namespace Drone.Booster.Descriptor
             private set { _type = value; }
         }
         
-        public Dictionary<string, object> Params
+        public Dictionary<string, string> Params
         {
             get { return _params; }
             private set { _params = value; }

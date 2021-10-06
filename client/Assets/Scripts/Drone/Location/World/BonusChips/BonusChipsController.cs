@@ -16,7 +16,7 @@ namespace Drone.Location.World.BonusChips
         private void OnCollisionEnter(Collision other)
         {
             if (other.gameObject.GetComponent<PrefabModel>().ObjectType == (WorldObjectType.DRON)) {
-                other.gameObject.SetActive(false);
+                gameObject.SetActive(false);
             }
         }
     }
