@@ -1,6 +1,5 @@
 using Drone.Location.Service;
 using Drone.Location.Service.Builder;
-using Drone.Location.World.SpeedBooster.IoC;
 using IoC.Api;
 
 namespace Drone.Location.IoC
