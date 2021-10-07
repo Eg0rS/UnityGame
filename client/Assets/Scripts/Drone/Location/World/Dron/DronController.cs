@@ -6,6 +6,7 @@ using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Dron;
+using Drone.Location.Service;
 using Drone.Location.World.Dron.Event;
 using Drone.World;
 using Drone.World.Event;
@@ -19,6 +20,9 @@ namespace Drone.Location.World.Dron
         
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject]
+        private GameService _gameService;
         
         private DronControlService _dronControlService;
         
@@ -26,7 +30,7 @@ namespace Drone.Location.World.Dron
         
         private float _acceleration = 0.2f;
         private float _maxSpeed;
-        private float _shiftSpeed = 0.13f;
+        private float Mobility;
         private BezierWalkerWithSpeed _bezier;
         private bool _isGameRun;
         private Coroutine _isMoving;
@@ -45,7 +49,7 @@ namespace Drone.Location.World.Dron
             _dronControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
-            _shiftSpeed = 0.4f;
+            Mobility = _gameService.DroneModel.mobility;
         }
         
         private void SetParameters(WorldEvent worldEvent)
@@ -138,7 +142,7 @@ namespace Drone.Location.World.Dron
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
-            float time = distance / _shiftSpeed;
+            float time = distance / Mobility;
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
             float deltaX = move.x / updateCount;
             float deltaY = move.y / updateCount;
