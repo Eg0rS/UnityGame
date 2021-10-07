@@ -72,7 +72,7 @@ namespace Drone.Location.World.Dron
             } else if (_bezier.speed > _maxSpeed) {
                 _bezier.speed -= _acceleration * Time.deltaTime;
             }
-            _mobility = _basemobility * ((_bezier.speed / 2) / _minimalSpeed);
+            _mobility = _basemobility * (_bezier.speed / _minimalSpeed);
         }
 
         private void EndGame(WorldEvent worldEvent)
