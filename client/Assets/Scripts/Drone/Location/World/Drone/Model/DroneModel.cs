@@ -13,9 +13,8 @@ namespace Drone.Location.World.Drone.Model
         public float maxDurability;
         public float maxSpeed;
         public float acceleration;
-        
         private DroneDescriptor _droneDescriptor;
-        
+
         public DroneModel(DroneDescriptor descriptor)
         {
             durability = descriptor.Durability;
@@ -34,7 +33,7 @@ namespace Drone.Location.World.Drone.Model
             get => _droneDescriptor;
             private set => _droneDescriptor = value;
         }
-        
+
         private void Awake()
         {
             throw new NotImplementedException();
