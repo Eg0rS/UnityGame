@@ -26,8 +26,10 @@ namespace Drone.Location.World.Dron
 
         private float _acceleration = 0.2f;
         private float _maxSpeed;
+
         private float _basemobility;
         private float _mobility;
+
         private BezierWalkerWithSpeed _bezier;
         private bool _isGameRun;
         private Coroutine _isMoving;
@@ -140,6 +142,7 @@ namespace Drone.Location.World.Dron
             Vector3 move = targetPosition - startPosition;
             float distance = (move).magnitude;
             float time = distance / _mobility;
+
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
             float deltaX = move.x / updateCount;
             float deltaY = move.y / updateCount;
