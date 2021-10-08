@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Drone.Location.World.Dron.Descriptor;
+using Drone.Location.World.Drone.Descriptor;
 
-namespace Drone.Location.World.Dron.IoC
+namespace Drone.Location.World.Drone.IoC
 {
     public class DronDescriptorRegistry
     {

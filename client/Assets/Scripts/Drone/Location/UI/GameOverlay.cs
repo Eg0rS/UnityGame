@@ -9,7 +9,7 @@ using Drone.Core.Audio.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Location.Model;
 using Drone.Location.Service;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;

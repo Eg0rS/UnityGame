@@ -17,8 +17,8 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
-using Drone.Location.World.Dron.Service;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
+using Drone.Location.World.Drone.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
@@ -52,7 +52,7 @@ namespace Drone.Location.Service
         private LevelService _levelService;
 
         [Inject]
-        private DronService _dronService;
+        private DroneService _dronService;
 
         [Inject]
         private LocationService _locationService;

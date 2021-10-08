@@ -3,7 +3,7 @@ using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Screens.Service;
 using Drone.Location.UI;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using IoC.Attribute;
 using RSG;
 

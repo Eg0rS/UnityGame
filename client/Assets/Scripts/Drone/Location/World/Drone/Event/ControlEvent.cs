@@ -1,7 +1,7 @@
 using AgkCommons.Event;
 using UnityEngine;
 
-namespace Drone.Location.World.Dron.Event
+namespace Drone.Location.World.Drone.Event
 {
     public class ControllEvent : GameEvent
     {

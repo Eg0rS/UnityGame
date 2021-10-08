@@ -1,11 +1,11 @@
-﻿using Drone.Location.World.Dron.Descriptor;
+﻿using System;
+using Drone.Location.Model.BaseModel;
+using Drone.Location.World.Drone.Descriptor;
 
-namespace Drone.Location.World.Dron.Model
+namespace Drone.Location.World.Drone.Model
 {
-    public class DroneModel
+    public class DroneModel : PrefabModel
     {
-        private DronDescriptor _dronDescriptor;
-
         public float durability;
         public float energy;
         public int countChips;
@@ -14,6 +14,8 @@ namespace Drone.Location.World.Dron.Model
 
         public float maxSpeed;
         public float acceleration;
+        
+        private DronDescriptor _dronDescriptor;
         
         public DroneModel(DronDescriptor descriptor)
         {
@@ -31,6 +33,11 @@ namespace Drone.Location.World.Dron.Model
         {
             get => _dronDescriptor;
             private set => _dronDescriptor = value;
+        }
+        
+        private void Awake()
+        {
+            throw new NotImplementedException();
         }
     }
 }

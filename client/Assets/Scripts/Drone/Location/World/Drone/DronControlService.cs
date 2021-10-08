@@ -1,12 +1,12 @@
 ﻿using System;
 using AgkCommons.Event;
 using AgkCommons.Extension;
-using Drone.Location.World.Dron.Event;
+using Drone.Location.World.Drone.Event;
 using UnityEngine;
 using UnityEngine.Serialization;
 using TouchPhase = UnityEngine.TouchPhase;
 
-namespace Drone.Location.World.Dron
+namespace Drone.Location.World.Drone
 {
     public class DronControlService : GameEventDispatcher
     {

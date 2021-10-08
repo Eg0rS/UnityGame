@@ -2,17 +2,17 @@
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using Drone.Core.Filter;
-using Drone.Location.World.Dron.Descriptor;
-using Drone.Location.World.Dron.IoC;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Descriptor;
+using Drone.Location.World.Drone.IoC;
+using Drone.Location.World.Drone.Model;
 using IoC.Attribute;
 using JetBrains.Annotations;
 
-namespace Drone.Location.World.Dron.Service
+namespace Drone.Location.World.Drone.Service
 {
-    public class DronService : IInitable
+    public class DroneService : IInitable
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DronService>();
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DroneService>();
         private string _currentDronId;
 
         [Inject]
