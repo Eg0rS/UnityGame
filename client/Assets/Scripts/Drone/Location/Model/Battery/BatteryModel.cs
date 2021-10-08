@@ -8,7 +8,7 @@ namespace Drone.Location.Model.Battery
 
         public void Awake()
         {
-            ObjectType = WorldObjectType.Battery;
+            ObjectType = WorldObjectType.BATTERY;
             Energy = 3f;
         }
     }

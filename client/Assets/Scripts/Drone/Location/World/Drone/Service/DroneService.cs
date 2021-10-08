@@ -2,17 +2,18 @@
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using Drone.Core.Filter;
-using Drone.Location.World.Drone.Descriptor;
-using Drone.Location.World.Drone.IoC;
-using Drone.Location.World.Drone.Model;
+using Drone.Inventory.Service;
+using Drone.Location.World.Dron.Descriptor;
+using Drone.Location.World.Dron.IoC;
+using Drone.Location.World.Dron.Model;
 using IoC.Attribute;
 using JetBrains.Annotations;
 
-namespace Drone.Location.World.Drone.Service
+namespace Drone.Location.World.Dron.Service
 {
-    public class DroneService : IInitable
+    public class DronService : IInitable
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DroneService>();
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DronService>();
         private string _currentDronId;
 
         [Inject]
@@ -20,6 +21,8 @@ namespace Drone.Location.World.Drone.Service
 
         [Inject]
         private ResourceService _resourceService;
+        [Inject]
+        private InventoryService _inventoryService;
 
         public string CurrentDronId
         {
@@ -28,13 +31,18 @@ namespace Drone.Location.World.Drone.Service
 
         public void Init()
         {
-            if (_dronDescriptorRegistry.DronDescriptors.Count == 0) {
-                _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
-                _resourceService.LoadConfiguration("Configs/drons@embeded", OnConfigLoaded);
+            if (_dronDescriptorRegistry.DronDescriptors.Count != 0) {
+                return;
             }
+            _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
+            _resourceService.LoadConfiguration("Configs/drons@embeded")
+                            .Then(x => {
+                                OnConfigLoaded(x);
+                                _inventoryService.AddAllDrones();
+                            });
         }
 
-        private void OnConfigLoaded(Configuration config, object[] loadparameters)
+        private void OnConfigLoaded(Configuration config)
         {
             foreach (Configuration conf in config.GetList<Configuration>("drons.dron")) {
                 DronDescriptor dronDescriptor = new DronDescriptor();

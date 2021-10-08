@@ -1,4 +1,6 @@
+using Drone.Booster.Service;
 using Drone.Location.Model.BaseModel;
+using IoC.Attribute;
 
 namespace Drone.Location.Model.ShieldBooster
 {
@@ -7,8 +9,8 @@ namespace Drone.Location.Model.ShieldBooster
         public float Duration { get; private set; }
         public void Awake()
         {
-            ObjectType = WorldObjectType.SHIELD_BUSTER;
-            Duration = 5f;
+            ObjectType = WorldObjectType.SHIELD_BOOSTER;
+           
         }
     }
 }

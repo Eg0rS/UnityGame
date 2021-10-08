@@ -3,6 +3,9 @@ using AgkCommons.Event;
 using Drone.Core.Filter;
 using Drone.Inventory.Event;
 using Drone.Inventory.Model;
+using Drone.Location.World.Dron.Descriptor;
+using Drone.Location.World.Dron.IoC;
+using Drone.Location.World.Dron.Service;
 using Drone.Shop.Descriptor;
 using IoC.Attribute;
 
@@ -17,6 +20,9 @@ namespace Drone.Inventory.Service
         private ShopDescriptor _shopDescriptor;
 
         private InventoryModel _inventory;
+
+        [Inject]
+        private DronDescriptorRegistry _dronDescriptorRegistry;
 
         public void Init()
         {
@@ -40,17 +46,31 @@ namespace Drone.Inventory.Service
 
         private void InitInventoryModel()
         {
-            if (!HasInventoryModel()) {
-                _inventory = new InventoryModel {
-                        Items = new List<InventoryItemModel>()
-                };
-                InventoryItemModel defaultItem = new InventoryItemModel("dron1", InventoryItemTypeModel.DRON, 1);
-                AddInventory(defaultItem);
-                SaveInventoryModel(_inventory);
-            } else {
-                _inventory = _inventoryRepository.Require();
+            _inventory = new InventoryModel {
+                    Items = new List<InventoryItemModel>()
+            };
+        }
+
+        public void AddAllDrones()
+        {
+            foreach (DronDescriptor descriptor in _dronDescriptorRegistry.DronDescriptors) {
+                AddInventory(new InventoryItemModel(descriptor.Id, InventoryItemTypeModel.DRON, 1));
             }
         }
+        // Комментарий на время теста всех дронов
+        // private void InitInventoryModel()
+        // {
+        //     if (!HasInventoryModel()) {
+        //         _inventory = new InventoryModel {
+        //                 Items = new List<InventoryItemModel>()
+        //         };
+        //         InventoryItemModel defaultItem = new InventoryItemModel("dron1", InventoryItemTypeModel.DRON, 1);
+        //         AddInventory(defaultItem);
+        //         SaveInventoryModel(_inventory);
+        //     } else {
+        //         _inventory = _inventoryRepository.Require();
+        //     }
+        // }
 
         public void AddInventory(InventoryItemModel item)
         {

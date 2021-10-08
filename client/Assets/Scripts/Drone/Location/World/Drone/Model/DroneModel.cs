@@ -8,6 +8,7 @@ namespace Drone.Location.World.Drone.Model
     {
         public float durability;
         public float energy;
+        public float mobility;
         public int countChips;
         public float energyFall;
         public float maxDurability;
@@ -21,6 +22,7 @@ namespace Drone.Location.World.Drone.Model
         {
             durability = descriptor.Durability;
             energy = descriptor.Energy;
+            mobility = descriptor.Mobility;
             countChips = 0;
             energyFall = 0f;
             maxDurability = durability;

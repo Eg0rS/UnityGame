@@ -37,11 +37,11 @@ namespace Drone.Location.Service
             _controllers[DRON] = new ControllerData(typeof(DroneController), InitController<DroneController, DroneModel>);
             _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
             _controllers[BONUS_CHIPS] = new ControllerData(typeof(BonusChipsController), InitController<BonusChipsController, BonusChipsModel>);
-            _controllers[SPEED_BUSTER] =
+            _controllers[SPEED_BOOSTER] =
                     new ControllerData(typeof(SpeedBoosterController), InitController<SpeedBoosterController, SpeedBoosterModel>);
-            _controllers[SHIELD_BUSTER] =
+            _controllers[SHIELD_BOOSTER] =
                     new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
-            _controllers[Battery] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
+            _controllers[BATTERY] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
         }
 
