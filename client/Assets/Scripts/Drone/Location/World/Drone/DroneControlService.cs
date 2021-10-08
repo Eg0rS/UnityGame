@@ -22,7 +22,7 @@ namespace Drone.Location.World.Drone
         [Header("default value = 0.1")]
         [Range(0.0f, 1.0f)]
         [SerializeField]
-        private float _endMoveTreshold = 0.1f;
+        private float _endMoveTreshold = 0.07f;
 
         [FormerlySerializedAs("DOUBLE_END_MOVE_TRESHOLD")]
         [Header("default value = 0.35")]
@@ -40,7 +40,7 @@ namespace Drone.Location.World.Drone
         [Header("default value = 0.70")]
         [Range(0.0f, .90f)]
         [SerializeField]
-        private double _verticalSwipeAngle = 0.70;
+        private double _verticalSwipeAngle = 0.75;
 
 
         #endregion
