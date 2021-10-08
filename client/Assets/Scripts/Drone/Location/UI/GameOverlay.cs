@@ -2,10 +2,9 @@
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using AgkUI.Element.Text;
-using Drone.Core.Audio.Model;
 using Drone.Core.Audio.Service;
 using Drone.LevelMap.LevelDialogs;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;

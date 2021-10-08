@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
 {
     [UIController(PREFAB_NAME)]
-    public class ViewDronPanel : MonoBehaviour
+    public class ViewDronePanel : MonoBehaviour
     {
         private const string PREFAB_NAME = "UI/Panel/pfChoiseDronPanel@embeded";
 

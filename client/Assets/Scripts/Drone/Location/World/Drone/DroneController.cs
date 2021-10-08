@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections;
-using UnityEngine;
 using AgkCommons.Event;
-using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
-using Drone.Location.Model.Dron;
+using Drone.Location.Model.Drone;
 using Drone.Location.Service;
-using Drone.Location.World.Dron.Event;
+using Drone.Location.World.Drone.Event;
 using Drone.World;
 using Drone.World.Event;
+using IoC.Attribute;
 using IoC.Util;
+using UnityEngine;
 
-namespace Drone.Location.World.Dron
+namespace Drone.Location.World.Drone
 {
-    public class DronController : GameEventDispatcher, IWorldObjectController<DronModel>
+    public class DroneController : GameEventDispatcher, IWorldObjectController<DronePrefabModel>
     {
         private const float UPDATE_TIME = 0.1f;
         
@@ -24,7 +24,7 @@ namespace Drone.Location.World.Dron
         [Inject]
         private GameService _gameService;
         
-        private DronControlService _dronControlService;
+        private DroneControlService _droneControlService;
         
         public WorldObjectType ObjectType { get; }
         
@@ -36,17 +36,17 @@ namespace Drone.Location.World.Dron
         private Coroutine _isMoving;
         private Vector3 _droneTargetPosition = Vector3.zero;
         
-        public void Init(DronModel model)
+        public void Init(DronePrefabModel model)
         {
-            _dronControlService = gameObject.AddComponent<DronControlService>();
+            _droneControlService = gameObject.AddComponent<DroneControlService>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _bezier.enabled = false;
             _bezier.speed = 0;
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
-            _dronControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
-            _dronControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
+            _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
+            _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
             Mobility = _gameService.DroneModel.mobility;
@@ -80,8 +80,8 @@ namespace Drone.Location.World.Dron
         
         private void EndGame(WorldEvent worldEvent)
         {
-            _dronControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
-            _dronControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
+            _droneControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
+            _droneControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);

@@ -8,7 +8,7 @@ using TouchPhase = UnityEngine.TouchPhase;
 
 namespace Drone.Location.World.Drone
 {
-    public class DronControlService : GameEventDispatcher
+    public class DroneControlService : GameEventDispatcher
     {
         #region const
 

@@ -4,9 +4,9 @@ namespace Drone.Location.World.Drone.Model
 {
     public class DroneViewModel
     {
-        private DronDescriptor _droneDescriptor;
+        private DroneDescriptor _droneDescriptor;
 
-        public DronDescriptor DroneDescriptor
+        public DroneDescriptor DroneDescriptor
         {
             get => _droneDescriptor;
             set => _droneDescriptor = value;
