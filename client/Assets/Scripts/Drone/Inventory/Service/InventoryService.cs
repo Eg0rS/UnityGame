@@ -3,10 +3,8 @@ using AgkCommons.Event;
 using Drone.Core.Filter;
 using Drone.Inventory.Event;
 using Drone.Inventory.Model;
-using Drone.Location.World.Dron.Descriptor;
-using Drone.Location.World.Dron.IoC;
-using Drone.Location.World.Dron.Service;
-using Drone.Shop.Descriptor;
+using Drone.Location.World.Drone.Descriptor;
+using Drone.Location.World.Drone.IoC;
 using IoC.Attribute;
 
 namespace Drone.Inventory.Service
@@ -15,14 +13,11 @@ namespace Drone.Inventory.Service
     {
         [Inject]
         private InventoryRepository _inventoryRepository;
-
+        
         [Inject]
-        private ShopDescriptor _shopDescriptor;
-
+        private DroneDescriptorRegistry _droneDescriptorRegistry;
+        
         private InventoryModel _inventory;
-
-        [Inject]
-        private DronDescriptorRegistry _dronDescriptorRegistry;
 
         public void Init()
         {
@@ -53,7 +48,7 @@ namespace Drone.Inventory.Service
 
         public void AddAllDrones()
         {
-            foreach (DronDescriptor descriptor in _dronDescriptorRegistry.DronDescriptors) {
+            foreach (DroneDescriptor descriptor in _droneDescriptorRegistry.DroneDescriptors) {
                 AddInventory(new InventoryItemModel(descriptor.Id, InventoryItemTypeModel.DRON, 1));
             }
         }

@@ -2,7 +2,7 @@
 using Drone.Booster.Descriptor;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.Location.Model;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using JetBrains.Annotations;
 using UnityEngine;
 

@@ -8,7 +8,7 @@ using Drone.Core.Filter;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Service;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;

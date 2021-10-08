@@ -17,8 +17,8 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
-using Drone.Location.World.Dron.Service;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
+using Drone.Location.World.Drone.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
@@ -52,7 +52,7 @@ namespace Drone.Location.Service
         private LevelService _levelService;
 
         [Inject]
-        private DronService _dronService;
+        private DroneService _droneService;
 
         [Inject]
         private LocationService _locationService;
@@ -84,7 +84,7 @@ namespace Drone.Location.Service
             _locationService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
-            DroneModel = new DroneModel(_dronService.GetDronById(_dronId).DronDescriptor);
+            DroneModel = new DroneModel(_droneService.GetDronById(_dronId).DroneDescriptor);
         }
         
         private void OnWorldCreated(WorldEvent worldEvent)
@@ -194,7 +194,7 @@ namespace Drone.Location.Service
         private void CreateDrone(string dronId)
         {
             GameObject parent = _gameWorld.Require().GetGameObjectByName("DronCube");
-            GameObject drone = Instantiate(Resources.Load<GameObject>(_dronService.GetDronById(dronId).DronDescriptor.Prefab));
+            GameObject drone = Instantiate(Resources.Load<GameObject>(_droneService.GetDronById(dronId).DroneDescriptor.Prefab));
             _gameWorld.Require().AddGameObject(drone, parent);
             CinemachineVirtualCamera camera = _gameWorld.Require().GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
             camera.Follow = drone.transform;

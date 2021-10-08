@@ -103,7 +103,7 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
             GameObject itemContainer = GameObject.Find("ScrollContainer");
             _endlessScroll = itemContainer.GetComponent<EndlessScrollView>();
             foreach (InventoryItemModel item in _inventoryService.Inventory.Items) {
-                _uiService.Create<ViewDronPanel>(UiModel.Create<ViewDronPanel>(item).Container(itemContainer))
+                _uiService.Create<ViewDronePanel>(UiModel.Create<ViewDronePanel>(item).Container(itemContainer))
                           .Then(controller => { _endlessScroll.ScrollPanelList.Add(controller.gameObject); })
                           .Then(() => { _endlessScroll.Init(); })
                           .Done();
@@ -123,7 +123,7 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         [UIOnClick("StartGameButton")]
         private void OnStartGameButton()
         {
-            string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronPanel>().ItemId;
+            string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
             _levelService.CurrentLevelId = _levelDescriptor.Id;
             _gameService.StartGame(_levelDescriptor, dronId);
         }

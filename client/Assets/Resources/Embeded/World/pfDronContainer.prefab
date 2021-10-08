@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5558900977321141418}
-  - component: {fileID: 7203058195922755626}
   - component: {fileID: 4816063555861607130}
   - component: {fileID: 4463336640678877510}
   - component: {fileID: 1750121112195645289}
+  - component: {fileID: 1139790821984813557}
   m_Layer: 0
   m_Name: DronCube
   m_TagString: Untagged
@@ -34,19 +34,6 @@ Transform:
   m_Father: {fileID: 3395788657807914715}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7203058195922755626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6019808304011269422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daf82d2e45e387444a6ebb2dcc04589c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _objectType: 1
 --- !u!135 &4816063555861607130
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -86,7 +73,7 @@ Animator:
   m_GameObject: {fileID: 6019808304011269422}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2df2510e51a00bd49b39d6d98aa646d8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -95,6 +82,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1139790821984813557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019808304011269422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b553c8dd7d847cba54b614b4e358278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectType: 1
 --- !u!1 &6172073164826588196
 GameObject:
   m_ObjectHideFlags: 0
