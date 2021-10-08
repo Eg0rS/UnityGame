@@ -64,6 +64,9 @@ public class EndlessScrollView : MonoBehaviour
 
     private void InitScroll(Vector3 initCoords)
     {
+        if (_scrollPanels.Count <= 1) {
+            return;
+        }
         foreach (GameObject panel in _scrollPanels) {
             panel.transform.localPosition = initCoords;
         }
@@ -93,6 +96,9 @@ public class EndlessScrollView : MonoBehaviour
 
     private void UpdateRightScroll()
     {
+        if (_scrollPanels.Count <= 1) {
+            return;
+        }
         Vector3 newCoords = new Vector3(_initCoords.x + (_scrollPanels[0].GetComponent<RectTransform>().sizeDelta.x + _offset), 0, 0);
         InitScroll(newCoords);
         MoveLeft(false);
@@ -100,6 +106,9 @@ public class EndlessScrollView : MonoBehaviour
 
     private void UpdateLeftScroll()
     {
+        if (_scrollPanels.Count <= 1) {
+            return;
+        }
         Vector3 newCoords = new Vector3(_initCoords.x - (_scrollPanels[0].GetComponent<RectTransform>().sizeDelta.x + _offset), 0, 0);
         InitScroll(newCoords);
         MoveRight(false);
