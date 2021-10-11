@@ -25,19 +25,26 @@ namespace Drone.Location.World.Drone
         public void Init()
         {
             _gameService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            _gameService.AddListener<WorldEvent>(WorldEvent.END_GAME, OnWorldDestroy);
         }
 
         private void OnWorldCreated(WorldEvent obj)
         {
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
         }
+        
+        private void OnWorldDestroy(WorldEvent obj)
+        {
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
+        }
 
         private void StartGame(WorldEvent obj)
         {
-            GameObject parent = _gameWorld.Require().GetGameObjectByName("DronCube"); //todo оптимизировать
-            List<GameObject> list = parent.GetChildren();
-            _animator = list[0].GetComponentInChildren<Animator>();
+            List<GameObject> list = _gameWorld.Require().GetGameObjectByName("DronCube").GetChildren(); //todo оптимизировать
+            GameObject droneModel = list[0];
+            _animator = droneModel.GetComponentInChildren<Animator>();
         }
+        
 
         public void SetAnimState(AnimState animState)
         {

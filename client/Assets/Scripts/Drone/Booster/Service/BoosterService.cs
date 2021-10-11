@@ -36,6 +36,8 @@ namespace Drone.Booster.Service
         private List<BoosterDescriptor> _boosterDescriptors;
         private DroneModel _droneModel;
 
+        private BoosterDescriptor _speedBoosterDescriptor;
+        private BoosterDescriptor _shieldBoosterDescriptor;
         public void Init()
         {
             _boosterDescriptors = new List<BoosterDescriptor>();
@@ -86,23 +88,33 @@ namespace Drone.Booster.Service
 
         private void OnTakeShield(BoosterDescriptor shieldBoosterDescriptor)
         {
+            _shieldBoosterDescriptor = shieldBoosterDescriptor;
             Debug.Log(shieldBoosterDescriptor.Id);
             _droneAnimService.SetAnimState(AnimState.EnableShield);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SHIELD));
-            Invoke(nameof(DisableShield), float.Parse(shieldBoosterDescriptor.Params["Duration"]));
+            Invoke(nameof(DisableShield), float.Parse(_shieldBoosterDescriptor.Params["Duration"]));
         }
 
         private void DisableShield()
         {
-            _droneAnimService.SetAnimState(AnimState.DisableShield);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SHIELD));
+            _droneAnimService.SetAnimState(AnimState.DisableShield);
         }
 
         private void OnTakeSpeed(BoosterDescriptor speedBoosterDescriptor)
         {
-            Debug.Log(speedBoosterDescriptor.Id);
-            _droneModel.energy -= float.Parse(speedBoosterDescriptor.Params["NeedsEnergy"]);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, speedBoosterDescriptor));
+            _speedBoosterDescriptor = speedBoosterDescriptor;
+            Debug.Log(_speedBoosterDescriptor.Id);
+            _droneModel.energy -= float.Parse(_speedBoosterDescriptor.Params["NeedsEnergy"]);
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SPEED, _speedBoosterDescriptor));
+            _droneAnimService.SetAnimState(AnimState.EnableSpeed);
+            Invoke(nameof(DisableSpeed), float.Parse(_speedBoosterDescriptor.Params["Duration"]));
+        }
+        
+        private void DisableSpeed()
+        {
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SPEED, _speedBoosterDescriptor));
+            _droneAnimService.SetAnimState(AnimState.DisableSpeed);
         }
     }
 }

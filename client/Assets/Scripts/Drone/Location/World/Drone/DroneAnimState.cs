@@ -7,6 +7,7 @@ namespace Drone.Location.World.Drone
     {
         EnableShield,
         DisableShield,
-        ActivateSpeed
+        EnableSpeed,
+        DisableSpeed
     }
 }

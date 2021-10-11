@@ -16,12 +16,13 @@ namespace Drone.World.Event
         public const string SELECTED = "WorldObjectSelected";
         public const string ON_COLLISION = "OnCollision";
         public const string UI_UPDATE = "UiUpdate";
-        public const string ENABLE_SHIELD = "ActivateShield";
+        public const string ENABLE_SHIELD = "EnableShield";
         public const string DISABLE_SHIELD = "DisableShield";
+        public const string ENABLE_SPEED = "EnableSpeed";
+        public const string DISABLE_SPEED = "DisableSpeed";
         public const string TAKE_BOOST = "TakeBoost";
         public const string START_FLIGHT = "StartFlight";
         public const string END_GAME = "EndGame";
-        public const string DRON_BOOST_SPEED = "DronBoostSpeed";
         public const string WORLD_CREATED = "WorldCreated";
         public const string SET_DRON_PARAMETERS = "SetDronOptions";
         public const string CREATE_WORLD = "CreateWorld";
