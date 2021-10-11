@@ -8,6 +8,7 @@ using Drone.Core.Filter;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Service;
+using Drone.Location.World.Drone;
 using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
@@ -28,6 +29,9 @@ namespace Drone.Booster.Service
         
         [Inject]
         private GameService _gameService;
+
+        [Inject]
+        private DroneAnimService _droneAnimService;
 
         private List<BoosterDescriptor> _boosterDescriptors;
         private bool _onActiveShield;
@@ -85,6 +89,7 @@ namespace Drone.Booster.Service
         {
             Debug.Log(shieldBoosterDescriptor.Id);
             _onActiveShield = true;
+            _droneAnimService.SetAnimState(AnimState.EnableShield);
             Invoke(nameof(DisableShield), float.Parse(shieldBoosterDescriptor.Params["Duration"]));
         }
 
@@ -97,6 +102,7 @@ namespace Drone.Booster.Service
 
         private void DisableShield()
         {
+            _droneAnimService.SetAnimState(AnimState.DisableShield);
             _onActiveShield = false;
         }
     }
