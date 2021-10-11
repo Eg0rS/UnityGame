@@ -298,7 +298,6 @@ namespace Drone.Location.World.Drone
         {
             _maxSpeed *= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
             _acceleration *= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
-            ;
             StartCoroutine(DisableSpeedBoost(objectEvent));
         }
 

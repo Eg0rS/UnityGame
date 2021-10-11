@@ -56,7 +56,7 @@ namespace Drone.Location.Service
 
         [Inject]
         private LocationService _locationService;
-        
+
         private LevelDescriptor _levelDescriptor;
         private bool _isPlay;
         private string _dronId;
@@ -69,7 +69,7 @@ namespace Drone.Location.Service
         private SpeedBoosterModel _speedBoosterModel;
         private ObstacleModel _obstacleModel;
         private BonusChipsModel _bonusChipsModel;
-        
+
         public DroneModel DroneModel { get; private set; }
 
         private bool IsPlay
@@ -86,14 +86,28 @@ namespace Drone.Location.Service
             _overlayManager.Require().HideLoadingOverlay(true);
             DroneModel = new DroneModel(_droneService.GetDronById(_dronId).DroneDescriptor);
         }
-        
+
         private void OnWorldCreated(WorldEvent worldEvent)
         {
             _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED, DroneModel));
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, DroneModel));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, EnableShield);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, DisableShield);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
+
             CreateDrone(_dronId);
+        }
+
+        private void EnableShield(WorldEvent obj)
+        {
+            _onActiveShield = true;
+        }
+
+        private void DisableShield(WorldEvent obj)
+        {
+            _onActiveShield = false;
         }
 
         private void OnAnyTouch(AnyTouch anyTouch)
@@ -130,7 +144,7 @@ namespace Drone.Location.Service
         {
             DroneModel.energy += component.Energy;
         }
-        
+
         private void OnTakeChip(BonusChipsModel component)
         {
             DroneModel.countChips++;

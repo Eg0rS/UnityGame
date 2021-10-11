@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using AgkCommons.Event;
+using AgkCommons.Extension;
 using Drone.Core.Filter;
 using Drone.Location.Service;
 using Drone.World;
@@ -10,16 +12,16 @@ using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneAnimService: GameEventDispatcher, IInitable
+    public class DroneAnimService : GameEventDispatcher, IInitable
     {
         [Inject]
         private GameService _gameService;
-        
+
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
         private Animator _animator;
-        
+
         public void Init()
         {
             _gameService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
@@ -27,7 +29,14 @@ namespace Drone.Location.World.Drone
 
         private void OnWorldCreated(WorldEvent obj)
         {
-            _animator = _gameWorld.Require().GetGameObjectByName("DronCube")?.GetComponentInChildren<Animator>();
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
+        }
+
+        private void StartGame(WorldEvent obj)
+        {
+            GameObject parent = _gameWorld.Require().GetGameObjectByName("DronCube"); //todo оптимизировать
+            List<GameObject> list = parent.GetChildren();
+            _animator = list[0].GetComponentInChildren<Animator>();
         }
 
         public void SetAnimState(AnimState animState)

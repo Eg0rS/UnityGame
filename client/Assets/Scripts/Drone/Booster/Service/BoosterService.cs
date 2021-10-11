@@ -26,7 +26,7 @@ namespace Drone.Booster.Service
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-        
+
         [Inject]
         private GameService _gameService;
 
@@ -34,7 +34,6 @@ namespace Drone.Booster.Service
         private DroneAnimService _droneAnimService;
 
         private List<BoosterDescriptor> _boosterDescriptors;
-        private bool _onActiveShield;
         private DroneModel _droneModel;
 
         public void Init()
@@ -43,7 +42,7 @@ namespace Drone.Booster.Service
             _resourceService.LoadConfiguration("Configs/boosters@embeded", OnConfigLoaded);
             _gameService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
-        
+
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
             foreach (Configuration conf in config.GetList<Configuration>("boosters.booster")) {
@@ -57,7 +56,7 @@ namespace Drone.Booster.Service
         private BoosterDescriptor GetDescriptorByType(WorldObjectType objectType)
         {
             string type = Enum.GetName(typeof(WorldObjectType), objectType);
-            
+
             foreach (BoosterDescriptor boosterDescriptor in _boosterDescriptors) {
                 if (boosterDescriptor.Type == type) {
                     return boosterDescriptor;
@@ -88,9 +87,15 @@ namespace Drone.Booster.Service
         private void OnTakeShield(BoosterDescriptor shieldBoosterDescriptor)
         {
             Debug.Log(shieldBoosterDescriptor.Id);
-            _onActiveShield = true;
             _droneAnimService.SetAnimState(AnimState.EnableShield);
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SHIELD));
             Invoke(nameof(DisableShield), float.Parse(shieldBoosterDescriptor.Params["Duration"]));
+        }
+
+        private void DisableShield()
+        {
+            _droneAnimService.SetAnimState(AnimState.DisableShield);
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SHIELD));
         }
 
         private void OnTakeSpeed(BoosterDescriptor speedBoosterDescriptor)
@@ -98,12 +103,6 @@ namespace Drone.Booster.Service
             Debug.Log(speedBoosterDescriptor.Id);
             _droneModel.energy -= float.Parse(speedBoosterDescriptor.Params["NeedsEnergy"]);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRON_BOOST_SPEED, speedBoosterDescriptor));
-        }
-
-        private void DisableShield()
-        {
-            _droneAnimService.SetAnimState(AnimState.DisableShield);
-            _onActiveShield = false;
         }
     }
 }
