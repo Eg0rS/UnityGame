@@ -22,7 +22,7 @@ namespace Drone.MainMenu.UI.Panel
     public class MainMenuPanel : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
-        private const string PREFAB = "UI/Panel/pfMainScreenPanel@embeded";
+        private const string PREFAB = "UI/MainMenu/Panel/pfMainScreenPanel@embeded";
 
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
@@ -39,12 +39,12 @@ namespace Drone.MainMenu.UI.Panel
         [UIObjectBinding("MiddlePanel")]
         private GameObject _middlePanel;
 
-        [UIComponentBinding("CountChips")]
+        //  [UIComponentBinding("CountChips")]
         private UILabel _countChips;
-        
-        [UIComponentBinding("CountCrypto")]
+
+        // [UIComponentBinding("CountCrypto")]
         private UILabel _countCrypto;
-        
+
         public void Init()
         {
             _overlayManager.Require().HideLoadingOverlay(true);
@@ -70,25 +70,24 @@ namespace Drone.MainMenu.UI.Panel
             UpdateCredits();
         }
 
-        [UIOnClick("DronShop")]
-        private void OnDroneStore()
+        [UIOnClick("ShopButton")]
+        private void OnStore()
         {
             _dialogManager.Require().Show<ShopDialog>();
             _logger.Debug("Click on store");
         }
 
-        [UIOnClick("SettingsButton")]
+        [UIOnClick("ButtonSetting")]
         private void OnSettingsPanel()
         {
             _dialogManager.Require().Show<GameSettingsDialog>();
             _logger.Debug("Click on settings");
         }
 
-        [UIOnClick("StoreChipsButton")]
+        [UIOnClick("StatusChips")]
         private void OnCreditsPanel()
         {
             _dialogManager.Require().Show<BillingDialog>();
         }
-        
     }
 }
