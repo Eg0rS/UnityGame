@@ -14,6 +14,7 @@ using Drone.Settings.UI;
 using Drone.Shop.UI;
 using IoC.Attribute;
 using IoC.Util;
+using TMPro;
 using UnityEngine;
 
 namespace Drone.MainMenu.UI.Panel
@@ -39,11 +40,11 @@ namespace Drone.MainMenu.UI.Panel
         [UIObjectBinding("MiddlePanel")]
         private GameObject _middlePanel;
 
-        //  [UIComponentBinding("CountChips")]
-        private UILabel _countChips;
+        [UIComponentBinding("ChipsValue")]
+        private TextMeshProUGUI _countChips;
 
-        // [UIComponentBinding("CountCrypto")]
-        private UILabel _countCrypto;
+        [UIComponentBinding("CryptValue")]
+        private TextMeshProUGUI _countCrypto;
 
         public void Init()
         {

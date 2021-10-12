@@ -18,11 +18,11 @@ namespace Drone.Settings.UI
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<GameSettingsDialog>();
 
-        //[UIComponentBinding("SoundToggleButton")]
-        private ToggleButton _toggleSoundButton;
+        [UIComponentBinding("Handle_Sound")]
+        private SwitchButton _toggleSoundButton;
 
-       // [UIComponentBinding("MusicToggleButton")]
-        private ToggleButton _toggleMusicButton;
+        [UIComponentBinding("Handle_Music")]
+        private SwitchButton _toggleMusicButton;
         
         [Inject]
         private SettingsService _settingsService;
@@ -32,35 +32,37 @@ namespace Drone.Settings.UI
 
         private void Start()
         {
-            _toggleMusicButton.IsOn = _settingsService.GetMusicMute();
-            _toggleSoundButton.IsOn = _settingsService.GetSoundMute();
+            _toggleMusicButton._isSwitchOn = _settingsService.GetMusicMute();
+            _toggleSoundButton._isSwitchOn = _settingsService.GetSoundMute();
+            _toggleMusicButton.SwitchCheck();
+            _toggleSoundButton.SwitchCheck();
         }
 
-       // [UIOnClick("CloseButton")]
+        [UIOnClick("Button_close")]
         private void CloseButton()
         {
             _dialogManager.Require().Hide(gameObject);
         }
 
-       // [UIOnClick("SoundToggleButton")]
+        [UIOnClick("Handle_Sound")]
         private void OnSoundButton()
         {
             _logger.Debug("MuteSound");
-            _settingsService.SetSoundMute(_toggleSoundButton.IsOn);
+            _settingsService.SetSoundMute(_toggleSoundButton._isSwitchOn);
         }
         
-      //  [UIOnClick("MusicToggleButton")]
+        [UIOnClick("Handle_Music")]
         private void OnMusicButton()
         {
             _logger.Debug("MuteMusic");
-            _settingsService.SetMusicMute(_toggleMusicButton.IsOn);
+            _settingsService.SetMusicMute(_toggleMusicButton._isSwitchOn);
         }
 
-       // [UIOnClick("ResetButton")]
-        private void OnResetButton()
-        {
-            _logger.Debug("Reset");
-            _settingsService.ResetAllProgress();
-        }
+        // [UIOnClick("ResetButton")]
+        // private void OnResetButton()
+        // {
+        //     _logger.Debug("Reset");
+        //     _settingsService.ResetAllProgress();
+        // }
     }
 }
