@@ -32,7 +32,7 @@ namespace Drone.Location.World.Drone
         {
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
         }
-        
+
         private void OnWorldDestroy(WorldEvent obj)
         {
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
@@ -44,7 +44,6 @@ namespace Drone.Location.World.Drone
             GameObject droneModel = list[0];
             _animator = droneModel.GetComponentInChildren<Animator>();
         }
-        
 
         public void SetAnimState(AnimState animState)
         {
