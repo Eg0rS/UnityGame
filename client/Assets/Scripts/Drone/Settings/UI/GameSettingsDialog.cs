@@ -18,10 +18,10 @@ namespace Drone.Settings.UI
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<GameSettingsDialog>();
 
-        [UIComponentBinding("SoundToggleButton")]
+        //[UIComponentBinding("SoundToggleButton")]
         private ToggleButton _toggleSoundButton;
 
-        [UIComponentBinding("MusicToggleButton")]
+       // [UIComponentBinding("MusicToggleButton")]
         private ToggleButton _toggleMusicButton;
         
         [Inject]
@@ -36,27 +36,27 @@ namespace Drone.Settings.UI
             _toggleSoundButton.IsOn = _settingsService.GetSoundMute();
         }
 
-        [UIOnClick("CloseButton")]
+       // [UIOnClick("CloseButton")]
         private void CloseButton()
         {
             _dialogManager.Require().Hide(gameObject);
         }
 
-        [UIOnClick("SoundToggleButton")]
+       // [UIOnClick("SoundToggleButton")]
         private void OnSoundButton()
         {
             _logger.Debug("MuteSound");
             _settingsService.SetSoundMute(_toggleSoundButton.IsOn);
         }
         
-        [UIOnClick("MusicToggleButton")]
+      //  [UIOnClick("MusicToggleButton")]
         private void OnMusicButton()
         {
             _logger.Debug("MuteMusic");
             _settingsService.SetMusicMute(_toggleMusicButton.IsOn);
         }
 
-        [UIOnClick("ResetButton")]
+       // [UIOnClick("ResetButton")]
         private void OnResetButton()
         {
             _logger.Debug("Reset");
