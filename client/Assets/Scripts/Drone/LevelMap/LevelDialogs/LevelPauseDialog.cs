@@ -18,7 +18,7 @@ namespace Drone.LevelMap.LevelDialogs
     public class LevelPauseDialog : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelPauseDialog>();
-        private const string PREFAB_NAME = "UI/Dialog/pfLevelPauseDialog@embeded";
+        private const string PREFAB_NAME = "UI/Pause/pfLevelPauseDialog@embeded";
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
@@ -36,16 +36,16 @@ namespace Drone.LevelMap.LevelDialogs
             Time.timeScale = 0;
         }
 
-        [UIOnClick("LevelMapButton")]
-        private void LevelMapButtonClicked()
+        [UIOnClick("ButtonExit")]
+        private void ExitClick()
         {
             _gameService.EndGame();
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
         }
 
-        [UIOnClick("ContinueButton")]
-        private void ContinueButtonClicked()
+        [UIOnClick("ButtonResume")]
+        private void ResumeClick()
         {
             _dialogManager.Require().Hide(this);
             Time.timeScale = 1;
