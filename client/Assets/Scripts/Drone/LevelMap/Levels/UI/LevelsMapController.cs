@@ -64,7 +64,7 @@ namespace Drone.LevelMap.Levels.UI
 
         private void CreateLevels(ZoneDescriptor zoneDescriptor, List<LevelViewModel> viewModels)
         {
-            foreach (string levelId in zoneDescriptor.LevelId) {
+            foreach (string levelId in zoneDescriptor.LevelIds) {
                 LevelViewModel levelViewModel = viewModels.Find(x => x.LevelDescriptor.Id.Equals(levelId));
                 GameObject levelContainer = GameObject.Find($"level{levelViewModel.LevelDescriptor.Order}");
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,

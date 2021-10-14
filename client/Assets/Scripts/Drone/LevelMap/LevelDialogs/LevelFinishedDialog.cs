@@ -147,7 +147,7 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetButtonNextActivity()
         {
-            ZoneDescriptor zoneDescriptor = _levelService.GetZonesDescriptors().Find(x => x.LevelId.Contains(_levelViewModel.LevelProgress.Id));
+            ZoneDescriptor zoneDescriptor = _levelService.GetZonesDescriptors().Find(x => x.LevelIds.Contains(_levelViewModel.LevelProgress.Id));
             ZoneDescriptor nextZoneDescriptor = _levelService.GetZoneDescriptorById(_levelService.GetNextZoneId(zoneDescriptor.Id));
             if (_levelService.GetNextLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
                 _nextLevelButton.gameObject.SetActive(false);

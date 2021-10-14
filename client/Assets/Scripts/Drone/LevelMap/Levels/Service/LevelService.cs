@@ -169,19 +169,18 @@ namespace Drone.LevelMap.Levels.Service
 
         public string GetCurrentZoneId()
         {
-            string prevId = "";
+            ZoneDescriptor zoneDescriptor;
             foreach (LevelViewModel model in _levelsViewModels) {
-                if (model.LevelProgress != null) {
-                    prevId = model.LevelDescriptor.Id;
-                    continue;
+                zoneDescriptor = _zoneDescriptorRegistry.ZoneDescriptors.FirstOrDefault(zone => zone.LevelIds.Contains(model.LevelDescriptor.Id));
+                if (zoneDescriptor == null) {
+                    throw new Exception("The level does not belong to any of the zones");
                 }
-                ZoneDescriptor zoneDescriptor = _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.LevelId.Contains(model.LevelDescriptor.Id));
-                string nextZoneId = GetNextZoneId(zoneDescriptor.Id);
-                ZoneDescriptor nextZone = GetZoneDescriptorById(nextZoneId);
-                if (nextZone != null) {
-                    return CompletedZoneConditions(zoneDescriptor.Id, nextZone.CountStars) ? nextZone.Id : zoneDescriptor.Id;
+                if (model.LevelProgress == null) {
+                    return zoneDescriptor.Id;
                 }
-                return _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.LevelId.Contains(prevId)).Id;
+                if (!CompletedZoneConditions(zoneDescriptor.Id, zoneDescriptor.CountStars)) {
+                    return zoneDescriptor.Id;
+                }
             }
             return _zoneDescriptorRegistry.ZoneDescriptors[_zoneDescriptorRegistry.ZoneDescriptors.Count - 1].Id;
         }
@@ -208,7 +207,7 @@ namespace Drone.LevelMap.Levels.Service
                 return 0;
             }
             int result = 0;
-            foreach (string levelId in zoneDescriptor.LevelId) {
+            foreach (string levelId in zoneDescriptor.LevelIds) {
                 LevelProgress levelProgress = GetLevelProgressById(levelId);
                 if (levelProgress != null) {
                     result += GetLevelProgressById(levelId).CountStars;
@@ -221,7 +220,7 @@ namespace Drone.LevelMap.Levels.Service
         {
             PlayerProgressModel model = GetPlayerProgressModel();
             ZoneDescriptor zoneDescriptor = GetZoneDescriptorById(regionId);
-            foreach (string levelId in zoneDescriptor.LevelId) {
+            foreach (string levelId in zoneDescriptor.LevelIds) {
                 if (_levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(levelId)).Type != LevelType.BOSS) {
                     continue;
                 }

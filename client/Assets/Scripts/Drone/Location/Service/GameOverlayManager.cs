@@ -20,16 +20,16 @@ namespace Drone.Location.Service
 
         private GameOverlay _gameOverlay;
 
-        public IPromise LoadGameOverlay(DroneModel droneModel)
+        public IPromise LoadGameOverlay()
         {
-            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>(droneModel)).Then(Attach);
+            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>()).Then(Attach);
         }
         
         private IPromise Attach(GameOverlay arg)
         {
             Promise promise = new Promise();
             _gameOverlay = arg;
-            _screenStructureManager.AttachToSafeArea(_gameOverlay.gameObject);
+            _screenStructureManager.AttachToOverlay(_gameOverlay.gameObject);
             promise.Resolve();
             return promise;
         }
