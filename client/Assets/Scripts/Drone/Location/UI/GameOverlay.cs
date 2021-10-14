@@ -39,7 +39,6 @@ namespace Drone.Location.UI
         [UICreated]
         private void Init()
         {
-            
             _timer.text = "0,00";
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.UI_UPDATE, UiUpdate);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
