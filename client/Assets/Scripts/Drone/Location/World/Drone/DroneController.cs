@@ -16,7 +16,6 @@ namespace Drone.Location.World.Drone
     public class DroneController : GameEventDispatcher, IWorldObjectController<DronePrefabModel>
     {
         private const float UPDATE_TIME = 0.1f;
-        private const float ANIMATION_SPEED = 1.2f;
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -40,7 +39,8 @@ namespace Drone.Location.World.Drone
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _droneControlService = gameObject.AddComponent<DroneControlService>();
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, DisableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
@@ -84,7 +84,7 @@ namespace Drone.Location.World.Drone
             _droneControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _droneControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
 
@@ -294,17 +294,14 @@ namespace Drone.Location.World.Drone
             _bezier.speed /= 2;
         }
 
-        private void SpeedBoost(WorldEvent objectEvent)
+        private void EnableSpeedBoost(WorldEvent objectEvent)
         {
             _maxSpeed *= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
             _acceleration *= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
-            ;
-            StartCoroutine(DisableSpeedBoost(objectEvent));
         }
 
-        private IEnumerator DisableSpeedBoost(WorldEvent objectEvent)
+        private void DisableSpeedBoost(WorldEvent objectEvent)
         {
-            yield return new WaitForSeconds(float.Parse(objectEvent.SpeedBooster.Params["Duration"]));
             _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
             _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
         }
