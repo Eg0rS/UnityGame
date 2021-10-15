@@ -47,7 +47,6 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
             _animator = GetComponent<Animator>();
-            //_animator.speed *= ANIMATION_SPEED; TODO какую-нибудь формулу
         }
 
         private void SetParameters(WorldEvent worldEvent)
@@ -70,7 +69,6 @@ namespace Drone.Location.World.Drone
             if (!_isGameRun) {
                 return;
             }
-
             if (_bezier.speed < _maxSpeed) {
                 _bezier.speed += _acceleration * Time.deltaTime;
             } else if (_bezier.speed > _maxSpeed) {
@@ -162,7 +160,6 @@ namespace Drone.Location.World.Drone
             int countMovement = 0;
             while (!complete) {
                 countMovement++;
-                Debug.Log(countMovement + "CountMovement");
                 Vector3 currentPosition = transform.localPosition;
                 float xPos = currentPosition.x += deltaX;
                 if (rightDirection) {
@@ -193,7 +190,7 @@ namespace Drone.Location.World.Drone
                     _droneTargetPosition = targetPosition;
                     _animator.SetInteger("moveDirection", 0);
                 }
-                if (countMovement >= 75) {
+                if (countMovement >= 120) {
                     transform.localPosition = targetPosition;
                 }
                 yield return 0.1;
@@ -205,7 +202,7 @@ namespace Drone.Location.World.Drone
         {
             Vector2 move = direction - startPos;
             move = RoundMoveVector(move);
-            
+
             if (move == Vector2.up) {
                 return 1;
             }
@@ -273,7 +270,8 @@ namespace Drone.Location.World.Drone
 
         private void Deceleration(WorldEvent objectEvent)
         {
-            _bezier.speed /= 2; //todo откомменить
+            _bezier.speed /= 2;
+            // _bezier.speed = 0;
         }
 
         private void EnableSpeedBoost(WorldEvent objectEvent)
@@ -286,6 +284,5 @@ namespace Drone.Location.World.Drone
             // _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
             // _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
         }
-        
     }
 }
