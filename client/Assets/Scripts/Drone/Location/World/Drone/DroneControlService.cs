@@ -23,13 +23,8 @@ namespace Drone.Location.World.Drone
         [Range(0.0f, 1.0f)]
         [SerializeField]
         private float _endMoveTreshold = 0.07f;
-
-        [FormerlySerializedAs("DOUBLE_END_MOVE_TRESHOLD")]
-        [Header("default value = 0.35")]
-        [Range(0.0f, 1.0f)]
-        [SerializeField]
-        private float _doubleEndMoveTreshold = 0.95f;
-
+        
+        
         [FormerlySerializedAs("HORISONTAL_SWIPE_ANGLE")]
         [Header("default value = 0.30")]
         [Range(0.0f, 0.90f)]
@@ -53,8 +48,7 @@ namespace Drone.Location.World.Drone
         private bool _isMoving;
         private bool _swipeDone;
         private Vector2 _movingVector;
-
-        private Vector2 _swipeVector;
+        
 
         private void Awake()
         {
@@ -104,7 +98,6 @@ namespace Drone.Location.World.Drone
             bool vectorChanged = !_movingVector.Equals(currentSwipeVector);
             if (vectorChanged) {
                 _swipeDone = false;
-                _swipeVector = Vector2.zero;
                 _isMoving = false;
                 _movingVector = currentSwipeVector;
             }
@@ -122,7 +115,6 @@ namespace Drone.Location.World.Drone
                 if (lengthX >= _endMoveTreshold || lengthY >= _endMoveTreshold) {
                     _startTouch = _currentTouch;
                     _isMoving = false;
-                    _swipeVector = currentSwipeVector;
                     _movingVector = currentSwipeVector;
                     Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
                     Debug.Log("Swape: " + currentSwipeVector);
