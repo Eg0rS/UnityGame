@@ -159,7 +159,10 @@ namespace Drone.Location.World.Drone
             bool upDirection = targetPosition.y > startPosition.y;
             bool rightDirection = targetPosition.x > startPosition.x;
 
+            int countMovement = 0;
             while (!complete) {
+                countMovement++;
+                Debug.Log(countMovement + "CountMovement");
                 Vector3 currentPosition = transform.localPosition;
                 float xPos = currentPosition.x += deltaX;
                 if (rightDirection) {
@@ -189,41 +192,20 @@ namespace Drone.Location.World.Drone
                     complete = true;
                     _droneTargetPosition = targetPosition;
                     _animator.SetInteger("moveDirection", 0);
-                } else {
-                    CheckLocalPosition();
+                }
+                if (countMovement >= 75) {
+                    transform.localPosition = targetPosition;
                 }
                 yield return 0.1;
             }
             _isMoving = null;
         }
 
-        private void CheckLocalPosition()
-        {
-            Vector2 position = transform.localPosition;
-
-            if (position.x > 0.9) {
-                position = new Vector2((int) position.x, position.y);
-                return;
-            }
-            if (position.y > 0.9) {
-                position = new Vector2(position.x, (int) position.y);
-                return;
-            }
-            if (position.x < -0.9) {
-                position = new Vector2((int) position.x, position.y);
-                return;
-            }
-            if (position.y < -0.9) {
-                position = new Vector2(position.x, (int) position.y);
-            }
-        }
-
         private int GetMoveDirection(Vector2 startPos, Vector2 direction)
         {
             Vector2 move = direction - startPos;
-            Debug.Log(move + "move!!!");
             move = RoundMoveVector(move);
-            Debug.Log(move + "NewMove");
+            
             if (move == Vector2.up) {
                 return 1;
             }
@@ -291,19 +273,19 @@ namespace Drone.Location.World.Drone
 
         private void Deceleration(WorldEvent objectEvent)
         {
-            _bezier.speed /= 2;
+            _bezier.speed /= 2; //todo откомменить
         }
 
         private void EnableSpeedBoost(WorldEvent objectEvent)
         {
-            _maxSpeed *= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
-            _acceleration *= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            _bezier.speed = _maxSpeed;
         }
 
         private void DisableSpeedBoost(WorldEvent objectEvent)
         {
-            _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
-            _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            // _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
+            // _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
         }
+        
     }
 }

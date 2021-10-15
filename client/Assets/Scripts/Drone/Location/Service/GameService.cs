@@ -17,6 +17,7 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
+using Drone.Location.UI;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
 using Drone.World;
@@ -85,6 +86,7 @@ namespace Drone.Location.Service
             _locationService.SwitchLocation(levelDescriptor);
             _overlayManager.Require().HideLoadingOverlay(true);
             DroneModel = new DroneModel(_droneService.GetDronById(_dronId).DroneDescriptor);
+            _dialogManager.Require().Show<GameOverlay>();
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
@@ -95,8 +97,6 @@ namespace Drone.Location.Service
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, EnableShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, DisableShield);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
-
             CreateDrone(_dronId);
         }
 
