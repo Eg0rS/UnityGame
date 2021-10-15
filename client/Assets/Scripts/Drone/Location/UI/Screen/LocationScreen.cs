@@ -18,12 +18,11 @@ namespace Drone.Location.UI.Screen
 
         [Inject]
         private IoCProvider<LocationService> _locationService;
+
         [UICreated]
         private void Init()
         {
             _locationService.Require().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            //gameObject.GetComponent<GameEventDispatcher>().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-                    // _gameOverlayManager.LoadGameOverlay();
         }
 
         private void OnDestroy()
@@ -32,12 +31,11 @@ namespace Drone.Location.UI.Screen
                 return;
             }
             _locationService.Require().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            //gameObject.GetComponent<GameEventDispatcher>().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
-             _gameOverlayManager.LoadGameOverlay();
+            _gameOverlayManager.LoadGameOverlay();
         }
     }
 }
