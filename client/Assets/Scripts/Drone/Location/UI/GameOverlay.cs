@@ -1,20 +1,18 @@
 ﻿using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
-using AgkUI.Element.Text;
-using Drone.Core.Audio.Model;
-using Drone.Core.Audio.Service;
 using Drone.LevelMap.LevelDialogs;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
+using TMPro;
 using UnityEngine;
 
 namespace Drone.Location.UI
 {
-    [UIController("UI/Dialog/pfGameOverlay@embeded")]
+    [UIController("UI/GameOverlay/pfGameOverlay@embeded")]
     public class GameOverlay : MonoBehaviour
     {
         [Inject]
@@ -23,35 +21,25 @@ namespace Drone.Location.UI
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        [Inject]
-        private SoundService _soundService;
+        [UIComponentBinding("ChipsValue")]
+        private TextMeshProUGUI _countChips;
 
-        [UIComponentBinding("CountChips")]
-        private UILabel _countChips;
+        [UIComponentBinding("TimeValue")]
+        private TextMeshProUGUI _timer;
 
-        [UIComponentBinding("ParceTime")]
-        private UILabel _timer;
+        [UIComponentBinding("EnergyValue")]
+        private TextMeshProUGUI _countEnergy;
 
-        [UIComponentBinding("CountEnergy")]
-        private UILabel _countEnergy;
-
-        [UIComponentBinding("CountDurability")]
-        private UILabel _durability;
-
-        [UIObjectBinding("ShieldActive")]
-        private GameObject _shieldActive;
+        [UIComponentBinding("DurabilityValue")]
+        private TextMeshProUGUI _durability;
 
         private float _time;
-        private float _maxDurability;
         private bool _isGame;
 
         [UICreated]
-        private void Init(DroneModel droneModel)
+        private void Init()
         {
-            _maxDurability = droneModel.durability; //для вывода в процентах
-            SetStats(droneModel);
             _timer.text = "0,00";
-            _shieldActive.SetActive(false);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.UI_UPDATE, UiUpdate);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
@@ -60,6 +48,7 @@ namespace Drone.Location.UI
         private void EndGame(WorldEvent objectEvent)
         {
             _isGame = false;
+            Destroy(gameObject);
         }
 
         private void StartGame(WorldEvent objectEvent)
@@ -81,11 +70,11 @@ namespace Drone.Location.UI
             SetStats(objectEvent.DroneModel);
         }
 
-        private void SetStats(DroneModel dronStats)
+        private void SetStats(DroneModel model)
         {
-            _countChips.text = dronStats.countChips.ToString();
-            _countEnergy.text = dronStats.energy.ToString("F0");
-            _durability.text = ((dronStats.durability / _maxDurability) * 100).ToString("F0") + "%";
+            _countChips.text = model.countChips.ToString();
+            _countEnergy.text = model.energy.ToString("F0");
+            _durability.text = ((model.durability / model.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
         }
 
         [UIOnClick("PauseButton")]

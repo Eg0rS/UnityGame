@@ -12,6 +12,8 @@ using Drone.Location.Service;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Drone.LevelMap.LevelDialogs
 {
@@ -34,15 +36,13 @@ namespace Drone.LevelMap.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
-        [UIComponentBinding("FailReasonTitle")]
-        private UILabel _failReasonLabel;
+        [UIComponentBinding("ReasonText")]
+        private Text _failReasonLabel;
 
         [UICreated]
         public void Init(FailedReasons failReason)
         {
-            _logger.Debug("[LevelFailedCompactDialog] Init()...");
             _levelId = _levelService.CurrentLevelId;
-
             _failReason = failReason;
             SetDialogLabels();
         }
@@ -55,7 +55,7 @@ namespace Drone.LevelMap.LevelDialogs
             _levelService.ShowStartLevelDialog(_levelId);
         }
 
-        [UIOnClick("LevelMapButton")]
+        [UIOnClick("MenuButton")]
         private void LevelMapButtonClicked()
         {
             _dialogManager.Require().Hide(this);
@@ -64,14 +64,11 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetDialogLabels()
         {
-            switch (_failReason) {
-                case FailedReasons.Crashed:
-                    _failReasonLabel.text = "Дрон разбился";
-                    break;
-                case FailedReasons.EnergyFalled:
-                    _failReasonLabel.text = "Закончилась энергия";
-                    break;
-            }
+            _failReasonLabel.text = _failReason switch {
+                    FailedReasons.Crashed => "Дрон разбился",
+                    FailedReasons.EnergyFalled => "Закончилась энергия",
+                    _ => _failReasonLabel.text
+            };
         }
     }
 }

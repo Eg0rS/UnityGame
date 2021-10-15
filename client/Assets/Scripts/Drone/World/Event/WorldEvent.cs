@@ -2,7 +2,7 @@
 using Drone.Booster.Descriptor;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.Location.Model;
-using Drone.Location.World.Dron.Model;
+using Drone.Location.World.Drone.Model;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -16,11 +16,13 @@ namespace Drone.World.Event
         public const string SELECTED = "WorldObjectSelected";
         public const string ON_COLLISION = "OnCollision";
         public const string UI_UPDATE = "UiUpdate";
-        public const string ACTIVATE_BOOST = "ActivateBoost";
+        public const string ENABLE_SHIELD = "EnableShield";
+        public const string DISABLE_SHIELD = "DisableShield";
+        public const string ENABLE_SPEED = "EnableSpeed";
+        public const string DISABLE_SPEED = "DisableSpeed";
         public const string TAKE_BOOST = "TakeBoost";
         public const string START_FLIGHT = "StartFlight";
         public const string END_GAME = "EndGame";
-        public const string DRON_BOOST_SPEED = "DronBoostSpeed";
         public const string WORLD_CREATED = "WorldCreated";
         public const string SET_DRON_PARAMETERS = "SetDronOptions";
         public const string CREATE_WORLD = "CreateWorld";
@@ -33,8 +35,8 @@ namespace Drone.World.Event
         public DroneModel DroneModel { get; private set; }
         public WorldObjectType TypeBoost { get; private set; }
         public string DronId { get; private set; }
-        public BoosterDescriptor SpeedBooster{ get; private set; }
-       
+        public BoosterDescriptor SpeedBooster { get; private set; }
+
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
             CollisionObject = target;
@@ -44,7 +46,6 @@ namespace Drone.World.Event
         {
             DroneModel = droneModel;
         }
-        
 
         public WorldEvent(string name, WorldObjectType type) : base(name)
         {
