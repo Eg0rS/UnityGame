@@ -1,4 +1,6 @@
-﻿using Drone.Core.Audio.Service;
+﻿using System.Globalization;
+using System.Threading;
+using Drone.Core.Audio.Service;
 using Drone.Core.Configurations;
 using IoC.Attribute;
 using UnityEngine;
@@ -18,13 +20,19 @@ namespace Drone.Core.Filter
             InitGraphicsQualitySettings();
             InitPixelDragThreshold();
             InitGlobalException(chain.gameObject);
-
+            InitSystemSettings();
             chain.Next();
         }
 
         private void InitSleepSettings()
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        }
+        private void InitSystemSettings()
+        {
+            CultureInfo newCInfo = (CultureInfo) Thread.CurrentThread.CurrentCulture.Clone();
+            newCInfo.NumberFormat.NumberDecimalSeparator = ",";
+            Thread.CurrentThread.CurrentCulture = newCInfo;
         }
 
         private void InitPixelDragThreshold()

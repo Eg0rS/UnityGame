@@ -4,7 +4,9 @@ using AgkUI.Binding.Attributes;
 using Drone.Location.Service;
 using Drone.World.Event;
 using IoC.Attribute;
+using IoC.Util;
 using UnityEngine;
+using LocationService = Drone.Location.Service.LocationService;
 
 namespace Drone.Location.UI.Screen
 {
@@ -14,10 +16,14 @@ namespace Drone.Location.UI.Screen
         [Inject]
         private GameOverlayManager _gameOverlayManager;
 
+        [Inject]
+        private IoCProvider<LocationService> _locationService;
         [UICreated]
         private void Init()
         {
-            gameObject.GetComponent<GameEventDispatcher>().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            _locationService.Require().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            //gameObject.GetComponent<GameEventDispatcher>().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+                    // _gameOverlayManager.LoadGameOverlay();
         }
 
         private void OnDestroy()
@@ -25,12 +31,13 @@ namespace Drone.Location.UI.Screen
             if (this.IsDestroyed()) {
                 return;
             }
-            gameObject.GetComponent<GameEventDispatcher>().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            _locationService.Require().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            //gameObject.GetComponent<GameEventDispatcher>().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void OnWorldCreated(WorldEvent worldEvent)
         {
-            _gameOverlayManager.LoadGameOverlay(worldEvent.DroneModel);
+             _gameOverlayManager.LoadGameOverlay();
         }
     }
 }

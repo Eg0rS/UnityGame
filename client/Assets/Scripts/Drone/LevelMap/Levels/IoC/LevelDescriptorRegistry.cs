@@ -5,7 +5,7 @@ namespace Drone.LevelMap.Levels.IoC
 {
     public class LevelDescriptorRegistry
     {
-        private List<LevelDescriptor> _levelDescriptors;
+        private readonly List<LevelDescriptor> _levelDescriptors;
 
         public LevelDescriptorRegistry()
         {

@@ -77,12 +77,6 @@ namespace Drone.LevelMap.Levels.UI
         [UICreated]
         private void Init(LevelViewModel levelViewModel, bool isCurrentLevel, bool isBossLevel)
         {
-            if (isBossLevel) {
-                _nextLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txCurrentLevelBoss", typeof(Sprite)) as Sprite;
-                _completedLevelImage.GetComponent<Image>().sprite =
-                        Resources.Load("Embeded/UI/Texture/txCompletedLevelBoss", typeof(Sprite)) as Sprite;
-                _lockedLevelImage.GetComponent<Image>().sprite = Resources.Load("Embeded/UI/Texture/txLockedLevelBoss", typeof(Sprite)) as Sprite;
-            }
             UpdateSpot(levelViewModel, isCurrentLevel);
         }
         
