@@ -5,15 +5,15 @@ using AgkCommons.Event;
 using IoC.Attribute;
 using BezierSolution;
 using Drone.Location.Model;
-using Drone.Location.Model.Dron;
-using Drone.Location.World.Dron.Event;
+using Drone.Location.Model.Drone;
+using Drone.Location.World.Drone.Event;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Util;
 
 namespace Drone.Location.World.Dron
 {
-    public class testDronControllerPryanik : GameEventDispatcher, IWorldObjectController<DronModel>
+    public class testDronControllerPryanik : GameEventDispatcher, IWorldObjectController<DronePrefabModel>
     {
         private const float UPDATE_TIME = 0.1f;
         
@@ -34,7 +34,7 @@ namespace Drone.Location.World.Dron
 
         public Vector2 _Vector2;
         
-        public void Init(DronModel model)
+        public void Init(DronePrefabModel model)
         {
             _dronControlService = gameObject.AddComponent<testDronControlServicePryanik>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
@@ -56,8 +56,7 @@ namespace Drone.Location.World.Dron
 
         private void Start()
         {
-            Init(new DronModel());
-            
+            Init(new DronePrefabModel());
         }
 
         private void SetParameters(WorldEvent worldEvent)
@@ -92,7 +91,7 @@ namespace Drone.Location.World.Dron
             _dronControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _dronControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.DRON_BOOST_SPEED, SpeedBoost);
+            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.ENABLE_SPEED, SpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
         }
         
