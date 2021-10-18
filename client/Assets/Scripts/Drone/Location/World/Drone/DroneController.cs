@@ -19,6 +19,10 @@ namespace Drone.Location.World.Drone
 
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        [Inject]
+        private DroneAnimService _droneAnimService;
+
         private float _acceleration = 0.2f;
         private float _maxSpeed;
         private float _basemobility;
@@ -26,11 +30,9 @@ namespace Drone.Location.World.Drone
         private DroneControlService _droneControlService;
         private BezierWalkerWithSpeed _bezier;
         private Coroutine _isMoving;
-        private Animator _animator;
         private Vector3 _droneTargetPosition = Vector3.zero;
         private float _minimalSpeed = 3.0f;
         private bool _isGameRun;
-        private bool _animationAlreadyBegin;
         public WorldObjectType ObjectType { get; }
 
         public void Init(DronePrefabModel model)
@@ -46,7 +48,6 @@ namespace Drone.Location.World.Drone
             _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
-            _animator = GetComponent<Animator>();
         }
 
         private void SetParameters(WorldEvent worldEvent)
@@ -93,7 +94,6 @@ namespace Drone.Location.World.Drone
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
             }
-            Debug.Log(_droneTargetPosition);
             MoveTo(newPosition);
         }
 
@@ -130,23 +130,87 @@ namespace Drone.Location.World.Drone
 
         private void MoveTo(Vector3 newPos)
         {
-            _animationAlreadyBegin = false;
-            _animator.SetInteger("moveDirection", 0);
             if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
+            _droneAnimService.SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
             _isMoving = StartCoroutine(Moving(newPos));
-            _animationAlreadyBegin = true;
+        }
+
+        private float CalculateAnimSpeed(Vector3 newPos)
+        {
+            return 0.3f * (1 / ((1 / (_mobility * 10)) * (newPos - transform.localPosition).magnitude));
+        }
+
+        private AnimState DetectDirection(Vector3 newPos)
+        {
+            Vector3 vector = newPos - RoundMoveVector(transform.localPosition);
+            vector = RoundMoveVector(vector);
+            if (vector.Equals(Vector3.right)) {
+                return AnimState.amMoveRight;
+            }
+            if (vector.Equals(Vector3.left)) {
+                return AnimState.amMoveLeft;
+            }
+            if (vector.Equals(Vector3.up)) {
+                return AnimState.amMoveUp;
+            }
+            if (vector.Equals(Vector3.down)) {
+                return AnimState.amMoveDown;
+            }
+            if (vector.Equals(new Vector3(1, 1, 0))) {
+                return AnimState.amMoveUpRight;
+            }
+            if (vector.Equals(new Vector3(-1, 1, 0))) {
+                return AnimState.amMoveUpLeft;
+            }
+            if (vector.Equals(new Vector3(1, -1, 0))) {
+                return AnimState.amMoveDownRight;
+            }
+            if (vector.Equals(new Vector3(-1, -1, 0))) {
+                return AnimState.amMoveDownLeft;
+            }
+            if (vector.Equals(Vector3.zero)){
+                return AnimState.amIdle;
+            }
+            throw new Exception("Incorrect vector for animation: " + vector);
+        }
+
+        private Vector3 RoundMoveVector(Vector3 move)
+        {
+            if (move.x > 0 && move.x < 0.5f) {
+                move.x = 0;
+            }
+            if (move.y > 0 && move.y < 0.5f) {
+                move.y = 0;
+            }
+            if (move.x > -0.5f && move.x < 0) {
+                move.x = 0;
+            }
+            if (move.y > -0.5f && move.y < 0) {
+                move.y = 0;
+            }
+
+            if (move.x > 1 || (move.x > 0.5f && move.x < 1)) {
+                move.x = 1;
+            }
+            if (move.y > 1 || (move.y > 0.5f && move.y < 1)) {
+                move.y = 1;
+            }
+            if ((move.x < -1 && move.x != 0) || (move.x > -1 && move.x < 0)) {
+                move.x = -1;
+            }
+            if (move.y < -1 || (move.y > -1 && move.y < 0)) {
+                move.y = -1;
+            }
+
+            return new Vector3(move.x, move.y, 0);
         }
 
         private IEnumerator Moving(Vector3 targetPosition)
         {
             Vector3 startPosition = transform.localPosition;
             Vector3 move = targetPosition - startPosition;
-            if (!_animationAlreadyBegin) {
-                int direction = GetMoveDirection(startPosition, targetPosition);
-                _animator.SetInteger("moveDirection", direction);
-            }
             float distance = (move).magnitude;
             float time = distance / _mobility;
             float updateCount = (float) Math.Ceiling(time / UPDATE_TIME);
@@ -188,7 +252,6 @@ namespace Drone.Location.World.Drone
                 if (targetPosition.Equals(transform.localPosition)) {
                     complete = true;
                     _droneTargetPosition = targetPosition;
-                    _animator.SetInteger("moveDirection", 0);
                 }
                 if (countMovement >= 120) {
                     transform.localPosition = targetPosition;
@@ -196,71 +259,6 @@ namespace Drone.Location.World.Drone
                 yield return 0.1;
             }
             _isMoving = null;
-        }
-
-        private int GetMoveDirection(Vector2 startPos, Vector2 direction)
-        {
-            Vector2 move = direction - startPos;
-            move = RoundMoveVector(move);
-
-            if (move == Vector2.up) {
-                return 1;
-            }
-            if (move == Vector2.down) {
-                return 2;
-            }
-            if (move == Vector2.left) {
-                return 3;
-            }
-            if (move == Vector2.right) {
-                return 4;
-            }
-
-            if (move == new Vector2(-1, 1)) {
-                return 5;
-            }
-            if (move == new Vector2(-1, -1)) {
-                return 6;
-            }
-            if (move == new Vector2(1, -1)) {
-                return 7;
-            }
-            if (move == new Vector2(1, 1)) {
-                return 8;
-            }
-
-            return 0;
-        }
-
-        private Vector2 RoundMoveVector(Vector2 move)
-        {
-            if (move.x > 0 && move.x < 0.5f) {
-                move.x = 0;
-            }
-            if (move.y > 0 && move.y < 0.5f) {
-                move.y = 0;
-            }
-            if (move.x > -0.5f && move.x < 0) {
-                move.x = 0;
-            }
-            if (move.y > -0.5f && move.y < 0) {
-                move.y = 0;
-            }
-
-            if (move.x > 1 || (move.x > 0.5f && move.x < 1)) {
-                move.x = 1;
-            }
-            if (move.y > 1 || (move.y > 0.5f && move.y < 1)) {
-                move.y = 1;
-            }
-            if ((move.x < -1 && move.x != 0) || (move.x > -1 && move.x < 0)) {
-                move.x = -1;
-            }
-            if (move.y < -1 || (move.y > -1 && move.y < 0)) {
-                move.y = -1;
-            }
-
-            return move;
         }
 
         private void OnCollisionEnter(Collision other)

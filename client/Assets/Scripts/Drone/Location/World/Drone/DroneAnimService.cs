@@ -20,7 +20,19 @@ namespace Drone.Location.World.Drone
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
+        private const float NORMILIZED_BLEND_ANIM_MOVE = 0.15f;
+
         private Animator _animator;
+
+        private float _animSpeed = 1;
+
+        private AnimState _lastAnimMoveState = AnimState.amIdle;
+
+        public float DefaultAnimSpeed
+        {
+            get { return _animSpeed; }
+            set { _animSpeed = value; }
+        }
 
         public void Init()
         {
@@ -45,9 +57,26 @@ namespace Drone.Location.World.Drone
             _animator = droneModel.GetComponentInChildren<Animator>();
         }
 
-        public void SetAnimState(AnimState animState)
+        public void SetAnimState(AnimState animState, float speed = -1)
         {
+            if (speed.Equals(-1)) {
+                speed = DefaultAnimSpeed;
+            }
+            _animator.speed = speed;
             _animator.Play(Enum.GetName(typeof(AnimState), animState));
+        }
+
+        public void SetAnimMoveState(AnimState animMoveState, float speed)
+        {
+            _animator.speed = speed;
+            if (animMoveState != _lastAnimMoveState) {
+                _animator.CrossFade(Enum.GetName(typeof(AnimState), animMoveState), NORMILIZED_BLEND_ANIM_MOVE);
+            } else {
+                _animator.CrossFade(Enum.GetName(typeof(AnimState), AnimState.amIdle), NORMILIZED_BLEND_ANIM_MOVE * 2);
+                _animator.Play(Enum.GetName(typeof(AnimState), animMoveState), 0,
+                               NORMILIZED_BLEND_ANIM_MOVE); //todo исправить проблему с резким переключением при небольшой скорости
+            }
+            _lastAnimMoveState = animMoveState;
         }
     }
 }
