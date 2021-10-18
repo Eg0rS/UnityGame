@@ -9,7 +9,6 @@ using Drone.LevelMap.Levels.Service;
 using Drone.MainMenu.UI.Panel;
 using IoC.Attribute;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Drone.LevelMap.Levels.UI
 {
@@ -21,100 +20,120 @@ namespace Drone.LevelMap.Levels.UI
         [Inject]
         private LevelService _levelService;
 
+        [Inject]
+        private LevelsMapController _levelsMapController;
+
         [UIObjectBinding("Stars")]
         private GameObject _stars;
 
-        [UIObjectBinding("Сompleted")]
-        private GameObject _completedLevelImage;
+        [UIObjectBinding("StageCurrent")]
+        private GameObject _stageCurrent;
 
-        [UIObjectBinding("Next")]
-        private GameObject _nextLevelImage;
+        [UIObjectBinding("StageCompleted")]
+        private GameObject _stageCompleted;
 
-        [UIObjectBinding("Locked")]
-        private GameObject _lockedLevelImage;
+        [UIObjectBinding("StageNotOpen")]
+        private GameObject _stageNotOpen;
 
-        [UIObjectBinding("LevelNumber")]
-        private GameObject _levelNumber;
+        [UIObjectBinding("StageLock")]
+        private GameObject _stageLock;
 
-        [UIObjectBinding("FirstStar")]
-        private GameObject _firstStar;
+        [UIObjectBinding("Order")]
+        private GameObject _order;
 
-        [UIObjectBinding("SecondStar")]
-        private GameObject _secondStar;
+        [UIObjectBinding("Star1")]
+        private GameObject _oneStar;
 
-        [UIObjectBinding("ThirdStar")]
-        private GameObject _thirdStar;
+        [UIObjectBinding("Star2")]
+        private GameObject _twoStar;
+
+        [UIObjectBinding("Star3")]
+        private GameObject _threeStar;
 
         private LevelViewModel _levelViewModel;
-
-        private bool _isCurrentLevel;
+        private bool _isCanClick = false;
 
         public LevelViewModel LevelViewModel
         {
             get { return _levelViewModel; }
         }
-        
-        public void UpdateSpot(LevelViewModel levelViewModel, bool isCurrentLevel)
+
+        [UICreated]
+        private void Init(LevelViewModel levelViewModel, int x, int y)
         {
-            DisableStars();
-            DisableProgressImages();
+            UpdateSpot(levelViewModel);
+        }
+
+        public void UpdateSpot(LevelViewModel levelViewModel)
+        {
             _levelViewModel = levelViewModel;
-            _isCurrentLevel = isCurrentLevel;
-            _levelNumber.GetComponent<UILabel>().text = levelViewModel.LevelDescriptor.Order.ToString();
-            if (levelViewModel.LevelProgress == null && !isCurrentLevel) {
-                _lockedLevelImage.SetActive(true);
+            DisableSpotProgress();
+            if (_levelViewModel.LevelProgress != null) {
+                SetCompletedSpot();
+            } else if (_levelViewModel.LevelProgress == null && _levelViewModel.LevelDescriptor.Id.Equals(_levelsMapController.CurrentLevelId)) {
+                SetCurrentSpot();
             } else {
-                _lockedLevelImage.SetActive(false);
-                if (isCurrentLevel) {
-                    _nextLevelImage.SetActive(true);
-                    return;
-                }
-                _completedLevelImage.SetActive(true);
-                SetStars(levelViewModel.LevelProgress.CountStars);
+                SetNotOpenSpot();
             }
         }
 
-        [UICreated]
-        private void Init(LevelViewModel levelViewModel, bool isCurrentLevel, bool isBossLevel)
+        private void SetCompletedSpot()
         {
-            UpdateSpot(levelViewModel, isCurrentLevel);
+            _stageCompleted.SetActive(true);
+            _stars.SetActive(true);
+            if (_levelViewModel.LevelProgress.CountStars == 1) {
+                _oneStar.SetActive(true);
+            } else if (_levelViewModel.LevelProgress.CountStars == 2) {
+                _twoStar.SetActive(true);
+            } else if (_levelViewModel.LevelProgress.CountStars == 3) {
+                _threeStar.SetActive(true);
+            } else {
+            }
+            SetOrder();
+            _isCanClick = true;
         }
-        
-        [UIOnClick("pfLocationItemSpot")]
-        private void SelectLevel()
+
+        private void SetCurrentSpot()
         {
-            if (_levelViewModel.LevelProgress == null && !_isCurrentLevel) {
+            _stageCurrent.SetActive(true);
+            SetOrder();
+            _isCanClick = true;
+        }
+
+        private void SetNotOpenSpot()
+        {
+            _stageNotOpen.SetActive(true);
+            SetOrder();
+            _isCanClick = false;
+        }
+
+        private void DisableSpotProgress()
+        {
+            _stars.SetActive(false);
+            _oneStar.SetActive(false);
+            _twoStar.SetActive(false);
+            _threeStar.SetActive(false);
+            _stageLock.SetActive(false);
+            _stageNotOpen.SetActive(false);
+            _stageCompleted.SetActive(false);
+            _stageCurrent.SetActive(false);
+            _order.SetActive(false);
+        }
+
+        private void SetOrder()
+        {
+            _order.SetActive(true);
+            _order.GetComponent<UILabel>().text = _levelViewModel.LevelDescriptor.Order.ToString();
+        }
+
+        [UIOnClick("pfLocationItemSpot")]
+        private void OnSpotClick()
+        {
+            if (!_isCanClick) {
                 return;
             }
             _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);
             _logger.Debug("start dialog: " + _levelViewModel.LevelDescriptor.Id);
-        }
-
-        private List<GameObject> GetStarsImage()
-        {
-            List<GameObject> stars = _stars.GetChildren();
-            return stars;
-        }
-
-        private void SetStars(int countStars)
-        {
-            List<GameObject> stars = GetStarsImage();
-            for (int i = 0; i < countStars; i++) {
-                stars[i].SetActive(!stars[i].activeInHierarchy);
-            }
-        }
-
-        private void DisableStars()
-        {
-            _firstStar.SetActive(false);
-            _secondStar.SetActive(false);
-            _thirdStar.SetActive(false);
-        }
-
-        private void DisableProgressImages()
-        {
-            _completedLevelImage.SetActive(false);
-            _nextLevelImage.SetActive(false);
         }
     }
 }

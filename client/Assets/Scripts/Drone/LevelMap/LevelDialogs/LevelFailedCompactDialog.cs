@@ -42,7 +42,7 @@ namespace Drone.LevelMap.LevelDialogs
         [UICreated]
         public void Init(FailedReasons failReason)
         {
-            _levelId = _levelService.CurrentLevelId;
+            _levelId = _levelService.SelectedLevelId;
             _failReason = failReason;
             SetDialogLabels();
         }

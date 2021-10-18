@@ -88,7 +88,7 @@ namespace Drone.LevelMap.LevelDialogs
         [UICreated]
         public void Init()
         {
-            _levelId = _levelService.CurrentLevelId;
+            _levelId = _levelService.SelectedLevelId;
             _logger.Debug("[LevelFinishedDialog] Init()...");
             _levelViewModel = _levelService.GetLevels().Find(it => it.LevelProgress.Id.Equals(_levelId));
 
@@ -149,7 +149,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             ZoneDescriptor zoneDescriptor = _levelService.GetZonesDescriptors().Find(x => x.LevelIds.Contains(_levelViewModel.LevelProgress.Id));
             ZoneDescriptor nextZoneDescriptor = _levelService.GetZoneDescriptorById(_levelService.GetNextZoneId(zoneDescriptor.Id));
-            if (_levelService.GetNextLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
+            if (_levelService.GetCurrentLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
                 _nextLevelButton.gameObject.SetActive(false);
                 return;
             }

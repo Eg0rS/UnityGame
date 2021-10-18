@@ -124,7 +124,7 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         private void OnStartGameButton()
         {
             string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
-            _levelService.CurrentLevelId = _levelDescriptor.Id;
+            _levelService.SelectedLevelId = _levelDescriptor.Id;
             _gameService.StartGame(_levelDescriptor, dronId);
         }
 
