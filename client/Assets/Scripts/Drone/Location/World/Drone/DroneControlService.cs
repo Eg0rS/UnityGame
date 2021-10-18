@@ -16,20 +16,15 @@ namespace Drone.Location.World.Drone
         [Header("default value = 0.05")]
         [Range(0.0f, 1.0f)]
         [SerializeField]
-        private float _swipeTreshold = 0.05f;
+        private float _swipeTreshold = 0.03f;
 
         [FormerlySerializedAs("END_MOVE_TRESHOLD")]
         [Header("default value = 0.1")]
         [Range(0.0f, 1.0f)]
         [SerializeField]
         private float _endMoveTreshold = 0.07f;
-
-        [FormerlySerializedAs("DOUBLE_END_MOVE_TRESHOLD")]
-        [Header("default value = 0.35")]
-        [Range(0.0f, 1.0f)]
-        [SerializeField]
-        private float _doubleEndMoveTreshold = 0.35f;
-
+        
+        
         [FormerlySerializedAs("HORISONTAL_SWIPE_ANGLE")]
         [Header("default value = 0.30")]
         [Range(0.0f, 0.90f)]
@@ -40,7 +35,7 @@ namespace Drone.Location.World.Drone
         [Header("default value = 0.70")]
         [Range(0.0f, .90f)]
         [SerializeField]
-        private double _verticalSwipeAngle = 0.75;
+        private double _verticalSwipeAngle = 0.7f;
 
 
         #endregion
@@ -51,10 +46,9 @@ namespace Drone.Location.World.Drone
         private Vector2 _currentTouch;
         private Vector2 _startTouch;
         private bool _isMoving;
-        private bool _firstSwipeDone;
+        private bool _swipeDone;
         private Vector2 _movingVector;
-
-        private Vector2 _swipeVector;
+        
 
         private void Awake()
         {
@@ -79,7 +73,10 @@ namespace Drone.Location.World.Drone
                     DetectSwipe();
                     break;
                 case TouchPhase.Ended:
+                    _swipeDone = true;
+                    break;
                 case TouchPhase.Canceled:
+                    _swipeDone = true;
                     break;
                 case TouchPhase.Stationary:
                     break;
@@ -100,8 +97,7 @@ namespace Drone.Location.World.Drone
 
             bool vectorChanged = !_movingVector.Equals(currentSwipeVector);
             if (vectorChanged) {
-                _firstSwipeDone = false;
-                _swipeVector = Vector2.zero;
+                _swipeDone = false;
                 _isMoving = false;
                 _movingVector = currentSwipeVector;
             }
@@ -115,25 +111,14 @@ namespace Drone.Location.World.Drone
                 return;
             }
 
-            if (!_firstSwipeDone) {
+            if (_swipeDone) {
                 if (lengthX >= _endMoveTreshold || lengthY >= _endMoveTreshold) {
                     _startTouch = _currentTouch;
-                    _firstSwipeDone = true;
                     _isMoving = false;
-                    _swipeVector = currentSwipeVector;
                     _movingVector = currentSwipeVector;
                     Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
                     Debug.Log("Swape: " + currentSwipeVector);
                 }
-
-                return;
-            }
-
-            if (currentSwipeVector.Equals(_swipeVector) && lengthX >= _doubleEndMoveTreshold || lengthY >= _doubleEndMoveTreshold) {
-                _startTouch = _currentTouch;
-                _isMoving = false;
-                Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
-                Debug.Log("Double swape: " + currentSwipeVector);
             }
         }
 

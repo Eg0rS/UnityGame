@@ -95,8 +95,6 @@ namespace Drone.Location.Service
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, EnableShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, DisableShield);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
-
             CreateDrone(_dronId);
         }
 
@@ -157,6 +155,7 @@ namespace Drone.Location.Service
                 return;
             }
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH));
+            
             DroneModel.durability -= component.Damage;
             if (DroneModel.durability <= 0) {
                 DroneModel.durability = 0;
