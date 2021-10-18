@@ -19,10 +19,6 @@ namespace Drone.LevelMap.Levels.UI
 
         [Inject]
         private LevelService _levelService;
-
-        [Inject]
-        private LevelsMapController _levelsMapController;
-
         [UIObjectBinding("Stars")]
         private GameObject _stars;
 
@@ -50,8 +46,9 @@ namespace Drone.LevelMap.Levels.UI
         [UIObjectBinding("Star3")]
         private GameObject _threeStar;
 
+        private UILabel _orderLabel;
         private LevelViewModel _levelViewModel;
-        private bool _isCanClick = false;
+        private bool _isCanClick;
 
         public LevelViewModel LevelViewModel
         {
@@ -59,18 +56,19 @@ namespace Drone.LevelMap.Levels.UI
         }
 
         [UICreated]
-        private void Init(LevelViewModel levelViewModel, int x, int y)
+        private void Init(LevelViewModel levelViewModel, bool isCurrent)
         {
-            UpdateSpot(levelViewModel);
+            _orderLabel = _order.GetComponent<UILabel>();
+            UpdateSpot(levelViewModel, isCurrent);
         }
 
-        public void UpdateSpot(LevelViewModel levelViewModel)
+        public void UpdateSpot(LevelViewModel levelViewModel, bool isCurrent)
         {
             _levelViewModel = levelViewModel;
             DisableSpotProgress();
             if (_levelViewModel.LevelProgress != null) {
                 SetCompletedSpot();
-            } else if (_levelViewModel.LevelProgress == null && _levelViewModel.LevelDescriptor.Id.Equals(_levelsMapController.CurrentLevelId)) {
+            } else if (_levelViewModel.LevelProgress == null && isCurrent) {
                 SetCurrentSpot();
             } else {
                 SetNotOpenSpot();
@@ -97,6 +95,7 @@ namespace Drone.LevelMap.Levels.UI
         {
             _stageCurrent.SetActive(true);
             SetOrder();
+            _orderLabel.color = Color.black;
             _isCanClick = true;
         }
 
@@ -118,12 +117,13 @@ namespace Drone.LevelMap.Levels.UI
             _stageCompleted.SetActive(false);
             _stageCurrent.SetActive(false);
             _order.SetActive(false);
+            _orderLabel.color = Color.white;
         }
 
         private void SetOrder()
         {
             _order.SetActive(true);
-            _order.GetComponent<UILabel>().text = _levelViewModel.LevelDescriptor.Order.ToString();
+            _orderLabel.text = _levelViewModel.LevelDescriptor.Order.ToString();
         }
 
         [UIOnClick("pfLocationItemSpot")]

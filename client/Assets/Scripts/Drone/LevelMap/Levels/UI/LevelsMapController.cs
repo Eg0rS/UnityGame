@@ -70,8 +70,7 @@ namespace Drone.LevelMap.Levels.UI
                 LevelViewModel levelViewModel = viewModels.Find(x => x.LevelDescriptor.Id.Equals(levelId));
                 GameObject levelContainer = GameObject.Find($"level{levelViewModel.LevelDescriptor.Order}");
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,
-                                                                        1,
-                                                                        1)
+                                                                        levelViewModel.LevelDescriptor.Id.Equals(_currentLevelId))
                                                                     .Container(levelContainer))
                           .Then(controller => _progressMapItemController.Add(controller))
                           .Done();
@@ -108,7 +107,7 @@ namespace Drone.LevelMap.Levels.UI
             foreach (ProgressMapItemController spotController in _progressMapItemController) {
                 LevelDescriptor descriptor = spotController.LevelViewModel.LevelDescriptor;
                 LevelViewModel model = levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));
-                spotController.UpdateSpot(model);
+                spotController.UpdateSpot(model, model.LevelDescriptor.Id.Equals(_currentLevelId));
             }
         }
 
