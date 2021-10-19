@@ -17,6 +17,7 @@ using Drone.LevelMap.Zones.Descriptor;
 using Drone.LevelMap.Zones.IoC;
 using IoC.Attribute;
 using IoC.Util;
+using JetBrains.Annotations;
 
 namespace Drone.LevelMap.Levels.Service
 {
@@ -41,7 +42,8 @@ namespace Drone.LevelMap.Levels.Service
         private BillingService _billingService;
 
         private List<LevelViewModel> _levelsViewModels = new List<LevelViewModel>();
-        public string CurrentLevelId { get; set; }
+        public string SelectedLevelId { get; set; }
+        
 
         public void Init()
         {
@@ -91,6 +93,7 @@ namespace Drone.LevelMap.Levels.Service
             }
         }
 
+        [CanBeNull]
         public string GetNextLevelId(string levelId)
         {
             LevelDescriptor levelDescriptor = _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id == levelId);
@@ -114,7 +117,7 @@ namespace Drone.LevelMap.Levels.Service
             return value;
         }
 
-        public int GetNextLevel()
+        public int GetCurrentLevel()
         {
             List<LevelDescriptor> descriptors = _levelDescriptorRegistry.LevelDescriptors.OrderBy(o => o.Order).ToList();
             foreach (LevelDescriptor descriptor in descriptors) {

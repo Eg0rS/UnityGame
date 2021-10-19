@@ -13,6 +13,7 @@ namespace Drone.LevelMap.Levels.IoC
             container.RegisterSingleton<LevelDescriptorRegistry>();
             container.RegisterSingleton<ZoneDescriptorRegistry>();
             container.RegisterSingleton<LevelService>();
+            
         }
     }
 }

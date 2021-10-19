@@ -185,7 +185,7 @@ namespace Drone.Location.Service
         {
             float timeInGame = Time.time - _startTime;
             if (isWin) {
-                _levelService.SetLevelProgress(_levelService.CurrentLevelId, CalculateStars(timeInGame), DroneModel.countChips, timeInGame,
+                _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), DroneModel.countChips, timeInGame,
                                                (int) ((DroneModel.durability / DroneModel.maxDurability) * 100));
             }
         }

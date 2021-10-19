@@ -1,22 +1,19 @@
-﻿using Adept.Logger;
+﻿using System;
+using System.Collections.Generic;
+using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
-using AgkUI.Element.Buttons;
-using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
-using Drone.Core.Audio.Model;
-using Drone.Core.Audio.Service;
 using Drone.Core.UI.Dialog;
-using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Service;
-using Drone.LevelMap.Zones.Descriptor;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.UI;
 using static System.String;
 
 namespace Drone.LevelMap.LevelDialogs
@@ -25,29 +22,19 @@ namespace Drone.LevelMap.LevelDialogs
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class LevelFinishedDialog : MonoBehaviour
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelFinishedDialog>();
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFinishedDialog@embeded";
 
-        private const string TASKS_COMPLETED = "Выполнено заданий {0} из 3";
-        private const string CHIPS_TASK_FULL = "Собрано чипов {0} из {1}";
-        private const string DURABILITY_TASK = "Сохранить не менее {0}% груза";
-        private const string TIME_TASK = "Уложиться в {0} сек.";
-
-        private int _chipsGoal;
-        private float _durabilityGoal;
-        private int _timeGoal;
-
-        private int _chipsLevelResult;
-        private float _durabilityLevelResult;
-        private int _timeLevelResult;
-
-        private bool _chipsTaskCompleted;
-        private bool _durabilityTaskCompleted;
-        private bool _timeTaskCompleted;
-        private int _tasksCompletedCount;
+        private const string CHIPS_TASK_GOAL = "Собрать {0} чипов";
+        private const string CHIPS_TASK_SCORE = "Собрано {0} чипов";
+        private const string DURABILITY_TASK_GOAL = "Сохранить не менее {0}% груза";
+        private const string DURABILITY_TASK_SCORE = "Сохранено {0}% груза";
+        private const string TIME_TASK_GOAL = "Пролететь за {0} сек.";
+        private const string TIME_TASK_SCORE = "Пролет за {0} сек.";
 
         private string _levelId;
+
         private LevelViewModel _levelViewModel;
+        private int _countStars;
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
@@ -58,113 +45,101 @@ namespace Drone.LevelMap.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
-        [UIComponentBinding("ChipsStar")]
-        private ToggleButton _chipsStar;
+        [UIObjectBinding("ChipsMark")]
+        private GameObject _chipMark;
+        [UIObjectBinding("DurabilityMark")]
+        private GameObject _durabilityMark;
+        [UIObjectBinding("TimerMark")]
+        private GameObject _timerMark;
+        [UIObjectBinding("StatisticsChipsTask")]
+        private GameObject _chipTask;
+        [UIObjectBinding("StatisticsDurabilityTask")]
+        private GameObject _durabilityTask;
+        [UIObjectBinding("StatisticsTimerTask")]
+        private GameObject _timerTask;
+        [UIObjectBinding("Stars")]
+        private GameObject _starsContainer;
 
-        [UIComponentBinding("NextLevelButton")]
-        private UIButton _nextLevelButton;
-
-        [UIComponentBinding("DurabilityStar")]
-        private ToggleButton _durabilityStar;
-
-        [UIComponentBinding("TimeStar")]
-        private ToggleButton _timeStar;
-
-        [UIComponentBinding("ChipsTask")]
-        private UILabel _chipsTaskLabel;
-
-        [UIComponentBinding("DurabilityTask")]
-        private UILabel _durabilityTaskLabel;
-
-        [UIComponentBinding("TimeTask")]
-        private UILabel _timeTaskLabel;
-
-        [UIComponentBinding("TasksCompletedTitle")]
-        private UILabel _tasksCompletedLabel;
-
-        [Inject]
-        private SoundService _soundService;
+        [UIComponentBinding("LevelTitle")]
+        private Text _levelTitle;
 
         [UICreated]
         public void Init()
         {
-            _levelId = _levelService.CurrentLevelId;
-            _logger.Debug("[LevelFinishedDialog] Init()...");
-            _levelViewModel = _levelService.GetLevels().Find(it => it.LevelProgress.Id.Equals(_levelId));
-
-            _chipsGoal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
-            _durabilityGoal = _levelViewModel.LevelDescriptor.NecessaryDurability;
-            _timeGoal = _levelViewModel.LevelDescriptor.NecessaryTime;
-
-            _chipsLevelResult = _levelViewModel.LevelProgress.CountChips;
-            _durabilityLevelResult = _levelViewModel.LevelProgress.Durability;
-            _timeLevelResult = (int) _levelViewModel.LevelProgress.TransitTime;
-
-            if (_chipsLevelResult >= _chipsGoal) {
-                _chipsTaskCompleted = true;
-                _tasksCompletedCount++;
-            }
-
-            if (_durabilityLevelResult >= _durabilityGoal) {
-                _durabilityTaskCompleted = true;
-                _tasksCompletedCount++;
-            }
-
-            if (_timeLevelResult <= _timeGoal) {
-                _timeTaskCompleted = true;
-                _tasksCompletedCount++;
-            }
-
-            SetDialogStars();
-            SetDialogLabels();
-            SetButtonNextActivity();
+            _levelId = _levelService.SelectedLevelId;
+            _levelViewModel = _levelService.GetLevels().Find(x => x.LevelDescriptor.Id.Equals(_levelId));
+            _levelTitle.text = _levelViewModel.LevelDescriptor.Title;
+            _countStars = 0;
+            SetChipstask();
+            SetDurabilityTask();
+            SetTimeTask();
+            SetStars();
         }
 
-        private void PlaySound(Sound sound)
+        private void SetStars()
         {
-            _soundService.StopAllSounds();
-            _soundService.PlaySound(sound);
-        }
-
-        private void SetDialogStars()
-        {
-            _chipsStar.Interactable = false;
-            _durabilityStar.Interactable = false;
-            _timeStar.Interactable = false;
-
-            _chipsStar.IsOn = _chipsTaskCompleted;
-            _durabilityStar.IsOn = _durabilityTaskCompleted;
-            _timeStar.IsOn = _timeTaskCompleted;
-        }
-
-        private void SetDialogLabels()
-        {
-            _tasksCompletedLabel.text = Format(TASKS_COMPLETED, _tasksCompletedCount);
-            _chipsTaskLabel.text = Format(CHIPS_TASK_FULL, _chipsLevelResult, _chipsGoal);
-            _durabilityTaskLabel.text = Format(DURABILITY_TASK, _durabilityGoal);
-            _timeTaskLabel.text = Format(TIME_TASK, _timeGoal);
-        }
-
-        private void SetButtonNextActivity()
-        {
-            ZoneDescriptor zoneDescriptor = _levelService.GetZonesDescriptors().Find(x => x.LevelIds.Contains(_levelViewModel.LevelProgress.Id));
-            ZoneDescriptor nextZoneDescriptor = _levelService.GetZoneDescriptorById(_levelService.GetNextZoneId(zoneDescriptor.Id));
-            if (_levelService.GetNextLevel() == 0 && _levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id) == null) {
-                _nextLevelButton.gameObject.SetActive(false);
-                return;
+            List<GameObject> stars = _starsContainer.GetChildren();
+            for (int i = 0; i < _countStars; i++) {
+                stars[i].SetActive(true);
             }
-            if (nextZoneDescriptor == null) {
-                _nextLevelButton.gameObject.SetActive(true);
-                return;
-            }
-            if (_levelViewModel.LevelDescriptor.Type == LevelType.BOSS) {
-                _nextLevelButton.gameObject.SetActive(_levelService.CompletedZoneConditions(zoneDescriptor.Id, nextZoneDescriptor.CountStars));
-                return;
-            }
-            _nextLevelButton.gameObject.SetActive(true);
         }
 
-        [UIOnClick("RestartButton")]
+        private void SetTimeTask()
+        {
+            float goal = _levelViewModel.LevelDescriptor.NecessaryTime;
+            float score = _levelViewModel.LevelProgress.TransitTime;
+            SetTask(_timerTask, TIME_TASK_GOAL, TIME_TASK_SCORE, goal, score);
+            if (score <= goal) {
+                _timerMark.SetActive(true);
+                _countStars++;
+            }
+        }
+
+        private void SetDurabilityTask()
+        {
+            float goal = _levelViewModel.LevelDescriptor.NecessaryDurability;
+            float score = _levelViewModel.LevelProgress.Durability;
+            SetTask(_durabilityTask, DURABILITY_TASK_GOAL, DURABILITY_TASK_SCORE, goal, score);
+            if (score >= goal) {
+                _durabilityMark.SetActive(true);
+                _countStars++;
+            }
+        }
+
+        private void SetChipstask()
+        {
+            float goal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
+            float score = _levelViewModel.LevelProgress.CountChips;
+            SetTask(_chipTask, CHIPS_TASK_GOAL, CHIPS_TASK_SCORE, goal, score);
+            if (score >= goal) {
+                _chipMark.SetActive(true);
+                _countStars++;
+            }
+        }
+
+        private void SetTask(GameObject container, string patternGoal, string patternValue, float goal, float score)
+        {
+            List<GameObject> statistics = container.GetChildren();
+            foreach (GameObject obj in statistics) {
+                if (obj.name.Equals("TaskGoal")) {
+                    List<GameObject> goalContainers = obj.GetChildren();
+                    foreach (GameObject goalObj in goalContainers) {
+                        if (goalObj.name.Equals("GoalValue")) {
+                            goalObj.GetComponent<Text>().text = Format(patternGoal, goal);
+                        }
+                    }
+                } else if (obj.name.Equals("TaskScore")) {
+                    List<GameObject> scoreContainers = obj.GetChildren();
+                    foreach (GameObject scoreobj in scoreContainers) {
+                        if (scoreobj.name.Equals("ScoreValue")) {
+                            scoreobj.GetComponent<Text>().text = Format(patternValue, Math.Round(score, 2));
+                        }
+                    }
+                }
+            }
+        }
+
+        [UIOnClick("ButtonRetry")]
         private void RestartButtonClicked()
         {
             _dialogManager.Require().Hide(this);
@@ -172,7 +147,7 @@ namespace Drone.LevelMap.LevelDialogs
             _levelService.ShowStartLevelDialog(_levelId);
         }
 
-        [UIOnClick("NextLevelButton")]
+        [UIOnClick("ButtonNext")]
         private void NextLevelButtonClicked()
         {
             _dialogManager.Require().Hide(this);
@@ -180,7 +155,7 @@ namespace Drone.LevelMap.LevelDialogs
             _levelService.ShowStartLevelDialog(_levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id));
         }
 
-        [UIOnClick("LevelMapButton")]
+        [UIOnClick("ButtonMenu")]
         private void LevelMapButtonClicked()
         {
             _dialogManager.Require().Hide(this);
