@@ -1,6 +1,4 @@
 ﻿using System;
-using AgkCommons.Input.Gesture.Model;
-using AgkCommons.Input.Gesture.Model.Gestures;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
@@ -132,16 +130,6 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         private void CloseDialog()
         {
             _dialogManager.Require().Hide(gameObject);
-        }
-
-        [UIOnSwipe("ScrollContainer")]
-        private void OnSwipe(Swipe swipe)
-        {
-            if (swipe.Check(HorizontalSwipeDirection.LEFT)) {
-                MoveLeft();
-            } else if (swipe.Check(HorizontalSwipeDirection.RIGHT)) {
-                MoveRight();
-            }
         }
 
         [UIOnClick("LeftArrow")]
