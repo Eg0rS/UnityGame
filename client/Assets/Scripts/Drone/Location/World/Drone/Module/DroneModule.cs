@@ -1,6 +1,7 @@
 ﻿using Drone.Location.World.Drone.IoC;
 using Drone.Location.World.Drone.Service;
 using IoC.Api;
+using IoC.Scope;
 
 namespace Drone.Location.World.Drone.Module
 {
@@ -9,7 +10,7 @@ namespace Drone.Location.World.Drone.Module
         public void Configure(IIoCContainer container)
         {
             container.RegisterSingleton<DroneService>();
-            container.RegisterSingleton<DroneAnimService>();
+            container.RegisterSingleton<DroneAnimService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<DroneDescriptorRegistry>();
         }
     }

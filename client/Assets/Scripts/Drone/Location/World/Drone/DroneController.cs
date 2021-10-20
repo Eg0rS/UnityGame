@@ -21,7 +21,7 @@ namespace Drone.Location.World.Drone
         private IoCProvider<GameWorld> _gameWorld;
 
         [Inject]
-        private DroneAnimService _droneAnimService;
+        private IoCProvider<DroneAnimService> _droneAnimService;
 
         private float _acceleration = 0.2f;
         private float _maxSpeed;
@@ -136,7 +136,7 @@ namespace Drone.Location.World.Drone
             if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
-            _droneAnimService.SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
+            _droneAnimService.Require().SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
             _isMoving = StartCoroutine(Moving(newPos));
         }
 

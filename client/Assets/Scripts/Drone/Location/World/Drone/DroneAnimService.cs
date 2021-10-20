@@ -1,27 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using AgkCommons.Event;
-using AgkCommons.Extension;
-using Drone.Core.Filter;
-using Drone.Location.Service;
+using Drone.Core.Service;
 using Drone.World;
-using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneAnimService : GameEventDispatcher, IInitable
+    public class DroneAnimService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
-        private GameService _gameService;
-
-        [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-        
+
         private const float NULL_SPEED = -1f;
 
         private const float NORMILIZED_BLEND_ANIM_MOVE = 0.15f;
@@ -40,31 +32,19 @@ namespace Drone.Location.World.Drone
 
         public void Init()
         {
-            _gameService.AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
-            _gameService.AddListener<WorldEvent>(WorldEvent.END_GAME, OnWorldDestroy);
         }
 
-        private void OnWorldCreated(WorldEvent obj)
-        {
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-        }
-
-        private void OnWorldDestroy(WorldEvent obj)
-        {
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-        }
-
-        private void StartGame(WorldEvent obj)
+        private void LoadAnimator()
         {
             _animator = _gameWorld.Require().GetDroneAnimator();
         }
-        
+
         [CanBeNull]
         private string GetAnimName(DroneAnimState droneAnimState)
         {
             return Enum.GetName(typeof(DroneAnimState), droneAnimState);
         }
-        
+
         [CanBeNull]
         private string GetParticleName(DroneParticles particle)
         {
@@ -73,6 +53,9 @@ namespace Drone.Location.World.Drone
 
         public void PlayAnimState(DroneAnimState droneAnimState, float speed = NULL_SPEED)
         {
+            if (_animator == null) {
+                LoadAnimator();
+            }
             if (speed.Equals(NULL_SPEED)) {
                 speed = DefaultAnimSpeed;
             }
@@ -82,6 +65,9 @@ namespace Drone.Location.World.Drone
 
         public void SetAnimMoveState(DroneAnimState droneAnimMoveState, float speed = -1)
         {
+            if (_animator == null) {
+                LoadAnimator();
+            }
             if (speed.Equals(-1)) {
                 speed = DefaultAnimSpeed;
             }

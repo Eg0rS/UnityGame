@@ -1,5 +1,6 @@
 ﻿using Drone.Booster.Service;
 using IoC.Api;
+using IoC.Scope;
 
 namespace Drone.Booster.Module
 {
@@ -7,7 +8,7 @@ namespace Drone.Booster.Module
     {
         public void Configure(IIoCContainer container)
         {
-            container.RegisterSingleton<BoosterService>();
+            container.RegisterSingleton<BoosterService>(null, ScopeType.SCREEN); //todo убрать в отдельный модуль
         }
     }
 }
