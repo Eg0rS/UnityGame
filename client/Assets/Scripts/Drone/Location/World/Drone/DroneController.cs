@@ -31,6 +31,7 @@ namespace Drone.Location.World.Drone
         private BezierWalkerWithSpeed _bezier;
         private Coroutine _isMoving;
         private Vector3 _droneTargetPosition = Vector3.zero;
+        private Vector3 _dronePreviosPosition = Vector3.zero;
         private float _minimalSpeed = 3.0f;
         private bool _isGameRun;
         public WorldObjectType ObjectType { get; }
@@ -47,7 +48,7 @@ namespace Drone.Location.World.Drone
             _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, OnDroneCrash);
         }
 
         private void SetParameters(WorldEvent worldEvent)
@@ -85,6 +86,7 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
+            
         }
 
         private void OnStart(ControllEvent objectEvent)
@@ -133,6 +135,7 @@ namespace Drone.Location.World.Drone
             if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
+            _dronePreviosPosition = transform.localPosition;
             _droneAnimService.SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
             _isMoving = StartCoroutine(Moving(newPos));
         }
@@ -266,10 +269,15 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
         }
 
-        private void Deceleration(WorldEvent objectEvent)
+        private void OnDroneCrash(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;
-            // _bezier.speed = 0;
+
+            if (_isMoving != null) {
+                StopCoroutine(_isMoving);
+                MoveTo(_dronePreviosPosition);
+            }
+           
         }
 
         private void EnableSpeedBoost(WorldEvent objectEvent)

@@ -63,12 +63,11 @@ namespace Drone.Location.Service
         private float _startTime;
         private bool _onActiveShield;
         private Coroutine _fallingEnergy;
-
-        private BatteryModel _batteryModel;
+        
         private ShieldBoosterModel _shieldBoosterModel;
         private SpeedBoosterModel _speedBoosterModel;
-        private ObstacleModel _obstacleModel;
-        private BonusChipsModel _bonusChipsModel;
+
+        private CinemachineBasicMultiChannelPerlin _cameraNoise;
 
         public DroneModel DroneModel { get; private set; }
 
@@ -210,6 +209,7 @@ namespace Drone.Location.Service
             GameObject drone = Instantiate(Resources.Load<GameObject>(_droneService.GetDronById(dronId).DroneDescriptor.Prefab));
             _gameWorld.Require().AddGameObject(drone, parent);
             CinemachineVirtualCamera camera = _gameWorld.Require().GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
+            _cameraNoise = camera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
             camera.Follow = drone.transform;
             camera.LookAt = drone.transform;
         }
