@@ -95,6 +95,7 @@ namespace Drone.Location.World.Drone
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
             }
+            _dronePreviosPosition = _droneTargetPosition;
             MoveTo(newPosition);
         }
 
@@ -132,8 +133,7 @@ namespace Drone.Location.World.Drone
 
         private void MoveTo(Vector3 newPos)
         {
-            if (_isMoving != null) 
-            {
+            if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
             _droneAnimService.SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
