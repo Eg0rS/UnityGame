@@ -17,6 +17,7 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
+using Drone.Location.World.Drone;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
 using Drone.World;
@@ -57,13 +58,18 @@ namespace Drone.Location.Service
         [Inject]
         private LocationService _locationService;
 
+        [Inject]
+        private IoCProvider<DroneAnimService> _droneAnimService;
+
         private LevelDescriptor _levelDescriptor;
         private bool _isPlay;
         private string _dronId;
         private float _startTime;
         private bool _onActiveShield;
         private Coroutine _fallingEnergy;
-        
+        private float _crashNoise = 2;
+        private float _crashNoiseDuration = 0.5f;
+
         private ShieldBoosterModel _shieldBoosterModel;
         private SpeedBoosterModel _speedBoosterModel;
 
@@ -97,6 +103,17 @@ namespace Drone.Location.Service
             CreateDrone(_dronId);
         }
 
+        private void CreateDrone(string dronId)
+        {
+            GameObject parent = _gameWorld.Require().GetGameObjectByName("DroneCube");
+            GameObject drone = Instantiate(Resources.Load<GameObject>(_droneService.GetDronById(dronId).DroneDescriptor.Prefab));
+            _gameWorld.Require().AddGameObject(drone, parent);
+            CinemachineVirtualCamera camera = _gameWorld.Require().GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
+            _cameraNoise = camera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            camera.Follow = drone.transform;
+            camera.LookAt = drone.transform;
+        }
+
         private void EnableShield(WorldEvent obj)
         {
             _onActiveShield = true;
@@ -120,19 +137,19 @@ namespace Drone.Location.Service
 
         private void OnDronCollision(WorldEvent worldEvent)
         {
-            GameObject collisionObject = worldEvent.CollisionObject;
-            switch (collisionObject.GetComponent<PrefabModel>().ObjectType) {
+            Collision collisionObject = worldEvent.CollisionObject;
+            switch (collisionObject.gameObject.GetComponent<PrefabModel>().ObjectType) {
                 case WorldObjectType.OBSTACLE:
-                    OnDronCrash(collisionObject.GetComponent<ObstacleModel>());
+                    OnDronCrash(collisionObject.gameObject.GetComponent<ObstacleModel>(), collisionObject.contacts);
                     break;
                 case WorldObjectType.BATTERY:
-                    OnTakeBattery(collisionObject.GetComponent<BatteryModel>());
+                    OnTakeBattery(collisionObject.gameObject.GetComponent<BatteryModel>());
                     break;
                 case WorldObjectType.BONUS_CHIPS:
-                    OnTakeChip(collisionObject.GetComponent<BonusChipsModel>());
+                    OnTakeChip(collisionObject.gameObject.GetComponent<BonusChipsModel>());
                     break;
                 case WorldObjectType.FINISH:
-                    Victory(collisionObject.GetComponent<FinishModel>());
+                    Victory(collisionObject.gameObject.GetComponent<FinishModel>());
                     break;
             }
         }
@@ -148,19 +165,28 @@ namespace Drone.Location.Service
             UiUpdate();
         }
 
-        private void OnDronCrash(ObstacleModel component)
+        private void OnDronCrash(ObstacleModel component, ContactPoint[] contactPoints)
         {
             if (_onActiveShield) {
                 return;
             }
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH));
-            
+            _cameraNoise.m_AmplitudeGain += _crashNoise;
+            foreach (ContactPoint contact in contactPoints) {
+                _droneAnimService.Require().PlayParticleState(DroneParticles.ptSparks, contact.point, component.transform.rotation);
+            }
+            Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
             DroneModel.durability -= component.Damage;
             if (DroneModel.durability <= 0) {
                 DroneModel.durability = 0;
                 DronFailed(FailedReasons.Crashed);
             }
             UiUpdate();
+        }
+
+        private void DisableCrashNoise()
+        {
+            _cameraNoise.m_AmplitudeGain -= _crashNoise;
         }
 
         private void UiUpdate()
@@ -201,17 +227,6 @@ namespace Drone.Location.Service
             SetStatsInProgress(false);
             EndGame();
             _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(failReason);
-        }
-
-        private void CreateDrone(string dronId)
-        {
-            GameObject parent = _gameWorld.Require().GetGameObjectByName("DronCube");
-            GameObject drone = Instantiate(Resources.Load<GameObject>(_droneService.GetDronById(dronId).DroneDescriptor.Prefab));
-            _gameWorld.Require().AddGameObject(drone, parent);
-            CinemachineVirtualCamera camera = _gameWorld.Require().GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
-            _cameraNoise = camera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-            camera.Follow = drone.transform;
-            camera.LookAt = drone.transform;
         }
 
         private int CalculateStars(float timeInGame)

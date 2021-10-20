@@ -8,6 +8,7 @@ using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Drone.Location.World.Drone
@@ -26,7 +27,7 @@ namespace Drone.Location.World.Drone
 
         private float _animSpeed = 1;
 
-        private AnimState _lastAnimMoveState = AnimState.amIdle;
+        private DroneAnimState _lastDroneAnimMoveState = DroneAnimState.amIdle;
 
         public float DefaultAnimSpeed
         {
@@ -52,31 +53,38 @@ namespace Drone.Location.World.Drone
 
         private void StartGame(WorldEvent obj)
         {
-            List<GameObject> list = _gameWorld.Require().GetGameObjectByName("DronCube").GetChildren(); //todo оптимизировать
-            GameObject droneModel = list[0];
+            GameObject droneModel = _gameWorld.Require().GetGameObjectByName("pfDroneModelContainer"); //todo оптимизировать
             _animator = droneModel.GetComponentInChildren<Animator>();
         }
 
-        public void SetAnimState(AnimState animState, float speed = -1)
+        public void PlayAnimState(DroneAnimState droneAnimState, float speed = -1)
         {
             if (speed.Equals(-1)) {
                 speed = DefaultAnimSpeed;
             }
             _animator.speed = speed;
-            _animator.Play(Enum.GetName(typeof(AnimState), animState));
+            _animator.Play(Enum.GetName(typeof(DroneAnimState), droneAnimState));
         }
 
-        public void SetAnimMoveState(AnimState animMoveState, float speed)
+        public void SetAnimMoveState(DroneAnimState droneAnimMoveState, float speed = -1)
         {
-            _animator.speed = speed;
-            if (animMoveState != _lastAnimMoveState) {
-                _animator.CrossFade(Enum.GetName(typeof(AnimState), animMoveState), NORMILIZED_BLEND_ANIM_MOVE);
-            } else {
-                _animator.CrossFade(Enum.GetName(typeof(AnimState), AnimState.amIdle), NORMILIZED_BLEND_ANIM_MOVE * 2);
-                _animator.Play(Enum.GetName(typeof(AnimState), animMoveState), 0,
-                               NORMILIZED_BLEND_ANIM_MOVE); //todo исправить проблему с резким переключением при небольшой скорости
+            if (speed.Equals(-1)) {
+                speed = DefaultAnimSpeed;
             }
-            _lastAnimMoveState = animMoveState;
+            _animator.speed = speed;
+            if (droneAnimMoveState != _lastDroneAnimMoveState) {
+                _animator.CrossFade(Enum.GetName(typeof(DroneAnimState), droneAnimMoveState), NORMILIZED_BLEND_ANIM_MOVE);
+            } else {
+                _animator.CrossFade(Enum.GetName(typeof(DroneAnimState), DroneAnimState.amIdle), NORMILIZED_BLEND_ANIM_MOVE * 2);
+                _animator.Play(Enum.GetName(typeof(DroneAnimState), droneAnimMoveState), 0, NORMILIZED_BLEND_ANIM_MOVE);
+                //todo исправить проблему с резким переключением при небольшой скорости
+            }
+            _lastDroneAnimMoveState = droneAnimMoveState;
+        }
+
+        public void PlayParticleState(DroneParticles particle, Vector3 position, Quaternion rotation)
+        {
+            Instantiate(Resources.Load<GameObject>("Embeded/Particles/" + Enum.GetName(typeof(DroneParticles), particle)), position, rotation);
         }
     }
 }

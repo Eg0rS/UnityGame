@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Drone/Location/World/Dron/DroneMovement.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Drone/Location/World/Drone/DroneMovement.inputactions'
 
 using System;
 using System.Collections;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace Drone.Location.World.Drone
+namespace Drone.Location.World.Dron
 {
     public class @DroneMovement : IInputActionCollection, IDisposable
     {

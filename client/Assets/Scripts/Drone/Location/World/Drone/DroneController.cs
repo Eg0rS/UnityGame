@@ -86,7 +86,6 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
             _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
-            
         }
 
         private void OnStart(ControllEvent objectEvent)
@@ -106,6 +105,7 @@ namespace Drone.Location.World.Drone
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
             }
+            _dronePreviosPosition = _droneTargetPosition;
             _droneTargetPosition = newPosition;
             Debug.Log(_droneTargetPosition);
             MoveTo(newPosition);
@@ -135,7 +135,6 @@ namespace Drone.Location.World.Drone
             if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
-            _dronePreviosPosition = transform.localPosition;
             _droneAnimService.SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
             _isMoving = StartCoroutine(Moving(newPos));
         }
@@ -145,36 +144,36 @@ namespace Drone.Location.World.Drone
             return 0.3f * (1 / ((1 / (_mobility * 10)) * (newPos - transform.localPosition).magnitude));
         }
 
-        private AnimState DetectDirection(Vector3 newPos)
+        private DroneAnimState DetectDirection(Vector3 newPos)
         {
             Vector3 vector = newPos - RoundMoveVector(transform.localPosition);
             vector = RoundMoveVector(vector);
             if (vector.Equals(Vector3.right)) {
-                return AnimState.amMoveRight;
+                return DroneAnimState.amMoveRight;
             }
             if (vector.Equals(Vector3.left)) {
-                return AnimState.amMoveLeft;
+                return DroneAnimState.amMoveLeft;
             }
             if (vector.Equals(Vector3.up)) {
-                return AnimState.amMoveUp;
+                return DroneAnimState.amMoveUp;
             }
             if (vector.Equals(Vector3.down)) {
-                return AnimState.amMoveDown;
+                return DroneAnimState.amMoveDown;
             }
             if (vector.Equals(new Vector3(1, 1, 0))) {
-                return AnimState.amMoveUpRight;
+                return DroneAnimState.amMoveUpRight;
             }
             if (vector.Equals(new Vector3(-1, 1, 0))) {
-                return AnimState.amMoveUpLeft;
+                return DroneAnimState.amMoveUpLeft;
             }
             if (vector.Equals(new Vector3(1, -1, 0))) {
-                return AnimState.amMoveDownRight;
+                return DroneAnimState.amMoveDownRight;
             }
             if (vector.Equals(new Vector3(-1, -1, 0))) {
-                return AnimState.amMoveDownLeft;
+                return DroneAnimState.amMoveDownLeft;
             }
-            if (vector.Equals(Vector3.zero)){
-                return AnimState.amIdle;
+            if (vector.Equals(Vector3.zero)) {
+                return DroneAnimState.amIdle;
             }
             throw new Exception("Incorrect vector for animation: " + vector);
         }
@@ -266,18 +265,13 @@ namespace Drone.Location.World.Drone
 
         private void OnCollisionEnter(Collision other)
         {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other.gameObject));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other));
         }
 
         private void OnDroneCrash(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;
-
-            if (_isMoving != null) {
-                StopCoroutine(_isMoving);
-                MoveTo(_dronePreviosPosition);
-            }
-           
+            MoveTo(_dronePreviosPosition);
         }
 
         private void EnableSpeedBoost(WorldEvent objectEvent)

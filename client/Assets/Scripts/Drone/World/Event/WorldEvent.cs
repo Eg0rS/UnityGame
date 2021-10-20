@@ -29,7 +29,7 @@ namespace Drone.World.Event
 
         public const string CRASH = "Crash";
 
-        public GameObject CollisionObject { get; private set; }
+        public Collision CollisionObject { get; private set; }
         public LevelDescriptor LevelDescriptor { get; private set; }
 
         public DroneModel DroneModel { get; private set; }
@@ -38,6 +38,9 @@ namespace Drone.World.Event
         public BoosterDescriptor SpeedBooster { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
+        {
+        }
+        public WorldEvent(string name, Collision target) : base(name)
         {
             CollisionObject = target;
         }
