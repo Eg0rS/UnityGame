@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace Drone.Location.World.Dron
+namespace Drone.Location.World.Drone
 {
     public class @DroneMovement : IInputActionCollection, IDisposable
     {

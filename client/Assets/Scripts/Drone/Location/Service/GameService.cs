@@ -105,10 +105,10 @@ namespace Drone.Location.Service
 
         private void CreateDrone(string dronId)
         {
-            GameObject parent = _gameWorld.Require().GetGameObjectByName("DroneCube");
+            GameObject parent = _gameWorld.Require().GetDroneCube();
             GameObject drone = Instantiate(Resources.Load<GameObject>(_droneService.GetDronById(dronId).DroneDescriptor.Prefab));
             _gameWorld.Require().AddGameObject(drone, parent);
-            CinemachineVirtualCamera camera = _gameWorld.Require().GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
+            CinemachineVirtualCamera camera = _gameWorld.Require().GetDroneCamera();
             _cameraNoise = camera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
             camera.Follow = drone.transform;
             camera.LookAt = drone.transform;
