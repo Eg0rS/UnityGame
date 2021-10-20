@@ -74,6 +74,13 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
             CreateChoiseDron();
         }
 
+        private void OnGUI()
+        {
+            if (UnityEngine.Event.current.Equals(UnityEngine.Event.KeyboardEvent("escape"))) {
+                CloseDialog();
+            }
+        }
+
         private void DisplayTitle()
         {
             _title.text = _levelDescriptor.Title;
