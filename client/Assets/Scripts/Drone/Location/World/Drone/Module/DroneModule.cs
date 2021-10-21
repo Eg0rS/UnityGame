@@ -10,7 +10,6 @@ namespace Drone.Location.World.Drone.Module
         public void Configure(IIoCContainer container)
         {
             container.RegisterSingleton<DroneService>();
-            container.RegisterSingleton<DroneAnimService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<DroneDescriptorRegistry>();
         }
     }

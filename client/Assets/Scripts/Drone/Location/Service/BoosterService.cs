@@ -7,7 +7,6 @@ using Drone.Booster.Descriptor;
 using Drone.Core.Service;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
-using Drone.Location.Service;
 using Drone.Location.World.Drone;
 using Drone.Location.World.Drone.Model;
 using Drone.World;
@@ -17,7 +16,7 @@ using IoC.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Drone.Booster.Service
+namespace Drone.Location.Service
 {
     public class BoosterService : GameEventDispatcher, IWorldServiceInitiable
     {
@@ -38,18 +37,13 @@ namespace Drone.Booster.Service
 
         private BoosterDescriptor _speedBoosterDescriptor;
         private BoosterDescriptor _shieldBoosterDescriptor;
-        
+
         public void Init()
         {
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
             _boosterDescriptors = new List<BoosterDescriptor>();
             _resourceService.LoadConfiguration("Configs/boosters@embeded", OnConfigLoaded);
             _droneModel = _gameService.Require().DroneModel;
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-        }
-        
-        private void StartGame(WorldEvent worldEvent)
-        {
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ON_COLLISION, OnDronCollision);
         }
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
@@ -111,7 +105,7 @@ namespace Drone.Booster.Service
             _droneAnimService.Require().PlayAnimState(DroneAnimState.amEnableSpeed);
             Invoke(nameof(DisableSpeed), float.Parse(_speedBoosterDescriptor.Params["Duration"]));
         }
-        
+
         private void DisableSpeed()
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SPEED, _speedBoosterDescriptor));

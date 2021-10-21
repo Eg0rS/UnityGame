@@ -193,7 +193,7 @@ namespace Drone.Location.World.Drone
             if (move.y > -0.5f && move.y < 0) {
                 move.y = 0;
             }
-
+            
             if (move.x > 1 || (move.x > 0.5f && move.x < 1)) {
                 move.x = 1;
             }

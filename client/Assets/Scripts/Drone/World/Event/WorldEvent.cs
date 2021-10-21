@@ -2,6 +2,7 @@
 using Drone.Booster.Descriptor;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.Location.Model;
+using Drone.Location.Service;
 using Drone.Location.World.Drone.Model;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -22,11 +23,11 @@ namespace Drone.World.Event
         public const string DISABLE_SPEED = "DisableSpeed";
         public const string TAKE_BOOST = "TakeBoost";
         public const string START_FLIGHT = "StartFlight";
+        public const string DRONE_FAILED = "DroneFailed";
         public const string END_GAME = "EndGame";
         public const string WORLD_CREATED = "WorldCreated";
         public const string SET_DRON_PARAMETERS = "SetDronOptions";
         public const string CREATE_WORLD = "CreateWorld";
-
         public const string CRASH = "Crash";
 
         public Collision CollisionObject { get; private set; }
@@ -36,10 +37,12 @@ namespace Drone.World.Event
         public WorldObjectType TypeBoost { get; private set; }
         public string DronId { get; private set; }
         public BoosterDescriptor SpeedBooster { get; private set; }
+        public FailedReasons FailedReason { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
         }
+
         public WorldEvent(string name, Collision target) : base(name)
         {
             CollisionObject = target;
@@ -68,6 +71,11 @@ namespace Drone.World.Event
 
         public WorldEvent(string name) : base(name)
         {
+        }
+
+        public WorldEvent(string name, FailedReasons failedReason) : base(name)
+        {
+            FailedReason = failedReason;
         }
 
         public T GetController<T>()
