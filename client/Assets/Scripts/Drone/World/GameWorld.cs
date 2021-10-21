@@ -4,6 +4,7 @@ using System.Linq;
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Cinemachine;
+using Drone.Location.World.Drone.Model;
 using Drone.World.Event;
 using JetBrains.Annotations;
 using UnityEngine;

@@ -15,7 +15,7 @@ namespace Drone.World.Event
         public const string ADDED = "WorldObjectAdded";
         public const string CHANGED = "WorldObjectChanged";
         public const string SELECTED = "WorldObjectSelected";
-        public const string ON_COLLISION = "OnCollision";
+        public const string ON_COLLISION = "OnCollision"; 
         public const string UI_UPDATE = "UiUpdate";
         public const string ENABLE_SHIELD = "EnableShield";
         public const string DISABLE_SHIELD = "DisableShield";

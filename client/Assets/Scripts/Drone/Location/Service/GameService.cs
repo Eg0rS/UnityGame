@@ -10,7 +10,6 @@ using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Service;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
-using Drone.Location.Model.Finish;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
 using Drone.World;
@@ -107,7 +106,7 @@ namespace Drone.Location.Service
             Collision collisionObject = worldEvent.CollisionObject;
             switch (collisionObject.gameObject.GetComponent<PrefabModel>().ObjectType) {
                 case WorldObjectType.FINISH:
-                    Victory(collisionObject.gameObject.GetComponent<FinishModel>());
+                    Victory();
                     break;
             }
         }
@@ -130,7 +129,7 @@ namespace Drone.Location.Service
             }
         }
 
-        private void Victory(FinishModel component)
+        private void Victory()
         {
             SetStatsInProgress(true);
             EndGame();
@@ -139,10 +138,9 @@ namespace Drone.Location.Service
 
         private void DroneFailed(WorldEvent worldEvent)
         {
-            FailedReasons failedReason = worldEvent.FailedReason;
             SetStatsInProgress(false);
             EndGame();
-            _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(failedReason);
+            _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(worldEvent.FailedReason);
         }
 
         private int CalculateStars(float timeInGame)

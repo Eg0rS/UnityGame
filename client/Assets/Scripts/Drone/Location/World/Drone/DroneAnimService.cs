@@ -1,6 +1,4 @@
 ﻿using System;
-using AgkCommons.Event;
-using Drone.Core.Service;
 using Drone.World;
 using IoC.Attribute;
 using IoC.Util;
@@ -9,7 +7,7 @@ using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneAnimService : GameEventDispatcher, IWorldServiceInitiable
+    public class DroneAnimService : MonoBehaviour
     {
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -28,10 +26,6 @@ namespace Drone.Location.World.Drone
         {
             get { return _animSpeed; }
             set { _animSpeed = value; }
-        }
-
-        public void Init()
-        {
         }
 
         private void LoadAnimator()
