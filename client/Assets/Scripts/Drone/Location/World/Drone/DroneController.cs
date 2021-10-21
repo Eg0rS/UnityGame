@@ -272,7 +272,7 @@ namespace Drone.Location.World.Drone
         private void OnDroneCrash(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;
-            if (_droneTargetPosition.Equals(_dronePreviosPosition)) {
+            if (transform.localPosition == _dronePreviosPosition) {
                 return;
             }
             _droneTargetPosition = _dronePreviosPosition;

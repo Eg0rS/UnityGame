@@ -135,7 +135,7 @@ namespace Drone.Location.Service
             _startTime = Time.time;
         }
 
-        private void OnDronCollision(WorldEvent worldEvent)
+        private void OnDronCollision(WorldEvent worldEvent) //todo выделить все в отдельные сервисы
         {
             Collision collisionObject = worldEvent.CollisionObject;
             switch (collisionObject.gameObject.GetComponent<PrefabModel>().ObjectType) {
