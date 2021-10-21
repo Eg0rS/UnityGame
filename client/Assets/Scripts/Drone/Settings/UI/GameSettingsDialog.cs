@@ -2,7 +2,6 @@
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
-using AgkUI.Element.Buttons;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
@@ -23,7 +22,7 @@ namespace Drone.Settings.UI
 
         [UIComponentBinding("Handle_Music")]
         private SwitchButton _toggleMusicButton;
-        
+
         [Inject]
         private SettingsService _settingsService;
 
@@ -38,10 +37,17 @@ namespace Drone.Settings.UI
             _toggleSoundButton.SwitchCheck();
         }
 
-        [UIOnClick("Button_close")]
-        private void CloseButton()
+        private void OnGUI()
         {
-            _dialogManager.Require().Hide(gameObject);
+            if (Event.current.Equals(Event.KeyboardEvent("escape"))) {
+                CloseDialog();
+            }
+        }
+
+        [UIOnClick("Button_close")]
+        private void OnCloseButton()
+        {
+            CloseDialog();
         }
 
         [UIOnClick("Handle_Sound")]
@@ -50,7 +56,7 @@ namespace Drone.Settings.UI
             _logger.Debug("MuteSound");
             _settingsService.SetSoundMute(_toggleSoundButton._isSwitchOn);
         }
-        
+
         [UIOnClick("Handle_Music")]
         private void OnMusicButton()
         {
@@ -58,6 +64,16 @@ namespace Drone.Settings.UI
             _settingsService.SetMusicMute(_toggleMusicButton._isSwitchOn);
         }
 
+        [UIOnClick("BackGroundDialog")]
+        private void OnBackGround()
+        {
+            CloseDialog();
+        }
+
+        private void CloseDialog()
+        {
+            _dialogManager.Require().Hide(gameObject);
+        }
         // [UIOnClick("ResetButton")]
         // private void OnResetButton()
         // {

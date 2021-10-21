@@ -85,7 +85,7 @@ namespace Drone.MainMenu.UI.Panel
             _logger.Debug("Click on settings");
         }
 
-        [UIOnClick("StatusChips")]
+        //[UIOnClick("StatusChips")]
         private void OnCreditsPanel()
         {
             _dialogManager.Require().Show<BillingDialog>();
