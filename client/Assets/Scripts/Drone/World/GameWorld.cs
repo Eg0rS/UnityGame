@@ -51,13 +51,11 @@ namespace Drone.World
         [CanBeNull]
         public CinemachineVirtualCamera GetDroneCamera()
         {
-            return GetGameObjectByName("CM vcam1")?.GetComponent<CinemachineVirtualCamera>();
-        }
-
-        [CanBeNull]
-        public Animator GetDroneAnimator()
-        {
-            return GetGameObjectByName("pfDroneModelContainer")?.GetComponentInChildren<Animator>();
+            CinemachineVirtualCamera cinemachineVirtualCamera = GetGameObjectByName("CM vcam1").GetComponent<CinemachineVirtualCamera>();
+            if (cinemachineVirtualCamera == null) {
+                throw new NullReferenceException("CinemachineVirtualCamera is not find");
+            }
+            return cinemachineVirtualCamera;
         }
 
         #region GameObject control API
