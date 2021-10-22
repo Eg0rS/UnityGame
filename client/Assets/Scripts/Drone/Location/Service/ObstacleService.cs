@@ -22,9 +22,6 @@ namespace Drone.Location.Service
         private IoCProvider<GameWorld> _gameWorld;
 
         [Inject]
-        private IoCProvider<DroneAnimService> _droneAnimService;
-
-        [Inject]
         private GameService _gameService;
 
         private List<BoosterDescriptor> _boosterDescriptors;
@@ -72,10 +69,9 @@ namespace Drone.Location.Service
             if (_onActiveShield) {
                 return;
             }
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH));
             _cameraNoise.m_AmplitudeGain += _crashNoise;
             foreach (ContactPoint contact in contactPoints) {
-                _droneAnimService.Require().PlayParticleState(DroneParticles.ptSparks, contact.point, component.transform.rotation);
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH, DroneParticles.ptSparks, contact, component.transform));
             }
             Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
             _droneModel.durability -= component.Damage;

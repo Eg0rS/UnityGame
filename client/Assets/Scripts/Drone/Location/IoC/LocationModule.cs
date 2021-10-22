@@ -16,7 +16,7 @@ namespace Drone.Location.IoC
             container.RegisterSingleton<CreateObjectService>();
             container.RegisterSingleton<GameOverlayManager>();
 
-            container.RegisterSingleton<DroneAnimService>(null, ScopeType.SCREEN);
+            // container.RegisterSingleton<DroneAnimService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<BoosterService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<BatteryService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<ObstacleService>(null, ScopeType.SCREEN);

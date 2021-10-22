@@ -20,8 +20,9 @@ namespace Drone.Location.World.Drone
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        [Inject]
-        private IoCProvider<DroneAnimService> _droneAnimService;
+        // [Inject]
+        // private IoCProvider<DroneAnimService> _droneAnimService;
+        private DroneAnimService _droneAnimService;
 
         private float _acceleration = 0.2f;
         private float _maxSpeed;
@@ -39,8 +40,10 @@ namespace Drone.Location.World.Drone
         public void Init(DronePrefabModel model)
         {
             _droneControlService = gameObject.AddComponent<DroneControlService>();
+            //
+            
+            //
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
-            _droneControlService = gameObject.AddComponent<DroneControlService>();
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, DisableSpeedBoost);
@@ -49,8 +52,25 @@ namespace Drone.Location.World.Drone
             _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, OnDroneCrash);
+            _droneAnimService = gameObject.AddComponent<DroneAnimService>();
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.PLAY_ANIMATE, OnPlayAnimation);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, OnCrush);
         }
 
+        private void OnPlayAnimation(WorldEvent obj)
+        {
+            _droneAnimService.OnPlayAnimation(obj);
+        }
+        private void  OnCrush(WorldEvent obj)
+        {
+            _droneAnimService.OnCrush(obj);
+        }
+
+        // private void Start()
+        // {_droneAnimService = gameObject.AddComponent<DroneAnimService>();
+        //     
+        // }
+        
         private void SetParameters(WorldEvent worldEvent)
         {
             _bezier.enabled = false;
@@ -136,7 +156,7 @@ namespace Drone.Location.World.Drone
             if (_isMoving != null) {
                 StopCoroutine(_isMoving);
             }
-            _droneAnimService.Require().SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
+            //_droneAnimService.SetAnimMoveState(DetectDirection(newPos), CalculateAnimSpeed(newPos));
             _isMoving = StartCoroutine(Moving(newPos));
         }
 
