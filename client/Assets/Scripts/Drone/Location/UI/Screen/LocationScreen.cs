@@ -1,4 +1,3 @@
-using AgkCommons.Event;
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using Drone.Location.Service;
