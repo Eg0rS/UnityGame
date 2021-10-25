@@ -194,11 +194,6 @@ namespace Drone.Location.World.Drone
             _isMoving = null;
         }
 
-        private void OnCollisionEnter(Collision other)
-        {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ON_COLLISION, other));
-        }
-
         private void OnDroneCrash(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;

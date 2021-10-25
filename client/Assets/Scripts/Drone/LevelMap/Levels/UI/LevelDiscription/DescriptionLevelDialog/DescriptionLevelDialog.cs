@@ -16,6 +16,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
+using LocationService = Drone.Location.Service.LocationService;
 
 namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
 {
@@ -37,8 +38,11 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         [Inject]
         private InventoryService _inventoryService;
 
+        // [Inject]
+        // private GameService _gameService;
+
         [Inject]
-        private GameService _gameService;
+        private LocationService _locationService;
 
         [UIComponentBinding("Title")]
         private UILabel _title;
@@ -130,7 +134,9 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         {
             string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
             _levelService.SelectedLevelId = _levelDescriptor.Id;
-            _gameService.StartGame(_levelDescriptor, dronId);
+            _levelService.SelectedDroneId = dronId;
+            _locationService.SwitchLocation(_levelDescriptor);
+            //_gameService.StartGame(_levelDescriptor, dronId);
         }
 
         [UIOnClick("pfBackground")]

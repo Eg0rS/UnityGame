@@ -1,5 +1,5 @@
 ﻿using AgkCommons.Event;
-using Drone.Booster.Descriptor;
+using Drone.Descriptor;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.Location.Model;
 using Drone.Location.Service;
@@ -32,6 +32,8 @@ namespace Drone.World.Event
         public const string CREATE_WORLD = "CreateWorld";
         public const string CRASH = "Crash";
         public const string PLAY_ANIMATE = "PlayAnimate";
+        public const string TAKE_CHIP = "TakeChip";
+        public const string TAKE_BATTERY = "TakeBattery";
 
         public Collision CollisionObject { get; private set; }
         public LevelDescriptor LevelDescriptor { get; private set; }
@@ -79,12 +81,7 @@ namespace Drone.World.Event
         {
             SpeedBooster = speedBooster;
         }
-
-        public WorldEvent(string name, LevelDescriptor levelDescriptor, string dronId) : base(name)
-        {
-            LevelDescriptor = levelDescriptor;
-            DronId = dronId;
-        }
+        
 
         public WorldEvent(string name) : base(name)
         {

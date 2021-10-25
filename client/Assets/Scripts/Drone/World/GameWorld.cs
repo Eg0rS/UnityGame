@@ -48,10 +48,14 @@ namespace Drone.World
             return GetGameObjectByName(_drone);
         }
 
-        [CanBeNull]
+        [NotNull]
         public CinemachineVirtualCamera GetDroneCamera()
         {
-            CinemachineVirtualCamera cinemachineVirtualCamera = GetGameObjectByName("CM vcam1").GetComponent<CinemachineVirtualCamera>();
+            GameObject cinemachineObject = GetGameObjectByName("CM vcam1");
+            if (cinemachineObject == null) {
+                throw new NullReferenceException("CinemachineVirtualCamera is not find");
+            }
+            CinemachineVirtualCamera cinemachineVirtualCamera = cinemachineObject.GetComponent<CinemachineVirtualCamera>();
             if (cinemachineVirtualCamera == null) {
                 throw new NullReferenceException("CinemachineVirtualCamera is not find");
             }
