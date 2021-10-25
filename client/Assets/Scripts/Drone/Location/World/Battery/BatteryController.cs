@@ -1,6 +1,11 @@
-﻿using Drone.Location.Model;
+﻿using System.Collections.Generic;
+using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Battery;
+using Drone.World;
+using Drone.World.Event;
+using IoC.Attribute;
+using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.World.Battery
@@ -8,15 +13,20 @@ namespace Drone.Location.World.Battery
     public class BatteryController : MonoBehaviour, IWorldObjectController<BatteryModel>
     {
         public WorldObjectType ObjectType { get; private set; }
+        [Inject]
+        private IoCProvider<GameWorld> _gameWorld;
 
         public void Init(BatteryModel model)
         {
             ObjectType = model.ObjectType;
         }
-        private void OnCollisionEnter(Collision other)
+
+        private void OnCollisionEnter(Collision otherCollision)
         {
-            if (other.gameObject.GetComponent<PrefabModel>().ObjectType == (WorldObjectType.DRON)) {
+            WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
+            if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BATTERY));
             }
         }
     }

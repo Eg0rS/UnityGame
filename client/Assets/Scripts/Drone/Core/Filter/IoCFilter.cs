@@ -1,7 +1,6 @@
 using Adept.Logger;
 using AgkCommons.IoC;
 using Drone.Billing.IoC;
-using Drone.Booster.Module;
 using Drone.Console.IoC;
 using Drone.Core.Audio.IoC;
 using Drone.Core.IoC;
@@ -50,7 +49,6 @@ namespace Drone.Core.Filter
             context.RegisterModule(new BillingModule());
             context.RegisterModule(new ShopModule());
             context.RegisterModule(new DroneModule());
-            context.RegisterModule(new BoosterModule());
         }
     }
 }

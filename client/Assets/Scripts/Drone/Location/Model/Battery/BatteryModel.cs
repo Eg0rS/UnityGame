@@ -4,7 +4,7 @@ namespace Drone.Location.Model.Battery
 {
     public class BatteryModel : PrefabModel
     {
-        public float Energy { get; private set; }
+        public static float Energy { get; private set; }
 
         public void Awake()
         {

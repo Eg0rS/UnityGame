@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Event;
 using AgkCommons.Extension;
+using Cinemachine;
+using Drone.Location.World.Drone.Model;
 using Drone.World.Event;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -16,6 +18,8 @@ namespace Drone.World
         [PublicAPI]
         public string WorldId { get; private set; }
 
+        private string _drone = "DroneCube";
+
         public void CreateWorld(string worldId)
         {
             WorldId = worldId;
@@ -24,11 +28,10 @@ namespace Drone.World
         public void AddGameObject(GameObject go, [CanBeNull] GameObject container = null, bool worldPositionStays = false)
         {
             Transform parentContainer = container == null ? transform : container.transform;
-            
+
             go.transform.SetParent(parentContainer, worldPositionStays);
-            
-            go.GetOrCreateComponent<GameEventDispatcher>()
-              .Dispatch(new WorldEvent(WorldEvent.ADDED, go));
+
+            go.GetOrCreateComponent<GameEventDispatcher>().Dispatch(new WorldEvent(WorldEvent.ADDED, go));
         }
 
         public void RemoveGameObject(string id)
@@ -39,19 +42,37 @@ namespace Drone.World
             }
         }
 
+        [CanBeNull]
+        public GameObject GetDroneCube()
+        {
+            return GetGameObjectByName(_drone);
+        }
+
+        [NotNull]
+        public CinemachineVirtualCamera GetDroneCamera()
+        {
+            GameObject cinemachineObject = GetGameObjectByName("CM vcam1");
+            if (cinemachineObject == null) {
+                throw new NullReferenceException("CinemachineVirtualCamera is not find");
+            }
+            CinemachineVirtualCamera cinemachineVirtualCamera = cinemachineObject.GetComponent<CinemachineVirtualCamera>();
+            if (cinemachineVirtualCamera == null) {
+                throw new NullReferenceException("CinemachineVirtualCamera is not find");
+            }
+            return cinemachineVirtualCamera;
+        }
+
         #region GameObject control API
 
         [CanBeNull]
         public GameObject GetGameObjectByName(string objectName)
         {
-            return GetSceneObjects()
-                    .FirstOrDefault(o => o.name == objectName);
+            return GetSceneObjects().FirstOrDefault(o => o.name == objectName);
         }
 
         public GameObject RequireGameObjectByName(string objectName)
         {
-            return GetSceneObjects()
-                    .First(o => o.name == objectName);
+            return GetSceneObjects().First(o => o.name == objectName);
         }
 
         [NotNull]
@@ -59,7 +80,6 @@ namespace Drone.World
         {
             return gameObject.GetComponentsOnlyInChildren<Transform>(true).ToList().Select(t => t.gameObject).ToList();
         }
-        
 
         [CanBeNull]
         public T FindComponent<T>()
@@ -87,10 +107,7 @@ namespace Drone.World
 
         public List<T> GetObjectComponents<T>()
         {
-            return GetSceneObjects()
-                   .Where(go => go.GetComponent<T>() != null)
-                   .Select(go => go.GetComponent<T>())
-                   .ToList();
+            return GetSceneObjects().Where(go => go.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
         }
 
         public T RequireObjectComponent<T>(string objectName)

@@ -3,8 +3,10 @@ using AgkCommons.Resources;
 using RSG;
 using UnityEngine;
 using Adept.Logger;
+using Drone.Core.Service;
 using Drone.Location.Model.BaseModel;
 using Drone.World;
+using IoC;
 
 namespace Drone.Location.Service.Builder
 {
@@ -67,6 +69,9 @@ namespace Drone.Location.Service.Builder
 
         private static void InitService()
         {
+            foreach (IWorldServiceInitiable serviceInitable in AppContext.ResolveCollection<IWorldServiceInitiable>()) {
+                serviceInitable.Init();
+            }
         }
 
         private void InitControllers(GameWorld gameWorld)

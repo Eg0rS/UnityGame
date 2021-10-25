@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AgkCommons.Configurations;
 
-namespace Drone.Booster.Descriptor
+namespace Drone.Descriptor
 {
     public class BoosterDescriptor
     {

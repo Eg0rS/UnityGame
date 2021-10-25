@@ -1,6 +1,5 @@
-using Drone.Booster.Service;
 using Drone.Location.Model.BaseModel;
-using IoC.Attribute;
+
 
 namespace Drone.Location.Model.ShieldBooster
 {

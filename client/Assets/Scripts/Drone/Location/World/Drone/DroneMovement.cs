@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Drone/Location/World/Dron/DroneMovement.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Drone/Location/World/Drone/DroneMovement.inputactions'
 
 using System;
 using System.Collections;

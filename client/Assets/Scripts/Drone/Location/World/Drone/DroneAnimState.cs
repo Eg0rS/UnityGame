@@ -3,7 +3,7 @@
 namespace Drone.Location.World.Drone
 {
     [DataContract]
-    public enum AnimState
+    public enum DroneAnimState
     {
         amEnableShield,
         amDisableShield,
