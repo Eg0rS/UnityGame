@@ -21,6 +21,9 @@ namespace Drone.Location.World.Obstacle
 
         private CinemachineBasicMultiChannelPerlin _cameraNoise;
 
+        private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.034f;
+        private const float TIME_FOR_DEAD = 1f;
+
         private float _crashNoise = 2;
         private float _crashNoiseDuration = 0.5f;
 
@@ -48,17 +51,37 @@ namespace Drone.Location.World.Obstacle
         private void OnCollisionEnter(Collision otherCollision)
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType == WorldObjectType.DRON) {
-                ContactPoint[] contactPoints = otherCollision.contacts;
-                if (_onActiveShield) {
-                    return;
-                }
-                _cameraNoise.m_AmplitudeGain += _crashNoise;
-                foreach (ContactPoint contact in contactPoints) {
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH, DroneParticles.ptSparks, contact, otherCollision.transform));
-                }
-                Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
+            if (objectType != WorldObjectType.DRON) {
+                return;
             }
+            ContactPoint[] contactPoints = otherCollision.contacts;
+            if (_onActiveShield) {
+                return;
+            }
+            _cameraNoise.m_AmplitudeGain += _crashNoise;
+            foreach (ContactPoint contact in contactPoints) {
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASH, DroneParticles.ptSparks, contact, otherCollision.transform));
+            }
+            if (IsDeadCrash(otherCollision)) {
+                otherCollision.gameObject.SetActive(false);
+                _gameWorld.Require()
+                          .Dispatch(new WorldEvent(WorldEvent.CRASH, DroneParticles.ptExplosion, contactPoints[0], otherCollision.transform));
+                Invoke(nameof(GameOver), TIME_FOR_DEAD);
+            }
+            Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
+        }
+
+        private bool IsDeadCrash(Collision otherCollision)
+        {
+            Physics.ComputePenetration(gameObject.GetComponent<Collider>(), transform.position, transform.rotation, otherCollision.collider,
+                                       otherCollision.transform.position, otherCollision.transform.rotation, out Vector3 direction,
+                                       out float distance);
+            return distance >= MAX_DISTANCE_DEPTH_COLLIDER; //расстояние погружения одного коллайдера в другой
+        }
+
+        private void GameOver()
+        {
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASHED, FailedReasons.Crashed));
         }
 
         private void DisableCrashNoise()

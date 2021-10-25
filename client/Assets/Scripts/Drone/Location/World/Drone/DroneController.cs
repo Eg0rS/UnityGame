@@ -197,12 +197,16 @@ namespace Drone.Location.World.Drone
         private void OnDroneCrash(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;
+            _droneAnimationController.OnCrush(objectEvent);
+            /*
             if (transform.localPosition == _dronePreviosPosition) {
                 return;
             }
+            
             _droneTargetPosition = _dronePreviosPosition;
-            _droneAnimationController.OnCrush(objectEvent);
+           
             MoveTo(_dronePreviosPosition);
+            */
         }
 
         private void EnableSpeedBoost(WorldEvent objectEvent)

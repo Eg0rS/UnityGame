@@ -20,8 +20,9 @@ namespace Drone.World.Event
         public const string ENABLE_SPEED = "EnableSpeed";
         public const string DISABLE_SPEED = "DisableSpeed";
         public const string START_FLIGHT = "StartFlight";
-        public const string DRONE_FAILED = "DroneFailed";
+        public const string DRONE_CRASHED = "DroneCrashed";
         public const string END_GAME = "EndGame";
+        public const string VICTORY = "Victory";
         public const string WORLD_CREATED = "WorldCreated";
         public const string SET_DRON_PARAMETERS = "SetDronOptions";
         public const string CRASH = "Crash";

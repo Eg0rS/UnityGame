@@ -65,11 +65,18 @@ namespace Drone.Location.Service
             _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
             
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.VICTORY, Victory);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASHED, Crashed);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, OnCrush);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_BATTERY, OnTakeBattery);
 
             CreateDrone(_dronId);
+        }
+
+        private void Crashed(WorldEvent obj)
+        {
+            DroneFailed(obj.FailedReason);
         }
 
         private void OnTakeBattery(WorldEvent obj)
@@ -131,7 +138,7 @@ namespace Drone.Location.Service
             }
         }
 
-        private void Victory()
+        private void Victory(WorldEvent worldEvent)
         {
             SetStatsInProgress(true);
             EndGame();
@@ -169,7 +176,7 @@ namespace Drone.Location.Service
                 if (_droneModel.energy <= 0) {
                     _droneModel.energy = 0;
                     _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_FAILED, FailedReasons.EnergyFalled));
+                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASHED, FailedReasons.EnergyFalled));
                     StopCoroutine(_fallingEnergy);
                 } else {
                     _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
