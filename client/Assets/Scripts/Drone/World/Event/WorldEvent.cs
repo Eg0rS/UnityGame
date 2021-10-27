@@ -1,7 +1,5 @@
 ﻿using AgkCommons.Event;
 using Drone.Descriptor;
-using Drone.Location.Service;
-using Drone.Location.World.Drone;
 using Drone.Location.World.Drone.Model;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -23,7 +21,6 @@ namespace Drone.World.Event
         public const string CRASH = "Crash";
         public const string DRONE_CRASH = "DroneCrash";
         public const string CRASHED = "Crashed";
-        public const string PLAY_ANIMATE = "PlayAnimate";
         public const string ENABLE_SHIELD = "EnableShield";
         public const string DISABLE_SHIELD = "DisableShield";
         public const string ENABLE_SPEED = "EnableSpeed";
@@ -35,9 +32,6 @@ namespace Drone.World.Event
 
         public DroneModel DroneModel { get; private set; }
         public BoosterDescriptor SpeedBooster { get; private set; }
-        public FailedReasons FailedReason { get; private set; }
-        public DroneAnimState DroneAnimState { get; private set; }
-        public DroneParticles DroneParticles { get; private set; }
         public ContactPoint[] ContactPoints { get; private set; }
         public float ImmersionDepth { get; private set; }
 
