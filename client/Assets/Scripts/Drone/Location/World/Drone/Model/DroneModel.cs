@@ -1,5 +1,4 @@
-﻿using System;
-using Drone.Location.World.Drone.Descriptor;
+﻿using Drone.Location.World.Drone.Descriptor;
 
 namespace Drone.Location.World.Drone.Model
 {
@@ -32,11 +31,6 @@ namespace Drone.Location.World.Drone.Model
         {
             get => _droneDescriptor;
             private set => _droneDescriptor = value;
-        }
-
-        private void Awake()
-        {
-            throw new NotImplementedException();
         }
     }
 }

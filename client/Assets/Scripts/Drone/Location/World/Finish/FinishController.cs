@@ -24,8 +24,7 @@ namespace Drone.Location.World.Finish
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
-                gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.VICTORY));
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.FINISHED));
             }
         }
     }

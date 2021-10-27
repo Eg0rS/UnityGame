@@ -22,16 +22,38 @@ namespace Drone.Location.World.Drone
             this.InjectComponents();
         }
 
-        public void OnCrush(WorldEvent worldEvent)
+        public void OnCrash(WorldEvent worldEvent)
         {
-            PlayParticleState(worldEvent.DroneParticles, worldEvent.ContactPoint.point, worldEvent.Transform.rotation);
+            foreach (ContactPoint contactPoint in worldEvent.ContactPoints) {
+                PlayParticleState(DroneParticles.ptSparks, contactPoint.point, transform.rotation);
+            }
+        }
+        
+        public void OnCrashed()
+        {
+            PlayParticleState(DroneParticles.ptExplosion, transform.position, transform.rotation);
+        }
+        
+        public void EnableSpeedBoost()
+        {
+            PlayAnimState(DroneAnimState.amEnableSpeed);
+        }
+        
+        public void DisableSpeedBoost()
+        {
+            PlayAnimState(DroneAnimState.amDisableSpeed);
         }
 
-        public void OnPlayAnimation(WorldEvent worldEvent)
+        public void EnableShield()
         {
-            PlayAnimState(worldEvent.DroneAnimState);
+            PlayAnimState(DroneAnimState.amEnableShield);
         }
-
+        
+        public void DisableShield()
+        {
+            PlayAnimState(DroneAnimState.amDisableShield);
+        }
+        
         public float DefaultAnimSpeed
         {
             get { return _animSpeed; }

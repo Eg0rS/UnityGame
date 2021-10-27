@@ -2,6 +2,7 @@
 using System.Collections;
 using AgkCommons.Event;
 using BezierSolution;
+using Cinemachine;
 using Drone.Location.Model;
 using Drone.Location.Model.Drone;
 using Drone.Location.World.Drone.Event;
@@ -29,34 +30,35 @@ namespace Drone.Location.World.Drone
         private DroneControlService _droneControlService;
         private BezierWalkerWithSpeed _bezier;
         private Coroutine _isMoving;
+        private CinemachineBasicMultiChannelPerlin _cameraNoise;
         private Vector3 _droneTargetPosition = Vector3.zero;
         private Vector3 _dronePreviosPosition = Vector3.zero;
         private float _minimalSpeed = 3.0f;
         private bool _isGameRun;
         public WorldObjectType ObjectType { get; }
+        private float _crashNoise = 2;
+        private float _crashNoiseDuration = 0.5f;
 
         public void Init(DronePrefabModel model)
         {
             _droneControlService = gameObject.AddComponent<DroneControlService>();
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, DisableSpeedBoost);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, OnDroneCrash);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.PLAY_ANIMATE, OnPlayAnimation);
+            _cameraNoise = _gameWorld.Require().GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, OnStartGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SPEED, OnEnableSpeedBoost);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, OnDisableSpeedBoost);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, OnDisableShield);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, OnEndGame);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnCrash);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASHED, OnCrashed);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
         }
 
-        private void OnPlayAnimation(WorldEvent obj)
-        {
-            _droneAnimationController.OnPlayAnimation(obj);
-        }
-
-        private void SetParameters(WorldEvent worldEvent)
+        private void OnSetParameters(WorldEvent worldEvent)
         {
             _bezier.enabled = false;
             _bezier.speed = _minimalSpeed;
@@ -65,7 +67,7 @@ namespace Drone.Location.World.Drone
             _basemobility = worldEvent.DroneModel.mobility;
         }
 
-        private void StartGame(WorldEvent worldEvent)
+        private void OnStartGame(WorldEvent worldEvent)
         {
             _isGameRun = true;
             _bezier.enabled = true;
@@ -84,13 +86,10 @@ namespace Drone.Location.World.Drone
             _mobility = _basemobility * (_bezier.speed / _minimalSpeed);
         }
 
-        private void EndGame(WorldEvent worldEvent)
+        private void OnEndGame(WorldEvent worldEvent)
         {
             _droneControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
-            _droneControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
-            _gameWorld.Require().RemoveListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
+            _droneControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);;
         }
 
         private void OnStart(ControllEvent objectEvent)
@@ -194,30 +193,49 @@ namespace Drone.Location.World.Drone
             _isMoving = null;
         }
 
-        private void OnDroneCrash(WorldEvent objectEvent)
+        private void OnCrash(WorldEvent objectEvent)
         {
             _bezier.speed /= 2;
-            _droneAnimationController.OnCrush(objectEvent);
-            /*
-            if (transform.localPosition == _dronePreviosPosition) {
-                return;
-            }
-            
-            _droneTargetPosition = _dronePreviosPosition;
-           
-            MoveTo(_dronePreviosPosition);
-            */
+            _droneAnimationController.OnCrash(objectEvent);
+            _cameraNoise.m_AmplitudeGain += _crashNoise;
+            Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
         }
 
-        private void EnableSpeedBoost(WorldEvent objectEvent)
+        private void OnCrashed(WorldEvent objectEvent)
         {
-            _bezier.speed = _maxSpeed;
+            _droneAnimationController.OnCrashed();
+            gameObject.SetActive(false);
+            _cameraNoise.m_AmplitudeGain += _crashNoise;
+            Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
         }
 
-        private void DisableSpeedBoost(WorldEvent objectEvent)
+        private void DisableCrashNoise()
         {
-            // _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
-            // _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            _cameraNoise.m_AmplitudeGain -= _crashNoise;
+        }
+
+        private void OnEnableSpeedBoost(WorldEvent objectEvent)
+        {
+            _maxSpeed *= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
+            _acceleration *= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            _droneAnimationController.EnableSpeedBoost();
+        }
+
+        private void OnDisableSpeedBoost(WorldEvent objectEvent)
+        {
+            _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
+            _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            _droneAnimationController.DisableSpeedBoost();
+        }
+
+        private void OnEnableShield(WorldEvent objectEvent)
+        {
+            _droneAnimationController.EnableShield();
+        }
+
+        private void OnDisableShield(WorldEvent objectEvent)
+        {
+            _droneAnimationController.DisableShield();
         }
     }
 }
