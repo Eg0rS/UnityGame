@@ -54,7 +54,7 @@ namespace Drone.Location.Service
         [Inject]
         private DroneService _droneService;
 
-        private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.032f;
+        private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.0315f;
         private const float TIME_FOR_DEAD = 1f;
 
         private LevelDescriptor _levelDescriptor;

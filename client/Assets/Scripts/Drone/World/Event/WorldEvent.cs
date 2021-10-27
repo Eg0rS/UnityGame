@@ -39,16 +39,10 @@ namespace Drone.World.Event
         public DroneAnimState DroneAnimState { get; private set; }
         public DroneParticles DroneParticles { get; private set; }
         public ContactPoint[] ContactPoints { get; private set; }
-        public Transform Transform { get; private set; }
         public float ImmersionDepth { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
-        }
-
-        public WorldEvent(string name, DroneAnimState state) : base(name)
-        {
-            DroneAnimState = state;
         }
 
         public WorldEvent(string name, ContactPoint[] contactPoints, float immersionDepth) : base(name)
@@ -69,11 +63,6 @@ namespace Drone.World.Event
 
         public WorldEvent(string name) : base(name)
         {
-        }
-
-        public T GetController<T>()
-        {
-            return Target.GetComponent<T>();
         }
     }
 }

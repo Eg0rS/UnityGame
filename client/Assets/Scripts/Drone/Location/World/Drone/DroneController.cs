@@ -50,7 +50,6 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, OnDisableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, OnDisableShield);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, OnEndGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnCrash);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASHED, OnCrashed);
@@ -84,12 +83,6 @@ namespace Drone.Location.World.Drone
                 _bezier.speed -= _acceleration * Time.deltaTime;
             }
             _mobility = _basemobility * (_bezier.speed / _minimalSpeed);
-        }
-
-        private void OnEndGame(WorldEvent worldEvent)
-        {
-            _droneControlService.RemoveListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
-            _droneControlService.RemoveListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);;
         }
 
         private void OnStart(ControllEvent objectEvent)
