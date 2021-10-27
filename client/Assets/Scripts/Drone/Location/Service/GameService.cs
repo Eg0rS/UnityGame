@@ -134,9 +134,14 @@ namespace Drone.Location.Service
             if (_droneModel.durability <= 0 || worldEvent.ImmersionDepth > MAX_DISTANCE_DEPTH_COLLIDER) {
                 _droneModel.durability = 0;
                 _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASHED));
-                DroneFailed(FailedReasons.Crashed);
+                Invoke(nameof(Crashed), TIME_FOR_DEAD);
             }
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
+        }
+
+        private void Crashed()
+        {
+            DroneFailed(FailedReasons.Crashed);
         }
 
         private void OnTakeChip(WorldEvent worldEvent)
@@ -224,6 +229,7 @@ namespace Drone.Location.Service
                 _droneModel.energy -= _droneModel.energyFall;
                 if (_droneModel.energy <= 0) {
                     _droneModel.energy = 0;
+                    DroneFailed(FailedReasons.EnergyFalled);
                     _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
                     StopCoroutine(_fallingEnergy);
                 } else {

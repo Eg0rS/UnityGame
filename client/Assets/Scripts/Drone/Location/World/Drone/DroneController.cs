@@ -203,6 +203,7 @@ namespace Drone.Location.World.Drone
 
         private void OnCrashed(WorldEvent objectEvent)
         {
+            _bezier.enabled = false;
             _droneAnimationController.OnCrashed();
             gameObject.SetActive(false);
             _cameraNoise.m_AmplitudeGain += _crashNoise;
