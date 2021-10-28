@@ -8,6 +8,7 @@ using Drone.Location.Model.Battery;
 using Drone.Location.Model.BonusChips;
 using Drone.Location.Model.Drone;
 using Drone.Location.Model.Finish;
+using Drone.Location.Model.Magnet;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
@@ -17,6 +18,7 @@ using Drone.Location.World.Drone;
 using Drone.Location.World.Battery;
 using Drone.Location.World.BonusChips;
 using Drone.Location.World.Finish;
+using Drone.Location.World.Magnet;
 using Drone.Location.World.Obstacle;
 using Drone.Location.World.ShieldBooster;
 using Drone.Location.World.SpeedBooster;
@@ -45,6 +47,8 @@ namespace Drone.Location.Service
                     new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
             _controllers[X2_BOOSTER] =
                     new ControllerData(typeof(X2BoosterController), InitController<X2BoosterController, X2BoosterModel>);
+            _controllers[MAGNET_BOOSTER] =
+                    new ControllerData(typeof(MagnetBoosterController), InitController<MagnetBoosterController, MagnetBoosterModel>);
             _controllers[BATTERY] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
             

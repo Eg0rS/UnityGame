@@ -13,6 +13,7 @@ namespace Drone.Location.Model
         SPEED_BOOSTER,
         SHIELD_BOOSTER,
         X2_BOOSTER,
+        MAGNET_BOOSTER,
         FINISH
     }
 }

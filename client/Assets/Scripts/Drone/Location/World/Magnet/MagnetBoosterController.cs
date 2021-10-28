@@ -1,21 +1,21 @@
 ﻿using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
-using Drone.Location.Model.X2Booster;
+using Drone.Location.Model.Magnet;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.X2Booster
+namespace Drone.Location.World.Magnet
 {
-    public class X2BoosterController : MonoBehaviour, IWorldObjectController<X2BoosterModel>
+    public class MagnetBoosterController : MonoBehaviour, IWorldObjectController<MagnetBoosterModel>
     {
         public WorldObjectType ObjectType { get; private set; }
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        public void Init(X2BoosterModel model)
+        public void Init(MagnetBoosterModel model)
         {
             ObjectType = model.ObjectType;
         }
@@ -25,7 +25,7 @@ namespace Drone.Location.World.X2Booster
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_X2));
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_MAGNET));
             }
         }
     }

@@ -51,6 +51,8 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, OnDisableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, OnDisableShield);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_MAGNET, OnEnableMAGNET);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_MAGNET, OnDisableMAGNET);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnCrash);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASHED, OnCrashed);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
@@ -85,9 +87,9 @@ namespace Drone.Location.World.Drone
             _mobility = _basemobility * (_bezier.speed / _minimalSpeed);
         }
 
-        private void OnStart(ControllEvent objectEvent)
+        private void OnStart(ControllEvent worldEvent)
         {
-            Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
+            Vector3 swipe = new Vector3(worldEvent.Swipe.x, worldEvent.Swipe.y, 0f);
             Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
@@ -96,9 +98,9 @@ namespace Drone.Location.World.Drone
             MoveTo(newPosition);
         }
 
-        private void OnSwiped(ControllEvent objectEvent)
+        private void OnSwiped(ControllEvent worldEvent)
         {
-            Vector3 swipe = new Vector3(objectEvent.Swipe.x, objectEvent.Swipe.y, 0f);
+            Vector3 swipe = new Vector3(worldEvent.Swipe.x, worldEvent.Swipe.y, 0f);
             Vector3 newPosition = NewPosition(_droneTargetPosition, swipe);
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
@@ -186,15 +188,15 @@ namespace Drone.Location.World.Drone
             _isMoving = null;
         }
 
-        private void OnCrash(WorldEvent objectEvent)
+        private void OnCrash(WorldEvent worldEvent)
         {
             _bezier.speed /= 2;
-            _droneAnimationController.OnCrash(objectEvent);
+            _droneAnimationController.OnCrash(worldEvent);
             _cameraNoise.m_AmplitudeGain += _crashNoise;
             Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
         }
 
-        private void OnCrashed(WorldEvent objectEvent)
+        private void OnCrashed(WorldEvent worldEvent)
         {
             _bezier.enabled = false;
             _droneAnimationController.OnCrashed();
@@ -208,28 +210,36 @@ namespace Drone.Location.World.Drone
             _cameraNoise.m_AmplitudeGain -= _crashNoise;
         }
 
-        private void OnEnableSpeedBoost(WorldEvent objectEvent)
+        private void OnEnableSpeedBoost(WorldEvent worldEvent)
         {
-            _maxSpeed *= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
-            _acceleration *= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            _maxSpeed *= float.Parse(worldEvent.SpeedBooster.Params["SpeedBoost"]);
+            _acceleration *= float.Parse(worldEvent.SpeedBooster.Params["AccelerationBoost"]);
             _droneAnimationController.EnableSpeedBoost();
         }
 
-        private void OnDisableSpeedBoost(WorldEvent objectEvent)
+        private void OnDisableSpeedBoost(WorldEvent worldEvent)
         {
-            _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
-            _acceleration /= float.Parse(objectEvent.SpeedBooster.Params["AccelerationBoost"]);
+            _maxSpeed /= float.Parse(worldEvent.SpeedBooster.Params["SpeedBoost"]);
+            _acceleration /= float.Parse(worldEvent.SpeedBooster.Params["AccelerationBoost"]);
             _droneAnimationController.DisableSpeedBoost();
         }
 
-        private void OnEnableShield(WorldEvent objectEvent)
+        private void OnEnableShield(WorldEvent worldEvent)
         {
             _droneAnimationController.EnableShield();
         }
 
-        private void OnDisableShield(WorldEvent objectEvent)
+        private void OnDisableShield(WorldEvent worldEvent)
         {
             _droneAnimationController.DisableShield();
+        }
+
+        private void OnEnableMAGNET(WorldEvent worldEvent)
+        {
+        }
+
+        private void OnDisableMAGNET(WorldEvent worldEvent)
+        {
         }
     }
 }

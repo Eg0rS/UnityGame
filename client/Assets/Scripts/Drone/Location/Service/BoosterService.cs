@@ -33,6 +33,7 @@ namespace Drone.Location.Service
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_SPEED, OnTakeSpeed);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_SHIELD, OnTakeShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_X2, OnTakeX2);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_MAGNET, OnTakeMagnet);
         }
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
@@ -51,10 +52,15 @@ namespace Drone.Location.Service
             return _boosterDescriptors[type];
         }
 
+        private float GetDescriptorParametr(WorldObjectType objectType, string param)
+        {
+            return float.Parse(GetDescriptorByType(WorldObjectType.SPEED_BOOSTER).Params[param]);
+        }
+
         private void OnTakeSpeed(WorldEvent worldEvent)
         {
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SPEED, GetDescriptorByType(WorldObjectType.SPEED_BOOSTER)));
-            Invoke(nameof(DisableSpeed), float.Parse(GetDescriptorByType(WorldObjectType.SPEED_BOOSTER).Params["Duration"]));
+            Invoke(nameof(DisableSpeed), GetDescriptorParametr(WorldObjectType.SPEED_BOOSTER, "Duration"));
         }
 
         private void DisableSpeed()
@@ -66,7 +72,7 @@ namespace Drone.Location.Service
         {
             IsShieldActivate = true;
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SHIELD));
-            Invoke(nameof(DisableShield), float.Parse(GetDescriptorByType(WorldObjectType.SHIELD_BOOSTER).Params["Duration"]));
+            Invoke(nameof(DisableShield), GetDescriptorParametr(WorldObjectType.SHIELD_BOOSTER, "Duration"));
         }
 
         private void DisableShield()
@@ -74,16 +80,28 @@ namespace Drone.Location.Service
             IsShieldActivate = false;
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SHIELD));
         }
-        
+
         private void OnTakeX2(WorldEvent obj)
         {
             IsX2Activate = true;
-            Invoke(nameof(DisableX2), float.Parse(GetDescriptorByType(WorldObjectType.X2_BOOSTER).Params["Duration"]));
+            Invoke(nameof(DisableX2), GetDescriptorParametr(WorldObjectType.X2_BOOSTER, "Duration"));
         }
 
         private void DisableX2()
         {
             IsX2Activate = false;
+        }
+
+        private void OnTakeMagnet(WorldEvent obj)
+        {
+            _gameWorld.Require()
+                      .Dispatch(new WorldEvent(WorldEvent.ENABLE_MAGNET, GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Distance")));
+            Invoke(nameof(DisableMagnet), GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Duration"));
+        }
+
+        private void DisableMagnet()
+        {
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_MAGNET));
         }
     }
 }
