@@ -7,13 +7,9 @@ using AgkUI.Dialog.Service;
 using Cinemachine;
 using Drone.Core;
 using Drone.Core.Service;
-using Drone.Descriptor;
 using Drone.LevelMap.LevelDialogs;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Service;
-using Drone.Location.Model;
-using Drone.Location.Model.Battery;
-using Drone.Location.Model.Obstacle;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
 using Drone.World;
@@ -43,9 +39,6 @@ namespace Drone.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private IoCProvider<BoosterService> _boosterService;
-
-        [Inject]
         private IGestureService _gestureService;
 
         [Inject]
@@ -54,7 +47,6 @@ namespace Drone.Location.Service
         [Inject]
         private DroneService _droneService;
 
-        private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.0315f;
         private const float TIME_FOR_DEAD = 1f;
 
         private LevelDescriptor _levelDescriptor;
@@ -63,9 +55,7 @@ namespace Drone.Location.Service
         private float _startTime;
         private DroneModel _droneModel;
         private Coroutine _fallingEnergy;
-        private bool _isShieldActivate;
-        private BoosterDescriptor _speedBoosterDescriptor;
-        private BoosterDescriptor _shieldBoosterDescriptor;
+        private int _batteryEnergy;
 
         public void Init()
         {
@@ -75,14 +65,11 @@ namespace Drone.Location.Service
             _droneModel = new DroneModel(_droneService.GetDronById(_dronId).DroneDescriptor);
             _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
-
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, OnCrash);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_BATTERY, OnTakeBattery);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_SPEED, OnTakeSpeed);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_SHIELD, OnTakeShield);
-
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnDroneCrash);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_LETHAL_CRASH, OnDroneLethalCrash);
             CreateDrone(_dronId);
         }
 
@@ -107,14 +94,6 @@ namespace Drone.Location.Service
             _startTime = Time.time;
         }
 
-        public void EndGame()
-        {
-            _isPlay = false;
-            Time.timeScale = 0f;
-            _gestureService.RemoveAnyTouchHandler(OnAnyTouch);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
-        }
-
         private void SetStatsInProgress(bool isWin)
         {
             float timeInGame = Time.time - _startTime;
@@ -124,19 +103,22 @@ namespace Drone.Location.Service
             }
         }
 
-        private void OnCrash(WorldEvent worldEvent)
+        private void OnDroneCrash(WorldEvent worldEvent)
         {
-            if (_isShieldActivate) {
-                return;
-            }
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASH, worldEvent.ContactPoints, worldEvent.ImmersionDepth));
-            _droneModel.durability -= ObstacleModel.Damage;
-            if (_droneModel.durability <= 0 || worldEvent.ImmersionDepth > MAX_DISTANCE_DEPTH_COLLIDER) {
-                _droneModel.durability = 0;
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.CRASHED));
+            _droneModel.durability -= worldEvent.Damage;
+            if (_droneModel.durability <= 0) {
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASHED));
                 Invoke(nameof(Crashed), TIME_FOR_DEAD);
             }
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
+        }
+
+        private void OnDroneLethalCrash(WorldEvent obj)
+        {
+            _droneModel.durability = 0;
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASHED));
+            Invoke(nameof(Crashed), TIME_FOR_DEAD);
         }
 
         private void Crashed()
@@ -152,44 +134,13 @@ namespace Drone.Location.Service
 
         private void OnTakeBattery(WorldEvent worldEvent)
         {
-            _droneModel.energy += BatteryModel.Energy;
+            _droneModel.energy += _batteryEnergy;
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
         }
 
         private void OnFinished(WorldEvent worldEvent)
         {
             Victory();
-        }
-
-        private void OnTakeSpeed(WorldEvent worldEvent)
-        {
-            if (_speedBoosterDescriptor == null) {
-                _speedBoosterDescriptor = _boosterService.Require().GetDescriptorByType(WorldObjectType.SPEED_BOOSTER);
-            }
-
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SPEED, _speedBoosterDescriptor));
-            Invoke(nameof(DisableSpeed), float.Parse(_speedBoosterDescriptor.Params["Duration"]));
-        }
-
-        private void DisableSpeed()
-        {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SPEED, _speedBoosterDescriptor));
-        }
-
-        private void OnTakeShield(WorldEvent worldEvent)
-        {
-            if (_speedBoosterDescriptor == null) {
-                _shieldBoosterDescriptor = _boosterService.Require().GetDescriptorByType(WorldObjectType.SHIELD_BOOSTER);
-            }
-            _isShieldActivate = true;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SHIELD));
-            Invoke(nameof(DisableShield), float.Parse(_shieldBoosterDescriptor.Params["Duration"]));
-        }
-
-        private void DisableShield()
-        {
-            _isShieldActivate = false;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SHIELD));
         }
 
         private void Victory()
@@ -204,6 +155,14 @@ namespace Drone.Location.Service
             SetStatsInProgress(false);
             EndGame();
             _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
+        }
+
+        public void EndGame()
+        {
+            _isPlay = false;
+            Time.timeScale = 0f;
+            _gestureService.RemoveAnyTouchHandler(OnAnyTouch);
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
 
         private int CalculateStars(float timeInGame)

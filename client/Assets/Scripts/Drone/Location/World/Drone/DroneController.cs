@@ -45,14 +45,14 @@ namespace Drone.Location.World.Drone
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _cameraNoise = _gameWorld.Require().GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, OnStartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SPEED, OnEnableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, OnDisableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, OnDisableShield);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnCrash);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASHED, OnCrashed);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASHED, OnCrashed);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.END_MOVE, OnSwiped);
         }

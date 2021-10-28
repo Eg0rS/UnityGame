@@ -4,12 +4,9 @@ namespace Drone.Location.Model.Battery
 {
     public class BatteryModel : PrefabModel
     {
-        public static float Energy { get; private set; }
-
         public void Awake()
         {
             ObjectType = WorldObjectType.BATTERY;
-            Energy = 3f;
         }
     }
 }
