@@ -22,6 +22,7 @@ namespace Drone.Location.Service
         private IoCProvider<GameWorld> _gameWorld;
 
         public bool IsShieldActivate { get; private set; }
+        public bool IsX2Activate { get; private set; }
 
         private Dictionary<string, BoosterDescriptor> _boosterDescriptors;
 
@@ -31,6 +32,7 @@ namespace Drone.Location.Service
             _resourceService.LoadConfiguration("Configs/boosters@embeded", OnConfigLoaded);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_SPEED, OnTakeSpeed);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_SHIELD, OnTakeShield);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_X2, OnTakeX2);
         }
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
@@ -43,7 +45,7 @@ namespace Drone.Location.Service
         }
 
         [NotNull]
-        public BoosterDescriptor GetDescriptorByType(WorldObjectType objectType)
+        private BoosterDescriptor GetDescriptorByType(WorldObjectType objectType)
         {
             string type = Enum.GetName(typeof(WorldObjectType), objectType);
             return _boosterDescriptors[type];
@@ -71,6 +73,17 @@ namespace Drone.Location.Service
         {
             IsShieldActivate = false;
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SHIELD));
+        }
+        
+        private void OnTakeX2(WorldEvent obj)
+        {
+            IsX2Activate = true;
+            Invoke(nameof(DisableX2), float.Parse(GetDescriptorByType(WorldObjectType.X2_BOOSTER).Params["Duration"]));
+        }
+
+        private void DisableX2()
+        {
+            IsX2Activate = false;
         }
     }
 }

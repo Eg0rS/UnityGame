@@ -12,6 +12,7 @@ namespace Drone.Location.Model
         BONUS_CHIPS,
         SPEED_BOOSTER,
         SHIELD_BOOSTER,
+        X2_BOOSTER,
         FINISH
     }
 }

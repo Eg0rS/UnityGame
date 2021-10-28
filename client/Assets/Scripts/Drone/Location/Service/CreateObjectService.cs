@@ -11,6 +11,7 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
+using Drone.Location.Model.X2Booster;
 using Drone.Location.World;
 using Drone.Location.World.Drone;
 using Drone.Location.World.Battery;
@@ -19,6 +20,7 @@ using Drone.Location.World.Finish;
 using Drone.Location.World.Obstacle;
 using Drone.Location.World.ShieldBooster;
 using Drone.Location.World.SpeedBooster;
+using Drone.Location.World.X2Booster;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
 using AppContext = IoC.AppContext;
@@ -41,8 +43,11 @@ namespace Drone.Location.Service
                     new ControllerData(typeof(SpeedBoosterController), InitController<SpeedBoosterController, SpeedBoosterModel>);
             _controllers[SHIELD_BOOSTER] =
                     new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
+            _controllers[X2_BOOSTER] =
+                    new ControllerData(typeof(X2BoosterController), InitController<X2BoosterController, X2BoosterModel>);
             _controllers[BATTERY] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
+            
         }
 
         public Component AttachController(PrefabModel model)

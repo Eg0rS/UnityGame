@@ -30,6 +30,7 @@ namespace Drone.World.Event
         public const string TAKE_BATTERY = "TakeBattery";
         public const string TAKE_SPEED = "TakeSpeed";
         public const string TAKE_SHIELD = "TakeShield";
+        public const string TAKE_X2 = "TakeX2";
 
         public DroneModel DroneModel { get; private set; }
         public BoosterDescriptor SpeedBooster { get; private set; }

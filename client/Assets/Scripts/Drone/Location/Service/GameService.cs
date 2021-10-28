@@ -42,6 +42,9 @@ namespace Drone.Location.Service
         private IGestureService _gestureService;
 
         [Inject]
+        private IoCProvider<BoosterService> _boosterService;
+
+        [Inject]
         private LevelService _levelService;
 
         [Inject]
@@ -128,7 +131,12 @@ namespace Drone.Location.Service
 
         private void OnTakeChip(WorldEvent worldEvent)
         {
-            _droneModel.countChips++;
+            if (_boosterService.Require().IsX2Activate) {
+                _droneModel.countChips += 2;
+            } else {
+                _droneModel.countChips++;
+            }
+
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
         }
 
