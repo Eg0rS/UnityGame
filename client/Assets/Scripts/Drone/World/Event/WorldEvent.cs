@@ -26,8 +26,6 @@ namespace Drone.World.Event
         public const string DISABLE_SHIELD = "DisableShield";
         public const string ENABLE_SPEED = "EnableSpeed";
         public const string DISABLE_SPEED = "DisableSpeed";
-        public const string ENABLE_MAGNET = "EnableMagnet";
-        public const string DISABLE_MAGNET = "DisableMagnet";
         public const string TAKE_CHIP = "TakeChip";
         public const string TAKE_BATTERY = "TakeBattery";
         public const string TAKE_SPEED = "TakeSpeed";
@@ -40,10 +38,11 @@ namespace Drone.World.Event
         public ContactPoint[] ContactPoints { get; private set; }
         public float ImmersionDepth { get; private set; }
         public float Damage { get; private set; }
-        public float MagneticDistance { get; private set; }
+        public GameObject Drone { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
+            Drone = target;
         }
 
         public WorldEvent(string name, ContactPoint[] contactPoints, float immersionDepth, float damage) : base(name)
@@ -59,11 +58,6 @@ namespace Drone.World.Event
             ImmersionDepth = immersionDepth;
         }
 
-        public WorldEvent(string name, float distance) : base(name)
-        {
-            MagneticDistance = distance;
-        }
-
         public WorldEvent(string name, DroneModel droneModel) : base(name)
         {
             DroneModel = droneModel;
@@ -73,6 +67,7 @@ namespace Drone.World.Event
         {
             SpeedBooster = speedBooster;
         }
+        
 
         public WorldEvent(string name) : base(name)
         {

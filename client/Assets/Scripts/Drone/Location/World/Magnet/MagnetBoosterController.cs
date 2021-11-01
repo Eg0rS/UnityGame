@@ -25,7 +25,7 @@ namespace Drone.Location.World.Magnet
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_MAGNET));
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_MAGNET, otherCollision.gameObject));
             }
         }
     }

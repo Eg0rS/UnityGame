@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using AgkCommons.Configurations;
 using AgkCommons.Event;
@@ -6,11 +7,14 @@ using AgkCommons.Resources;
 using Drone.Core.Service;
 using Drone.Descriptor;
 using Drone.Location.Model;
+using Drone.Location.Model.BaseModel;
+using Drone.Location.World.BonusChips;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Drone.Location.Service
 {
@@ -20,6 +24,8 @@ namespace Drone.Location.Service
         private ResourceService _resourceService;
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
+
+        private const float TIME_SCAN_FOR_CHIPS = 0.2f;
 
         public bool IsShieldActivate { get; private set; }
         public bool IsX2Activate { get; private set; }
@@ -54,7 +60,7 @@ namespace Drone.Location.Service
 
         private float GetDescriptorParametr(WorldObjectType objectType, string param)
         {
-            return float.Parse(GetDescriptorByType(WorldObjectType.SPEED_BOOSTER).Params[param]);
+            return float.Parse(GetDescriptorByType(objectType).Params[param]);
         }
 
         private void OnTakeSpeed(WorldEvent worldEvent)
@@ -92,16 +98,29 @@ namespace Drone.Location.Service
             IsX2Activate = false;
         }
 
-        private void OnTakeMagnet(WorldEvent obj)
+        private void OnTakeMagnet(WorldEvent worldEvent)
         {
-            _gameWorld.Require()
-                      .Dispatch(new WorldEvent(WorldEvent.ENABLE_MAGNET, GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Distance")));
+            StartCoroutine(ScanForChips(worldEvent.Drone));
             Invoke(nameof(DisableMagnet), GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Duration"));
+        }
+
+        private IEnumerator ScanForChips(GameObject drone)
+        {
+            while (true) {
+                Collider[] colliders = Physics.OverlapSphere(drone.transform.position, GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Radius"));
+                foreach (Collider collider in colliders) {
+                    PrefabModel model = collider.gameObject.GetComponent<PrefabModel>();
+                    if (model != null && model.ObjectType == WorldObjectType.BONUS_CHIPS) {
+                        collider.gameObject.GetComponent<BonusChipsController>().MoveToDrone(drone.transform.position);
+                    }
+                }
+                yield return new WaitForSeconds(TIME_SCAN_FOR_CHIPS);
+            }
         }
 
         private void DisableMagnet()
         {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_MAGNET));
+            StopCoroutine(ScanForChips(null));
         }
     }
 }

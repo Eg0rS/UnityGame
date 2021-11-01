@@ -4,7 +4,9 @@ using AgkCommons.Event;
 using BezierSolution;
 using Cinemachine;
 using Drone.Location.Model;
+using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Drone;
+using Drone.Location.World.BonusChips;
 using Drone.Location.World.Drone.Event;
 using Drone.World;
 using Drone.World.Event;
@@ -51,8 +53,6 @@ namespace Drone.Location.World.Drone
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, OnDisableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SHIELD, OnDisableShield);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_MAGNET, OnEnableMAGNET);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_MAGNET, OnDisableMAGNET);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnCrash);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASHED, OnCrashed);
             _droneControlService.AddListener<ControllEvent>(ControllEvent.START_MOVE, OnStart);
@@ -232,14 +232,6 @@ namespace Drone.Location.World.Drone
         private void OnDisableShield(WorldEvent worldEvent)
         {
             _droneAnimationController.DisableShield();
-        }
-
-        private void OnEnableMAGNET(WorldEvent worldEvent)
-        {
-        }
-
-        private void OnDisableMAGNET(WorldEvent worldEvent)
-        {
         }
     }
 }
