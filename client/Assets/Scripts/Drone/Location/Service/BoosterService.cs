@@ -30,6 +30,8 @@ namespace Drone.Location.Service
         public bool IsShieldActivate { get; private set; }
         public bool IsX2Activate { get; private set; }
 
+        private Coroutine _magnetCoroutine;
+
         private Dictionary<string, BoosterDescriptor> _boosterDescriptors;
 
         public void Init()
@@ -100,7 +102,7 @@ namespace Drone.Location.Service
 
         private void OnTakeMagnet(WorldEvent worldEvent)
         {
-            StartCoroutine(ScanForChips(worldEvent.Drone));
+            _magnetCoroutine = StartCoroutine(ScanForChips(worldEvent.Drone));
             Invoke(nameof(DisableMagnet), GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Duration"));
         }
 
@@ -120,7 +122,7 @@ namespace Drone.Location.Service
 
         private void DisableMagnet()
         {
-            StopCoroutine(ScanForChips(null));
+            StopCoroutine(_magnetCoroutine);
         }
     }
 }

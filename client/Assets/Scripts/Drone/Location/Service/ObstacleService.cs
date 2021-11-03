@@ -17,7 +17,7 @@ namespace Drone.Location.Service
 
         private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.0315f;
 
-        private float damage = 3f; 
+        private float damage = 3f;
 
         public void Init()
         {
@@ -30,7 +30,8 @@ namespace Drone.Location.Service
                 return;
             }
             if (worldEvent.ImmersionDepth > MAX_DISTANCE_DEPTH_COLLIDER) {
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_LETHAL_CRASH));
+                // _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_LETHAL_CRASH));// todo определиться нужны ли летальные столкновения
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASH, worldEvent.ContactPoints, worldEvent.ImmersionDepth, damage));
             } else {
                 _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASH, worldEvent.ContactPoints, worldEvent.ImmersionDepth, damage));
             }

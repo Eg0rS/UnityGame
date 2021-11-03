@@ -58,7 +58,7 @@ namespace Drone.Location.Service
         private float _startTime;
         private DroneModel _droneModel;
         private Coroutine _fallingEnergy;
-        private int _batteryEnergy;
+        private int _batteryEnergy = 3;
 
         public void Init()
         {
