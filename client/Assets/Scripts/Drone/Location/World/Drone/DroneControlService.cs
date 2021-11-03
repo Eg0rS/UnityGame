@@ -1,152 +1,131 @@
 ﻿using System;
 using AgkCommons.Event;
 using AgkCommons.Extension;
+using Drone.Core.Service;
 using Drone.Location.World.Drone.Event;
+using Drone.World;
+using IoC.Attribute;
+using IoC.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
-using TouchPhase = UnityEngine.TouchPhase;
+using UnityEngine.InputSystem.LowLevel;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneControlService : GameEventDispatcher
+    public class DroneControlService : GameEventDispatcher , IWorldServiceInitiable
     {
-        #region const
+        [Inject]
+        private IoCProvider<GameWorld> _gameWorld;
+        private const float HORISONTAL_SWIPE_ANGLE = 0.40f;
+        private const float VERTICAL_SWIPE_ANGLE = 0.70f;
 
-        [FormerlySerializedAs("SWIPE_TRESHOLD")]
-        [Header("default value = 0.05")]
-        [Range(0.0f, 1.0f)]
-        [SerializeField]
-        private float _swipeTreshold = 0.03f;
+        private const float QUICK_GESTURE_TRESHOLD = 0.10f;
+        private const float LONG_TERM_GESTURE_TRESHOLD = 0.25f;
+        private const float GESTURE_SWITCH_TIME = 0.5f;
 
-        [FormerlySerializedAs("END_MOVE_TRESHOLD")]
-        [Header("default value = 0.1")]
-        [Range(0.0f, 1.0f)]
-        [SerializeField]
-        private float _endMoveTreshold = 0.07f;
-        
-        
-        [FormerlySerializedAs("HORISONTAL_SWIPE_ANGLE")]
-        [Header("default value = 0.30")]
-        [Range(0.0f, 0.90f)]
-        [SerializeField]
-        private double _horisontalSwipeAngle = 0.30;
-        
-        [FormerlySerializedAs("VERTICAL_SWIPE_ANGLE")]
-        [Header("default value = 0.70")]
-        [Range(0.0f, .90f)]
-        [SerializeField]
-        private double _verticalSwipeAngle = 0.7f;
-
-
-        #endregion
-
-        private float _width;
-        private float _height;
-
-        private Vector2 _currentTouch;
-        private Vector2 _startTouch;
+        private Vector2 _startPosition;
+        private Vector2 _currentPosition;
+        private float _startTime;
         private bool _isMoving;
-        private bool _swipeDone;
-        private Vector2 _movingVector;
-        
+        private float _width;
 
-        private void Awake()
+        private InputControl _inputControl;
+
+        
+        public void Init()
         {
             _width = Screen.width;
-            _height = Screen.height;
+           
+        }
+        private void Awake()
+        {
+            _inputControl = new InputControl();
+            _inputControl.Player.Touch.performed += ctx => Gesture(ctx.ReadValue<TouchState>());
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            if (Input.touchCount <= 0) {
-                return;
-            }
+            _inputControl.Enable();
+        }
 
-            Touch touch = Input.touches[Input.touchCount - 1];
+        private void OnDisable()
+        {
+            _inputControl.Disable();
+        }
+
+        private void Gesture(TouchState touch)
+        {
             switch (touch.phase) {
                 case TouchPhase.Began:
-                    _startTouch = touch.position;
-                    _currentTouch = touch.position;
+                    _startPosition = touch.position;
+                    _startTime = Time.time;
+                    _isMoving = false;
                     break;
                 case TouchPhase.Moved:
-                    _currentTouch = touch.position;
-                    DetectSwipe();
+                    _currentPosition = touch.position;
+                    DefGesture();
                     break;
                 case TouchPhase.Ended:
-                    _swipeDone = true;
-                    break;
-                case TouchPhase.Canceled:
-                    _swipeDone = true;
-                    break;
-                case TouchPhase.Stationary:
+
                     break;
             }
         }
 
-        private void DetectSwipe()
+        private void DefGesture()
         {
-            Vector2 currentSwipeVector = _currentTouch - _startTouch;
-            float lengthX = Mathf.Abs(currentSwipeVector.x / _width);
-            float lengthY = Mathf.Abs(currentSwipeVector.y / _height);
-
-            if (lengthX <= _swipeTreshold && lengthY <= _swipeTreshold) {
-                return;
+            if (Time.time - _startTime >= GESTURE_SWITCH_TIME) {
+                LongTermGesture();
+            } else {
+                QuickGesture();
             }
+        }
 
-            currentSwipeVector = RoundVector(currentSwipeVector);
-
-            bool vectorChanged = !_movingVector.Equals(currentSwipeVector);
-            if (vectorChanged) {
-                _swipeDone = false;
-                _isMoving = false;
-                _movingVector = currentSwipeVector;
-            }
-
-            if ((lengthX >= _swipeTreshold || lengthY >= _swipeTreshold) && !_isMoving) {
-                _startTouch = _currentTouch;
+        private void QuickGesture()
+        {
+            Vector2 vector = _currentPosition - _startPosition;
+            float distance = Vector2.Distance(_currentPosition, _startPosition) / _width;
+            if (distance >= QUICK_GESTURE_TRESHOLD && !_isMoving) {
+                vector = RoundVector(vector);
                 _isMoving = true;
-
-                Dispatch(new ControllEvent(ControllEvent.START_MOVE, currentSwipeVector));
-                Debug.Log("Start move: " + currentSwipeVector);
-                return;
+                _startPosition = _currentPosition;
+                _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
             }
+        }
 
-            if (_swipeDone) {
-                if (lengthX >= _endMoveTreshold || lengthY >= _endMoveTreshold) {
-                    _startTouch = _currentTouch;
-                    _isMoving = false;
-                    _movingVector = currentSwipeVector;
-                    Dispatch(new ControllEvent(ControllEvent.END_MOVE, currentSwipeVector));
-                    Debug.Log("Swape: " + currentSwipeVector);
-                }
+        private void LongTermGesture()
+        {
+            Vector2 vector = _currentPosition - _startPosition;
+            float distance = Vector2.Distance(_currentPosition, _startPosition) / _width;
+            if (distance >= LONG_TERM_GESTURE_TRESHOLD) {
+                vector = RoundVector(vector);
+                _startPosition = _currentPosition;
+                _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
             }
         }
 
         private Vector2 RoundVector(Vector2 vector)
         {
-            vector = vector.normalized;
-
             int xSign = Math.Sign(vector.x);
             int ySign = Math.Sign(vector.y);
             Vector2 absVector = vector.Abs();
 
             float hypotenuse = Vector2.Distance(new Vector2(0, 0), absVector);
-
             double angle = Math.Sin(absVector.y / hypotenuse);
-            Vector2 swipeVector = new Vector2();
-            if (angle > 0.00 && angle <= _horisontalSwipeAngle) {
-                swipeVector.x = 1 * xSign;
-                swipeVector.y = 0;
-            } else if (angle > _horisontalSwipeAngle && angle <= _verticalSwipeAngle) {
-                swipeVector.x = 1 * xSign;
-                swipeVector.y = 1 * ySign;
-                
-            } else if (angle > _verticalSwipeAngle && angle <= 0.90) {
-                swipeVector.x = 0;
-                swipeVector.y = 1 * ySign;
+
+            Vector2 gestureVector = new Vector2();
+            if (angle >= 0.00 && angle <= HORISONTAL_SWIPE_ANGLE) {
+                gestureVector.x = 1 * xSign;
+                gestureVector.y = 0;
+            } else if (angle > HORISONTAL_SWIPE_ANGLE && angle < VERTICAL_SWIPE_ANGLE) {
+                gestureVector.x = 1 * xSign;
+                gestureVector.y = 1 * ySign;
+            } else if (angle >= VERTICAL_SWIPE_ANGLE && angle <= 0.90) {
+                gestureVector.x = 0;
+                gestureVector.y = 1 * ySign;
+            } else {
+                throw new Exception("vector not difined");
             }
-            
-            return swipeVector;
+            return gestureVector;
         }
     }
 }
