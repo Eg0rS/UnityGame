@@ -30,8 +30,8 @@ namespace Drone.Location.Service
                 return;
             }
             if (worldEvent.ImmersionDepth > MAX_DISTANCE_DEPTH_COLLIDER) {
-                // _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_LETHAL_CRASH));// todo определиться нужны ли летальные столкновения
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASH, worldEvent.ContactPoints, worldEvent.ImmersionDepth, damage));
+                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_LETHAL_CRASH)); // todo определиться нужны ли летальные столкновения
+                //_gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASH, worldEvent.ContactPoints, worldEvent.ImmersionDepth, damage));
             } else {
                 _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASH, worldEvent.ContactPoints, worldEvent.ImmersionDepth, damage));
             }
