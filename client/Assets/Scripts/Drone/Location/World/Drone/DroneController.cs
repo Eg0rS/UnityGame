@@ -34,14 +34,16 @@ namespace Drone.Location.World.Drone
 
         public void Init(DronePrefabModel model)
         {
-            _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
+            _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.START_FLIGHT, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SPEED, EnableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DISABLE_SPEED, DisableSpeedBoost);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
             _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.GESTURE, OnGesture);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, SetParameters);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.CRASH, Deceleration);
+            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.PLAY_ANIMATE, OnPlayAnimation);
 
             _sequence = DOTween.Sequence();
         }
@@ -50,7 +52,6 @@ namespace Drone.Location.World.Drone
         {
             _droneAnimationController.OnPlayAnimation(obj);
         }
-
         private void SetParameters(WorldEvent worldEvent)
         {
             _bezier.enabled = false;
@@ -101,15 +102,6 @@ namespace Drone.Location.World.Drone
             DotWeenMove(newPosition);
         }
 
-        private void DotWeenMove(Vector3 newPos)
-        {
-            _mobility = _basemobility * (MINIMAL_SPEED / _bezier.speed);
-            Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.rotation.y, _droneTargetPosition.x - newPos.x) * 45;
-            _droneTargetPosition = newPos;
-            _sequence.Append(transform.DOLocalMove(newPos, _mobility))
-                     .Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
-        }
-
         private Vector3 NewPosition(Vector3 dronPos, Vector3 swipe)
         {
             Vector3 newPos = dronPos + swipe;
@@ -129,11 +121,26 @@ namespace Drone.Location.World.Drone
             return newPosition;
         }
 
+        private void DotWeenMove(Vector3 newPos)
+        {
+            _mobility = _basemobility * (MINIMAL_SPEED / _bezier.speed);
+            Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.rotation.y, _droneTargetPosition.x - newPos.x) * 45;
+            _droneTargetPosition = newPos;
+            _sequence.Append(transform.DOLocalMove(newPos, _mobility));
+            //.Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
+        }
+
+        private void Deceleration(WorldEvent objectEvent)
+        {
+            _bezier.speed /= 2;
+            // _bezier.speed = 0;
+        }
+
         private void EnableSpeedBoost(WorldEvent objectEvent)
         {
             _bezier.speed = _maxSpeed;
         }
-        
+
         private void DisableSpeedBoost(WorldEvent objectEvent)
         {
             // _maxSpeed /= float.Parse(objectEvent.SpeedBooster.Params["SpeedBoost"]);
