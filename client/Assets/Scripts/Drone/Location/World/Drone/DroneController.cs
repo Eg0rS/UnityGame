@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using AgkCommons.Event;
+﻿using AgkCommons.Event;
 using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Drone;
@@ -15,23 +14,25 @@ namespace Drone.Location.World.Drone
 {
     public class DroneController : GameEventDispatcher, IWorldObjectController<DronePrefabModel>
     {
+        private const float MINIMAL_SPEED = 3.0f;
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
-
+        
         private DroneAnimationController _droneAnimationController;
+        private BezierWalkerWithSpeed _bezier;
 
+        private bool _isGameRun;
+        
         private float _acceleration;
         private float _maxSpeed;
-        private float _basemobility;
         private float _mobility;
-        private BezierWalkerWithSpeed _bezier;
-        private Vector3 _droneTargetPosition = Vector3.zero;
-        private const float MINIMAL_SPEED = 3.0f;
-        private bool _isGameRun;
-        public WorldObjectType ObjectType { get; }
+        private float _basemobility;
+        
+        private Vector3 _droneTargetPosition;
 
         private Sequence _sequence;
-
+        
+        public WorldObjectType ObjectType { get; }
         public void Init(DronePrefabModel model)
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
@@ -52,6 +53,7 @@ namespace Drone.Location.World.Drone
         {
             _droneAnimationController.OnPlayAnimation(obj);
         }
+
         private void SetParameters(WorldEvent worldEvent)
         {
             _bezier.enabled = false;
@@ -124,10 +126,10 @@ namespace Drone.Location.World.Drone
         private void DotWeenMove(Vector3 newPos)
         {
             _mobility = _basemobility * (MINIMAL_SPEED / _bezier.speed);
-            Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.rotation.y, _droneTargetPosition.x - newPos.x) * 45;
+            Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 45;
             _droneTargetPosition = newPos;
-            _sequence.Append(transform.DOLocalMove(newPos, _mobility));
-            //.Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
+            _sequence.Append(transform.DOLocalMove(newPos, _mobility))
+                     .Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
         }
 
         private void Deceleration(WorldEvent objectEvent)

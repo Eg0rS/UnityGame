@@ -12,7 +12,7 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneControlService : GameEventDispatcher , IWorldServiceInitiable
+    public class DroneControlService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
@@ -23,29 +23,27 @@ namespace Drone.Location.World.Drone
         private const float LONG_TERM_GESTURE_TRESHOLD = 0.25f;
         private const float GESTURE_SWITCH_TIME = 0.5f;
 
-        private Vector2 _startPosition;
+        private Vector2 _beginPosition;
         private Vector2 _currentPosition;
         private float _startTime;
-        private bool _isMoving;
+        private bool _isQuickGestureDone;
         private float _width;
 
         private InputControl _inputControl;
 
-        
         public void Init()
         {
             _width = Screen.width;
-           
-        }
-        private void Awake()
-        {
-            _inputControl = new InputControl();
-            _inputControl.Player.Touch.performed += ctx => Gesture(ctx.ReadValue<TouchState>());
         }
 
         private void OnEnable()
         {
             _inputControl.Enable();
+        }
+        private void Awake()
+        {
+            _inputControl = new InputControl();
+            _inputControl.Player.Touch.performed += ctx => OnGesture(ctx.ReadValue<TouchState>());
         }
 
         private void OnDisable()
@@ -53,20 +51,20 @@ namespace Drone.Location.World.Drone
             _inputControl.Disable();
         }
 
-        private void Gesture(TouchState touch)
+        private void OnGesture(TouchState touch)
         {
+            if (Time.timeScale == 0) {
+                return;
+            }
             switch (touch.phase) {
                 case TouchPhase.Began:
-                    _startPosition = touch.position;
+                    _beginPosition = touch.position;
                     _startTime = Time.time;
-                    _isMoving = false;
+                    _isQuickGestureDone = false;
                     break;
                 case TouchPhase.Moved:
                     _currentPosition = touch.position;
                     DefGesture();
-                    break;
-                case TouchPhase.Ended:
-
                     break;
             }
         }
@@ -82,23 +80,23 @@ namespace Drone.Location.World.Drone
 
         private void QuickGesture()
         {
-            Vector2 vector = _currentPosition - _startPosition;
-            float distance = Vector2.Distance(_currentPosition, _startPosition) / _width;
-            if (distance >= QUICK_GESTURE_TRESHOLD && !_isMoving) {
+            Vector2 vector = _currentPosition - _beginPosition;
+            float distance = Vector2.Distance(_currentPosition, _beginPosition) / _width;
+            if (distance >= QUICK_GESTURE_TRESHOLD && !_isQuickGestureDone) {
                 vector = RoundVector(vector);
-                _isMoving = true;
-                _startPosition = _currentPosition;
+                _isQuickGestureDone = true;
+                _beginPosition = _currentPosition;
                 _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
             }
         }
 
         private void LongTermGesture()
         {
-            Vector2 vector = _currentPosition - _startPosition;
-            float distance = Vector2.Distance(_currentPosition, _startPosition) / _width;
+            Vector2 vector = _currentPosition - _beginPosition;
+            float distance = Vector2.Distance(_currentPosition, _beginPosition) / _width;
             if (distance >= LONG_TERM_GESTURE_TRESHOLD) {
                 vector = RoundVector(vector);
-                _startPosition = _currentPosition;
+                _beginPosition = _currentPosition;
                 _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
             }
         }
@@ -123,7 +121,7 @@ namespace Drone.Location.World.Drone
                 gestureVector.x = 0;
                 gestureVector.y = 1 * ySign;
             } else {
-                throw new Exception("vector not difined");
+                throw new Exception("Vector is not difined");
             }
             return gestureVector;
         }
