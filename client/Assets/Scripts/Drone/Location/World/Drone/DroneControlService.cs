@@ -20,7 +20,7 @@ namespace Drone.Location.World.Drone
         private const float VERTICAL_SWIPE_ANGLE = 0.70f;
 
         private const float QUICK_GESTURE_TRESHOLD = 0.10f;
-        private const float LONG_TERM_GESTURE_TRESHOLD = 0.25f;
+        private const float LONG_TERM_GESTURE_TRESHOLD = 0.20f;
         private const float GESTURE_SWITCH_TIME = 0.5f;
 
         private Vector2 _beginPosition;
