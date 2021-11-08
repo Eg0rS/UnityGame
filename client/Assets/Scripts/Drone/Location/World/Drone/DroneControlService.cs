@@ -1,13 +1,18 @@
 ﻿using System;
 using AgkCommons.Event;
 using AgkCommons.Extension;
+using DigitalRubyShared;
 using Drone.Core.Service;
 using Drone.Location.World.Drone.Event;
 using Drone.World;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.LowLevel;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Drone.Location.World.Drone
@@ -30,20 +35,50 @@ namespace Drone.Location.World.Drone
         private float _width;
 
         private InputControl _inputControl;
+        private InputAction _gesture;
 
         public void Init()
         {
             _width = Screen.width;
+            
         }
 
         private void OnEnable()
         {
             _inputControl.Enable();
+            
+            _gesture.Enable();
+            
         }
         private void Awake()
         {
+            //
             _inputControl = new InputControl();
-            _inputControl.Player.Touch.performed += ctx => OnGesture(ctx.ReadValue<TouchState>());
+            _gesture = _inputControl.Player.Touch;
+            _gesture.performed += Gest;
+            //_inputControl.Player.Touch.performed += ctx => OnGesture(ctx.ReadValue<TouchState>());
+        }
+        private void Gest(InputAction.CallbackContext obj)
+        {
+            TouchState a = obj.ReadValue<TouchState>();
+            OneTouch(a);
+        }
+
+        private void OneTouch(TouchState touchState)
+        {
+            Debug.Log("asds");
+            TouchPhase phase = touchState.phase;
+            switch (phase) {
+                case TouchPhase.Began:
+                    _beginPosition = touchState.position;
+                    _startTime = Time.time;
+                    _isQuickGestureDone = false;
+                    break;
+                case TouchPhase.Moved:
+                    _currentPosition = touchState.position;
+                    DefGesture();
+                    break;
+            }
         }
 
         private void OnDisable()
@@ -51,23 +86,62 @@ namespace Drone.Location.World.Drone
             _inputControl.Disable();
         }
 
-        private void OnGesture(TouchState touch)
+       
+
+        private void Ma()
         {
-            if (Time.timeScale == 0) {
-                return;
-            }
-            switch (touch.phase) {
-                case TouchPhase.Began:
-                    _beginPosition = touch.position;
-                    _startTime = Time.time;
-                    _isQuickGestureDone = false;
-                    break;
-                case TouchPhase.Moved:
-                    _currentPosition = touch.position;
-                    DefGesture();
-                    break;
-            }
+            Debug.Log("aaaaa");
         }
+
+        // private void OnGesture(TouchControl touch)
+        // {
+        //     Debug.Log("tousch");
+        //     
+        //     // switch (touch.phase) {
+        //     //     case TouchState:
+        //     //         _beginPosition = touch.screenPosition;
+        //     //         _startTime = Time.time;
+        //     //         _isQuickGestureDone = false;
+        //     //         break;
+        //     //     case UnityEngine.InputSystem.TouchPhase.Moved:
+        //     //         _currentPosition = touch.screenPosition;
+        //     //         DefGesture();
+        //     //         break;
+        //     //     case UnityEngine.InputSystem.TouchPhase.Stationary:
+        //     //         Debug.LogWarning("stationary");
+        //     //         break;
+        //     // }
+        // }
+
+        //upate input
+        /*  private void Update()
+          {
+              if (Input.touchCount > 0) {
+                  Touch touch = Input.touches[0];
+                  OnGesture(touch);
+              }
+          }
+ 
+         
+           private void OnGesture(Touch touch)
+         {
+             switch (touch.phase) {
+                 case TouchPhase.Began:
+                     _beginPosition = touch.position;
+                     _startTime = Time.time;
+                     _isQuickGestureDone = false;
+                     break;
+                 case TouchPhase.Moved:
+                     _currentPosition = touch.position;
+                     DefGesture();
+                     break;
+                 case TouchPhase.Stationary:
+                     _beginPosition = touch.position;
+                     _startTime = Time.time;
+                     _isQuickGestureDone = false;
+                     break;
+             }
+         }*/
 
         private void DefGesture()
         {
