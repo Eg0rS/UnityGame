@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6118821088854455051}
   - component: {fileID: 8290735579910784961}
   - component: {fileID: 8128521510067621245}
+  - component: {fileID: 6142151748278458501}
+  - component: {fileID: 3814015968488389517}
   m_Layer: 0
   m_Name: pfBattery
   m_TagString: Untagged
@@ -95,3 +97,29 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.30551848, y: 0.49066395, z: 0.17192708}
   m_Center: {x: 0.001520887, y: -0.011237718, z: 0}
+--- !u!114 &6142151748278458501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7498036418034918932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d1f59ac743d4221a74ea8b80ae6e5bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectType: 3
+--- !u!114 &3814015968488389517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7498036418034918932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d78d0e7708bc824408a1148165e710e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1

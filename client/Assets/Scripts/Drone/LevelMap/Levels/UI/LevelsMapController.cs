@@ -104,6 +104,7 @@ namespace Drone.LevelMap.Levels.UI
 
         private void UpdateLevels(List<LevelViewModel> levelViewModels)
         {
+            _currentLevelId = _levelViewModels.Find(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel())).LevelDescriptor.Id;
             foreach (ProgressMapItemController spotController in _progressMapItemController) {
                 LevelDescriptor descriptor = spotController.LevelViewModel.LevelDescriptor;
                 LevelViewModel model = levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));

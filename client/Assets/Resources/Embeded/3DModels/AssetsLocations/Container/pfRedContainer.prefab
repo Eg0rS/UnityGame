@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 3330320903617315641}
   - component: {fileID: 1844354489157684380}
   - component: {fileID: 4502616574791055446}
+  - component: {fileID: 186636091136649560}
+  - component: {fileID: 6002065416249076003}
   m_Layer: 0
   m_Name: pfRedContainer
   m_TagString: Untagged
@@ -81,3 +83,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &186636091136649560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2701171981366811011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectType: 2
+--- !u!65 &6002065416249076003
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2701171981366811011}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.9740093, y: 2.9995894, z: 8.040365}
+  m_Center: {x: 0.0000019073486, y: 1.4997947, z: -0.0000076293945}

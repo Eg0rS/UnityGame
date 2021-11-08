@@ -3,15 +3,26 @@
     <boosters>
         <booster id="SpeedBooster" type="SPEED_BOOSTER">
             <params>
-                <param key="SpeedBoost" value="1,6"/>
-                <param key="AccelerationBoost" value="1,6"/>
+                <param key="SpeedBoost" value="1,5"/>
+                <param key="AccelerationBoost" value="1,5"/>
                 <param key="NeedsEnergy" value="3"/>
-                <param key="Duration" value="8,0"/>
+                <param key="Duration" value="6,0"/>
             </params>
         </booster>
         <booster id="ShieldBooster" type="SHIELD_BOOSTER">
             <params>
                 <param key="Duration" value="8"/>
+            </params>
+        </booster>
+        <booster id="X2Booster" type="X2_BOOSTER">
+            <params>
+                <param key="Duration" value="6"/>
+            </params>
+        </booster>
+        <booster id="MagnetBooster" type="MAGNET_BOOSTER">
+            <params>
+                <param key="Duration" value="6"/>
+                <param key="Radius" value="6"/>
             </params>
         </booster>
     </boosters>
