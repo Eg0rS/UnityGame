@@ -4,11 +4,9 @@ namespace Drone.Location.Model.Obstacle
 {
     public class ObstacleModel : PrefabModel
     {
-        public static float Damage { get; private set; }
         public void Awake()
         {
             ObjectType = WorldObjectType.OBSTACLE;
-            Damage = 13f;
         }
     }
 }
