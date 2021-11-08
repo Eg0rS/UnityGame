@@ -237,6 +237,7 @@ namespace Drone.LevelMap.Levels.Service
         private void SaveProgress(PlayerProgressModel model)
         {
             _progressRepository.Set(model);
+            Dispatch(new LevelEvent(LevelEvent.UPDATED));
         }
 
         private void LoadLevelsDescriptors(Configuration config, object[] loadparameters)

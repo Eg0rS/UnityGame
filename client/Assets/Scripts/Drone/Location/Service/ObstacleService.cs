@@ -15,7 +15,7 @@ namespace Drone.Location.Service
         [Inject]
         private IoCProvider<BoosterService> _boosterService;
 
-        private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.0315f;
+        private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.029f;
 
         private float damage = 3f;
 

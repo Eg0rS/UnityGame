@@ -28,7 +28,7 @@ namespace Drone.Location.Service
         {
             Promise promise = new Promise();
             _gameOverlay = arg;
-            _screenStructureManager.AttachToOverlay(_gameOverlay.gameObject);
+            _screenStructureManager.AttachToSafeArea(_gameOverlay.gameObject);
             promise.Resolve();
             return promise;
         }

@@ -1,0 +1,121 @@
+{
+    "name": "InputControl",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "f88bde9c-f6e6-4c0a-befa-8f6db052881f",
+            "actions": [
+                {
+                    "name": "Touch",
+                    "type": "Value",
+                    "id": "1576babe-0ffa-41b8-8fd6-f8e8f7424902",
+                    "expectedControlType": "Touch",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Gesture",
+                    "type": "Button",
+                    "id": "291faeab-efeb-4fd3-ad82-fce356aa4b46",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "GestureStartPosition",
+                    "type": "PassThrough",
+                    "id": "d3123e77-21fd-4739-87dd-3288c4e6b77e",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "GesturePosition",
+                    "type": "PassThrough",
+                    "id": "e1c9ec61-81e1-4e2d-a2ab-fe01662013e6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "GestureTime",
+                    "type": "PassThrough",
+                    "id": "98234dc0-879e-49cc-9172-bc9b65b01673",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "bb3747ed-838e-418c-9f0c-5e02e4b55d20",
+                    "path": "<Touchscreen>/touch0/startPosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gesture",
+                    "action": "GestureStartPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a995f488-5bd6-474b-a84b-dc7271ef9a35",
+                    "path": "<Touchscreen>/touch0/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GesturePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d122b5b2-2a07-40a8-9c6e-3b1b34d741cd",
+                    "path": "<Touchscreen>/touch0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "884117ef-2d7e-4fc6-8198-324da04aacdc",
+                    "path": "<Touchscreen>/touch0/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gesture",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "49a75e94-2a91-4e3a-97dd-db1828a9ff9f",
+                    "path": "<Touchscreen>/touch0/startTime",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GestureTime",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Gesture",
+            "bindingGroup": "Gesture",
+            "devices": [
+                {
+                    "devicePath": "<Touchscreen>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
