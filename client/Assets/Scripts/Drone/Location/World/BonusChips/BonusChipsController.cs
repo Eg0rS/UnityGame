@@ -1,4 +1,6 @@
-﻿using Drone.Location.Model;
+﻿using System;
+using System.Collections;
+using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.BonusChips;
 using Drone.World;
@@ -15,6 +17,15 @@ namespace Drone.Location.World.BonusChips
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
+        private float _speedForMagnetic = 3f;
+        private float _coefIncreaseSpeed = 3f;
+
+        private bool _isCollected;
+        private bool _isMagnetic;
+        private Vector3 _dronePosition;
+        private Vector3 _startPosition;
+        private float _coefCompleteWay;
+
         public void Init(BonusChipsModel model)
         {
             ObjectType = model.ObjectType;
@@ -25,7 +36,32 @@ namespace Drone.Location.World.BonusChips
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
+                _isCollected = true;
                 _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_CHIP));
+            }
+        }
+
+        public void Update()
+        {
+            if (_isCollected || !_isMagnetic) {
+                return;
+            }
+            _coefCompleteWay += _speedForMagnetic * Time.deltaTime;
+            transform.position = Vector3.Lerp(_startPosition, _dronePosition, _coefCompleteWay);
+        }
+
+        public void MoveToDrone(Vector3 position)
+        {
+            if (_isCollected) {
+                return;
+            }
+            _dronePosition = position;
+            _startPosition = transform.position;
+            _coefCompleteWay = 0;
+            if (_isMagnetic) {
+                _speedForMagnetic *= _coefIncreaseSpeed;
+            } else {
+                _isMagnetic = true;
             }
         }
     }
