@@ -9,14 +9,6 @@ namespace Drone.Location.World.Drone
         amDisableShield,
         amEnableSpeed,
         amDisableSpeed,
-        amIdle,
-        amMoveRight,
-        amMoveLeft,
-        amMoveUp,
-        amMoveDown,
-        amMoveUpRight,
-        amMoveUpLeft,
-        amMoveDownRight,
-        amMoveDownLeft
+        amIdle
     }
 }
