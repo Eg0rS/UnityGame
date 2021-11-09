@@ -35,38 +35,52 @@ namespace Drone.Location.World.Drone
         private float _width;
 
         private InputControl _inputControl;
-        private InputAction _gesture;
 
         public void Init()
         {
             _width = Screen.width;
-            
         }
 
         private void OnEnable()
         {
             _inputControl.Enable();
-            
-            _gesture.Enable();
-            
         }
+
         private void Awake()
         {
-            //
+            Debug.Log(Touchscreen.current);
             _inputControl = new InputControl();
-            _gesture = _inputControl.Player.Touch;
-            _gesture.performed += Gest;
-            //_inputControl.Player.Touch.performed += ctx => OnGesture(ctx.ReadValue<TouchState>());
+            TouchSimulation.Enable();
+            
+            //_inputControl.Player.Touch.performed += context =>perf(context);
+            
+            
+            _inputControl.Player.touch1.performed += touch;
+            _inputControl.Player.touch2.performed += tval;
+            _inputControl.Player.touch3.performed += tany;
+
         }
-        private void Gest(InputAction.CallbackContext obj)
+        
+        private void tany(InputAction.CallbackContext obj)
         {
-            TouchState a = obj.ReadValue<TouchState>();
-            OneTouch(a);
+            Debug.Log("touch any + " + obj.ReadValueAsObject());
         }
+        private void tval(InputAction.CallbackContext obj)
+        {
+            Debug.Log("touch val + " + obj.ReadValueAsObject());
+        }
+
+        private void touch(InputAction.CallbackContext obj)
+        {
+            Debug.Log("touch bool + " + obj.ReadValueAsObject());
+            var t =  obj.ReadValue<TouchState>();
+            Debug.Log(t);
+        }
+        
 
         private void OneTouch(TouchState touchState)
         {
-            Debug.Log("asds");
+            Debug.Log("process");
             TouchPhase phase = touchState.phase;
             switch (phase) {
                 case TouchPhase.Began:
@@ -85,8 +99,6 @@ namespace Drone.Location.World.Drone
         {
             _inputControl.Disable();
         }
-
-       
 
         private void Ma()
         {
