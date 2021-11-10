@@ -15,29 +15,28 @@ namespace Drone.Location.World.Drone
 {
     public class DroneController : GameEventDispatcher, IWorldObjectController<DronePrefabModel>
     {
-
+        public WorldObjectType ObjectType { get; }
         private const float MINIMAL_SPEED = 3.0f;
-
+        private const float CRASH_NOISE = 2;
+        private const float CRASH_NOISE_DURATION = 0.5f;
+        
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
         private DroneAnimationController _droneAnimationController;
-
-        private float _acceleration = 0.2f;
-        private float _maxSpeed;
-        private float _basemobility;
-        private float _mobility;
-        private BezierWalkerWithSpeed _bezier;
-        private Coroutine _isMoving;
-        private CinemachineBasicMultiChannelPerlin _cameraNoise;
-        private Vector3 _droneTargetPosition = Vector3.zero;
-        private float _minimalSpeed = 3.0f;
-        private bool _isGameRun;
-        public WorldObjectType ObjectType { get; }
-        private float _crashNoise = 2;
-        private float _crashNoiseDuration = 0.5f;
         
+        private BezierWalkerWithSpeed _bezier;
+        private CinemachineBasicMultiChannelPerlin _cameraNoise;
+        
+        private float _acceleration;
+        private float _maxSpeed;
+        private float _baseMobility;
+        private float _mobility;
+        
+        private Vector3 _droneTargetPosition = Vector3.zero;
+        private bool _isGameRun;
         private Sequence _sequence;
+        
 
         public void Init(DronePrefabModel model)
         {
@@ -88,7 +87,7 @@ namespace Drone.Location.World.Drone
 
         private void DotWeenMove(Vector3 newPos)
         {
-            _mobility = _basemobility * (MINIMAL_SPEED / _bezier.speed);
+            _mobility = _baseMobility * (MINIMAL_SPEED / _bezier.speed);
             Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 45;
             _droneTargetPosition = newPos;
             _sequence.Append(transform.DOLocalMove(newPos, _mobility))
@@ -98,10 +97,10 @@ namespace Drone.Location.World.Drone
         private void OnSetParameters(WorldEvent worldEvent)
         {
             _bezier.enabled = false;
-            _bezier.speed = _minimalSpeed;
+            _bezier.speed = MINIMAL_SPEED;
             _maxSpeed = worldEvent.DroneModel.maxSpeed;
             _acceleration = worldEvent.DroneModel.acceleration;
-            _basemobility = worldEvent.DroneModel.mobility;
+            _baseMobility = worldEvent.DroneModel.mobility;
         }
 
         private void OnStartGame(WorldEvent worldEvent)
@@ -131,8 +130,8 @@ namespace Drone.Location.World.Drone
         {
             _bezier.speed /= 2;
             _droneAnimationController.OnCrash(worldEvent);
-            _cameraNoise.m_AmplitudeGain += _crashNoise;
-            Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
+            _cameraNoise.m_AmplitudeGain += CRASH_NOISE;
+            Invoke(nameof(DisableCrashNoise), CRASH_NOISE_DURATION);
         }
 
         private void OnCrashed(WorldEvent worldEvent)
@@ -140,13 +139,13 @@ namespace Drone.Location.World.Drone
             _bezier.enabled = false;
             _droneAnimationController.OnCrashed();
             gameObject.SetActive(false);
-            _cameraNoise.m_AmplitudeGain += _crashNoise;
-            Invoke(nameof(DisableCrashNoise), _crashNoiseDuration);
+            _cameraNoise.m_AmplitudeGain += CRASH_NOISE;
+            Invoke(nameof(DisableCrashNoise), CRASH_NOISE_DURATION);
         }
 
         private void DisableCrashNoise()
         {
-            _cameraNoise.m_AmplitudeGain -= _crashNoise;
+            _cameraNoise.m_AmplitudeGain -= CRASH_NOISE;
         }
 
         private void OnEnableSpeedBoost(WorldEvent worldEvent)

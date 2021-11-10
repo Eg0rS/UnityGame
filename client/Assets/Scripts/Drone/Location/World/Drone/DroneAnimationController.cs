@@ -14,7 +14,6 @@ namespace Drone.Location.World.Drone
         private Animator _animator;
         private const float LACK_OF_SPEED = 0f;
         private float _animSpeed = 1f;
-        private DroneAnimState _lastDroneAnimMoveState = DroneAnimState.amIdle;
 
         private void Awake()
         {

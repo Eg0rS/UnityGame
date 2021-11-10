@@ -7,6 +7,7 @@ using Drone.World;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.LowLevel;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -40,30 +41,30 @@ namespace Drone.Location.World.Drone
         {
             _inputControl.Enable();
         }
-        private void Awake()
-        {
-            _inputControl = new InputControl();
-            _inputControl.Player.Touch.performed += ctx => OnGesture(ctx.ReadValue<TouchState>());
-        }
 
         private void OnDisable()
         {
             _inputControl.Disable();
         }
 
-        private void OnGesture(TouchState touch)
+        private void Awake()
         {
-            if (Time.timeScale == 0) {
-                return;
-            }
-            switch (touch.phase) {
+            _inputControl = new InputControl();
+            TouchSimulation.Enable();
+            _inputControl.Player.Touch.performed += ctx => OnTouch(ctx.ReadValue<TouchState>());
+        }
+
+        private void OnTouch(TouchState touchState)
+        {
+            TouchPhase touchPhase = touchState.phase;
+            switch (touchPhase) {
                 case TouchPhase.Began:
-                    _beginPosition = touch.position;
+                    _beginPosition = touchState.position;
                     _startTime = Time.time;
                     _isQuickGestureDone = false;
                     break;
                 case TouchPhase.Moved:
-                    _currentPosition = touch.position;
+                    _currentPosition = touchState.position;
                     DefGesture();
                     break;
             }

@@ -9,6 +9,5 @@ namespace Drone.Location.World.Drone
         amDisableShield,
         amEnableSpeed,
         amDisableSpeed,
-        amIdle
     }
 }
