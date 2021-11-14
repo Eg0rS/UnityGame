@@ -89,7 +89,7 @@ namespace Drone.Billing.UI
         private void DroneStoreButton()
         {
             CloseDialog();
-            _billingService.ShowDronStoreDialog();
+            _billingService.ShowDroneStoreDialog();
         }
         
         [UIOnClick("StoreCryptoButton")]

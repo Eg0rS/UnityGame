@@ -15,20 +15,16 @@ namespace Drone.Billing.Service
 {
     public class BillingService : GameEventDispatcher, IInitable
     {
-        [Inject]
-        private BillingRepository _creditShopRepository;
+        [Inject] private BillingRepository _billingRepository;
 
-        [Inject]
-        private ResourceService _resourceService;
+        [Inject] private ResourceService _resourceService;
 
-        [Inject]
-        private BillingDescriptorRegistry _billingDescriptorRegistry;
+        [Inject] private BillingDescriptorRegistry _billingDescriptorRegistry;
 
-        [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        [Inject] private IoCProvider<DialogManager> _dialogManager;
 
         private PlayerResourceModel _resourceModel;
-        
+
         public void Init()
         {
             _resourceModel = RequirePlayerResourceModel();
@@ -37,7 +33,8 @@ namespace Drone.Billing.Service
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration temp in config.GetList<Configuration>("billing.billingItem")) {
+            foreach (Configuration temp in config.GetList<Configuration>("billing.billingItem"))
+            {
                 BillingDescriptor shopItemDescriptor = new BillingDescriptor();
                 shopItemDescriptor.Configure(temp);
                 _billingDescriptorRegistry.BillingDescriptors.Add(shopItemDescriptor);
@@ -46,41 +43,40 @@ namespace Drone.Billing.Service
 
         public PlayerResourceModel RequirePlayerResourceModel()
         {
-            PlayerResourceModel model = _creditShopRepository.Get();
-            if (model == null) {
-                InitCreditsCount();
+            PlayerResourceModel model = _billingRepository.Get();
+            if (model == null)
+            {
+                InitPlayerResourceModel();
             }
-            return _creditShopRepository.Require();
+            return _billingRepository.Require();
         }
 
         private bool HasCreditShopModel()
         {
-            return (_creditShopRepository.Get() != null);
+            return (_billingRepository.Get() != null);
         }
 
-        private void InitCreditsCount()
+        private void InitPlayerResourceModel()
         {
-            if (!HasCreditShopModel()) {
-                PlayerResourceModel playerResourceModel = new PlayerResourceModel();
-                playerResourceModel.CreditsCount = 0;
-                playerResourceModel.CryptoCount = 0;
-                _creditShopRepository.Set(playerResourceModel);
-            }
-            SetCreditsCount(_resourceModel.CreditsCount);
-            SetCryptoCount(_resourceModel.CryptoCount);
+            PlayerResourceModel playerResourceModel = new PlayerResourceModel
+            {
+                CreditsCount = 0,
+                CryptoCount = 0
+            };
+            _billingRepository.Set(playerResourceModel);
         }
 
         public void SetCreditsCount(int count)
         {
             _resourceModel.CreditsCount = count;
-            _creditShopRepository.Set(_resourceModel);
+            _billingRepository.Set(_resourceModel);
             Dispatch(new BillingEvent(BillingEvent.UPDATED));
         }
-        
+
         public void SetCryptoCount(int count)
         {
             _resourceModel.CryptoCount = count;
-            _creditShopRepository.Set(_resourceModel);
+            _billingRepository.Set(_resourceModel);
             Dispatch(new BillingEvent(BillingEvent.UPDATED));
         }
 
@@ -98,13 +94,13 @@ namespace Drone.Billing.Service
         {
             SetCreditsCount(GetCreditsCount() + count);
         }
-        
+
         public void AddCrypto(int count)
         {
             SetCryptoCount(GetCryptoCount() + count);
         }
 
-        public void ShowDronStoreDialog()
+        public void ShowDroneStoreDialog()
         {
             _dialogManager.Require().Show<ShopDialog>();
         }
