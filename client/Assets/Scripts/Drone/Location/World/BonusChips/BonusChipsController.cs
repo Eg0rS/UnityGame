@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Drone.Location.Model;
+﻿using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.BonusChips;
 using Drone.World;
@@ -8,7 +6,6 @@ using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
-using DG.Tweening;
 
 namespace Drone.Location.World.BonusChips
 {
@@ -41,10 +38,8 @@ namespace Drone.Location.World.BonusChips
 
         private void Update()
         {
-            if (_isMagnetic && !_isCollected)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, _droneTransform.position,
-                    _speedForMagnetic * Time.deltaTime);
+            if (_isMagnetic && !_isCollected) {
+                transform.position = Vector3.MoveTowards(transform.position, _droneTransform.position, _speedForMagnetic * Time.deltaTime);
             }
         }
 
