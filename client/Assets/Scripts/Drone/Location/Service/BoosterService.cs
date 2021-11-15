@@ -20,10 +20,8 @@ namespace Drone.Location.Service
 {
     public class BoosterService : GameEventDispatcher, IWorldServiceInitiable
     {
-        [Inject]
-        private ResourceService _resourceService;
-        [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        [Inject] private ResourceService _resourceService;
+        [Inject] private IoCProvider<GameWorld> _gameWorld;
 
         private const float TIME_SCAN_FOR_CHIPS = 0.2f;
 
@@ -46,7 +44,8 @@ namespace Drone.Location.Service
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration conf in config.GetList<Configuration>("boosters.booster")) {
+            foreach (Configuration conf in config.GetList<Configuration>("boosters.booster"))
+            {
                 BoosterDescriptor boosterDescriptor = new BoosterDescriptor();
                 boosterDescriptor.Configure(conf);
                 _boosterDescriptors.Add(boosterDescriptor.Type, boosterDescriptor);
@@ -67,13 +66,15 @@ namespace Drone.Location.Service
 
         private void OnTakeSpeed(WorldEvent worldEvent)
         {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SPEED, GetDescriptorByType(WorldObjectType.SPEED_BOOSTER)));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.ENABLE_SPEED,
+                GetDescriptorByType(WorldObjectType.SPEED_BOOSTER)));
             Invoke(nameof(DisableSpeed), GetDescriptorParametr(WorldObjectType.SPEED_BOOSTER, "Duration"));
         }
 
         private void DisableSpeed()
         {
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SPEED, GetDescriptorByType(WorldObjectType.SPEED_BOOSTER)));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DISABLE_SPEED,
+                GetDescriptorByType(WorldObjectType.SPEED_BOOSTER)));
         }
 
         private void OnTakeShield(WorldEvent worldEvent)
@@ -108,12 +109,16 @@ namespace Drone.Location.Service
 
         private IEnumerator ScanForChips(GameObject drone)
         {
-            while (true) {
-                Collider[] colliders = Physics.OverlapSphere(drone.transform.position, GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Radius"));
-                foreach (Collider collider in colliders) {
+            while (true)
+            {
+                Collider[] colliders = Physics.OverlapSphere(drone.transform.position,
+                    GetDescriptorParametr(WorldObjectType.MAGNET_BOOSTER, "Radius"));
+                foreach (Collider collider in colliders)
+                {
                     PrefabModel model = collider.gameObject.GetComponent<PrefabModel>();
-                    if (model != null && model.ObjectType == WorldObjectType.BONUS_CHIPS) {
-                        collider.gameObject.GetComponent<BonusChipsController>().MoveToDrone(drone.transform.position);
+                    if (model != null && model.ObjectType == WorldObjectType.BONUS_CHIPS)
+                    {
+                        collider.gameObject.GetComponent<BonusChipsController>().MoveToDrone(drone.transform);
                     }
                 }
                 yield return new WaitForSeconds(TIME_SCAN_FOR_CHIPS);

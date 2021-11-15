@@ -8,6 +8,7 @@ using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using DG.Tweening;
 
 namespace Drone.Location.World.BonusChips
 {
@@ -17,14 +18,11 @@ namespace Drone.Location.World.BonusChips
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 
-        private float _speedForMagnetic = 3f;
-        private float _coefIncreaseSpeed = 3f;
+        private float _speedForMagnetic = 10f;
 
         private bool _isCollected;
         private bool _isMagnetic;
-        private Vector3 _dronePosition;
-        private Vector3 _startPosition;
-        private float _coefCompleteWay;
+        private Transform _droneTransform;
 
         public void Init(BonusChipsModel model)
         {
@@ -41,28 +39,19 @@ namespace Drone.Location.World.BonusChips
             }
         }
 
-        public void Update()
+        private void Update()
         {
-            if (_isCollected || !_isMagnetic) {
-                return;
+            if (_isMagnetic && !_isCollected)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, _droneTransform.position,
+                    _speedForMagnetic * Time.deltaTime);
             }
-            _coefCompleteWay += _speedForMagnetic * Time.deltaTime;
-            transform.position = Vector3.Lerp(_startPosition, _dronePosition, _coefCompleteWay);
         }
 
-        public void MoveToDrone(Vector3 position)
+        public void MoveToDrone(Transform droneTransform)
         {
-            if (_isCollected) {
-                return;
-            }
-            _dronePosition = position;
-            _startPosition = transform.position;
-            _coefCompleteWay = 0;
-            if (_isMagnetic) {
-                _speedForMagnetic *= _coefIncreaseSpeed;
-            } else {
-                _isMagnetic = true;
-            }
+            _isMagnetic = true;
+            _droneTransform = droneTransform;
         }
     }
 }
