@@ -4,7 +4,6 @@ using System.Linq;
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Cinemachine;
-using Drone.Location.World.Drone.Model;
 using Drone.World.Event;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace Drone.World
         [PublicAPI]
         public string WorldId { get; private set; }
 
-        private string _drone = "DroneCube";
+        private string _drone = "pfPlayerContainer";
 
         public void CreateWorld(string worldId)
         {
@@ -42,10 +41,14 @@ namespace Drone.World
             }
         }
 
-        [CanBeNull]
-        public GameObject GetDroneCube()
+        [NotNull]
+        public GameObject GetPlayerContainer()
         {
-            return GetGameObjectByName(_drone);
+            GameObject droneObject = GetGameObjectByName(_drone);
+            if (droneObject == null) {
+                throw new NotImplementedException("Container is not found");
+            }
+            return droneObject;
         }
 
         [NotNull]

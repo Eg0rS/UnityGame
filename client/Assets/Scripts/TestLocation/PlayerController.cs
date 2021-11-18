@@ -1,15 +1,11 @@
 ﻿using BezierSolution;
-
 using DG.Tweening;
-
-
 using UnityEngine;
 
 namespace TestLocation
 {
-    public class PlayerController: MonoBehaviour
+    public class PlayerController : MonoBehaviour
     {
-        
         private const float MINIMAL_SPEED = 3.0f;
 
         private BezierWalkerWithSpeed _bezier;
@@ -18,13 +14,13 @@ namespace TestLocation
         private float _maxSpeed;
         private float _baseMobility;
         private float _mobility;
-        
+
         private Vector3 _droneTargetPosition = Vector3.zero;
         private bool _isGameRun;
         private Sequence _sequence;
 
         private bool _firstGestureDone = false;
-        
+
         private void OnEnable()
         {
             InputManager.OnGesture += OnGesture;
@@ -34,12 +30,13 @@ namespace TestLocation
         {
             InputManager.OnGesture -= OnGesture;
         }
+
         private void Awake()
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _sequence = DOTween.Sequence();
         }
-        
+
         private void OnGesture(Vector2 vector)
         {
             if (!_firstGestureDone) {
@@ -54,7 +51,7 @@ namespace TestLocation
             }
             DotWeenMove(newPosition);
         }
-        
+
         private Vector3 NewPosition(Vector3 dronPos, Vector3 swipe)
         {
             Vector3 newPos = dronPos + swipe;
@@ -105,7 +102,7 @@ namespace TestLocation
             }
             SetBezierSpeed();
         }
-        
+
         private void SetBezierSpeed()
         {
             if (_bezier.speed >= _maxSpeed) {

@@ -20,16 +20,15 @@ namespace Drone.Location.World.Drone.Service
 
         [Inject]
         private ResourceService _resourceService;
-        
+
         [Inject]
         private InventoryService _inventoryService;
-        
+
         public void Init()
         {
             if (_droneDescriptorRegistry.DroneDescriptors.Count != 0) {
                 return;
             }
-            _logger.Debug("[DronService] В _dronDescriptorRegistry.DronDescriptors пусто ...");
             _resourceService.LoadConfiguration("Configs/drons@embeded")
                             .Then(x => {
                                 OnConfigLoaded(x);
@@ -44,8 +43,6 @@ namespace Drone.Location.World.Drone.Service
                 dronDescriptor.Configure(conf);
                 _droneDescriptorRegistry.DroneDescriptors.Add(dronDescriptor);
             }
-            _logger.Debug("[DronService] Теперь количество элементов в _dronDescriptorRegistry.DronDescriptors = "
-                          + _droneDescriptorRegistry.DroneDescriptors.Count);
         }
 
         [NotNull]

@@ -1,15 +1,13 @@
 using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
-using AgkCommons.Input.Gesture.Model.Gestures;
-using AgkCommons.Input.Gesture.Service;
 using AgkUI.Dialog.Service;
-using Cinemachine;
 using Drone.Core;
 using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Service;
+using Drone.Location.World.Drone.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
 using Drone.World;
@@ -39,9 +37,6 @@ namespace Drone.Location.Service
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private IGestureService _gestureService;
-
-        [Inject]
         private IoCProvider<BoosterService> _boosterService;
 
         [Inject]
@@ -54,7 +49,7 @@ namespace Drone.Location.Service
 
         private LevelDescriptor _levelDescriptor;
         private bool _isPlay;
-        private string _dronId;
+        
         private float _startTime;
         private DroneModel _droneModel;
         private Coroutine _fallingEnergy;
@@ -62,35 +57,21 @@ namespace Drone.Location.Service
 
         public void Init()
         {
-            _dronId = _levelService.SelectedDroneId;
+            _droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
-            _overlayManager.Require().HideLoadingOverlay(true);
-            _droneModel = new DroneModel(_droneService.GetDronById(_dronId).DroneDescriptor);
-            _gestureService.AddAnyTouchHandler(OnAnyTouch, false);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_BATTERY, OnTakeBattery);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnDroneCrash);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_LETHAL_CRASH, OnDroneLethalCrash);
-            CreateDrone(_dronId);
+            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_FLIGHT, StartFlight);
+            _overlayManager.Require().HideLoadingOverlay(true);
         }
 
-        private void CreateDrone(string dronId)
+        private void StartFlight(ControllEvent controllEvent)
         {
-            GameObject parent = _gameWorld.Require().GetDroneCube();
-            GameObject drone = Instantiate(Resources.Load<GameObject>(_droneService.GetDronById(dronId).DroneDescriptor.Prefab));
-            _gameWorld.Require().AddGameObject(drone, parent);
-            CinemachineVirtualCamera droneCamera = _gameWorld.Require().GetDroneCamera();
-            droneCamera.Follow = drone.transform;
-            droneCamera.LookAt = drone.transform;
-        }
-
-        private void OnAnyTouch(AnyTouch anyTouch)
-        {
-            if (_isPlay) {
-                return;
-            }
             _isPlay = true;
             _fallingEnergy = StartCoroutine(FallEnergy());
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.START_FLIGHT));
@@ -169,7 +150,6 @@ namespace Drone.Location.Service
         {
             _isPlay = false;
             Time.timeScale = 0f;
-            _gestureService.RemoveAnyTouchHandler(OnAnyTouch);
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
 

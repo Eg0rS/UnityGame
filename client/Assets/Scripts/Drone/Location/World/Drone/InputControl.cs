@@ -35,6 +35,15 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Tap"",
+                    ""type"": ""Button"",
+                    ""id"": ""4622322d-fa2c-4e6b-9382-4efc51c49cc9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -46,6 +55,17 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gesture"",
                     ""action"": ""Touch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""901682c5-8b33-45ce-a9c5-c3262c8b55d2"",
+                    ""path"": ""<Touchscreen>/primaryTouch/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gesture"",
+                    ""action"": ""Tap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -69,6 +89,7 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Touch = m_Player.FindAction("Touch", throwIfNotFound: true);
+        m_Player_Tap = m_Player.FindAction("Tap", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -129,11 +150,13 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Touch;
+    private readonly InputAction m_Player_Tap;
     public struct PlayerActions
     {
         private @InputControl m_Wrapper;
         public PlayerActions(@InputControl wrapper) { m_Wrapper = wrapper; }
         public InputAction @Touch => m_Wrapper.m_Player_Touch;
+        public InputAction @Tap => m_Wrapper.m_Player_Tap;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -146,6 +169,9 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
                 @Touch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                 @Touch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                 @Touch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
+                @Tap.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTap;
+                @Tap.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTap;
+                @Tap.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTap;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -153,6 +179,9 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
                 @Touch.started += instance.OnTouch;
                 @Touch.performed += instance.OnTouch;
                 @Touch.canceled += instance.OnTouch;
+                @Tap.started += instance.OnTap;
+                @Tap.performed += instance.OnTap;
+                @Tap.canceled += instance.OnTap;
             }
         }
     }
@@ -169,5 +198,6 @@ public partial class @InputControl : IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnTouch(InputAction.CallbackContext context);
+        void OnTap(InputAction.CallbackContext context);
     }
 }

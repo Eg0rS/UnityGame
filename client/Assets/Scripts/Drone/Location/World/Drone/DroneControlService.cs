@@ -7,6 +7,7 @@ using Drone.World;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.LowLevel;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
@@ -32,6 +33,8 @@ namespace Drone.Location.World.Drone
 
         private InputControl _inputControl;
 
+        private bool _isFirstTapDone;
+
         public void Init()
         {
             _width = Screen.width;
@@ -52,6 +55,16 @@ namespace Drone.Location.World.Drone
             _inputControl = new InputControl();
             TouchSimulation.Enable();
             _inputControl.Player.Touch.performed += ctx => OnTouch(ctx.ReadValue<TouchState>());
+            _inputControl.Player.Tap.started += ctx => OnTap(ctx);
+        }
+
+        private void OnTap(InputAction.CallbackContext ctx)
+        {
+            if (_isFirstTapDone) {
+                return;
+            }
+            _isFirstTapDone = true;
+            _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.START_FLIGHT));
         }
 
         private void OnTouch(TouchState touchState)

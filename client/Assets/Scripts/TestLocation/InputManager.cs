@@ -11,7 +11,7 @@ namespace TestLocation
         public delegate void GestureEvent(Vector2 vector);
 
         public static event GestureEvent OnGesture;
-        
+
         private const float HORISONTAL_SWIPE_ANGLE = 0.40f;
         private const float VERTICAL_SWIPE_ANGLE = 0.70f;
 
