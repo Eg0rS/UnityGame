@@ -6,16 +6,11 @@ namespace Drone
 {
     public class Rotate : MonoBehaviour
     {
-        [SerializeField] public float speed = 0;
 
         private void Start()
         {
-           // transform.do
+            transform.DORotate(new Vector3(0, 180, 0), 5, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart);
         }
-
-        void Update()
-        {
-            transform.Rotate(0, speed * Time.deltaTime, 0, Space.Self); 
-        }
+        
     }
 }
