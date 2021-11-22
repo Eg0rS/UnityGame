@@ -16,7 +16,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.Service
+namespace Drone.Location.Service.Game
 {
     public enum FailedReasons
     {
@@ -48,12 +48,9 @@ namespace Drone.Location.Service
         private const float TIME_FOR_DEAD = 1f;
 
         private LevelDescriptor _levelDescriptor;
-        private bool _isPlay;
         
         private float _startTime;
         private DroneModel _droneModel;
-        private Coroutine _fallingEnergy;
-        private int _batteryEnergy = 3;
 
         public void Init()
         {
@@ -62,19 +59,15 @@ namespace Drone.Location.Service
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_BATTERY, OnTakeBattery);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnDroneCrash);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_LETHAL_CRASH, OnDroneLethalCrash);
-            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_FLIGHT, StartFlight);
+            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, StartFlight);
             _overlayManager.Require().HideLoadingOverlay(true);
         }
 
         private void StartFlight(ControllEvent controllEvent)
         {
-            _isPlay = true;
-            _fallingEnergy = StartCoroutine(FallEnergy());
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.START_FLIGHT));
             _startTime = Time.time;
         }
 
@@ -121,12 +114,6 @@ namespace Drone.Location.Service
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
         }
 
-        private void OnTakeBattery(WorldEvent worldEvent)
-        {
-            _droneModel.energy += _batteryEnergy;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
-        }
-
         private void OnFinished(WorldEvent worldEvent)
         {
             Victory();
@@ -148,7 +135,6 @@ namespace Drone.Location.Service
 
         public void EndGame()
         {
-            _isPlay = false;
             Time.timeScale = 0f;
             _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
@@ -168,22 +154,6 @@ namespace Drone.Location.Service
             }
 
             return countStars;
-        }
-
-        private IEnumerator FallEnergy()
-        {
-            while (_isPlay) {
-                _droneModel.energy -= _droneModel.energyFall;
-                if (_droneModel.energy <= 0) {
-                    _droneModel.energy = 0;
-                    DroneFailed(FailedReasons.EnergyFalled);
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
-                    StopCoroutine(_fallingEnergy);
-                } else {
-                    _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
-                    yield return new WaitForSeconds(1f);
-                }
-            }
         }
     }
 }

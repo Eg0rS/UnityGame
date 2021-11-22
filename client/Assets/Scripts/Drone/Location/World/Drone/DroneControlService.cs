@@ -64,7 +64,7 @@ namespace Drone.Location.World.Drone
                 return;
             }
             _isFirstTapDone = true;
-            _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.START_FLIGHT));
+            _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.START_GAME));
         }
 
         private void OnTouch(TouchState touchState)

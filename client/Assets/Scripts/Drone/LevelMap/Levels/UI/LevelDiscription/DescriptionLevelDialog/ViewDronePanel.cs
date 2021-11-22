@@ -2,6 +2,7 @@
 using AgkUI.Element.Text;
 using Drone.Inventory.Model;
 using Drone.Shop.Descriptor;
+using Drone.Shop.Service;
 using IoC.Attribute;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +15,7 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         private const string PREFAB_NAME = "UI/Panel/pfChoiseDronPanel@embeded";
 
         [Inject]
-        private ShopDescriptor _shopDescriptor;
+        private ShopService _shopService;
 
         [UIObjectBinding("Text")]
         private GameObject _text;
@@ -28,7 +29,7 @@ namespace Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog
         private void Init(InventoryItemModel item)
         {
             ItemId = item.Id;
-            ShopItemDescriptor descriptor = _shopDescriptor.ShopItemDescriptors.Find(x => x.Id.Equals(ItemId));
+            ShopItemDescriptor descriptor = _shopService.GetDescriptor().ShopItemDescriptors.Find(x => x.Id.Equals(ItemId));
             SetItemLabel(descriptor.Name);
             SetItemModel(descriptor.Model);
         }

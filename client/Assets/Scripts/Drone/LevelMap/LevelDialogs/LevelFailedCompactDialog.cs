@@ -9,6 +9,7 @@ using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
 using Drone.LevelMap.Levels.Service;
 using Drone.Location.Service;
+using Drone.Location.Service.Game;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;

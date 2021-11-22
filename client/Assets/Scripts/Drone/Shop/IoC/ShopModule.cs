@@ -1,5 +1,4 @@
-﻿using Drone.Shop.Descriptor;
-using Drone.Shop.Service;
+﻿using Drone.Shop.Service;
 using IoC.Api;
 
 namespace Drone.Shop.IoC
@@ -9,7 +8,6 @@ namespace Drone.Shop.IoC
         public void Configure(IIoCContainer container)
         {
             container.RegisterSingleton<ShopService>();
-            container.RegisterSingleton<ShopDescriptor>();
         }
     }
 }
