@@ -1,5 +1,6 @@
 ﻿using System;
 using AgkCommons.Event;
+using Drone.Location.Event;
 using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Extension;
@@ -20,9 +21,9 @@ namespace Drone.Location.World.Drone
             this.InjectComponents();
         }
 
-        public void OnCrash(WorldEvent worldEvent)
+        public void OnCrash(ObstacleEvent obstacleEvent)
         {
-            foreach (ContactPoint contactPoint in worldEvent.ContactPoints) {
+            foreach (ContactPoint contactPoint in obstacleEvent.ContactPoints) {
                 PlayParticleState(DroneParticles.ptSparks, contactPoint.point, transform.rotation);
             }
         }

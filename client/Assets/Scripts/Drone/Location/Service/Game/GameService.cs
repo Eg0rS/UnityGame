@@ -1,4 +1,3 @@
-using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
@@ -7,6 +6,7 @@ using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.LevelMap.Levels.Descriptor;
 using Drone.LevelMap.Levels.Service;
+using Drone.Location.Event;
 using Drone.Location.World.Drone.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
@@ -37,32 +37,32 @@ namespace Drone.Location.Service.Game
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
-        private IoCProvider<BoosterService> _boosterService;
-
-        [Inject]
         private LevelService _levelService;
 
         [Inject]
         private DroneService _droneService;
 
-        private const float TIME_FOR_DEAD = 1f;
+        private const float TIME_FOR_DEAD = 0.5f;
 
         private LevelDescriptor _levelDescriptor;
-        
+
         private float _startTime;
-        private DroneModel _droneModel;
+
+        private float _countChips;
 
         public void Init()
         {
-            _droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
+            DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, _droneModel));
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
+            _countChips = 0;
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, droneModel));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, droneModel));
+
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_CRASH, OnDroneCrash);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.DRONE_LETHAL_CRASH, OnDroneLethalCrash);
+            _gameWorld.Require().AddListener<ObstacleEvent>(ObstacleEvent.LETHAL_CRUSH, OnDroneLethalCrash);
             _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, StartFlight);
+
             _overlayManager.Require().HideLoadingOverlay(true);
         }
 
@@ -75,26 +75,13 @@ namespace Drone.Location.Service.Game
         {
             float timeInGame = Time.time - _startTime;
             if (isWin) {
-                _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _droneModel.countChips, timeInGame,
-                                               (int) ((_droneModel.durability / _droneModel.maxDurability) * 100));
+                // _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _droneModel.countChips, timeInGame,
+                //                                (int) ((_droneModel.durability / _droneModel.maxDurability) * 100));
             }
         }
 
-        private void OnDroneCrash(WorldEvent worldEvent)
+        private void OnDroneLethalCrash(ObstacleEvent obstacleEvent)
         {
-            _droneModel.durability -= worldEvent.Damage;
-            if (_droneModel.durability <= 0) {
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASHED));
-                Invoke(nameof(Crashed), TIME_FOR_DEAD);
-            }
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
-        }
-
-        private void OnDroneLethalCrash(WorldEvent obj)
-        {
-            _droneModel.durability = 0;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.DRONE_CRASHED));
             Invoke(nameof(Crashed), TIME_FOR_DEAD);
         }
 
@@ -105,13 +92,9 @@ namespace Drone.Location.Service.Game
 
         private void OnTakeChip(WorldEvent worldEvent)
         {
-            if (_boosterService.Require().IsX2Activate) {
-                _droneModel.countChips += 2;
-            } else {
-                _droneModel.countChips++;
-            }
+            _countChips++;
 
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
+            // _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
         }
 
         private void OnFinished(WorldEvent worldEvent)
@@ -143,15 +126,15 @@ namespace Drone.Location.Service.Game
         {
             int countStars = 0;
 
-            if (_droneModel.durability >= _levelDescriptor.NecessaryDurability) {
-                countStars++;
-            }
-            if (_droneModel.countChips >= _levelDescriptor.NecessaryCountChips) {
-                countStars++;
-            }
-            if (timeInGame <= _levelDescriptor.NecessaryTime) {
-                countStars++;
-            }
+            // if (_droneModel.durability >= _levelDescriptor.NecessaryDurability) {
+            //     countStars++;
+            // }
+            // if (_droneModel.countChips >= _levelDescriptor.NecessaryCountChips) {
+            //     countStars++;
+            // }
+            // if (timeInGame <= _levelDescriptor.NecessaryTime) {
+            //     countStars++;
+            // }
 
             return countStars;
         }

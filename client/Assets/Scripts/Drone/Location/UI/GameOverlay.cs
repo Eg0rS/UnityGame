@@ -2,6 +2,7 @@
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using Drone.LevelMap.LevelDialogs;
+using Drone.Location.Event;
 using Drone.Location.World.Drone.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.World;
@@ -41,9 +42,20 @@ namespace Drone.Location.UI
         private void Init()
         {
             _timer.text = "0,00";
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.UI_UPDATE, UiUpdate);
+            _gameWorld.Require().AddListener<EnergyEvent>(EnergyEvent.ENERGY_UPDATE, EnergyUpdate);
+            _gameWorld.Require().AddListener<ObstacleEvent>(ObstacleEvent.DURABILITY_UPDATED, DurabilityUpdate);
             _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, StartGame);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
+        }
+
+        private void DurabilityUpdate(ObstacleEvent obstacleEvent)
+        {
+            _durability.text = obstacleEvent.DurabilityValue.ToString("F0");
+        }
+
+        private void EnergyUpdate(EnergyEvent energyEvent)
+        {
+            _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
         }
 
         private void EndGame(WorldEvent objectEvent)
@@ -64,11 +76,6 @@ namespace Drone.Location.UI
             }
             _time += Time.deltaTime;
             _timer.text = _time.ToString("F2");
-        }
-
-        private void UiUpdate(WorldEvent objectEvent)
-        {
-            SetStats(objectEvent.DroneModel);
         }
 
         private void SetStats(DroneModel model)

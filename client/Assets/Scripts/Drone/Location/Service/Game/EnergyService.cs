@@ -20,7 +20,7 @@ namespace Drone.Location.Service.Game
         private Coroutine _degreaseEnergy;
         private float _energyValue;
         private float _energyDecrement;
-        
+
         public void Init()
         {
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
@@ -42,6 +42,7 @@ namespace Drone.Location.Service.Game
         {
             _energyValue = worldEvent.DroneModel.energy;
             _energyDecrement = worldEvent.DroneModel.energyFall;
+            _gameWorld.Require().Dispatch(new EnergyEvent(EnergyEvent.ENERGY_UPDATE, _energyValue));
         }
 
         private IEnumerator DegraseEnergy()

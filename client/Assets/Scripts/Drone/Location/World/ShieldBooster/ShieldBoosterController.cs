@@ -13,7 +13,6 @@ namespace Drone.Location.World.ShieldBooster
     public class ShieldBoosterController : MonoBehaviour, IWorldObjectController<ShieldBoosterModel>
     {
         public WorldObjectType ObjectType { get; private set; }
-        private BoosterDescriptor _descriptor;
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;
 

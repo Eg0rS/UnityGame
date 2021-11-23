@@ -1,8 +1,8 @@
-﻿using Drone.Location.Model;
+﻿using Drone.Location.Event;
+using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Obstacle;
 using Drone.World;
-using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -28,7 +28,7 @@ namespace Drone.Location.World.Obstacle
                 return;
             }
             ContactPoint[] contactPoints = otherCollision.contacts;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.OBSTACLE_COLLISION, contactPoints, ImmersionDepth(otherCollision)));
+            _gameWorld.Require().Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT, contactPoints, ImmersionDepth(otherCollision)));
         }
 
         private float ImmersionDepth(Collision otherCollision)
