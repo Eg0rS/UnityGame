@@ -13,6 +13,7 @@ using Drone.Shop.Event;
 using Drone.Shop.UI;
 using IoC.Attribute;
 using IoC.Util;
+using JetBrains.Annotations;
 
 namespace Drone.Shop.Service
 {
@@ -22,22 +23,22 @@ namespace Drone.Shop.Service
         private ResourceService _resourceService;
 
         [Inject]
-        private ShopDescriptor _shopDescriptor;
-
-        [Inject]
         private InventoryService _inventoryService;
 
         [Inject]
         private BillingService _billingService;
-        
+
         [Inject]
         private PlayerResourceModel _resourceModel;
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
+        private ShopDescriptor _shopDescriptor;
+
         public void Init()
         {
+            _shopDescriptor = new ShopDescriptor();
             _resourceService.LoadConfiguration("Configs/shop@embeded", OnConfigLoaded);
         }
 
@@ -62,6 +63,12 @@ namespace Drone.Shop.Service
                 _dialogManager.Require().ShowModal<BuyDialog>(false);
                 return false;
             }
+        }
+
+        [NotNull]
+        public ShopDescriptor GetDescriptor()
+        {
+            return _shopDescriptor == null ? throw new NullReferenceException("ShopDescriptor is null") : _shopDescriptor;
         }
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)

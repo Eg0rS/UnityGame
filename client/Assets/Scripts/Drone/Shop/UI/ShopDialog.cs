@@ -36,18 +36,12 @@ namespace Drone.Shop.UI
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-
-        [Inject]
-        private ShopDescriptor _shopDescriptor;
-
+        
         [Inject]
         private ShopService _shopService;
 
         [Inject]
         private InventoryService _inventoryService;
-
-        [Inject]
-        private IGestureService _gestureService;
 
         private EndlessScrollView _endlessScroll;
 
@@ -56,12 +50,15 @@ namespace Drone.Shop.UI
         
         [UIComponentBinding("CountCrypto")]
         private UILabel _countCrypto;
+        
+        private ShopDescriptor _shopDescriptor;
 
         [UICreated]
         public void Init()
         {
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             _shopService.AddListener<ShopEvent>(ShopEvent.CLOSE_DIALOG, OnCloseUpdated);
+            _shopDescriptor = _shopService.GetDescriptor();
             UpdateCredits();
             CreateShopItem();
             _countCrypto.text = _billingService.GetCryptoCount().ToString();

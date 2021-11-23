@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Drone.Location.Event;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Battery;
@@ -26,7 +27,7 @@ namespace Drone.Location.World.Battery
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_BATTERY));
+                _gameWorld.Require().Dispatch(new EnergyEvent(EnergyEvent.PICKED));
             }
         }
     }

@@ -10,6 +10,7 @@ using Drone.Inventory.IoC;
 using Drone.LevelMap.Levels.IoC;
 using Drone.Location.IoC;
 using Drone.Location.World.Drone.Module;
+using Drone.PowerUp.IoC;
 using Drone.Settings.IoC;
 using Drone.Shop.IoC;
 using IoC;
@@ -49,6 +50,7 @@ namespace Drone.Core.Filter
             context.RegisterModule(new BillingModule());
             context.RegisterModule(new ShopModule());
             context.RegisterModule(new DroneModule());
+            context.RegisterModule(new PowerUpModule());
         }
     }
 }

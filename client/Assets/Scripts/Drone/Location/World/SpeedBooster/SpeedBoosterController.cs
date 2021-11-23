@@ -1,8 +1,8 @@
-﻿using Drone.Location.Model;
+﻿using Drone.Location.Event;
+using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.SpeedBooster;
 using Drone.World;
-using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -25,7 +25,7 @@ namespace Drone.Location.World.SpeedBooster
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_SPEED));
+                _gameWorld.Require().Dispatch(new AcceleratorEvent(AcceleratorEvent.PICKED));
             }
         }
     }

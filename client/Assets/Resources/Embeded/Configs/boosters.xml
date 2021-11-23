@@ -1,29 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
     <boosters>
-        <booster id="SpeedBooster" type="SPEED_BOOSTER">
-            <params>
-                <param key="SpeedBoost" value="1,5"/>
-                <param key="AccelerationBoost" value="1,5"/>
-                <param key="NeedsEnergy" value="3"/>
-                <param key="Duration" value="6,0"/>
-            </params>
+        <booster id="SpeedBooster" type="ACCELERATOR">
+            <parameters>
+                <parametr key="Acceleration" value="1,5"/>
+                <parametr key="EnergyCost" value="3"/>
+                <parametr key="Duration" value="6,0"/>
+            </parameters>
         </booster>
-        <booster id="ShieldBooster" type="SHIELD_BOOSTER">
-            <params>
-                <param key="Duration" value="8"/>
-            </params>
+        <booster id="ShieldBooster" type="FORCE_FIELD">
+            <parameters>
+                <parametr key="Duration" value="8"/>
+            </parameters>
         </booster>
-        <booster id="X2Booster" type="X2_BOOSTER">
-            <params>
-                <param key="Duration" value="6"/>
-            </params>
+        <booster id="X2Booster" type="DOUBLE_CHIPS">
+            <parameters>
+                <parametr key="Duration" value="6"/>
+            </parameters>
         </booster>
-        <booster id="MagnetBooster" type="MAGNET_BOOSTER">
-            <params>
-                <param key="Duration" value="6"/>
-                <param key="Radius" value="6"/>
-            </params>
+        <booster id="MagnetBooster" type="MAGNET">
+            <parameters>
+                <parametr key="Duration" value="6"/>
+                <parametr key="Radius" value="6"/>
+            </parameters>
+        </booster>
+        <booster id="Rocket" type="ROCKET">
+            <parameters>
+                <parametr key="Speed" value="6"/>
+            </parameters>
         </booster>
     </boosters>
 </config>
