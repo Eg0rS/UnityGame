@@ -70,10 +70,10 @@ namespace Drone.LevelMap.LevelDialogs
             _levelViewModel = _levelService.GetLevels().Find(x => x.LevelDescriptor.Id.Equals(_levelId));
             _levelTitle.text = _levelViewModel.LevelDescriptor.Title;
             _countStars = 0;
-            SetChipstask();
-            SetDurabilityTask();
-            SetTimeTask();
-            SetStars();
+            // SetChipstask();
+            // SetDurabilityTask();
+            // SetTimeTask();
+            // SetStars();
         }
 
         private void SetStars()

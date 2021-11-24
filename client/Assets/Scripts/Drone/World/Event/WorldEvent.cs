@@ -18,10 +18,7 @@ namespace Drone.World.Event
         public const string FINISHED = "Finished";
         public const string WORLD_CREATED = "WorldCreated";
         public const string SET_DRON_PARAMETERS = "SetDronParameters";
-        public const string OBSTACLE_COLLISION = "ObstacleCollision";
         public const string DRONE_LETHAL_CRASH = "DroneLethalCrash";
-        public const string DRONE_CRASH = "DroneCrash";
-        public const string DRONE_CRASHED = "DroneCrashed";
         public const string ENABLE_SHIELD = "EnableShield";
         public const string DISABLE_SHIELD = "DisableShield";
         public const string TAKE_CHIP = "TakeChip";
@@ -30,10 +27,8 @@ namespace Drone.World.Event
         public const string TAKE_MAGNET = "TakeMagnet";
 
         public DroneModel DroneModel { get; private set; }
-        public BoosterDescriptor SpeedBooster { get; private set; }
-        public ContactPoint[] ContactPoints { get; private set; }
-        public float ImmersionDepth { get; private set; }
-        public float Damage { get; private set; }
+
+
         public GameObject Drone { get; private set; }
 
         public WorldEvent(string name, GameObject target) : base(name, target)
@@ -41,28 +36,11 @@ namespace Drone.World.Event
             Drone = target;
         }
 
-        public WorldEvent(string name, ContactPoint[] contactPoints, float immersionDepth, float damage) : base(name)
-        {
-            ContactPoints = contactPoints;
-            ImmersionDepth = immersionDepth;
-            Damage = damage;
-        }
-
-        public WorldEvent(string name, ContactPoint[] contactPoints, float immersionDepth) : base(name)
-        {
-            ContactPoints = contactPoints;
-            ImmersionDepth = immersionDepth;
-        }
-
         public WorldEvent(string name, DroneModel droneModel) : base(name)
         {
             DroneModel = droneModel;
         }
-
-        public WorldEvent(string name, BoosterDescriptor speedBooster) : base(name)
-        {
-            SpeedBooster = speedBooster;
-        }
+        
         
 
         public WorldEvent(string name) : base(name)
