@@ -64,6 +64,7 @@ namespace Drone.Location.World.Drone
             _camera = _gameWorld.Require().GetDroneCamera();
             _sequence = DOTween.Sequence();
             _rigidbody = gameObject.GetComponent<Rigidbody>();
+            _sequence.SetUpdate(UpdateType.Fixed);
         }
 
         private void OnCrush(ObstacleEvent obstacleEvent)
@@ -127,8 +128,8 @@ namespace Drone.Location.World.Drone
             _mobility = _baseMobility * (MINIMAL_SPEED / _bezier.speed);
             Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 30;
             _droneTargetPosition = newPos;
-            _sequence.Append(transform.DOLocalMove(newPos, _mobility))
-                     .Join(_rigidbody.DORotate(rotation, _mobility).OnComplete(() => { _rigidbody.DORotate(Vector3.zero, _mobility); }));
+            _sequence.Append(transform.DOLocalMove(newPos, _mobility).SetUpdate(UpdateType.Fixed))
+                     .Join(transform.DOLocalRotate(rotation, _mobility).SetUpdate(UpdateType.Fixed).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility).SetUpdate(UpdateType.Fixed); }));
         }
 
         private void OnSetParameters(WorldEvent worldEvent)
