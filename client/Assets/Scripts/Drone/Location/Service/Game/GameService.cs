@@ -49,14 +49,14 @@ namespace Drone.Location.Service.Game
         private float _startTime;
 
         private float _countChips;
+        public DroneModel DroneModel { get; private set; }
 
         public void Init()
         {
-            DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
+            DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, droneModel));
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, droneModel));
+            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, DroneModel));
 
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
@@ -93,8 +93,7 @@ namespace Drone.Location.Service.Game
         private void OnTakeChip(WorldEvent worldEvent)
         {
             _countChips++;
-
-            // _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.UI_UPDATE, _droneModel));
+            
         }
 
         private void OnFinished(WorldEvent worldEvent)
