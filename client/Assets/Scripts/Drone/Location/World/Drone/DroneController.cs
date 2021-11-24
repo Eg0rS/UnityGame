@@ -123,7 +123,7 @@ namespace Drone.Location.World.Drone
         private void DotWeenMove(Vector3 newPos)
         {
             _mobility = _baseMobility * (MINIMAL_SPEED / _bezier.speed);
-            Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 45;
+            Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 30;
             _droneTargetPosition = newPos;
             _sequence.Append(transform.DOLocalMove(newPos, _mobility))
                      .Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
