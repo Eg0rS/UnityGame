@@ -41,12 +41,13 @@ namespace Drone.Location.World.Drone
         private bool _isGameRun;
         private Sequence _sequence;
 
+        private Rigidbody _rigidbody;
+
         public void Init(DronePrefabModel model)
         {
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _cameraNoise = _gameWorld.Require().GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-            
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
             
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
@@ -62,6 +63,7 @@ namespace Drone.Location.World.Drone
             
             _camera = _gameWorld.Require().GetDroneCamera();
             _sequence = DOTween.Sequence();
+            _rigidbody = gameObject.GetComponent<Rigidbody>();
         }
 
         private void OnCrush(ObstacleEvent obstacleEvent)
@@ -126,7 +128,7 @@ namespace Drone.Location.World.Drone
             Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 30;
             _droneTargetPosition = newPos;
             _sequence.Append(transform.DOLocalMove(newPos, _mobility))
-                     .Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
+                     .Join(_rigidbody.DORotate(rotation, _mobility).OnComplete(() => { _rigidbody.DORotate(Vector3.zero, _mobility); }));
         }
 
         private void OnSetParameters(WorldEvent worldEvent)
