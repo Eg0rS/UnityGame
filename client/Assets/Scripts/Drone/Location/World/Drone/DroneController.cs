@@ -41,8 +41,6 @@ namespace Drone.Location.World.Drone
         private bool _isGameRun;
         private Sequence _sequence;
 
-        private Rigidbody _rigidbody;
-
         public void Init(DronePrefabModel model)
         {
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
@@ -63,7 +61,6 @@ namespace Drone.Location.World.Drone
             
             _camera = _gameWorld.Require().GetDroneCamera();
             _sequence = DOTween.Sequence();
-            _rigidbody = gameObject.GetComponent<Rigidbody>();
             _sequence.SetUpdate(UpdateType.Fixed);
         }
 
