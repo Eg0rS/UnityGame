@@ -46,7 +46,6 @@ namespace Drone.Location.World.Drone
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             _cameraNoise = _gameWorld.Require().GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-            
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
             
             _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.ENABLE_SHIELD, OnEnableShield);
@@ -62,6 +61,7 @@ namespace Drone.Location.World.Drone
             
             _camera = _gameWorld.Require().GetDroneCamera();
             _sequence = DOTween.Sequence();
+            _sequence.SetUpdate(UpdateType.Fixed);
         }
 
         private void OnCrush(ObstacleEvent obstacleEvent)
@@ -125,8 +125,8 @@ namespace Drone.Location.World.Drone
             _mobility = _baseMobility * (MINIMAL_SPEED / _bezier.speed);
             Vector3 rotation = new Vector3(_droneTargetPosition.y - newPos.y, transform.localRotation.y, _droneTargetPosition.x - newPos.x) * 30;
             _droneTargetPosition = newPos;
-            _sequence.Append(transform.DOLocalMove(newPos, _mobility))
-                     .Join(transform.DOLocalRotate(rotation, _mobility).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility); }));
+            _sequence.Append(transform.DOLocalMove(newPos, _mobility).SetUpdate(UpdateType.Fixed))
+                     .Join(transform.DOLocalRotate(rotation, _mobility).SetUpdate(UpdateType.Fixed).OnComplete(() => { transform.DOLocalRotate(Vector3.zero, _mobility).SetUpdate(UpdateType.Fixed); }));
         }
 
         private void OnSetParameters(WorldEvent worldEvent)
