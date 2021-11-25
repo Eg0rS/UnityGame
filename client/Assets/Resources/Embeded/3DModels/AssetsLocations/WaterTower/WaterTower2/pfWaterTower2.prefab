@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 4384402696015297263}
   - component: {fileID: 1962567010056490533}
   - component: {fileID: 823681623128110450}
-  - component: {fileID: 8939124208870443310}
   - component: {fileID: 4158654211438762329}
   - component: {fileID: -7460046193856892870}
   - component: {fileID: -4698019223588513745}
+  - component: {fileID: 5958324870307367074}
   m_Layer: 0
   m_Name: pfWaterTower2
   m_TagString: Untagged
@@ -99,19 +99,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.2576597, y: 14.63414, z: 2.249169}
   m_Center: {x: 0.052148223, y: 7.31707, z: -0.02896607}
---- !u!65 &8939124208870443310
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 17042688415035376}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3.4455454, y: 6.5063486, z: 2.9036517}
-  m_Center: {x: -0.00000011920929, y: 17.756065, z: -0.024124622}
 --- !u!65 &4158654211438762329
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -150,3 +137,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33aa90e441a9e6f45b63e7556e66f0a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &5958324870307367074
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17042688415035376}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.84
+  m_Height: 7.97
+  m_Direction: 1
+  m_Center: {x: 0, y: 17.37, z: 0.14841032}
