@@ -66,13 +66,21 @@ namespace Drone.LevelMap.Levels.UI
         {
             _levelViewModel = levelViewModel;
             DisableSpotProgress();
-            if (_levelViewModel.LevelProgress != null) {
+            if (_levelViewModel.LevelDescriptor.Prefab == "") {
+                SetLockedSpot();
+            } else if (_levelViewModel.LevelProgress != null) {
                 SetCompletedSpot();
             } else if (_levelViewModel.LevelProgress == null && isCurrent) {
                 SetCurrentSpot();
             } else {
                 SetNotOpenSpot();
             }
+        }
+
+        private void SetLockedSpot()
+        {
+            _stageLock.SetActive(true);
+            _stageNotOpen.SetActive(true);
         }
 
         private void SetCompletedSpot()
@@ -85,7 +93,6 @@ namespace Drone.LevelMap.Levels.UI
                 _twoStar.SetActive(true);
             } else if (_levelViewModel.LevelProgress.CountStars == 3) {
                 _threeStar.SetActive(true);
-            } else {
             }
             SetOrder();
             _isCanClick = true;
