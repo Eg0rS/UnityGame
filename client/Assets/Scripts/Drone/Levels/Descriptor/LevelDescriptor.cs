@@ -1,7 +1,6 @@
-﻿using System.Xml.Serialization;
 using AgkCommons.Configurations;
 
-namespace Drone.LevelMap.Levels.Descriptor
+namespace Drone.Levels.Descriptor
 {
     public class LevelDescriptor
     {
@@ -14,7 +13,6 @@ namespace Drone.LevelMap.Levels.Descriptor
         public string Title { get; private set; }
         public string Description { get; private set; }
         public string Image { get; private set; }
-        
         public LevelType Type { get; private set; }
 
         public void Configure(Configuration config)
@@ -30,6 +28,7 @@ namespace Drone.LevelMap.Levels.Descriptor
             Image = config.GetString("image");
             int type = config.GetInt("type");
             Type = (LevelType) type;
+           
         }
     }
 }
