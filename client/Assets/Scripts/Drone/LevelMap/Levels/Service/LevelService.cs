@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Configurations;
 using AgkCommons.Event;
@@ -13,8 +12,6 @@ using Drone.LevelMap.Levels.IoC;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.Levels.Repository;
 using Drone.LevelMap.Levels.UI.LevelDiscription.DescriptionLevelDialog;
-using Drone.LevelMap.Zones.Descriptor;
-using Drone.LevelMap.Zones.IoC;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
@@ -33,9 +30,6 @@ namespace Drone.LevelMap.Levels.Service
         private LevelDescriptorRegistry _levelDescriptorRegistry;
 
         [Inject]
-        private ZoneDescriptorRegistry _zoneDescriptorRegistry;
-
-        [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
         [Inject]
@@ -45,11 +39,9 @@ namespace Drone.LevelMap.Levels.Service
         public string SelectedLevelId { get; set; }
         public string SelectedDroneId { get; set; }
 
-
         public void Init()
         {
             _resourceService.LoadConfiguration("Configs/levels@embeded", LoadLevelsDescriptors);
-            _resourceService.LoadConfiguration("Configs/zones@embeded", LoadZonesDescriptors);
         }
 
         public void ShowStartLevelDialog(string leveId)
@@ -82,16 +74,6 @@ namespace Drone.LevelMap.Levels.Service
         {
             _progressRepository.Delete();
             Dispatch(new LevelEvent(LevelEvent.UPDATED));
-        }
-
-        public string GetNextZoneId(string regionId)
-        {
-            int nextId = GetIntZoneId(regionId) + 1;
-            try {
-                return _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.Id.Equals($"region{nextId}")).Id;
-            } catch (Exception) {
-                return null;
-            }
         }
 
         [CanBeNull]
@@ -149,16 +131,6 @@ namespace Drone.LevelMap.Levels.Service
             return _levelsViewModels;
         }
 
-        public List<ZoneDescriptor> GetZonesDescriptors()
-        {
-            return _zoneDescriptorRegistry.ZoneDescriptors;
-        }
-
-        public ZoneDescriptor GetZoneDescriptorById(string zoneId)
-        {
-            return _zoneDescriptorRegistry.ZoneDescriptors.Find(x => x.Id.Equals(zoneId));
-        }
-
         public LevelDescriptor GetLevelDescriptorById(string levelId)
         {
             return _levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id == levelId);
@@ -171,67 +143,14 @@ namespace Drone.LevelMap.Levels.Service
             return level;
         }
 
-        public string GetCurrentZoneId()
-        {
-            ZoneDescriptor zoneDescriptor;
-            foreach (LevelViewModel model in _levelsViewModels) {
-                zoneDescriptor = _zoneDescriptorRegistry.ZoneDescriptors.FirstOrDefault(zone => zone.LevelIds.Contains(model.LevelDescriptor.Id));
-                if (zoneDescriptor == null) {
-                    throw new Exception("The level does not belong to any of the zones");
-                }
-                if (model.LevelProgress == null) {
-                    return zoneDescriptor.Id;
-                }
-                if (!CompletedZoneConditions(zoneDescriptor.Id, zoneDescriptor.CountStars)) {
-                    return zoneDescriptor.Id;
-                }
-            }
-            return _zoneDescriptorRegistry.ZoneDescriptors[_zoneDescriptorRegistry.ZoneDescriptors.Count - 1].Id;
-        }
-
         public PlayerProgressModel GetPlayerProgressModel()
         {
             return !HasPlayerProgress() ? new PlayerProgressModel() : _progressRepository.Require();
         }
 
-        public bool CompletedZoneConditions(string zoneId, int needCountStars)
-        {
-            return CalculateCountStarsZone(zoneId) >= needCountStars && PassedBoss(zoneId);
-        }
-
         private bool HasPlayerProgress()
         {
             return _progressRepository.Exists();
-        }
-
-        private int CalculateCountStarsZone(string regionId)
-        {
-            ZoneDescriptor zoneDescriptor = GetZoneDescriptorById(regionId);
-            if (zoneDescriptor == null) {
-                return 0;
-            }
-            int result = 0;
-            foreach (string levelId in zoneDescriptor.LevelIds) {
-                LevelProgress levelProgress = GetLevelProgressById(levelId);
-                if (levelProgress != null) {
-                    result += GetLevelProgressById(levelId).CountStars;
-                }
-            }
-            return result;
-        }
-
-        private bool PassedBoss(string regionId)
-        {
-            PlayerProgressModel model = GetPlayerProgressModel();
-            ZoneDescriptor zoneDescriptor = GetZoneDescriptorById(regionId);
-            foreach (string levelId in zoneDescriptor.LevelIds) {
-                if (_levelDescriptorRegistry.LevelDescriptors.Find(x => x.Id.Equals(levelId)).Type != LevelType.BOSS) {
-                    continue;
-                }
-                LevelProgress levelProgress = model.LevelsProgress.Find(x => x.Id.Equals(levelId));
-                return levelProgress != null;
-            }
-            return false;
         }
 
         private void SaveProgress(PlayerProgressModel model)
@@ -246,15 +165,6 @@ namespace Drone.LevelMap.Levels.Service
                 LevelDescriptor levelDescriptor = new LevelDescriptor();
                 levelDescriptor.Configure(configuration);
                 _levelDescriptorRegistry.LevelDescriptors.Add(levelDescriptor);
-            }
-        }
-
-        private void LoadZonesDescriptors(Configuration config, object[] loadparameters)
-        {
-            foreach (Configuration configuration in config.GetList<Configuration>("zones.zone")) {
-                ZoneDescriptor zoneDescriptor = new ZoneDescriptor();
-                zoneDescriptor.Configure(configuration);
-                _zoneDescriptorRegistry.ZoneDescriptors.Add(zoneDescriptor);
             }
         }
     }
