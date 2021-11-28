@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 513062670432106548}
   - component: {fileID: 3508612327523055505}
   - component: {fileID: 1681512936855667547}
-  - component: {fileID: 9212485962892868772}
+  - component: {fileID: 5378343333566011607}
   m_Layer: 0
   m_Name: pfPurpleCar1
   m_TagString: Untagged
@@ -82,8 +82,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9212485962892868772
-BoxCollider:
+--- !u!64 &5378343333566011607
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -92,6 +92,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.8976212, y: 1.9740404, z: 7.247817}
-  m_Center: {x: 0, y: 0.99219805, z: 0.015639424}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1272669521879396405, guid: 2e1be7b3ef67dbb4eb7b93147b086995, type: 3}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7978492408629639867}
   - component: {fileID: 6419484377961084190}
   - component: {fileID: 9147479682602156500}
-  - component: {fileID: 6387654824830284542}
+  - component: {fileID: 6250356084390330400}
   m_Layer: 0
   m_Name: pfGreenCar1
   m_TagString: Untagged
@@ -82,8 +82,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6387654824830284542
-BoxCollider:
+--- !u!64 &6250356084390330400
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -92,6 +92,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.7336082, y: 2.0385613, z: 5.8460407}
-  m_Center: {x: 0.011032641, y: 1.0060995, z: -0.08284128}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4679390504295679099, guid: 94a8352c059071d489a6f9a9c176eda3, type: 3}
