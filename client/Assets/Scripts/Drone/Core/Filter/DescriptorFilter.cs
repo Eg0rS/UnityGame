@@ -1,6 +1,6 @@
 using Adept.Logger;
+using Drone.Descriptor;
 using Drone.Descriptor.Loader.Interfaces;
-using Drone.Shop.Descriptor;
 using IoC.Attribute;
 
 namespace Drone.Core.Filter
@@ -13,10 +13,7 @@ namespace Drone.Core.Filter
 
         public void Run(AppFilterChain chain)
         {
-            _localDescriptorLoader.AddDescriptor<GameDescriptor>(Descriptors.LEVEL_SETTINGS)
-                                 
-                                  .Load()
-                                  .Done();
+            _localDescriptorLoader.AddDescriptor<LevelsDescriptors>(Descriptors.LEVELS).Load().Done((() => chain.Next()));
         }
     }
 }

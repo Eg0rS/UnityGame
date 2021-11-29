@@ -2,7 +2,7 @@
 using Drone.Core.Audio.Service;
 using Drone.Core.Filter;
 using Drone.Inventory.Service;
-using Drone.LevelMap.Levels.Service;
+using Drone.Levels.Service;
 using Drone.Location.Service;
 using Drone.Settings.Model;
 using IoC.Attribute;

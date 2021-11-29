@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Drone.Descriptor.Loader.Interfaces;
 using RSG;
 using static CsPreconditions.Preconditions;
 
-namespace Drone.Descriptor.Loader.Interfaces
+namespace Drone.Descriptor.Loader
 {
-    public abstract class AbstractDescriptorLoader : IDescriptorLoader
+    public abstract class AbstactDescriptorLoader : IDescriptorLoader
     {
         private const string ID_ATTRIBUTE = "id";
         private readonly Dictionary<string, Type> _collections = new Dictionary<string, Type>();
@@ -39,8 +40,7 @@ namespace Drone.Descriptor.Loader.Interfaces
 
             for (int i = 0; i < xmlNodeList.Count; i++) {
                 XmlNode currentXmlNode = xmlNodeList.Item(i);
-                string id = currentXmlNode.GetStringAttribute(ID_ATTRIBUTE);
-                string id = currentXmlNode.
+                string id = currentXmlNode.Attributes[ID_ATTRIBUTE].ToString();
 
                 XmlSerializer deserializer = new XmlSerializer(descriptorType);
                 using (TextReader textReader = new StringReader(currentXmlNode.OuterXml)) {

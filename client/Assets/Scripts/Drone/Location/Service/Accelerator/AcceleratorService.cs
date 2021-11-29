@@ -20,9 +20,9 @@ namespace Drone.Location.Service.Accelerator
         [Inject]
         private PowerUpService _powerUpService;
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private GameWorld _gameWorld;
         [Inject]
-        private IoCProvider<GameService> _gameService;
+        private GameService _gameService;
 
         private PowerUpDescriptor _powerUpDescriptor;
         private AcceleratorModel _acceleratorModel;
@@ -31,7 +31,7 @@ namespace Drone.Location.Service.Accelerator
         {
             InitParameters();
 
-            _gameWorld.Require().AddListener<AcceleratorEvent>(AcceleratorEvent.PICKED, OnPowerUpPicked);
+            _gameWorld.AddListener<AcceleratorEvent>(AcceleratorEvent.PICKED, OnPowerUpPicked);
         }
 
         private void InitParameters()
@@ -45,8 +45,7 @@ namespace Drone.Location.Service.Accelerator
 
         private void OnPowerUpPicked(AcceleratorEvent acceleratorEvent)
         {
-            _gameService.Require();
-            _gameWorld.Require().Dispatch(new AcceleratorEvent(AcceleratorEvent.ACCELERATION, _acceleratorModel));
+            _gameWorld.Dispatch(new AcceleratorEvent(AcceleratorEvent.ACCELERATION, _acceleratorModel));
         }
     }
 }

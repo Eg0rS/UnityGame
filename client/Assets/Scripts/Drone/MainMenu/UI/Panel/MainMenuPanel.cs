@@ -4,16 +4,14 @@ using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
-using AgkUI.Element.Text;
 using Drone.Billing.Event;
 using Drone.Billing.Service;
 using Drone.Billing.UI;
 using Drone.Core;
-using Drone.LevelMap.Levels.UI;
+using Drone.LevelMap.UI;
 using Drone.Settings.UI;
 using Drone.Shop.UI;
 using IoC.Attribute;
-using IoC.Util;
 using TMPro;
 using UnityEngine;
 
@@ -26,7 +24,7 @@ namespace Drone.MainMenu.UI.Panel
         private const string PREFAB = "UI/MainMenu/Panel/pfMainScreenPanel@embeded";
 
         [Inject]
-        private IoCProvider<OverlayManager> _overlayManager;
+        private OverlayManager _overlayManager;
 
         [Inject]
         private BillingService _billingService;
@@ -35,7 +33,7 @@ namespace Drone.MainMenu.UI.Panel
         private UIService _uiService;
 
         [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        private DialogManager _dialogManager;
 
         [UIObjectBinding("MiddlePanel")]
         private GameObject _middlePanel;
@@ -48,7 +46,7 @@ namespace Drone.MainMenu.UI.Panel
 
         public void Init()
         {
-            _overlayManager.Require().HideLoadingOverlay(true);
+            _overlayManager.HideLoadingOverlay(true);
             _uiService.Create<LevelsMapController>(UiModel.Create<LevelsMapController>().Container(_middlePanel)).Done();
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             UpdateCredits();
@@ -74,21 +72,21 @@ namespace Drone.MainMenu.UI.Panel
         [UIOnClick("ShopButton")]
         private void OnStore()
         {
-            _dialogManager.Require().Show<ShopDialog>();
+            _dialogManager.Show<ShopDialog>();
             _logger.Debug("Click on store");
         }
 
         [UIOnClick("ButtonSetting")]
         private void OnSettingsPanel()
         {
-            _dialogManager.Require().Show<GameSettingsDialog>();
+            _dialogManager.Show<GameSettingsDialog>();
             _logger.Debug("Click on settings");
         }
 
         //[UIOnClick("StatusChips")]
         private void OnCreditsPanel()
         {
-            _dialogManager.Require().Show<BillingDialog>();
+            _dialogManager.Show<BillingDialog>();
         }
     }
 }

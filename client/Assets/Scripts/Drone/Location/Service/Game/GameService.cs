@@ -4,8 +4,8 @@ using AgkUI.Dialog.Service;
 using Drone.Core;
 using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
-using Drone.LevelMap.Levels.Descriptor;
-using Drone.LevelMap.Levels.Service;
+using Drone.Levels.Descriptor;
+using Drone.Levels.Service;
 using Drone.Location.Event;
 using Drone.Location.World.Drone.Event;
 using Drone.Location.World.Drone.Model;
@@ -13,7 +13,6 @@ using Drone.Location.World.Drone.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.Service.Game
@@ -28,13 +27,13 @@ namespace Drone.Location.Service.Game
     public class GameService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private GameWorld _gameWorld;
 
         [Inject]
-        private IoCProvider<OverlayManager> _overlayManager;
+        private OverlayManager _overlayManager;
 
         [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        private DialogManager _dialogManager;
 
         [Inject]
         private LevelService _levelService;
@@ -56,14 +55,14 @@ namespace Drone.Location.Service.Game
             DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, DroneModel));
+            _gameWorld.Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, DroneModel));
 
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
-            _gameWorld.Require().AddListener<ObstacleEvent>(ObstacleEvent.LETHAL_CRUSH, OnDroneLethalCrash);
-            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, StartFlight);
+            _gameWorld.AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
+            _gameWorld.AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
+            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.LETHAL_CRUSH, OnDroneLethalCrash);
+            _gameWorld.AddListener<ControllEvent>(ControllEvent.START_GAME, StartFlight);
 
-            _overlayManager.Require().HideLoadingOverlay(true);
+            _overlayManager.HideLoadingOverlay(true);
         }
 
         private void StartFlight(ControllEvent controllEvent)
@@ -105,20 +104,20 @@ namespace Drone.Location.Service.Game
         {
             SetStatsInProgress(true);
             EndGame();
-            _dialogManager.Require().ShowModal<LevelFinishedDialog>();
+            _dialogManager.ShowModal<LevelFinishedDialog>();
         }
 
         private void DroneFailed(FailedReasons reason)
         {
             SetStatsInProgress(false);
             EndGame();
-            _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
+            _dialogManager.ShowModal<LevelFailedCompactDialog>(reason);
         }
 
         public void EndGame()
         {
             Time.timeScale = 0f;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
+            _gameWorld.Dispatch(new WorldEvent(WorldEvent.END_GAME));
         }
 
         private int CalculateStars(float timeInGame)

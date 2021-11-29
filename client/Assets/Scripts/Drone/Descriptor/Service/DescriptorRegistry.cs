@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Drone.Descriptor.Loader.Interfaces;
 using JetBrains.Annotations;
 
 namespace Drone.Descriptor.Service
@@ -51,6 +52,31 @@ namespace Drone.Descriptor.Service
         public bool ContainsSingleDescriptor(Type t)
         {
             return GetSingleDescriptor(t) != null;
+        }
+
+        public DescriptorCollection<T> CreateCollection<T>(string collectionName)
+        {
+            DescriptorCollection<T> collection = new DescriptorCollection<T>(collectionName);
+            _collections.Add(collectionName, collection);
+            return collection;
+        }
+
+        public DescriptorCollection<T> RequireCollection<T>(string collectionName)
+        {
+            if (!ContainsCollection(collectionName)) {
+                throw new NullReferenceException("Collection with name=" + collectionName + " not found.");
+            }
+            return (DescriptorCollection<T>) _collections[collectionName];
+        }
+
+        [CanBeNull]
+        public IDescriptorCollection GetCollection(string collectionName)
+        {
+            if (!_collections.ContainsKey(collectionName)) {
+                return null;
+            }
+
+            return (IDescriptorCollection) _collections[collectionName];
         }
 
         [PublicAPI]
