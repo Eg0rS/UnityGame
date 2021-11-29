@@ -22,11 +22,11 @@ namespace Drone.Location.World.Magnet
 
         private void OnCollisionEnter(Collision otherCollision)
         {
-            WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType == WorldObjectType.DRON) {
-                gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_MAGNET, otherCollision.gameObject));
-            }
+            // WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
+            // if (objectType == WorldObjectType.DRON) {
+            //     gameObject.SetActive(false);
+            //     _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_MAGNET, otherCollision.gameObject));
+            // }
         }
     }
 }

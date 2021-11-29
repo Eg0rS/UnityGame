@@ -2,6 +2,7 @@
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Drone.Core.Service;
+using Drone.Location.Service.Game.Event;
 using Drone.Location.World.Drone.Event;
 using Drone.World;
 using IoC.Attribute;
@@ -64,7 +65,7 @@ namespace Drone.Location.World.Drone
                 return;
             }
             _isFirstTapDone = true;
-            _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.START_GAME));
+            _gameWorld.Require().Dispatch(new InGameEvent(InGameEvent.START_GAME));
         }
 
         private void OnTouch(TouchState touchState)

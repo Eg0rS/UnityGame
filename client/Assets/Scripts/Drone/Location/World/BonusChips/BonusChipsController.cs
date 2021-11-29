@@ -32,7 +32,7 @@ namespace Drone.Location.World.BonusChips
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
                 _isCollected = true;
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_CHIP));
+                _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.TAKE_CHIP));
             }
         }
 

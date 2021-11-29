@@ -26,7 +26,7 @@ namespace Drone.Location.World.ShieldBooster
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_SHIELD));
+                _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.TAKE_SHIELD));
             }
         }
     }

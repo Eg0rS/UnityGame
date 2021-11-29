@@ -25,7 +25,7 @@ namespace Drone.Location.World.X2Booster
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.DRON) {
                 gameObject.SetActive(false);
-                _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.TAKE_X2));
+                _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.TAKE_X2));
             }
         }
     }

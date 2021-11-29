@@ -1,12 +1,10 @@
 using Drone.Core.Service;
 using Drone.Location.Event;
-using Drone.Location.Service.Game;
 using Drone.PowerUp;
 using Drone.PowerUp.Descriptor;
 using Drone.PowerUp.Service;
 using Drone.World;
 using IoC.Attribute;
-using IoC.Util;
 
 namespace Drone.Location.Service.Accelerator
 {
@@ -21,8 +19,6 @@ namespace Drone.Location.Service.Accelerator
         private PowerUpService _powerUpService;
         [Inject]
         private GameWorld _gameWorld;
-        [Inject]
-        private GameService _gameService;
 
         private PowerUpDescriptor _powerUpDescriptor;
         private AcceleratorModel _acceleratorModel;
@@ -31,19 +27,19 @@ namespace Drone.Location.Service.Accelerator
         {
             InitParameters();
 
-            _gameWorld.AddListener<AcceleratorEvent>(AcceleratorEvent.PICKED, OnPowerUpPicked);
+            _gameWorld.AddListener<AcceleratorEvent>(AcceleratorEvent.PICKED, OnAcceleratorUpPicked);
         }
 
         private void InitParameters()
         {
             _powerUpDescriptor = _powerUpService.GetDescriptorByType(TYPE);
             float duration = float.Parse(_powerUpDescriptor.GetParameterValue(DURATION));
-            float acceleration = float.Parse(_powerUpDescriptor.GetParameterValue(DURATION));
-            float energyCost = float.Parse(_powerUpDescriptor.GetParameterValue(DURATION));
+            float acceleration = float.Parse(_powerUpDescriptor.GetParameterValue(ACCELERATION));
+            float energyCost = float.Parse(_powerUpDescriptor.GetParameterValue(ENERGY_COST));
             _acceleratorModel = new AcceleratorModel(duration, acceleration, energyCost);
         }
 
-        private void OnPowerUpPicked(AcceleratorEvent acceleratorEvent)
+        private void OnAcceleratorUpPicked(AcceleratorEvent acceleratorEvent)
         {
             _gameWorld.Dispatch(new AcceleratorEvent(AcceleratorEvent.ACCELERATION, _acceleratorModel));
         }

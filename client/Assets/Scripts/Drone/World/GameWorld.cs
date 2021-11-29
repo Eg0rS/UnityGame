@@ -30,7 +30,7 @@ namespace Drone.World
 
             go.transform.SetParent(parentContainer, worldPositionStays);
 
-            go.GetOrCreateComponent<GameEventDispatcher>().Dispatch(new WorldEvent(WorldEvent.ADDED, go));
+            go.GetOrCreateComponent<GameEventDispatcher>().Dispatch(new WorldObjectEvent(WorldObjectEvent.ADDED, go));
         }
 
         public void RemoveGameObject(string id)

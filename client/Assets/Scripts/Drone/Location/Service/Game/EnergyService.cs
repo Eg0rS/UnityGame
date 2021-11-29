@@ -2,11 +2,9 @@ using System.Collections;
 using AgkCommons.Event;
 using Drone.Core.Service;
 using Drone.Location.Event;
-using Drone.Location.World.Drone.Event;
+using Drone.Location.Service.Game.Event;
 using Drone.World;
-using Drone.World.Event;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.Service.Game
@@ -14,46 +12,46 @@ namespace Drone.Location.Service.Game
     public class EnergyService : GameEventDispatcher, IWorldServiceInitiable
     {
         private const float UPDATE_PERIOD = 1.0f;
-        private const float BATTERY_ENERGY = 3.0f;
+
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private GameWorld _gameWorld;
         private Coroutine _degreaseEnergy;
         private float _energyValue;
         private float _energyDecrement;
 
         public void Init()
         {
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.SET_DRON_PARAMETERS, OnSetParameters);
-            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, OnStartGame);
-            _gameWorld.Require().AddListener<EnergyEvent>(EnergyEvent.PICKED, OnTakeBattery);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, OnStartGame);
+            _gameWorld.AddListener<EnergyEvent>(EnergyEvent.CHANGED, OnChangeEnergy);
         }
 
-        private void OnTakeBattery(EnergyEvent energyEvent)
+        private void OnChangeEnergy(EnergyEvent energyEvent)
         {
-            _energyValue += BATTERY_ENERGY;
+            _energyValue += energyEvent.EnergyDelta;
         }
 
-        private void OnStartGame(ControllEvent controllEvent)
+        private void OnStartGame(InGameEvent inGameEvent)
         {
-            _degreaseEnergy = StartCoroutine(DegraseEnergy());
+            _degreaseEnergy = StartCoroutine(DecreaseEnergy());
         }
 
-        private void OnSetParameters(WorldEvent worldEvent)
+        private void OnSetParameters(InGameEvent inGameEvent)
         {
-            _energyValue = worldEvent.DroneModel.energy;
-            _energyDecrement = worldEvent.DroneModel.energyFall;
-            _gameWorld.Require().Dispatch(new EnergyEvent(EnergyEvent.ENERGY_UPDATE, _energyValue));
+            _energyValue = inGameEvent.DroneModel.energy;
+            _energyDecrement = inGameEvent.DroneModel.energyFall;
+            _gameWorld.Dispatch(new EnergyEvent(EnergyEvent.UPDATE, _energyValue));
         }
 
-        private IEnumerator DegraseEnergy()
+        private IEnumerator DecreaseEnergy()
         {
             while (true) {
                 _energyValue -= _energyDecrement;
-                _gameWorld.Require().Dispatch(new EnergyEvent(EnergyEvent.ENERGY_UPDATE, _energyValue));
+                _gameWorld.Dispatch(new EnergyEvent(EnergyEvent.UPDATE, _energyValue));
                 if (_energyValue > 0) {
                     yield return new WaitForSeconds(UPDATE_PERIOD);
                 } else {
-                    _gameWorld.Require().Dispatch(new EnergyEvent(EnergyEvent.ENERGY_FALL));
+                    //death
                     StopCoroutine(_degreaseEnergy);
                 }
             }

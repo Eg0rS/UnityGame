@@ -7,12 +7,12 @@ namespace Drone.Location.Event
     {
         public const string OBSTACLE_CONTACT = "obstacleContact";
         public const string CRUSH = "crush";
-        public const string LETHAL_CRUSH = "lethalCrush";
-        public const string DURABILITY_UPDATED = "damageUpdated";
 
         public ContactPoint[] ContactPoints { get; private set; }
         public float ImmersionDepth { get; private set; }
-        public float DurabilityValue { get; private set; }
+
+        public float DurabilityDelta { get; private set; }
+        public bool IsLethalCrush { get; private set; }
 
         public ObstacleEvent(string name, ContactPoint[] contactPoints, float immersionDepth) : base(name)
         {
@@ -20,13 +20,10 @@ namespace Drone.Location.Event
             ImmersionDepth = immersionDepth;
         }
 
-        public ObstacleEvent(string name, float durability) : base(name)
+        public ObstacleEvent(string name, bool isLethalCrush, float durability) : base(name)
         {
-            DurabilityValue = durability;
-        }
-
-        public ObstacleEvent(string name) : base(name)
-        {
+            DurabilityDelta = durability;
+            IsLethalCrush = isLethalCrush;
         }
     }
 }

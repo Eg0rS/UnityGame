@@ -4,7 +4,7 @@ using AgkUI.Dialog.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Location.Event;
 using Drone.Location.Service.Game;
-using Drone.Location.World.Drone.Event;
+using Drone.Location.Service.Game.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
@@ -45,14 +45,16 @@ namespace Drone.Location.UI
         private void Init()
         {
             _timer.text = "0,00";
-            _gameWorld.AddListener<EnergyEvent>(EnergyEvent.ENERGY_UPDATE, EnergyUpdate);
-            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.DURABILITY_UPDATED, DurabilityUpdate);
-            _gameWorld.AddListener<ControllEvent>(ControllEvent.START_GAME, StartGame);
-            _gameWorld.AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartGame);
+            
+            _gameWorld.AddListener<EnergyEvent>(EnergyEvent.UPDATE, EnergyUpdate);
+            _gameWorld.AddListener<DurabilityEvent>(DurabilityEvent.UPDATED, DurabilityUpdate);
+            
+            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.END_GAME, EndGame);
             SetStats(_gameService.DroneModel);
         }
 
-        private void DurabilityUpdate(ObstacleEvent obstacleEvent)
+        private void DurabilityUpdate(DurabilityEvent obstacleEvent)
         {
             _durability.text = ((obstacleEvent.DurabilityValue / _droneModel.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
         }
@@ -62,13 +64,13 @@ namespace Drone.Location.UI
             _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
         }
 
-        private void EndGame(WorldEvent objectEvent)
+        private void EndGame(WorldObjectEvent objectObjectEvent)
         {
             _isGame = false;
             Destroy(gameObject);
         }
 
-        private void StartGame(ControllEvent controllEvent)
+        private void StartGame(InGameEvent inGameEvent)
         {
             _isGame = true;
         }

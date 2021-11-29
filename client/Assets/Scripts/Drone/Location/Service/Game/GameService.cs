@@ -1,3 +1,4 @@
+using System;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
@@ -7,6 +8,7 @@ using Drone.LevelMap.LevelDialogs;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
 using Drone.Location.Event;
+using Drone.Location.Service.Game.Event;
 using Drone.Location.World.Drone.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
@@ -41,7 +43,7 @@ namespace Drone.Location.Service.Game
         [Inject]
         private DroneService _droneService;
 
-        private const float TIME_FOR_DEAD = 0.5f;
+        private const float TIME_FOR_DEAD = 0.3f;
 
         private LevelDescriptor _levelDescriptor;
 
@@ -55,20 +57,46 @@ namespace Drone.Location.Service.Game
             DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, DroneModel));
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, DroneModel));
+            
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
 
-            _gameWorld.AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
-            _gameWorld.AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
-            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.LETHAL_CRUSH, OnDroneLethalCrash);
-            _gameWorld.AddListener<ControllEvent>(ControllEvent.START_GAME, StartFlight);
+            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.TAKE_CHIP, OnTakeChip);
+            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.FINISHED, OnFinished);
+            //событие смерти 
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartFlight);
 
             _overlayManager.HideLoadingOverlay(true);
         }
 
-        private void StartFlight(ControllEvent controllEvent)
+        private void OnEndGame(InGameEvent inGameEvent)
+        {
+            EndGameReasons reason = inGameEvent.EndGameReason;
+            switch (reason) {
+                case EndGameReasons.OUT_OF_DURABILITY:
+                case EndGameReasons.OUT_OF_ENEGRY:
+                    GameFailed(reason);
+                    break;
+                case EndGameReasons.VICTORY:
+                    break;
+                default:
+                    throw new Exception($"Reason {reason} is not implemented");
+                    break;
+                    
+                
+            }
+        }
+
+        private void GameFailed(EndGameReasons reason)
+        {
+            
+        }
+
+        private void StartFlight(InGameEvent obj)
         {
             _startTime = Time.time;
         }
+        
 
         private void SetStatsInProgress(bool isWin)
         {
@@ -89,13 +117,13 @@ namespace Drone.Location.Service.Game
             DroneFailed(FailedReasons.Crashed);
         }
 
-        private void OnTakeChip(WorldEvent worldEvent)
+        private void OnTakeChip(WorldObjectEvent worldObjectEvent)
         {
             _countChips++;
             
         }
 
-        private void OnFinished(WorldEvent worldEvent)
+        private void OnFinished(WorldObjectEvent worldObjectEvent)
         {
             Victory();
         }
@@ -117,7 +145,7 @@ namespace Drone.Location.Service.Game
         public void EndGame()
         {
             Time.timeScale = 0f;
-            _gameWorld.Dispatch(new WorldEvent(WorldEvent.END_GAME));
+            _gameWorld.Dispatch(new WorldObjectEvent(WorldObjectEvent.END_GAME));
         }
 
         private int CalculateStars(float timeInGame)
