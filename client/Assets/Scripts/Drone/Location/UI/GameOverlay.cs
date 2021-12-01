@@ -50,7 +50,7 @@ namespace Drone.Location.UI
             _gameWorld.AddListener<EnergyEvent>(EnergyEvent.UPDATE, EnergyUpdate);
             _gameWorld.AddListener<DurabilityEvent>(DurabilityEvent.UPDATED, DurabilityUpdate);
             
-            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.END_GAME, EndGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, EndGame);
             SetStats(_gameService.DroneModel);
         }
 
@@ -64,10 +64,10 @@ namespace Drone.Location.UI
             _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
         }
 
-        private void EndGame(WorldObjectEvent objectObjectEvent)
+        private void EndGame(InGameEvent inGameEvent)
         {
             _isGame = false;
-            Destroy(gameObject);
+            _dialogManager.Hide(gameObject);
         }
 
         private void StartGame(InGameEvent inGameEvent)

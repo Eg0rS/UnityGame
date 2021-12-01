@@ -2,7 +2,7 @@ using AgkCommons.Event;
 
 namespace Drone.Location.Service.Game.Event
 {
-    public class DurabilityEvent: GameEvent
+    public class DurabilityEvent : GameEvent
     {
         public const string UPDATED = "Updated";
 

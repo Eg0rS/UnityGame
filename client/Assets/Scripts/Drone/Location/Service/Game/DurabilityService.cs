@@ -13,6 +13,8 @@ namespace Drone.Location.Service.Game
         private GameWorld _gameWorld;
         private float _durability;
 
+        private float _maxDurabity;
+
         public void Init()
         {
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
@@ -35,7 +37,17 @@ namespace Drone.Location.Service.Game
 
         private void OnSetParameters(InGameEvent inGameEvent)
         {
-            _durability = inGameEvent.DroneModel.durability;
+            _maxDurabity = inGameEvent.DroneModel.durability;
+            _durability = _maxDurabity;
+        }
+
+        public float Durability
+        {
+            get { return _durability; }
+        }
+        public float MaxDurability
+        {
+            get { return _maxDurabity; }
         }
     }
 }

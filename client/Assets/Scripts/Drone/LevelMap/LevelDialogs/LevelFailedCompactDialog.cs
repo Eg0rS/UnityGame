@@ -10,6 +10,7 @@ using Drone.Core.UI.Dialog;
 using Drone.Levels.Service;
 using Drone.Location.Service;
 using Drone.Location.Service.Game;
+using Drone.Location.Service.Game.Event;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
@@ -26,7 +27,7 @@ namespace Drone.LevelMap.LevelDialogs
         private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedCompactDialog@embeded";
 
         private string _levelId;
-        private FailedReasons _failReason;
+        private EndGameReasons _endGameReasons;
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
@@ -41,10 +42,10 @@ namespace Drone.LevelMap.LevelDialogs
         private Text _failReasonLabel;
 
         [UICreated]
-        public void Init(FailedReasons failReason)
+        public void Init(EndGameReasons failReason)
         {
             _levelId = _levelService.SelectedLevelId;
-            _failReason = failReason;
+            _endGameReasons = failReason;
             SetDialogLabels();
         }
 
@@ -65,9 +66,9 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetDialogLabels()
         {
-            _failReasonLabel.text = _failReason switch {
-                    FailedReasons.Crashed => "Дрон разбился",
-                    FailedReasons.EnergyFalled => "Закончилась энергия",
+            _failReasonLabel.text = _endGameReasons switch {
+                    EndGameReasons.OUT_OF_DURABILITY => "Дрон разбился",
+                    EndGameReasons.OUT_OF_ENERGY => "Закончилась энергия",
                     _ => _failReasonLabel.text
             };
         }

@@ -20,9 +20,9 @@ namespace Drone.Location.IoC
             
             container.RegisterSingleton<DroneControlService>(null, ScopeType.SCREEN);
             
-            
-            container.RegisterSingleton<ObstacleService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<EnergyService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<DurabilityService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<ObstacleService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<AcceleratorService>(null, ScopeType.SCREEN);
             //должен быть создан самым последним 
             container.RegisterSingleton<GameService>(null, ScopeType.SCREEN);
