@@ -2,21 +2,21 @@ using System.Collections.Generic;
 using System.Data;
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.PowerUp.Descriptor;
 using IoC.Attribute;
 using JetBrains.Annotations;
 
 namespace Drone.PowerUp.Service
 {
-    public class PowerUpService : IInitable
+    public class PowerUpService : IConfigurable
     {
         [Inject]
         private ResourceService _resourceService;
 
         private Dictionary<PowerUpType, PowerUpDescriptor> _powerUpDescriptors;
 
-        public void Init()
+        public void Configure()
         {
             _powerUpDescriptors = new Dictionary<PowerUpType, PowerUpDescriptor>();
             _resourceService.LoadConfiguration("Configs/boosters@embeded", OnConfigLoaded);

@@ -60,7 +60,6 @@ namespace Drone
             filterChain.AddFilter(new ConfigureServiceFilter());
             filterChain.AddFilter(new AppSettingsFilter());
             filterChain.AddFilter(new StartGameFilter());
-            filterChain.AddFilter(new InitableFilter());
             filterChain.Next();
         }
     }

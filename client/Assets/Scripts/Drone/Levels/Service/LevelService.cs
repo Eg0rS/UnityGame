@@ -3,7 +3,7 @@ using System.Linq;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
 using Drone.Billing.Service;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.Descriptor;
 using Drone.LevelMap.Levels.Model;
 using Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog;
@@ -17,7 +17,7 @@ using JetBrains.Annotations;
 
 namespace Drone.Levels.Service
 {
-    public class LevelService : GameEventDispatcher, IInitable
+    public class LevelService : GameEventDispatcher, IConfigurable
     {
         [Inject]
         private ProgressRepository _progressRepository;
@@ -32,7 +32,7 @@ namespace Drone.Levels.Service
         public string SelectedLevelId { get; set; }
         public string SelectedDroneId { get; set; }
 
-        public void Init()
+        public void Configure()
         {
         }
 

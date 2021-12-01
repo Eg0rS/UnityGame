@@ -6,14 +6,14 @@ using Drone.Billing.Descriptor;
 using Drone.Billing.Event;
 using Drone.Billing.IoC;
 using Drone.Billing.Model;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.Shop.UI;
 using IoC.Attribute;
 using IoC.Util;
 
 namespace Drone.Billing.Service
 {
-    public class BillingService : GameEventDispatcher, IInitable
+    public class BillingService : GameEventDispatcher, IConfigurable
     {
         [Inject] private BillingRepository _billingRepository;
 
@@ -25,7 +25,7 @@ namespace Drone.Billing.Service
 
         private PlayerResourceModel _resourceModel;
 
-        public void Init()
+        public void Configure()
         {
             _resourceModel = RequirePlayerResourceModel();
             _resourceService.LoadConfiguration("Configs/Billing@embeded", OnConfigLoaded);

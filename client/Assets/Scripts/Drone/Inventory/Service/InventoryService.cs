@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using AgkCommons.Event;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.Inventory.Event;
 using Drone.Inventory.Model;
 using Drone.Location.World.Drone.Descriptor;
@@ -9,7 +9,7 @@ using IoC.Attribute;
 
 namespace Drone.Inventory.Service
 {
-    public class InventoryService : GameEventDispatcher, IInitable
+    public class InventoryService : GameEventDispatcher, IConfigurable
     {
         [Inject]
         private InventoryRepository _inventoryRepository;
@@ -19,7 +19,7 @@ namespace Drone.Inventory.Service
         
         private InventoryModel _inventory;
 
-        public void Init()
+        public void Configure()
         {
             InitInventoryModel();
         }

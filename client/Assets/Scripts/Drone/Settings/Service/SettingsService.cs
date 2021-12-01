@@ -1,15 +1,14 @@
 ﻿using Drone.Billing.Service;
 using Drone.Core.Audio.Service;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.Inventory.Service;
 using Drone.Levels.Service;
-using Drone.Location.Service;
 using Drone.Settings.Model;
 using IoC.Attribute;
 
 namespace Drone.Settings.Service
 {
-    public class SettingsService : IInitable
+    public class SettingsService : IConfigurable
     {
         [Inject]
         private SettingsRepository _settingsRepository;
@@ -42,12 +41,12 @@ namespace Drone.Settings.Service
         {
             SettingsModel model = _settingsRepository.Get();
             if (model == null) {
-                Init();
+                Configure();
             }
             return _settingsRepository.Require();
         }
 
-        public void Init()
+        public void Configure()
         {
             if (!HasSettingsModel()) {
                 SettingsModel settingsModel = new SettingsModel();
