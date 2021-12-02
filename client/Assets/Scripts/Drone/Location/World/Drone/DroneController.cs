@@ -40,6 +40,7 @@ namespace Drone.Location.World.Drone
         private Vector3 _droneTargetPosition = Vector3.zero;
         private bool _isGameRun;
         private Sequence _sequence;
+        private Vector2 _swipe;
 
         public void Init(DronePrefabModel model)
         {
@@ -110,6 +111,7 @@ namespace Drone.Location.World.Drone
             if (_droneTargetPosition.Equals(newPosition)) {
                 return;
             }
+            _gameWorld.Dispatch(new ControllEvent(ControllEvent.MOVEMENT, newPosition));
             DotWeenMove(newPosition);
         }
 
@@ -128,6 +130,7 @@ namespace Drone.Location.World.Drone
             if (newPos.y < -1.0f) {
                 swipe.y = 0.0f;
             }
+            _swipe = swipe;
             Vector3 newPosition = dronPos + swipe;
             return newPosition;
         }
