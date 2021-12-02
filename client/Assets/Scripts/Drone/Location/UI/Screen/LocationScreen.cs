@@ -21,7 +21,7 @@ namespace Drone.Location.UI.Screen
         [UICreated]
         private void Init()
         {
-            _locationService.Require().AddListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            _locationService.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void OnDestroy()
@@ -29,10 +29,10 @@ namespace Drone.Location.UI.Screen
             if (this.IsDestroyed()) {
                 return;
             }
-            _locationService.Require().RemoveListener<WorldEvent>(WorldEvent.WORLD_CREATED, OnWorldCreated);
+            _locationService.Require().RemoveListener<WorldObjectEvent>(WorldObjectEvent.WORLD_CREATED, OnWorldCreated);
         }
 
-        private void OnWorldCreated(WorldEvent worldEvent)
+        private void OnWorldCreated(WorldObjectEvent worldObjectEvent)
         {
             _gameOverlayManager.LoadGameOverlay();
         }

@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Adept.Logger;
-using Drone.LevelMap.Levels.Descriptor;
-using Drone.LevelMap.Levels.IoC;
-using Drone.LevelMap.Levels.Service;
+using Drone.Levels.Descriptor;
+using Drone.Levels.Service;
 using IngameDebugConsole.Console.External;
 using JetBrains.Annotations;
 using AppContext = IoC.AppContext;
@@ -19,8 +18,8 @@ namespace Drone.Console
         public static void UnlockLevel(int order)
         {
             LevelService levelService = AppContext.Resolve<LevelService>();
-            LevelDescriptorRegistry levelDescriptorRegistry = AppContext.Resolve<LevelDescriptorRegistry>();
-            List<LevelDescriptor> levels = new List<LevelDescriptor>(levelDescriptorRegistry.LevelDescriptors.OrderBy(x => x.Order));
+            
+            List<LevelDescriptor> levels = levelService.LevelsDescriptors.Levels.ToList();
             for (int i = 0; i < order; i++) {
                 levelService.SetLevelProgress(levels[i].Id, 0, 0, 0, 0);
             }

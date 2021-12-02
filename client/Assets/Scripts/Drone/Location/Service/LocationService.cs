@@ -2,7 +2,7 @@ using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Screens.Service;
 using Drone.Core;
-using Drone.LevelMap.Levels.Descriptor;
+using Drone.Levels.Descriptor;
 using Drone.Location.Service.Builder;
 using Drone.Location.UI.Screen;
 using Drone.World.Event;
@@ -32,11 +32,11 @@ namespace Drone.Location.Service
 
         private void CreatedWorld(LevelDescriptor levelDescriptor)
         {
-            string levelPrefabName = levelDescriptor.Prefab;
+            string levelPrefabName = levelDescriptor.Graphics.Prefab;
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
                                    .Build()
-                                   .Then(() => Dispatch(new WorldEvent(WorldEvent.WORLD_CREATED)))
+                                   .Then(() => Dispatch(new WorldObjectEvent(WorldObjectEvent.WORLD_CREATED)))
                                    .Done();
         }
     }

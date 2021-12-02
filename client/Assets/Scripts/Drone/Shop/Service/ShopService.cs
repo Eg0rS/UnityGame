@@ -5,7 +5,7 @@ using AgkCommons.Resources;
 using AgkUI.Dialog.Service;
 using Drone.Billing.Model;
 using Drone.Billing.Service;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.Inventory.Model;
 using Drone.Inventory.Service;
 using Drone.Shop.Descriptor;
@@ -17,7 +17,7 @@ using JetBrains.Annotations;
 
 namespace Drone.Shop.Service
 {
-    public class ShopService : GameEventDispatcher, IInitable
+    public class ShopService : GameEventDispatcher, IConfigurable
     {
         [Inject]
         private ResourceService _resourceService;
@@ -36,7 +36,7 @@ namespace Drone.Shop.Service
 
         private ShopDescriptor _shopDescriptor;
 
-        public void Init()
+        public void Configure()
         {
             _shopDescriptor = new ShopDescriptor();
             _resourceService.LoadConfiguration("Configs/shop@embeded", OnConfigLoaded);

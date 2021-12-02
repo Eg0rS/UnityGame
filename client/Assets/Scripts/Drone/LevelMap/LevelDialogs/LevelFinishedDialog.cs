@@ -8,7 +8,8 @@ using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
 using Drone.LevelMap.Levels.Model;
-using Drone.LevelMap.Levels.Service;
+using Drone.Levels.Model;
+using Drone.Levels.Service;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
@@ -68,12 +69,12 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _levelId = _levelService.SelectedLevelId;
             _levelViewModel = _levelService.GetLevels().Find(x => x.LevelDescriptor.Id.Equals(_levelId));
-            _levelTitle.text = _levelViewModel.LevelDescriptor.Title;
+            _levelTitle.text = _levelViewModel.LevelDescriptor.Reference.Title;
             _countStars = 0;
-            // SetChipstask();
-            // SetDurabilityTask();
-            // SetTimeTask();
-            // SetStars();
+            SetChipstask();
+            SetDurabilityTask();
+            SetTimeTask();
+            SetStars();
         }
 
         private void SetStars()
@@ -86,7 +87,7 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetTimeTask()
         {
-            float goal = _levelViewModel.LevelDescriptor.NecessaryTime;
+            float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryTime;
             float score = _levelViewModel.LevelProgress.TransitTime;
             SetTask(_timerTask, TIME_TASK_GOAL, TIME_TASK_SCORE, goal, score);
             if (score <= goal) {
@@ -97,7 +98,7 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetDurabilityTask()
         {
-            float goal = _levelViewModel.LevelDescriptor.NecessaryDurability;
+            float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryDurability;
             float score = _levelViewModel.LevelProgress.Durability;
             SetTask(_durabilityTask, DURABILITY_TASK_GOAL, DURABILITY_TASK_SCORE, goal, score);
             if (score >= goal) {
@@ -108,7 +109,7 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetChipstask()
         {
-            float goal = _levelViewModel.LevelDescriptor.NecessaryCountChips;
+            float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryCountChips;
             float score = _levelViewModel.LevelProgress.CountChips;
             SetTask(_chipTask, CHIPS_TASK_GOAL, CHIPS_TASK_SCORE, goal, score);
             if (score >= goal) {
@@ -152,7 +153,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _levelService.ShowStartLevelDialog(_levelService.GetNextLevelId(_levelViewModel.LevelDescriptor.Id));
+            _levelService.ShowStartLevelDialog(_levelService.GetNextLevelDescriptor(_levelViewModel.LevelDescriptor.Id)?.Id);
         }
 
         [UIOnClick("ButtonMenu")]

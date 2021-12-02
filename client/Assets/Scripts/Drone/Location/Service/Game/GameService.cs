@@ -1,40 +1,35 @@
+using System;
+using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
 using Drone.Core;
 using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
-using Drone.LevelMap.Levels.Descriptor;
-using Drone.LevelMap.Levels.Service;
-using Drone.Location.Event;
-using Drone.Location.World.Drone.Event;
+using Drone.Levels.Descriptor;
+using Drone.Levels.Service;
+using Drone.Location.Service.Game.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.Location.World.Drone.Service;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.Service.Game
 {
-    public enum FailedReasons
-    {
-        Crashed,
-        EnergyFalled,
-    }
 
     [Injectable]
     public class GameService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private GameWorld _gameWorld;
 
         [Inject]
-        private IoCProvider<OverlayManager> _overlayManager;
+        private OverlayManager _overlayManager;
 
         [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        private DialogManager _dialogManager;
 
         [Inject]
         private LevelService _levelService;
@@ -42,13 +37,16 @@ namespace Drone.Location.Service.Game
         [Inject]
         private DroneService _droneService;
 
-        private const float TIME_FOR_DEAD = 0.5f;
+        [Inject]
+        private DurabilityService _durabilityService;
+
+        private const float TIME_FOR_DEAD = 0.3f;
 
         private LevelDescriptor _levelDescriptor;
 
         private float _startTime;
 
-        private float _countChips;
+        private int _countChips;
         public DroneModel DroneModel { get; private set; }
 
         public void Init()
@@ -56,17 +54,43 @@ namespace Drone.Location.Service.Game
             DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.SET_DRON_PARAMETERS, DroneModel));
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, DroneModel));
 
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.TAKE_CHIP, OnTakeChip);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.FINISHED, OnFinished);
-            _gameWorld.Require().AddListener<ObstacleEvent>(ObstacleEvent.LETHAL_CRUSH, OnDroneLethalCrash);
-            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, StartFlight);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
 
-            _overlayManager.Require().HideLoadingOverlay(true);
+            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.TAKE_CHIP, OnTakeChip);
+            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.FINISHED, OnFinished);
+            //событие смерти
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartFlight);
+
+            _overlayManager.HideLoadingOverlay(true);
         }
 
-        private void StartFlight(ControllEvent controllEvent)
+        private void OnEndGame(InGameEvent inGameEvent)
+        {
+            EndGameReasons reason = inGameEvent.EndGameReason;
+            switch (reason) {
+                case EndGameReasons.OUT_OF_DURABILITY:
+                case EndGameReasons.OUT_OF_ENERGY:
+                    StartCoroutine(GameFailed(reason));
+                    break;
+                case EndGameReasons.VICTORY:
+                    Victory();
+                    break;
+                default:
+                    throw new Exception($"Reason {reason} is not implemented");
+                    break;
+            }
+        }
+
+        private IEnumerator GameFailed(EndGameReasons reason)
+        {
+            yield return new WaitForSeconds(TIME_FOR_DEAD);
+            SetStatsInProgress(false);
+            _dialogManager.ShowModal<LevelFailedCompactDialog>(reason);
+        }
+
+        private void StartFlight(InGameEvent obj)
         {
             _startTime = Time.time;
         }
@@ -75,28 +99,17 @@ namespace Drone.Location.Service.Game
         {
             float timeInGame = Time.time - _startTime;
             if (isWin) {
-                // _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _droneModel.countChips, timeInGame,
-                //                                (int) ((_droneModel.durability / _droneModel.maxDurability) * 100));
+                _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _countChips, timeInGame,
+                                               (int) ((_durabilityService.Durability / _durabilityService.MaxDurability) * 100));
             }
         }
 
-        private void OnDroneLethalCrash(ObstacleEvent obstacleEvent)
-        {
-            Invoke(nameof(Crashed), TIME_FOR_DEAD);
-        }
-
-        private void Crashed()
-        {
-            DroneFailed(FailedReasons.Crashed);
-        }
-
-        private void OnTakeChip(WorldEvent worldEvent)
+        private void OnTakeChip(WorldObjectEvent worldObjectEvent)
         {
             _countChips++;
-            
         }
 
-        private void OnFinished(WorldEvent worldEvent)
+        private void OnFinished(WorldObjectEvent worldObjectEvent)
         {
             Victory();
         }
@@ -104,36 +117,22 @@ namespace Drone.Location.Service.Game
         private void Victory()
         {
             SetStatsInProgress(true);
-            EndGame();
-            _dialogManager.Require().ShowModal<LevelFinishedDialog>();
-        }
-
-        private void DroneFailed(FailedReasons reason)
-        {
-            SetStatsInProgress(false);
-            EndGame();
-            _dialogManager.Require().ShowModal<LevelFailedCompactDialog>(reason);
-        }
-
-        public void EndGame()
-        {
-            Time.timeScale = 0f;
-            _gameWorld.Require().Dispatch(new WorldEvent(WorldEvent.END_GAME));
+            _dialogManager.ShowModal<LevelFinishedDialog>();
         }
 
         private int CalculateStars(float timeInGame)
         {
             int countStars = 0;
 
-            // if (_droneModel.durability >= _levelDescriptor.NecessaryDurability) {
-            //     countStars++;
-            // }
-            // if (_droneModel.countChips >= _levelDescriptor.NecessaryCountChips) {
-            //     countStars++;
-            // }
-            // if (timeInGame <= _levelDescriptor.NecessaryTime) {
-            //     countStars++;
-            // }
+            if (_durabilityService.Durability >= _levelDescriptor.Goals.NecessaryDurability) {
+                countStars++;
+            }
+            if (_countChips >= _levelDescriptor.Goals.NecessaryCountChips) {
+                countStars++;
+            }
+            if (timeInGame <= _levelDescriptor.Goals.NecessaryTime) {
+                countStars++;
+            }
 
             return countStars;
         }

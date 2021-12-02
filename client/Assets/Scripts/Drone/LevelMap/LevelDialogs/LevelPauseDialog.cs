@@ -5,7 +5,6 @@ using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
-using Drone.Location.Service;
 using Drone.Location.Service.Game;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
@@ -22,33 +21,27 @@ namespace Drone.LevelMap.LevelDialogs
         private const string PREFAB_NAME = "UI/Pause/pfLevelPauseDialog@embeded";
 
         [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        private DialogManager _dialogManager;
 
         [Inject]
         private ScreenManager _screenManager;
 
-        [Inject]
-        private GameService _gameService;
-
         [UICreated]
         public void Init()
         {
-            _logger.Debug("[LevelPauseDialog] Init()...");
             Time.timeScale = 0;
         }
 
         [UIOnClick("ButtonExit")]
         private void ExitClick()
         {
-            _gameService.EndGame();
-            _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
         }
 
         [UIOnClick("ButtonResume")]
         private void ResumeClick()
         {
-            _dialogManager.Require().Hide(this);
+            _dialogManager.Hide(this);
             Time.timeScale = 1;
         }
     }

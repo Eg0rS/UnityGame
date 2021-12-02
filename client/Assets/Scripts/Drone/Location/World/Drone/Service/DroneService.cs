@@ -1,7 +1,7 @@
 ﻿using Adept.Logger;
 using AgkCommons.Configurations;
 using AgkCommons.Resources;
-using Drone.Core.Filter;
+using Drone.Core.Service;
 using Drone.Inventory.Service;
 using Drone.Location.World.Drone.Descriptor;
 using Drone.Location.World.Drone.IoC;
@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace Drone.Location.World.Drone.Service
 {
-    public class DroneService : IInitable
+    public class DroneService : IConfigurable
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DroneService>();
 
@@ -24,7 +24,7 @@ namespace Drone.Location.World.Drone.Service
         [Inject]
         private InventoryService _inventoryService;
 
-        public void Init()
+        public void Configure()
         {
             if (_droneDescriptorRegistry.DroneDescriptors.Count != 0) {
                 return;

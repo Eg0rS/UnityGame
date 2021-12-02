@@ -4,12 +4,11 @@ using AgkUI.Dialog.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Location.Event;
 using Drone.Location.Service.Game;
-using Drone.Location.World.Drone.Event;
+using Drone.Location.Service.Game.Event;
 using Drone.Location.World.Drone.Model;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
-using IoC.Util;
 using TMPro;
 using UnityEngine;
 
@@ -19,12 +18,12 @@ namespace Drone.Location.UI
     public class GameOverlay : MonoBehaviour
     {
         [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        private DialogManager _dialogManager;
 
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private GameWorld _gameWorld;
         [Inject]
-        private IoCProvider<GameService> _gameService;
+        private GameService _gameService;
 
         [UIComponentBinding("ChipsValue")]
         private TextMeshProUGUI _countChips;
@@ -40,21 +39,24 @@ namespace Drone.Location.UI
 
         private float _time;
         private bool _isGame;
+        private DroneModel _droneModel;
 
         [UICreated]
         private void Init()
         {
             _timer.text = "0,00";
-            _gameWorld.Require().AddListener<EnergyEvent>(EnergyEvent.ENERGY_UPDATE, EnergyUpdate);
-            _gameWorld.Require().AddListener<ObstacleEvent>(ObstacleEvent.DURABILITY_UPDATED, DurabilityUpdate);
-            _gameWorld.Require().AddListener<ControllEvent>(ControllEvent.START_GAME, StartGame);
-            _gameWorld.Require().AddListener<WorldEvent>(WorldEvent.END_GAME, EndGame);
-            SetStats(_gameService.Require().DroneModel);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartGame);
+            
+            _gameWorld.AddListener<EnergyEvent>(EnergyEvent.UPDATE, EnergyUpdate);
+            _gameWorld.AddListener<DurabilityEvent>(DurabilityEvent.UPDATED, DurabilityUpdate);
+            
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, EndGame);
+            SetStats(_gameService.DroneModel);
         }
 
-        private void DurabilityUpdate(ObstacleEvent obstacleEvent)
+        private void DurabilityUpdate(DurabilityEvent obstacleEvent)
         {
-            _durability.text = obstacleEvent.DurabilityValue.ToString("F0");
+            _durability.text = ((obstacleEvent.DurabilityValue / _droneModel.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
         }
 
         private void EnergyUpdate(EnergyEvent energyEvent)
@@ -62,13 +64,13 @@ namespace Drone.Location.UI
             _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
         }
 
-        private void EndGame(WorldEvent objectEvent)
+        private void EndGame(InGameEvent inGameEvent)
         {
             _isGame = false;
-            Destroy(gameObject);
+            _dialogManager.Hide(gameObject);
         }
 
-        private void StartGame(ControllEvent controllEvent)
+        private void StartGame(InGameEvent inGameEvent)
         {
             _isGame = true;
         }
@@ -84,6 +86,7 @@ namespace Drone.Location.UI
 
         private void SetStats(DroneModel model)
         {
+            _droneModel = model;
             _countChips.text = model.countChips.ToString();
             _countEnergy.text = model.energy.ToString("F0");
             _durability.text = ((model.durability / model.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
@@ -92,7 +95,7 @@ namespace Drone.Location.UI
         [UIOnClick("PauseButton")]
         private void OnPauseButton()
         {
-            _dialogManager.Require().ShowModal<LevelPauseDialog>();
+            _dialogManager.ShowModal<LevelPauseDialog>();
         }
     }
 }
