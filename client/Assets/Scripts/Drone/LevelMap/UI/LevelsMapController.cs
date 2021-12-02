@@ -42,9 +42,10 @@ namespace Drone.LevelMap.UI
             UpdateLevels(_levelService.GetLevels());
         }
 
-        private void CreateLevels(List<LevelViewModel> viewModels)
+        private void CreateLevels(List<LevelViewModel> levelViewModels)
         {
-            foreach (LevelViewModel levelViewModel in viewModels) {
+            _currentLevelId = levelViewModels.Find(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel())).LevelDescriptor.Id;
+            foreach (LevelViewModel levelViewModel in levelViewModels) {
                 GameObject levelContainer = GameObject.Find($"level{levelViewModel.LevelDescriptor.Order}");
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,
                                                                         levelViewModel.LevelDescriptor.Id.Equals(_currentLevelId))

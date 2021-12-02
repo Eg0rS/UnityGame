@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4374992472853802254}
   - component: {fileID: 799604352933847723}
   - component: {fileID: 3241523718352705121}
-  - component: {fileID: 3922953684923757937}
+  - component: {fileID: 2361638528762018661}
+  - component: {fileID: 975318971609549827}
   m_Layer: 0
   m_Name: pfBigStone
   m_TagString: Untagged
@@ -82,8 +83,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3922953684923757937
-BoxCollider:
+--- !u!114 &2361638528762018661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034320187494053812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectType: 2
+--- !u!64 &975318971609549827
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -92,6 +106,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 6.0617123, y: 6.7045813, z: 5.7536106}
-  m_Center: {x: 0.15961683, y: 3.3522906, z: -0.17565477}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -4030421661885603460, guid: d16d4e3484255e1489b087f1b50c464a, type: 3}
