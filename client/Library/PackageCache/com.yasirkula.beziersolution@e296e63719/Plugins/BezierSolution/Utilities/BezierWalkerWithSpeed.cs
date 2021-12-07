@@ -8,6 +8,7 @@ namespace BezierSolution
 	{
 		public BezierSpline spline;
 		public TravelMode travelMode;
+		public Rigidbody rigidbody;
 
 		public float speed = 5f;
 		[SerializeField]
@@ -36,7 +37,7 @@ namespace BezierSolution
 
 		private void FixedUpdate()
 		{
-			Execute( Time.deltaTime );
+			Execute( Time.fixedDeltaTime );
 		}
 
 		public override void Execute( float deltaTime )
@@ -44,8 +45,11 @@ namespace BezierSolution
 			float targetSpeed = ( isGoingForward ) ? speed : -speed;
 
 			Vector3 targetPos = spline.MoveAlongSpline( ref m_normalizedT, targetSpeed * deltaTime );
-
-			transform.position = targetPos;
+			//rigidbody.velocity = Vector3.zero;
+			if (rigidbody.position != targetPos) {
+				rigidbody.AddForce(targetPos-transform.position,ForceMode.VelocityChange);
+			}
+			//transform.position = targetPos;
 			//transform.position = Vector3.Lerp( transform.position, targetPos, movementLerpModifier * deltaTime );
 
 			bool movingForward = MovingForward;
