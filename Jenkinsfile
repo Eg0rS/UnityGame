@@ -185,34 +185,36 @@ private void deployClient(PlatformType platform) {
 }
 def buildAppClient(def context, PlatformType type, forceBuildLib = false) {
     def clientBuildPath = "${context.path.buildPath}/${type.name}client"
-    DurationService durationService = new DurationService(this)
-    if (!forceBuildLib) {
-        durationService.start("clientLibSaveLocalCache")
-        saveLocalCache(clientBuildPath, "Library", "${type.name}client")
+    prepareClient(context, type, forceBuildLib, "${context.path.repoPath}/client/")
+//     def clientBuildPath = "${context.path.buildPath}/${type.name}client"
+//     DurationService durationService = new DurationService(this)
+//     if (!forceBuildLib) {
+//         durationService.start("clientLibSaveLocalCache")
+//         saveLocalCache(clientBuildPath, "Library", "${type.name}client")
 
-        durationService.end("clientLibSaveLocalCache")
-    }
+//         durationService.end("clientLibSaveLocalCache")
+//     }
 
-    if (!fileExists(clientBuildPath)) {
-        fileOperations([folderCreateOperation(clientBuildPath)])
-    }
+//     if (!fileExists(clientBuildPath)) {
+//         fileOperations([folderCreateOperation(clientBuildPath)])
+//     }
 
-    syncDirectory("${context.path.repoPath}/client/", clientBuildPath)
+//     syncDirectory("${context.path.repoPath}/client/", clientBuildPath)
 
-    if (!forceBuildLib) {
-        durationService.start("clientLibRestoreLocalCache")
-        restoreLocalCache(clientBuildPath, "Library", "${type.name}client")
-        durationService.end("clientLibRestoreLocalCache")
-    }
+//     if (!forceBuildLib) {
+//         durationService.start("clientLibRestoreLocalCache")
+//         restoreLocalCache(clientBuildPath, "Library", "${type.name}client")
+//         durationService.end("clientLibRestoreLocalCache")
+//     }
 
-// retrieve  cache from master branch
-    def libPath = "${clientBuildPath}/Library"
-    if (!fileExists(libPath) && !forceBuildLib) {
-        echo "try restore"
-        durationService.start("restoreClientUnityLib")
-        context.cacheService.restoreClientUnityLib(type, libPath)
-        durationService.end("restoreClientUnityLib")
-    }
+// // retrieve  cache from master branch
+//     def libPath = "${clientBuildPath}/Library"
+//     if (!fileExists(libPath) && !forceBuildLib) {
+//         echo "try restore"
+//         durationService.start("restoreClientUnityLib")
+//         context.cacheService.restoreClientUnityLib(type, libPath)
+//         durationService.end("restoreClientUnityLib")
+//     }
 
     dir(clientBuildPath) {
         def prod = context.isProduction();
