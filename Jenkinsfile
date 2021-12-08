@@ -156,9 +156,9 @@ pipeline {
             script {
                 def nexusBranch = BuildContext.isProduction() ? BuildContext.projectOptions["nexusReleasesId"] : BuildContext.projectOptions["nexusAbyssId"]
                 slackSend channel: 'drone-tech', color: 'good',
-                    message: "${env.JOB_NAME} - #${env.BUILD_NUMBER}  Build success! (<${env.BUILD_URL}|Open>) @here \n
+                    message: """${env.JOB_NAME} - #${env.BUILD_NUMBER}  Build success! (<${env.BUILD_URL}|Open>) @here
                     https://nexus-dev.tortugasocial.com/repository/" + nexusBranch + "/com/tortuga/dronDonDon/dronDonDon-client-android-" + BuildContext.branch.branchName + "/" + BuildContext.version + "/dronDonDon-client-android-" + BuildContext.branch.branchName + "-" + BuildContext.version + ".zip \n
-                    https://nexus-dev.tortugasocial.com/repository/" + nexusBranch + "/com/tortuga/dronDonDon/dronDonDon-client-ios-" + BuildContext.branch.branchName + "/" + BuildContext.version + "/dronDonDon-client-ios-" + BuildContext.branch.branchName + "-" + BuildContext.version + ".zip"
+                    https://nexus-dev.tortugasocial.com/repository/" + nexusBranch + "/com/tortuga/dronDonDon/dronDonDon-client-ios-" + BuildContext.branch.branchName + "/" + BuildContext.version + "/dronDonDon-client-ios-" + BuildContext.branch.branchName + "-" + BuildContext.version + ".zip"""
             }
         }
     }
