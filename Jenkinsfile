@@ -13,9 +13,6 @@ class BuildContext {
 
     static notificationService
     static checkoutService
-    static stageService
-    static oldStageService
-    static deployerService
     static cacheService
     static awxService
 
@@ -40,7 +37,7 @@ pipeline {
         booleanParam(name: 'recreate', defaultValue: false, description: 'delete workspace and recreate it from develop')
 
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
-        booleanParam(name: 'windowsBuild', defaultValue: false, description: 'build windows')
+        booleanParam(name: 'iosBuild', defaultValue: false, description: 'build ios')
     }
 
     options {
@@ -63,14 +60,6 @@ pipeline {
                     BuildContext.notificationService = createNotificationService(BuildContext.projectOptions['slackChannel'])
                     BuildContext.checkoutService = createCheckoutService(BuildContext.projectOptions["repoUrl"])
                     BuildContext.path = getPathOptions()
-                    BuildContext.stageService = createNewStageService(BuildContext.projectOptions["stageUrl"],
-                            BuildContext.projectOptions["projectPrefix"])
-
-                    BuildContext.oldStageService = createStageService(BuildContext.projectOptions["projectPrefix"],
-                            BuildContext.projectOptions["nexusId"], BuildContext.projectOptions["stageUrl"])
-
-                    BuildContext.deployerService = createDeployerService(BuildContext.projectOptions["projectPrefix"],
-                            BuildContext.projectOptions["nexusId"], BuildContext.projectOptions["deployerUrl"])
 
                     BuildContext.cacheService = createCacheService(BuildContext.projectOptions["cacheBranch"])
 
@@ -110,22 +99,22 @@ pipeline {
         stage("build") {
             parallel {
                 
-                stage('windows-client') {
+                stage('ios-client') {
                     when {
-                        equals expected: true, actual: checkBuild("windows")
+                        equals expected: true, actual: checkBuild("ios")
                     }
                     stages {
                 
                         stage("build") {
                             steps {
-                                buildAppClient(BuildContext, PlatformType.WINDOWS,  params.forceBuildLib)
+                                buildAppClient(BuildContext, PlatformType.IOS,  params.forceBuildLib)
                             }
                         }
 
                         stage("deploy") {
                             steps {
                                 script {
-                                    deployClient(PlatformType.WINDOWS)
+                                    deployClient(PlatformType.IOS)
                                 }
                             }
                         }
@@ -173,7 +162,7 @@ pipeline {
 
 private void fillActiveBuilds() {
     BuildContext.activeBuilds['android'] = params.androidBuild
-    BuildContext.activeBuilds['windows'] = params.windowsBuild
+    BuildContext.activeBuilds['ios'] = params.iosBuild
 }
 
 private static boolean checkBuild(String type) {
