@@ -154,7 +154,7 @@ pipeline {
 
         success {
             script {
-                BuildContext.notificationService.notifyBuildSuccess(BuildContext.job, BuildContext.branch.user)
+                slackSend channel: 'drone-tech', color: 'good', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER}  Build success! Started by user @${BuildContext.user} (<${env.BUILD_URL}|Open>) @here"
             }
         }
     }
