@@ -170,8 +170,25 @@ private static boolean checkBuild(String type) {
 }
 
 private void deployClient(PlatformType platform) {
+    def clientBuildPath = BuildContext.path.buildPath + "/" + platform.name + 'client'
+    def clientPom = readMavenPom file: clientBuildPath + '/pom.xml'
 
+    def clientPackage = createPackage(
+            clientPom.groupId,
+            'dron-client',
+            BuildContext.version,
+            BuildContext.branch.branchName,
+            BuildContext.isProduction(),
+            platform
+    )
+
+    BuildContext.artifactIds.add(clientPackage.packageId)
+
+    dir("${clientBuildPath}/target") {
+        createNexusService(BuildContext.nexusConfig).tortugaPackage(clientPackage).upload()
+    }
 }
+
 def buildAppClient(def context, PlatformType type, forceBuildLib = false) {
     def clientBuildPath = "${context.path.buildPath}/${type.name}client"
     prepareClient(context, type, forceBuildLib, "${context.path.repoPath}/client/")
