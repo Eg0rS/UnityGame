@@ -175,7 +175,7 @@ private void deployClient(PlatformType platform) {
 
     def clientPackage = createPackage(
             clientPom.groupId,
-            'dron-client',
+            'dronDonDon-client',
             BuildContext.version,
             BuildContext.branch.branchName,
             BuildContext.isProduction(),
