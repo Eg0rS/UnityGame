@@ -35,11 +35,11 @@ class BuildContext {
 pipeline {
     agent any
     parameters {
-        booleanParam(name: 'forceBuildLib', defaultValue: true, description: 'use cache lib')
+        booleanParam(name: 'forceBuildLib', defaultValue: false, description: 'use cache lib')
         booleanParam(name: 'recreate', defaultValue: false, description: 'delete workspace and recreate it from develop')
 
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
-        booleanParam(name: 'iosBuild', defaultValue: false, description: 'build ios')
+        booleanParam(name: 'iosBuild', defaultValue: true, description: 'build ios')
     }
 
     options {
