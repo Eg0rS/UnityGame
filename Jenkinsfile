@@ -145,6 +145,19 @@ pipeline {
                 }
             }
         }
+        stage("notify-ansible") {
+            when {
+                equals expected: false, actual: BuildContext.isProduction()
+            }
+            steps {
+                script {
+
+                    BuildContext.awxService.runRecipe("drondondon-stage-add-build",
+                            "{\\\"version\\\": \\\"${BuildContext.version}\\\", \\\"branch_name\\\": \\\"${BuildContext.branch.displayBranchName}\\\", \\\"artifacts\\\": \\\"${BuildContext.artifactIds.join(",")}\\\"}")
+
+                }
+            }
+        }
     }
 
     post {
