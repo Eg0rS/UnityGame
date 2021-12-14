@@ -1,3 +1,5 @@
+@Library('my-shared-lib@fix-cache-service') _
+
 import com.tortuga.model.PlatformType
 import com.tortuga.model.PlatformType
 import com.tortuga.service.DurationService
@@ -13,9 +15,6 @@ class BuildContext {
 
     static notificationService
     static checkoutService
-    static stageService
-    static oldStageService
-    static deployerService
     static cacheService
     static awxService
 
@@ -40,7 +39,7 @@ pipeline {
         booleanParam(name: 'recreate', defaultValue: false, description: 'delete workspace and recreate it from develop')
 
         booleanParam(name: 'androidBuild', defaultValue: true, description: 'build android')
-        booleanParam(name: 'windowsBuild', defaultValue: true, description: 'build windows')
+        booleanParam(name: 'iosBuild', defaultValue: true, description: 'build ios')
     }
 
     options {
@@ -63,14 +62,6 @@ pipeline {
                     BuildContext.notificationService = createNotificationService(BuildContext.projectOptions['slackChannel'])
                     BuildContext.checkoutService = createCheckoutService(BuildContext.projectOptions["repoUrl"])
                     BuildContext.path = getPathOptions()
-                    BuildContext.stageService = createNewStageService(BuildContext.projectOptions["stageUrl"],
-                            BuildContext.projectOptions["projectPrefix"])
-
-                    BuildContext.oldStageService = createStageService(BuildContext.projectOptions["projectPrefix"],
-                            BuildContext.projectOptions["nexusId"], BuildContext.projectOptions["stageUrl"])
-
-                    BuildContext.deployerService = createDeployerService(BuildContext.projectOptions["projectPrefix"],
-                            BuildContext.projectOptions["nexusId"], BuildContext.projectOptions["deployerUrl"])
 
                     BuildContext.cacheService = createCacheService(BuildContext.projectOptions["cacheBranch"])
 
@@ -110,22 +101,22 @@ pipeline {
         stage("build") {
             parallel {
                 
-                stage('windows-client') {
+                stage('ios-client') {
                     when {
-                        equals expected: true, actual: checkBuild("windows")
+                        equals expected: true, actual: checkBuild("ios")
                     }
                     stages {
                 
                         stage("build") {
                             steps {
-                                buildAppClient(BuildContext, PlatformType.WINDOWS,  parameters.forceBuildLib)
+                                buildAppClient(BuildContext, PlatformType.IOS,  params.forceBuildLib)
                             }
                         }
 
                         stage("deploy") {
                             steps {
                                 script {
-                                    deployClient(PlatformType.WINDOWS)
+                                    deployClient(PlatformType.IOS)
                                 }
                             }
                         }
@@ -139,7 +130,7 @@ pipeline {
                     stages {                   
                         stage("build-client") {
                             steps {
-                                buildAppClient(BuildContext, PlatformType.ANDROID, parameters.forceBuildLib)
+                                buildAppClient(BuildContext, PlatformType.ANDROID, params.forceBuildLib)
                             }
                         }
 
@@ -154,6 +145,19 @@ pipeline {
                 }
             }
         }
+        stage("notify-ansible") {
+            when {
+                equals expected: false, actual: BuildContext.isProduction()
+            }
+            steps {
+                script {
+
+                    BuildContext.awxService.runRecipe("drondondon-stage-add-build",
+                            "{\\\"version\\\": \\\"${BuildContext.version}\\\", \\\"branch_name\\\": \\\"${BuildContext.branch.displayBranchName}\\\", \\\"artifacts\\\": \\\"${BuildContext.artifactIds.join(",")}\\\"}")
+
+                }
+            }
+        }
     }
 
     post {
@@ -165,15 +169,20 @@ pipeline {
 
         success {
             script {
-                BuildContext.notificationService.notifyBuildSuccess(BuildContext.job, BuildContext.branch.user)
+                def nexusBranch = BuildContext.isProduction() ? BuildContext.projectOptions["nexusReleasesId"] : BuildContext.projectOptions["nexusAbyssId"]
+                def androidUrl = "https://nexus-dev.tortugasocial.com/repository/${nexusBranch}/com/tortuga/dronDonDon/dronDonDon-client-android-${BuildContext.branch.branchName.replaceAll("[^0-9a-zA-Z]+", "_")}/${BuildContext.version}/dronDonDon-client-android-${BuildContext.branch.branchName.replaceAll("[^0-9a-zA-Z]+", "_")}-${BuildContext.version}.zip"
+                def iosUrl = "https://nexus-dev.tortugasocial.com/repository/${nexusBranch}/com/tortuga/dronDonDon/dronDonDon-client-ios-${BuildContext.branch.branchName.replaceAll("[^0-9a-zA-Z]+", "_")}/${BuildContext.version}/dronDonDon-client-ios-${BuildContext.branch.branchName.replaceAll("[^0-9a-zA-Z]+", "_")}-${BuildContext.version}.zip"
+                slackSend channel: 'drone-tech', color: 'good',
+                    message: "${env.JOB_NAME} - #${env.BUILD_NUMBER}  Build success! (<${env.BUILD_URL}|Open>) @here\n" +
+                    "Download: <${androidUrl}|Android Client> | <${iosUrl}|Ios Client>"
             }
         }
     }
 }
 
 private void fillActiveBuilds() {
-    BuildContext.activeBuilds['android'] = parameters.androidBuild
-    BuildContext.activeBuilds['windows'] = parameters.windowsBuild
+    BuildContext.activeBuilds['android'] = params.androidBuild
+    BuildContext.activeBuilds['ios'] = params.iosBuild
 }
 
 private static boolean checkBuild(String type) {
@@ -181,38 +190,28 @@ private static boolean checkBuild(String type) {
 }
 
 private void deployClient(PlatformType platform) {
+    def clientBuildPath = BuildContext.path.buildPath + "/" + platform.name + 'client'
+    def clientPom = readMavenPom file: clientBuildPath + '/pom.xml'
 
+    def clientPackage = createPackage(
+            clientPom.groupId,
+            'drondondon-client',
+            BuildContext.version,
+            BuildContext.branch.branchName,
+            BuildContext.isProduction(),
+            platform
+    )
+
+    BuildContext.artifactIds.add(clientPackage.packageId)
+
+    dir("${clientBuildPath}/target") {
+        createNexusService(BuildContext.nexusConfig).tortugaPackage(clientPackage).upload()
+    }
 }
+
 def buildAppClient(def context, PlatformType type, forceBuildLib = false) {
     def clientBuildPath = "${context.path.buildPath}/${type.name}client"
-    DurationService durationService = new DurationService(this)
-    if (!forceBuildLib) {
-        durationService.start("clientLibSaveLocalCache")
-        saveLocalCache(clientBuildPath, "Library", "${type.name}client")
-
-        durationService.end("clientLibSaveLocalCache")
-    }
-
-    if (!fileExists(clientBuildPath)) {
-        fileOperations([folderCreateOperation(clientBuildPath)])
-    }
-
-    syncDirectory("${context.path.repoPath}/client/", clientBuildPath)
-
-    if (!forceBuildLib) {
-        durationService.start("clientLibRestoreLocalCache")
-        restoreLocalCache(clientBuildPath, "Library", "${type.name}client")
-        durationService.end("clientLibRestoreLocalCache")
-    }
-
-// retrieve  cache from master branch
-    def libPath = "${clientBuildPath}/Library"
-    if (!fileExists(libPath) && !forceBuildLib) {
-        echo "try restore"
-        durationService.start("restoreClientUnityLib")
-        context.cacheService.restoreClientUnityLib(type, libPath)
-        durationService.end("restoreClientUnityLib")
-    }
+    prepareClient(context, type, forceBuildLib, "${context.path.repoPath}/client/")
 
     dir(clientBuildPath) {
         def prod = context.isProduction();
