@@ -13,6 +13,7 @@ namespace Drone.Location.Service.Builder
     public class LocationBuilder
     {
         private const string WORLD_NAME = "location";
+        private const string GAME_WORLD = "GameWorld";
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createCreateService;
@@ -21,6 +22,7 @@ namespace Drone.Location.Service.Builder
         private Promise _promise;
         private string _prefab;
         private Transform _container;
+        private GameObject _gameWorld;
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService)
         {
@@ -48,18 +50,18 @@ namespace Drone.Location.Service.Builder
         public IPromise Build()
         {
             _promise = new Promise();
+            _gameWorld = new GameObject(GAME_WORLD);
+            _gameWorld.transform.SetParent(_container, false);
             _resourceService.LoadPrefab(_prefab, OnPrefabLoad);
             return _promise;
         }
 
         private void OnPrefabLoad(GameObject loadedObject, object[] loadparameters)
         {
-            loadedObject = Object.Instantiate(loadedObject, _container);
-
-            GameWorld gameWorld = loadedObject.AddComponent<GameWorld>();
+            Object.Instantiate(loadedObject, _gameWorld.transform);
+            GameWorld gameWorld = _gameWorld.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
-            
-            
+
 
             InitControllers(gameWorld);
             InitService();

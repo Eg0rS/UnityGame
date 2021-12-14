@@ -17,8 +17,6 @@ namespace Drone.World
         [PublicAPI]
         public string WorldId { get; private set; }
 
-        private string _drone = "pfPlayerContainer";
-
         public void CreateWorld(string worldId)
         {
             WorldId = worldId;
@@ -39,16 +37,6 @@ namespace Drone.World
             if (go != null) {
                 DestroyImmediate(go);
             }
-        }
-
-        [NotNull]
-        public GameObject GetPlayerContainer()
-        {
-            GameObject droneObject = GetGameObjectByName(_drone);
-            if (droneObject == null) {
-                throw new NotImplementedException("Container is not found");
-            }
-            return droneObject;
         }
 
         [NotNull]
