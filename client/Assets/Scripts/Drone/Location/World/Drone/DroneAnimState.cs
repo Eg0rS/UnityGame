@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Drone.Location.World.Drone
+namespace Drone.Location.Service.Control.Drone
 {
     [DataContract]
     public enum DroneAnimState

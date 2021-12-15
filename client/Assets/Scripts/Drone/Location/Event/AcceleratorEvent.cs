@@ -1,6 +1,6 @@
 using AgkCommons.Event;
 using Drone.Location.Service.Accelerator;
-using Drone.Location.World.SpeedBooster;
+using Drone.Location.Service.Control.SpeedBooster;
 
 namespace Drone.Location.Event
 {

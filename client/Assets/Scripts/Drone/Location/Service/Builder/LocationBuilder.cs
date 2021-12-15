@@ -16,6 +16,8 @@ namespace Drone.Location.Service.Builder
         private const string GAME_WORLD = "GameWorld";
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
+        private const string LEVEL = "Level";
+        private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createCreateService;
@@ -25,8 +27,11 @@ namespace Drone.Location.Service.Builder
         private string _prefab;
         private Transform _container;
         private GameObject _gameWorld;
-        private GameObject _spinline;
+        private GameObject _spline;
         private GameObject _player;
+        private GameObject _level;
+
+        private Promise _loadPromise;
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService)
         {
@@ -55,8 +60,6 @@ namespace Drone.Location.Service.Builder
         {
             _promise = new Promise();
             CreateWorldContainers();
-
-            _resourceService.LoadPrefab(_prefab, OnPrefabLoad);
             return _promise;
         }
 
@@ -65,23 +68,46 @@ namespace Drone.Location.Service.Builder
             _gameWorld = new GameObject(GAME_WORLD);
             _gameWorld.transform.SetParent(_container, false);
 
-            _spinline = new GameObject(SPLINE);
-            _spinline.transform.SetParent(_gameWorld.transform, false);
+            _spline = new GameObject(SPLINE);
+            _spline.transform.SetParent(_gameWorld.transform, false);
 
-            _player = new GameObject(PLAYER);
-            _player.transform.SetParent(_gameWorld.transform, false);
+            CreatePlayerContainer().Then((() => CreateLevelContainer())).Then(() => _promise.Resolve());
         }
 
-        private void OnPrefabLoad(GameObject loadedObject, object[] loadparameters)
+        private IPromise CreatePlayerContainer()
         {
-            Object.Instantiate(loadedObject, _gameWorld.transform);
+            _loadPromise = new Promise();
+            _player = new GameObject(PLAYER);
+            _player.transform.SetParent(_gameWorld.transform, false);
+            _resourceService.LoadPrefab(PLAYER_CONTAINER_PATH, OnPlayerContainerLoaded);
+            return _loadPromise;
+        }
+
+        private IPromise CreateLevelContainer()
+        {
+            _loadPromise = new Promise();
+            _level = new GameObject(LEVEL);
+            _level.transform.SetParent(_gameWorld.transform, false);
+            _resourceService.LoadPrefab(_prefab, OnLevelLoaded);
+            return _loadPromise;
+        }
+
+        private void OnPlayerContainerLoaded(GameObject loadedObject, object[] loadparameters)
+        {
+            Object.Instantiate(loadedObject, _player.transform);
+            _loadPromise.Resolve();
+        }
+
+        private void OnLevelLoaded(GameObject loadedObject, object[] loadparameters)
+        {
+            Object.Instantiate(loadedObject, _level.transform);
             GameWorld gameWorld = _gameWorld.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
 
             InitControllers(gameWorld);
             InitService();
 
-            _promise.Resolve();
+            _loadPromise.Resolve();
         }
 
         private static void InitService()

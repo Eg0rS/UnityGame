@@ -3,7 +3,7 @@ using Drone.Location.Service.Accelerator;
 using Drone.Location.Service.Builder;
 using Drone.Location.Service.Game;
 using Drone.Location.Service.Obstacle;
-using Drone.Location.World.Drone;
+using Drone.Location.Service.Control.Drone;
 using IoC.Api;
 using IoC.Scope;
 
@@ -18,7 +18,7 @@ namespace Drone.Location.IoC
             container.RegisterSingleton<CreateObjectService>();
             container.RegisterSingleton<GameOverlayManager>();
             
-            container.RegisterSingleton<DroneControlService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<ControlService>(null, ScopeType.SCREEN);
             
             container.RegisterSingleton<EnergyService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<DurabilityService>(null, ScopeType.SCREEN);

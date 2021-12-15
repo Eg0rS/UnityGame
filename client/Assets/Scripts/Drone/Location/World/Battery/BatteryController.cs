@@ -9,7 +9,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.Battery
+namespace Drone.Location.Service.Control.Battery
 {
     public class BatteryController : MonoBehaviour, IWorldObjectController<BatteryModel>
     {

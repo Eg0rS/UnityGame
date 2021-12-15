@@ -3,8 +3,8 @@ using AgkCommons.Event;
 using Drone.Core.Service;
 using Drone.Inventory.Event;
 using Drone.Inventory.Model;
-using Drone.Location.World.Drone.Descriptor;
-using Drone.Location.World.Drone.IoC;
+using Drone.Location.Service.Control.Drone.Descriptor;
+using Drone.Location.Service.Control.Drone.IoC;
 using IoC.Attribute;
 
 namespace Drone.Inventory.Service

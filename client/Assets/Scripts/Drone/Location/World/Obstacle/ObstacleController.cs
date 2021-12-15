@@ -7,7 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.Obstacle
+namespace Drone.Location.Service.Control.Obstacle
 {
     public class ObstacleController : MonoBehaviour, IWorldObjectController<ObstacleModel>
     {

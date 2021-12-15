@@ -8,7 +8,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.ShieldBooster
+namespace Drone.Location.Service.Control.ShieldBooster
 {
     public class ShieldBoosterController : MonoBehaviour, IWorldObjectController<ShieldBoosterModel>
     {

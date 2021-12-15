@@ -1,6 +1,6 @@
 ﻿using Drone.Location.Model;
 
-namespace Drone.Location.World
+namespace Drone.Location.Service.Control
 {
     public interface IWorldObject
     {

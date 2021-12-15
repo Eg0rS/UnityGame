@@ -7,7 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.Finish
+namespace Drone.Location.Service.Control.Finish
 {
     public class FinishController : MonoBehaviour, IWorldObjectController<FinishModel>
     {

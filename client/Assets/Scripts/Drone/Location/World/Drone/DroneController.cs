@@ -7,14 +7,14 @@ using DG.Tweening;
 using Drone.Location.Model;
 using Drone.Location.Event;
 using Drone.Location.Model.Drone;
+using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
-using Drone.Location.World.Drone.Event;
 using Drone.World;
 using Drone.World.Event;
 using IoC.Attribute;
 using UnityEngine;
 
-namespace Drone.Location.World.Drone
+namespace Drone.Location.Service.Control.Drone
 {
     public class DroneController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
@@ -30,7 +30,6 @@ namespace Drone.Location.World.Drone
 
         private BezierWalkerWithSpeed _bezier;
         private CinemachineBasicMultiChannelPerlin _cameraNoise;
-        private CinemachineVirtualCamera _camera;
 
         private float _acceleration;
         private float _maxSpeed;
@@ -40,7 +39,6 @@ namespace Drone.Location.World.Drone
         private Vector3 _droneTargetPosition = Vector3.zero;
         private bool _isGameRun;
         private Sequence _sequence;
-        private Vector2 _swipe;
 
         public void Init(DroneModel model)
         {
@@ -60,7 +58,7 @@ namespace Drone.Location.World.Drone
 
             _gameWorld.AddListener<AcceleratorEvent>(AcceleratorEvent.ACCELERATION, OnAccelerator);
 
-            _camera = _gameWorld.GetDroneCamera();
+            
             _sequence = DOTween.Sequence();
             _sequence.SetUpdate(UpdateType.Fixed);
         }
@@ -130,7 +128,6 @@ namespace Drone.Location.World.Drone
             if (newPos.y < -1.0f) {
                 swipe.y = 0.0f;
             }
-            _swipe = swipe;
             Vector3 newPosition = dronPos + swipe;
             return newPosition;
         }

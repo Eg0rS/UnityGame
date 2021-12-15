@@ -1,5 +1,5 @@
 using AgkCommons.Event;
-using Drone.Location.World.Drone.Model;
+using Drone.Location.Service.Control.Drone.Model;
 
 namespace Drone.Location.Service.Game.Event
 {

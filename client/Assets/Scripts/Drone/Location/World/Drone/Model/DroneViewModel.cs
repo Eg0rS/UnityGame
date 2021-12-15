@@ -1,6 +1,6 @@
-﻿using Drone.Location.World.Drone.Descriptor;
+﻿using Drone.Location.Service.Control.Drone.Descriptor;
 
-namespace Drone.Location.World.Drone.Model
+namespace Drone.Location.Service.Control.Drone.Model
 {
     public class DroneViewModel
     {

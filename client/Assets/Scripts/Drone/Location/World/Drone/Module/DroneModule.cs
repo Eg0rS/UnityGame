@@ -1,8 +1,8 @@
-﻿using Drone.Location.World.Drone.IoC;
-using Drone.Location.World.Drone.Service;
+﻿using Drone.Location.Service.Control.Drone.IoC;
+using Drone.Location.Service.Control.Drone.Service;
 using IoC.Api;
 
-namespace Drone.Location.World.Drone.Module
+namespace Drone.Location.Service.Control.Drone.Module
 {
     public class DroneModule : IIoCModule
     {

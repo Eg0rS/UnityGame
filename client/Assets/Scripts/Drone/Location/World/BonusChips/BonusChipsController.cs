@@ -7,7 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.BonusChips
+namespace Drone.Location.Service.Control.BonusChips
 {
     public class BonusChipsController : MonoBehaviour, IWorldObjectController<BonusChipsModel>
     {

@@ -3,13 +3,13 @@ using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using Drone.Core.Service;
 using Drone.Inventory.Service;
-using Drone.Location.World.Drone.Descriptor;
-using Drone.Location.World.Drone.IoC;
-using Drone.Location.World.Drone.Model;
+using Drone.Location.Service.Control.Drone.Descriptor;
+using Drone.Location.Service.Control.Drone.IoC;
+using Drone.Location.Service.Control.Drone.Model;
 using IoC.Attribute;
 using JetBrains.Annotations;
 
-namespace Drone.Location.World.Drone.Service
+namespace Drone.Location.Service.Control.Drone.Service
 {
     public class DroneService : IConfigurable
     {

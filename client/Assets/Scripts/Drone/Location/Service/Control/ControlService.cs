@@ -2,8 +2,8 @@
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Drone.Core.Service;
+using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
-using Drone.Location.World.Drone.Event;
 using Drone.World;
 using IoC.Attribute;
 using IoC.Util;
@@ -13,9 +13,9 @@ using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.LowLevel;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-namespace Drone.Location.World.Drone
+namespace Drone.Location.Service.Control.Drone
 {
-    public class DroneControlService : GameEventDispatcher, IWorldServiceInitiable
+    public class ControlService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
         private IoCProvider<GameWorld> _gameWorld;

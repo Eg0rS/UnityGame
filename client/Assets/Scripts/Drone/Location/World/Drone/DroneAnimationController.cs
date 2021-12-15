@@ -7,7 +7,7 @@ using IoC.Extension;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Drone.Location.World.Drone
+namespace Drone.Location.Service.Control.Drone
 {
     public class DroneAnimationController : GameEventDispatcher
     {

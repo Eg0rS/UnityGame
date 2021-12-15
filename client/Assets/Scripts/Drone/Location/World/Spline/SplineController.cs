@@ -4,7 +4,7 @@ using Drone.World;
 using IoC.Attribute;
 using UnityEngine;
 
-namespace Drone.Location.World.Spline
+namespace Drone.Location.Service.Control.Spline
 {
     public class SplineController : MonoBehaviour, IWorldObjectController<SplineModel>
     {

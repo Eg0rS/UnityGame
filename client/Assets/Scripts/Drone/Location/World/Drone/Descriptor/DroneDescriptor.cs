@@ -1,6 +1,6 @@
 ﻿using AgkCommons.Configurations;
 
-namespace Drone.Location.World.Drone.Descriptor
+namespace Drone.Location.Service.Control.Drone.Descriptor
 {
     public class DroneDescriptor
     {

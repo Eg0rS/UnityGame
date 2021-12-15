@@ -7,7 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.Magnet
+namespace Drone.Location.Service.Control.Magnet
 {
     public class MagnetBoosterController : MonoBehaviour, IWorldObjectController<MagnetBoosterModel>
     {

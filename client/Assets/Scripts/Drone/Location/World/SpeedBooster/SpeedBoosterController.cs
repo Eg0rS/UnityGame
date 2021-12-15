@@ -7,7 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.SpeedBooster
+namespace Drone.Location.Service.Control.SpeedBooster
 {
     public class SpeedBoosterController : MonoBehaviour, IWorldObjectController<SpeedBoosterModel>
     {

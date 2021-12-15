@@ -7,7 +7,7 @@ using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.World.X2Booster
+namespace Drone.Location.Service.Control.X2Booster
 {
     public class X2BoosterController : MonoBehaviour, IWorldObjectController<X2BoosterModel>
     {
