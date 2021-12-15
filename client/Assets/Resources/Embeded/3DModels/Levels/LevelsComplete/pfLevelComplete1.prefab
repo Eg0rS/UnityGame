@@ -82,6 +82,7 @@ MonoBehaviour:
   m_handleMode: 2
   m_normal: {x: 0, y: 1, z: 0}
   m_autoCalculatedNormalAngleOffset: 0
+  m_intermediateNormals: []
   m_extraData:
     c1: 0
     c2: 0
@@ -97,6 +98,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5064163555128543969}
   - component: {fileID: 2963624320868191217}
+  - component: {fileID: 4728535729503525786}
   m_Layer: 0
   m_Name: BezierSpline
   m_TagString: Untagged
@@ -139,6 +141,22 @@ MonoBehaviour:
   m_autoConstructMode: 0
   m_autoCalculateNormals: 0
   m_autoCalculatedNormalsAngle: 0
+  m_autoCalculatedIntermediateNormalsCount: 10
+  m_evenlySpacedPointsResolution: 10
+  m_evenlySpacedPointsAccuracy: 3
+  m_pointCacheResolution: 100
+--- !u!114 &4728535729503525786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3778732413225428119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163c1edbc7acc7445bae9affe27b5e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &6215926735974458422
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -206,6 +224,7 @@ MonoBehaviour:
   m_handleMode: 2
   m_normal: {x: 0, y: 1, z: 0}
   m_autoCalculatedNormalAngleOffset: 0
+  m_intermediateNormals: []
   m_extraData:
     c1: 0
     c2: 0
@@ -223,7 +242,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _objectType: 2
 --- !u!1 &9177546903416646630
 GameObject:
   m_ObjectHideFlags: 0
