@@ -6,7 +6,7 @@ namespace Drone.Location.Model
     public enum WorldObjectType
     {
         NONE,
-        DRON,
+        PLAYER,
         OBSTACLE,
         BATTERY,
         BONUS_CHIPS,
@@ -14,6 +14,8 @@ namespace Drone.Location.Model
         SHIELD_BOOSTER,
         X2_BOOSTER,
         MAGNET_BOOSTER,
-        FINISH
+        FINISH,
+        LEVEL,
+        SPLINE
     }
 }

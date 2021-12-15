@@ -16,7 +16,7 @@ using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneController : GameEventDispatcher, IWorldObjectController<DronePrefabModel>
+    public class DroneController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
         public WorldObjectType ObjectType { get; }
         private const float MINIMAL_SPEED = 3.0f;
@@ -42,7 +42,7 @@ namespace Drone.Location.World.Drone
         private Sequence _sequence;
         private Vector2 _swipe;
 
-        public void Init(DronePrefabModel model)
+        public void Init(DroneModel model)
         {
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();

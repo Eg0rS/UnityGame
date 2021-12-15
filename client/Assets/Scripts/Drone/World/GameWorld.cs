@@ -61,6 +61,7 @@ namespace Drone.World
             return GetSceneObjects().FirstOrDefault(o => o.name == objectName);
         }
 
+        [NotNull]
         public GameObject RequireGameObjectByName(string objectName)
         {
             return GetSceneObjects().First(o => o.name == objectName);

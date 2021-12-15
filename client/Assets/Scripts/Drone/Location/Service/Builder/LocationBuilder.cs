@@ -14,6 +14,8 @@ namespace Drone.Location.Service.Builder
     {
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
+        private const string SPLINE = "Spline";
+        private const string PLAYER = "Player";
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createCreateService;
@@ -23,6 +25,8 @@ namespace Drone.Location.Service.Builder
         private string _prefab;
         private Transform _container;
         private GameObject _gameWorld;
+        private GameObject _spinline;
+        private GameObject _player;
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService)
         {
@@ -50,10 +54,22 @@ namespace Drone.Location.Service.Builder
         public IPromise Build()
         {
             _promise = new Promise();
-            _gameWorld = new GameObject(GAME_WORLD);
-            _gameWorld.transform.SetParent(_container, false);
+            CreateWorldContainers();
+
             _resourceService.LoadPrefab(_prefab, OnPrefabLoad);
             return _promise;
+        }
+
+        private void CreateWorldContainers()
+        {
+            _gameWorld = new GameObject(GAME_WORLD);
+            _gameWorld.transform.SetParent(_container, false);
+
+            _spinline = new GameObject(SPLINE);
+            _spinline.transform.SetParent(_gameWorld.transform, false);
+
+            _player = new GameObject(PLAYER);
+            _player.transform.SetParent(_gameWorld.transform, false);
         }
 
         private void OnPrefabLoad(GameObject loadedObject, object[] loadparameters)
@@ -61,7 +77,6 @@ namespace Drone.Location.Service.Builder
             Object.Instantiate(loadedObject, _gameWorld.transform);
             GameWorld gameWorld = _gameWorld.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
-
 
             InitControllers(gameWorld);
             InitService();

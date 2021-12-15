@@ -12,6 +12,7 @@ using Drone.Location.Model.Magnet;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.ShieldBooster;
 using Drone.Location.Model.SpeedBooster;
+using Drone.Location.Model.Spline;
 using Drone.Location.Model.X2Booster;
 using Drone.Location.World;
 using Drone.Location.World.Drone;
@@ -22,6 +23,7 @@ using Drone.Location.World.Magnet;
 using Drone.Location.World.Obstacle;
 using Drone.Location.World.ShieldBooster;
 using Drone.Location.World.SpeedBooster;
+using Drone.Location.World.Spline;
 using Drone.Location.World.X2Booster;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
@@ -38,7 +40,7 @@ namespace Drone.Location.Service
 
         public CreateObjectService()
         {
-            _controllers[DRON] = new ControllerData(typeof(DroneController), InitController<DroneController, DronePrefabModel>);
+            _controllers[PLAYER] = new ControllerData(typeof(DroneController), InitController<DroneController, DroneModel>);
             _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
             _controllers[BONUS_CHIPS] = new ControllerData(typeof(BonusChipsController), InitController<BonusChipsController, BonusChipsModel>);
             _controllers[SPEED_BOOSTER] =
@@ -51,6 +53,7 @@ namespace Drone.Location.Service
                     new ControllerData(typeof(MagnetBoosterController), InitController<MagnetBoosterController, MagnetBoosterModel>);
             _controllers[BATTERY] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
+            _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
             
         }
 

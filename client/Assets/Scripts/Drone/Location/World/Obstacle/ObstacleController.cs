@@ -24,7 +24,7 @@ namespace Drone.Location.World.Obstacle
         private void OnCollisionEnter(Collision otherCollision)
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType != WorldObjectType.DRON) {
+            if (objectType != WorldObjectType.PLAYER) {
                 return;
             }
             ContactPoint[] contactPoints = otherCollision.contacts;

@@ -29,7 +29,7 @@ namespace Drone.Location.World.BonusChips
         private void OnCollisionEnter(Collision otherCollision)
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType == WorldObjectType.DRON) {
+            if (objectType == WorldObjectType.PLAYER) {
                 gameObject.SetActive(false);
                 _isCollected = true;
                 _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.TAKE_CHIP));

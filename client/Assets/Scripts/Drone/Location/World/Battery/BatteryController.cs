@@ -25,7 +25,7 @@ namespace Drone.Location.World.Battery
         private void OnCollisionEnter(Collision otherCollision)
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType == WorldObjectType.DRON) {
+            if (objectType == WorldObjectType.PLAYER) {
                 gameObject.SetActive(false);
                 _gameWorld.Require().Dispatch(new EnergyEvent(EnergyEvent.PICKED));
             }
