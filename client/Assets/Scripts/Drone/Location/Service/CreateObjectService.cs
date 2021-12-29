@@ -25,6 +25,7 @@ using Drone.Location.Service.Control.ShieldBooster;
 using Drone.Location.Service.Control.SpeedBooster;
 using Drone.Location.Service.Control.Spline;
 using Drone.Location.Service.Control.X2Booster;
+using Drone.Location.World.Spline;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
 using AppContext = IoC.AppContext;
@@ -54,7 +55,7 @@ namespace Drone.Location.Service
             _controllers[BATTERY] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
             _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
-            
+            _controllers[SPINLINE_WALKER] = new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
         }
 
         public Component AttachController(PrefabModel model)

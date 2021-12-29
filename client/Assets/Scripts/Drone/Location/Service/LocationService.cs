@@ -35,6 +35,7 @@ namespace Drone.Location.Service
             string levelPrefabName = levelDescriptor.Graphics.Prefab;
             _locationBuilderManager.CreateDefault()
                                    .Prefab(levelPrefabName)
+                                   .CreateContainers()
                                    .Build()
                                    .Then(() => Dispatch(new WorldObjectEvent(WorldObjectEvent.WORLD_CREATED)))
                                    .Done();

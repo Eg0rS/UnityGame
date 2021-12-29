@@ -1,7 +1,6 @@
-﻿using Drone.Location.Model;
+﻿using BezierSolution;
+using Drone.Location.Model;
 using Drone.Location.Model.Spline;
-using Drone.World;
-using IoC.Attribute;
 using UnityEngine;
 
 namespace Drone.Location.Service.Control.Spline
@@ -9,12 +8,17 @@ namespace Drone.Location.Service.Control.Spline
     public class SplineController : MonoBehaviour, IWorldObjectController<SplineModel>
     {
         public WorldObjectType ObjectType { get; }
-        [Inject]
-        private GameWorld _gameWorld;
+        private BezierSpline _bezierSpline;
 
         public void Init(SplineModel model)
         {
-            gameObject.transform.SetParent(_gameWorld.RequireGameObjectByName("Spline").transform, false);
+            _bezierSpline = gameObject.AddComponent<BezierSpline>();
+            _bezierSpline.Refresh();
+        }
+
+        public BezierSpline BezierSpline
+        {
+            get { return _bezierSpline; }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Drone.Location.Model
         X2_BOOSTER,
         MAGNET_BOOSTER,
         FINISH,
-        LEVEL,
+        SPINLINE_WALKER,
         SPLINE
     }
 }

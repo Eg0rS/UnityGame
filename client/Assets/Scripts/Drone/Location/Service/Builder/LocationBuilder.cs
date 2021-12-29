@@ -1,23 +1,29 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using AgkCommons.Resources;
 using RSG;
 using UnityEngine;
 using Adept.Logger;
+using BezierSolution;
 using Drone.Core.Service;
 using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.Spline;
 using Drone.World;
-using IoC;
+using AppContext = IoC.AppContext;
+using Object = UnityEngine.Object;
 
 namespace Drone.Location.Service.Builder
 {
     public class LocationBuilder
     {
+        private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
-        private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
+        private Vector3 _defaultPlayerPosition = new Vector3(0, 1.5f, 0);
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createCreateService;
@@ -50,6 +56,42 @@ namespace Drone.Location.Service.Builder
             return this;
         }
 
+        public LocationBuilder CreateContainers()
+        {
+            CreateGameWorldContainer();
+            CreateSplineContainer();
+            CreateLevelContainer();
+            CreatePlayerContainer();
+            return this;
+        }
+
+        private void CreateGameWorldContainer()
+        {
+            _gameWorld = new GameObject(GAME_WORLD);
+            _gameWorld.transform.SetParent(_container, false);
+        }
+
+        private void CreateSplineContainer()
+        {
+            _spline = new GameObject(SPLINE);
+            _spline.AddComponent<SplineModel>();
+            _spline.transform.SetParent(_gameWorld.transform, false);
+        }
+
+        private void CreateLevelContainer()
+        {
+            _level = new GameObject(LEVEL);
+            _level.AddComponent<SplineWalkerModel>();
+            _level.transform.SetParent(_gameWorld.transform, false);
+        }
+
+        private void CreatePlayerContainer()
+        {
+            _player = new GameObject(PLAYER);
+            _player.transform.SetParent(_gameWorld.transform, false);
+            _player.transform.position = _defaultPlayerPosition;
+        }
+
         public LocationBuilder Container(Transform container)
         {
             _container = container;
@@ -59,35 +101,29 @@ namespace Drone.Location.Service.Builder
         public IPromise Build()
         {
             _promise = new Promise();
-            CreateWorldContainers();
+            LoadPlayer().Then(() => LoadLevel()).Then(() => CreateLevelSpline()).Then(() => CreateGameWorld());
             return _promise;
         }
 
-        private void CreateWorldContainers()
+        private void CreateLevelSpline()
         {
-            _gameWorld = new GameObject(GAME_WORLD);
-            _gameWorld.transform.SetParent(_container, false);
-
-            _spline = new GameObject(SPLINE);
-            _spline.transform.SetParent(_gameWorld.transform, false);
-
-            CreatePlayerContainer().Then((() => CreateLevelContainer())).Then(() => _promise.Resolve());
+            BezierSpline levelBezier = _level.GetComponentInChildren<BezierSpline>();
+            List<BezierPoint> points = levelBezier.gameObject.GetComponentsInChildren<BezierPoint>().ToList();
+            foreach (BezierPoint point in points) {
+                point.gameObject.transform.SetParent(_spline.transform, false);
+            }
         }
 
-        private IPromise CreatePlayerContainer()
+        private IPromise LoadPlayer()
         {
             _loadPromise = new Promise();
-            _player = new GameObject(PLAYER);
-            _player.transform.SetParent(_gameWorld.transform, false);
             _resourceService.LoadPrefab(PLAYER_CONTAINER_PATH, OnPlayerContainerLoaded);
             return _loadPromise;
         }
 
-        private IPromise CreateLevelContainer()
+        private IPromise LoadLevel()
         {
             _loadPromise = new Promise();
-            _level = new GameObject(LEVEL);
-            _level.transform.SetParent(_gameWorld.transform, false);
             _resourceService.LoadPrefab(_prefab, OnLevelLoaded);
             return _loadPromise;
         }
@@ -101,13 +137,17 @@ namespace Drone.Location.Service.Builder
         private void OnLevelLoaded(GameObject loadedObject, object[] loadparameters)
         {
             Object.Instantiate(loadedObject, _level.transform);
+            _loadPromise.Resolve();
+        }
+
+        private void CreateGameWorld()
+        {
             GameWorld gameWorld = _gameWorld.AddComponent<GameWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
 
             InitControllers(gameWorld);
             InitService();
-
-            _loadPromise.Resolve();
+            _promise.Resolve();
         }
 
         private static void InitService()
