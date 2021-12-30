@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3582948949216258101}
   - component: {fileID: 438795863157630864}
   - component: {fileID: 2446050303896392538}
-  - component: {fileID: 8538739522260333732}
+  - component: {fileID: 5387712040438261483}
   m_Layer: 0
   m_Name: pfTrubeCollector4
   m_TagString: Untagged
@@ -82,8 +82,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8538739522260333732
-BoxCollider:
+--- !u!64 &5387712040438261483
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -92,6 +92,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.4731022, y: 1.4731025, z: 0.94620466}
-  m_Center: {x: 0.2634489, y: 0.7365511, z: 0.00000016391277}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2155086797234771374, guid: 96c7a4f9030d79046a6d8c7f6848ac21, type: 3}
