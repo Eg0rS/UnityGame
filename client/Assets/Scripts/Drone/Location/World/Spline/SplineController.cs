@@ -1,9 +1,10 @@
 ﻿using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Spline;
+using Drone.Location.Service.Control;
 using UnityEngine;
 
-namespace Drone.Location.Service.Control.Spline
+namespace Drone.Location.World.Spline
 {
     public class SplineController : MonoBehaviour, IWorldObjectController<SplineModel>
     {

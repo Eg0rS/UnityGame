@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using AgkCommons.Event;
+﻿using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Spline;
 using Drone.Location.Service.Control;
 using UnityEngine;
-using DG.Tweening;
-using Drone.Location.Service.Control.Spline;
 using Drone.Location.Service.Game.Event;
 using Drone.World;
 using IoC.Attribute;
@@ -16,52 +12,53 @@ namespace Drone.Location.World.Spline
     public class SplineWalkerController : MonoBehaviour, IWorldObjectController<SplineWalkerModel>
     {
         public WorldObjectType ObjectType { get; }
-        private Rigidbody _levelRigidBody;
-        private float m_normalizedT = 0f;
-        private SplineController _splineController;
+        private const float SPEED = 0.01f;
+        
         [Inject]
         private GameWorld _gameWorld;
-        private Coroutine _walking;
-        float targetSpeed = 3;
-        private bool start = false;
+        
+        private Rigidbody _levelRigidBody;
+        private SplineController _splineController;
+        
+        private float _distanceTraveled = 0f;
+        private bool _isCanFly = false;
 
         public void Init(SplineWalkerModel model)
         {
             ConfigurateRigidBody();
             _splineController = _gameWorld.RequireObjectComponent<SplineController>();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, OnStartGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
+        }
+
+        private void OnEndGame(InGameEvent obj)
+        {
+            _isCanFly = false;
         }
 
         private void OnStartGame(InGameEvent obj)
         {
-            start = true;
-            Physics.autoSimulation = true;
+            _isCanFly = true;
         }
 
         private void ConfigurateRigidBody()
         {
-            Physics.autoSimulation = false;
             _levelRigidBody = gameObject.AddComponent<Rigidbody>();
             _levelRigidBody.useGravity = false;
-        }
-        
-        private void FixedUpdate()
-        {
-            if (!start) {
-                return;
-            }
-            Vector3 targetPos = _splineController.BezierSpline.MoveAlongSpline(ref m_normalizedT, targetSpeed);
-            _levelRigidBody.MovePosition(targetPos);
+            _levelRigidBody.mass = 200;
+            _levelRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
-        private IEnumerator Walk()
+        private void FixedUpdate()
         {
-            while (true) {
-                Vector3 newPos = _splineController.BezierSpline.MoveAlongSpline(ref m_normalizedT, 3);
-                //Vector3 newPos = new Vector3(0, 0, _levelRigidBody.position.z + 10);
-                _levelRigidBody.DOMove(newPos * -1, 1f);
-                yield return new WaitForSeconds(1f);
+            if (!_isCanFly) {
+                return;
             }
+            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedTime, 10);
+            position *= -1;
+            _levelRigidBody.MovePosition(position);
+            BezierSpline.Segment segment = _splineController.BezierSpline.GetSegmentAt(_distanceTraveled);
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.CHANGE_SPLINE_SEGMENT, segment));
         }
     }
 }

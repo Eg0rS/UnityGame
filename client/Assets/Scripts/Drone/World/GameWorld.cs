@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Event;
 using AgkCommons.Extension;
-using Cinemachine;
 using Drone.World.Event;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -39,20 +38,6 @@ namespace Drone.World
             }
         }
 
-        [NotNull]
-        public CinemachineVirtualCamera GetDroneCamera()
-        {
-            GameObject cinemachineObject = GetGameObjectByName("CM vcam1");
-            if (cinemachineObject == null) {
-                throw new NullReferenceException("CinemachineVirtualCamera is not find");
-            }
-            CinemachineVirtualCamera cinemachineVirtualCamera = cinemachineObject.GetComponent<CinemachineVirtualCamera>();
-            if (cinemachineVirtualCamera == null) {
-                throw new NullReferenceException("CinemachineVirtualCamera is not find");
-            }
-            return cinemachineVirtualCamera;
-        }
-
         #region GameObject control API
 
         [CanBeNull]
@@ -86,6 +71,7 @@ namespace Drone.World
         }
 
         [Obsolete]
+        [NotNull]
         public T RequireObjectComponent<T>()
         {
             foreach (GameObject sceneObject in GetSceneObjects()) {

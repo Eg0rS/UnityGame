@@ -4,9 +4,11 @@ using AgkCommons.Extension;
 using BezierSolution;
 using Cinemachine;
 using DG.Tweening;
-using Drone.Location.Model;
 using Drone.Location.Event;
+using Drone.Location.Model;
 using Drone.Location.Model.Drone;
+using Drone.Location.Service.Control;
+using Drone.Location.Service.Control.Drone;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
 using Drone.World;
@@ -14,7 +16,7 @@ using Drone.World.Event;
 using IoC.Attribute;
 using UnityEngine;
 
-namespace Drone.Location.Service.Control.Drone
+namespace Drone.Location.World.Drone
 {
     public class DroneController : GameEventDispatcher, IWorldObjectController<DroneModel>
     {
@@ -44,7 +46,7 @@ namespace Drone.Location.Service.Control.Drone
         {
             _droneAnimationController = gameObject.AddComponent<DroneAnimationController>();
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
-            _cameraNoise = _gameWorld.GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            //_cameraNoise = _gameWorld.GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
 
             _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.ENABLE_SHIELD, OnEnableShield);
