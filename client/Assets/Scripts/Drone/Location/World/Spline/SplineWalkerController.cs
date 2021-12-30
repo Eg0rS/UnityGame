@@ -54,7 +54,7 @@ namespace Drone.Location.World.Spline
             if (!_isCanFly) {
                 return;
             }
-            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedTime, 10);
+            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedTime);
             position *= -1;
             _levelRigidBody.MovePosition(position);
             BezierSpline.Segment segment = _splineController.BezierSpline.GetSegmentAt(_distanceTraveled);

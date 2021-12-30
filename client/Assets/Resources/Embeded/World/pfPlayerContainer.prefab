@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 6022986809196900887}
   - component: {fileID: 6022986809196900889}
   - component: {fileID: 8316285040033107231}
-  - component: {fileID: 6392172207093780647}
-  - component: {fileID: 7650326893529430761}
   m_Layer: 0
   m_Name: DroneCollider
   m_TagString: Untagged
@@ -65,37 +63,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 120
   m_CollisionDetection: 3
---- !u!114 &6392172207093780647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6022986809196900886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b553c8dd7d847cba54b614b4e358278, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!95 &7650326893529430761
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6022986809196900886}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 68e6ddc512d4fe84192d272314ef78f6, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6022986809459316686
 GameObject:
   m_ObjectHideFlags: 0
@@ -10091,6 +10058,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6022986810540477598}
+  - component: {fileID: 3445092382111896895}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -10112,6 +10080,25 @@ Transform:
   m_Father: {fileID: 6022986809196900887}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &3445092382111896895
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6022986810540477597}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 68e6ddc512d4fe84192d272314ef78f6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6022986810890795081
 GameObject:
   m_ObjectHideFlags: 0
@@ -10233,7 +10220,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6022986811261989235}
-  - component: {fileID: 6022986811261989233}
+  - component: {fileID: 1242611279944404973}
   m_Layer: 0
   m_Name: pfPlayerContainer
   m_TagString: Untagged
@@ -10258,24 +10245,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6022986811261989233
+--- !u!114 &1242611279944404973
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6022986811261989232}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 148310ac13c958d4c93f53cdfe985375, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b553c8dd7d847cba54b614b4e358278, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 0}
-  travelMode: 0
-  speed: 0
-  m_normalizedT: 0
-  rotationLerpModifier: 10
-  lookAt: 1
-  onPathCompleted:
-    m_PersistentCalls:
-      m_Calls: []

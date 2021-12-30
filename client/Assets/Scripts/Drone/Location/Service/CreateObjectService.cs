@@ -15,7 +15,6 @@ using Drone.Location.Model.SpeedBooster;
 using Drone.Location.Model.Spline;
 using Drone.Location.Model.X2Booster;
 using Drone.Location.Service.Control;
-using Drone.Location.Service.Control.Drone;
 using Drone.Location.Service.Control.Battery;
 using Drone.Location.Service.Control.BonusChips;
 using Drone.Location.Service.Control.Finish;
