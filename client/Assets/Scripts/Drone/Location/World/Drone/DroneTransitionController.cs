@@ -5,6 +5,7 @@ using Drone.Location.Service.Control.Drone.Event;
 using Drone.World;
 using IoC.Attribute;
 using IoC.Extension;
+using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.World.Drone
@@ -14,7 +15,8 @@ namespace Drone.Location.World.Drone
         [InjectComponent]
         private Rigidbody _rigidbody;
         private Sequence _sequence;
-
+        [Inject]
+        private IoCProvider<GameWorld> _gameWorld;
         private float _mobility;
         private Vector3 _currentPosition = Vector3.zero;
         private DroneAnimationController _animationController;
@@ -22,7 +24,7 @@ namespace Drone.Location.World.Drone
         public void Configure()
         {
             _sequence = DOTween.Sequence();
-            _sequence.SetAutoKill(false).SetUpdate(UpdateType.Fixed);
+            _sequence.SetAutoKill(false);
             this.InjectComponents();
         }
 
@@ -39,13 +41,14 @@ namespace Drone.Location.World.Drone
         private void Move(Vector3 newPosition)
         {
             _currentPosition = newPosition;
-            //_sequence.Append(_rigidbody.DOMove(newPosition, _mobility)).SetUpdate(UpdateType.Fixed);
+            Vector3[] path = {newPosition};
+            _rigidbody.DOLocalPath(path, _mobility).SetUpdate(UpdateType.Fixed);
         }
 
         private Vector3 NewPosition(Vector3 currentPosition, Vector3 swipe)
         {
-            // выбрасывание ивента о свайпе в крайнее положение 
             Vector3 newPos = currentPosition + swipe;
+            _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.MOVEMENT, newPos));
             if (newPos.x > 1.0f) {
                 swipe.x = 0.0f;
             }

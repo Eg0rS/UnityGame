@@ -80,21 +80,21 @@ namespace Drone.Location.UI
         private void OnMovement(ControllEvent сontrollEvent)
         {
             Vector2 move = сontrollEvent.Movement;
-            if (move == new Vector2(0, 1)) {
+            if (move == new Vector2(0, 2)) {
                 _upArrow.DOFade(1, 0.5f).OnComplete(() => _upArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(0, -1)) {
+            } else if (move == new Vector2(0, -2)) {
                 _downArrow.DOFade(1, 0.5f).OnComplete(() => _downArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(-1, 0)) {
+            } else if (move == new Vector2(-2, 0)) {
                 _leftArrow.DOFade(1, 0.5f).OnComplete(() => _leftArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(1, 0)) {
+            } else if (move == new Vector2(2, 0)) {
                 _rightArrow.DOFade(1, 0.5f).OnComplete(() => _rightArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(1, 1)) {
+            } else if (move == new Vector2(1, 2) || move == new Vector2(2, 1) || move == new Vector2(2, 2)) {
                 _upRightArrow.DOFade(1, 0.5f).OnComplete(() => _upRightArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(-1, 1)) {
+            } else if (move == new Vector2(-2, 1) || move == new Vector2(-1, 2) || move == new Vector2(-2, 2)) {
                 _upLeftArrow.DOFade(1, 0.5f).OnComplete(() => _upLeftArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(1, -1)) {
+            } else if (move == new Vector2(1, -2) || move == new Vector2(2, -1) || move == new Vector2(2, -2)) {
                 _downRightArrow.DOFade(1, 0.5f).OnComplete(() => _downRightArrow.DOFade(0, 0.5f));
-            } else if (move == new Vector2(-1, -1)) {
+            } else if (move == new Vector2(-1, -2) || move == new Vector2(-2, -1) || move == new Vector2(-2, -2)) {
                 _downLeftArrow.DOFade(1, 0.5f).OnComplete(() => _downLeftArrow.DOFade(0, 0.5f));
             }
         }
