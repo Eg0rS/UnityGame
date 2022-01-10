@@ -8,14 +8,10 @@ namespace Drone.Location.Model
         NONE,
         PLAYER,
         OBSTACLE,
-        BATTERY,
         BONUS_CHIPS,
-        SPEED_BOOSTER,
-        SHIELD_BOOSTER,
-        X2_BOOSTER,
-        MAGNET_BOOSTER,
         FINISH,
-        SPINLINE_WALKER,
-        SPLINE
+        SPLINE_WALKER,
+        SPLINE,
+        SPAWNER
     }
 }

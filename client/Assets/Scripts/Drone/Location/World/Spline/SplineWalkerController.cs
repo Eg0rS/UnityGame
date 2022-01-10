@@ -1,10 +1,10 @@
 ﻿using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Spline;
-using Drone.Location.Service.Control;
+
 using UnityEngine;
 using Drone.Location.Service.Game.Event;
-using Drone.World;
+
 using IoC.Attribute;
 
 namespace Drone.Location.World.Spline
@@ -12,7 +12,7 @@ namespace Drone.Location.World.Spline
     public class SplineWalkerController : MonoBehaviour, IWorldObjectController<SplineWalkerModel>
     {
         public WorldObjectType ObjectType { get; }
-        private const float SPEED = 0.01f;
+        private const float SPEED = 1f;
         
         [Inject]
         private GameWorld _gameWorld;
@@ -54,7 +54,7 @@ namespace Drone.Location.World.Spline
             if (!_isCanFly) {
                 return;
             }
-            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedTime);
+            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedDeltaTime);
             position *= -1;
             _levelRigidBody.MovePosition(position);
             BezierSpline.Segment segment = _splineController.BezierSpline.GetSegmentAt(_distanceTraveled);

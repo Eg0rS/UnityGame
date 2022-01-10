@@ -6,7 +6,7 @@ namespace Drone.Location.Model.Spline
     {
         public void Awake()
         {
-            ObjectType = WorldObjectType.SPINLINE_WALKER;
+            ObjectType = WorldObjectType.SPLINE_WALKER;
         }
     }
 }

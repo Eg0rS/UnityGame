@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Resources;
@@ -10,6 +9,7 @@ using Drone.Core.Service;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spline;
 using Drone.World;
+using GameKit.World;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
 
@@ -23,7 +23,7 @@ namespace Drone.Location.Service.Builder
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
-        private Vector3 _defaultPlayerPosition = new Vector3(0, 1.5f, 0);
+        private readonly Vector3 _defaultPlayerPosition = new Vector3(0, 1.5f, 0);
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createCreateService;
@@ -101,7 +101,7 @@ namespace Drone.Location.Service.Builder
         public IPromise Build()
         {
             _promise = new Promise();
-            LoadPlayer().Then(() => LoadLevel()).Then(() => CreateLevelSpline()).Then(() => CreateGameWorld());
+            LoadPlayer().Then(LoadLevel).Then(CreateLevelSpline).Then(CreateGameWorld);
             return _promise;
         }
 

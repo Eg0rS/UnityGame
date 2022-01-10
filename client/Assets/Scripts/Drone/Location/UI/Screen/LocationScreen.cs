@@ -1,7 +1,7 @@
 using AgkCommons.Extension;
 using AgkUI.Binding.Attributes;
 using Drone.Location.Service;
-using Drone.World.Event;
+using GameKit.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
@@ -21,7 +21,8 @@ namespace Drone.Location.UI.Screen
         [UICreated]
         private void Init()
         {
-            _locationService.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.WORLD_CREATED, OnWorldCreated);
+            _gameOverlayManager.LoadGameOverlay();
+            //_locationService.Require().AddListener<WorldObjectEvent>(WorldObjectEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void OnDestroy()
@@ -29,7 +30,7 @@ namespace Drone.Location.UI.Screen
             if (this.IsDestroyed()) {
                 return;
             }
-            _locationService.Require().RemoveListener<WorldObjectEvent>(WorldObjectEvent.WORLD_CREATED, OnWorldCreated);
+            //_locationService.Require().RemoveListener<WorldObjectEvent>(WorldObjectEvent.WORLD_CREATED, OnWorldCreated);
         }
 
         private void OnWorldCreated(WorldObjectEvent worldObjectEvent)

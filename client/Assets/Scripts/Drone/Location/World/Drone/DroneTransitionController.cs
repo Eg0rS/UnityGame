@@ -1,8 +1,8 @@
 ﻿using AgkCommons.Event;
 using DG.Tweening;
-using Drone.Location.Service.Control.Drone;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.World;
+using GameKit.World;
 using IoC.Attribute;
 using IoC.Extension;
 using IoC.Util;
@@ -19,13 +19,13 @@ namespace Drone.Location.World.Drone
         private IoCProvider<GameWorld> _gameWorld;
         private float _mobility;
         private Vector3 _currentPosition = Vector3.zero;
-        private DroneAnimationController _animationController;
 
         public void Configure()
         {
             _sequence = DOTween.Sequence();
             _sequence.SetAutoKill(false);
             this.InjectComponents();
+            this.Inject();
         }
 
         public void OnGesture(ControllEvent controllEvent)
@@ -69,11 +69,6 @@ namespace Drone.Location.World.Drone
         {
             get { return _mobility; }
             set { _mobility = value; }
-        }
-        public DroneAnimationController AnimationController
-        {
-            get { return _animationController; }
-            set { _animationController = value; }
         }
     }
 }

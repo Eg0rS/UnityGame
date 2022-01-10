@@ -2,6 +2,7 @@ using AgkCommons.Event;
 using Drone.Core.Service;
 using Drone.Location.Event;
 using Drone.World;
+using GameKit.World;
 using IoC.Attribute;
 
 namespace Drone.Location.Service.Obstacle

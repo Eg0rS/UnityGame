@@ -12,7 +12,8 @@ using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
 using Drone.World;
-using Drone.World.Event;
+using GameKit.World;
+using GameKit.World.Event;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -37,9 +38,6 @@ namespace Drone.Location.Service.Game
         [Inject]
         private DroneService _droneService;
 
-        [Inject]
-        private DurabilityService _durabilityService;
-
         private const float TIME_FOR_DEAD = 0.3f;
 
         private LevelDescriptor _levelDescriptor;
@@ -57,9 +55,7 @@ namespace Drone.Location.Service.Game
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, DroneModel));
 
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
-
-            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.TAKE_CHIP, OnTakeChip);
-            _gameWorld.AddListener<WorldObjectEvent>(WorldObjectEvent.FINISHED, OnFinished);
+            
             //событие смерти
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartFlight);
 
@@ -99,8 +95,8 @@ namespace Drone.Location.Service.Game
         {
             float timeInGame = Time.time - _startTime;
             if (isWin) {
-                _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _countChips, timeInGame,
-                                               (int) ((_durabilityService.Durability / _durabilityService.MaxDurability) * 100));
+                // _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _countChips, timeInGame,
+                //                                (int) ((_durabilityService.Durability / _durabilityService.MaxDurability) * 100));
             }
         }
 
@@ -124,9 +120,9 @@ namespace Drone.Location.Service.Game
         {
             int countStars = 0;
 
-            if (_durabilityService.Durability >= _levelDescriptor.Goals.NecessaryDurability) {
-                countStars++;
-            }
+            // if (_durabilityService.Durability >= _levelDescriptor.Goals.NecessaryDurability) {
+            //     countStars++;
+            // }
             if (_countChips >= _levelDescriptor.Goals.NecessaryCountChips) {
                 countStars++;
             }

@@ -5,10 +5,10 @@ using Cinemachine;
 using Drone.Location.Model;
 using Drone.Location.Model.Drone;
 using Drone.Location.Service.Control;
-using Drone.Location.Service.Control.Drone;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
 using Drone.World;
+using GameKit.World;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -25,7 +25,6 @@ namespace Drone.Location.World.Drone
         [Inject]
         private GameWorld _gameWorld;
 
-        private DroneAnimationController _animationController;
         private DroneTransitionController _transitionController;
         private CinemachineBasicMultiChannelPerlin _cameraNoise;
 
@@ -72,7 +71,7 @@ namespace Drone.Location.World.Drone
 
             _transitionController = _collider.AddComponent<DroneTransitionController>();
             _transitionController.Configure();
-            _animationController = _mesh.AddComponent<DroneAnimationController>();
+            //  _animationController = _mesh.AddComponent<DroneAnimationController>();
         }
 
         private void OnSetParameters(InGameEvent inGameEvent)

@@ -2,7 +2,6 @@
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
 using Drone.LevelMap.LevelDialogs;
-using Drone.Location.Event;
 using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Event;
@@ -11,8 +10,8 @@ using Drone.World;
 using IoC.Attribute;
 using TMPro;
 using UnityEngine;
-using DG;
 using DG.Tweening;
+using GameKit.World;
 using UnityEngine.UI;
 
 namespace Drone.Location.UI
@@ -60,7 +59,6 @@ namespace Drone.Location.UI
 
         private float _time;
         private bool _isGame;
-        private DroneModel _droneModel;
 
         [UICreated]
         private void Init()
@@ -68,8 +66,8 @@ namespace Drone.Location.UI
             _timer.text = "0,00";
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartGame);
 
-            _gameWorld.AddListener<EnergyEvent>(EnergyEvent.UPDATE, EnergyUpdate);
-            _gameWorld.AddListener<DurabilityEvent>(DurabilityEvent.UPDATED, DurabilityUpdate);
+            //_gameWorld.AddListener<EnergyEvent>(EnergyEvent.UPDATE, EnergyUpdate);
+            // _gameWorld.AddListener<DurabilityEvent>(DurabilityEvent.UPDATED, DurabilityUpdate);
 
             _gameWorld.AddListener<ControllEvent>(ControllEvent.MOVEMENT, OnMovement);
 
@@ -99,15 +97,15 @@ namespace Drone.Location.UI
             }
         }
 
-        private void DurabilityUpdate(DurabilityEvent obstacleEvent)
-        {
-            _durability.text = ((obstacleEvent.DurabilityValue / _droneModel.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
-        }
+        // private void DurabilityUpdate(DurabilityEvent obstacleEvent)
+        // {
+        //     _durability.text = ((obstacleEvent.DurabilityValue / _droneModel.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
+        // }
 
-        private void EnergyUpdate(EnergyEvent energyEvent)
-        {
-            _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
-        }
+        // private void EnergyUpdate(EnergyEvent energyEvent)
+        // {
+        //     _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
+        // }
 
         private void EndGame(InGameEvent inGameEvent)
         {
@@ -131,7 +129,6 @@ namespace Drone.Location.UI
 
         private void SetStats(DroneModel model)
         {
-            _droneModel = model;
             _countChips.text = model.countChips.ToString();
             _countEnergy.text = model.energy.ToString("F0");
             _durability.text = ((model.durability / model.DroneDescriptor.Durability) * 100).ToString("F0") + "%";

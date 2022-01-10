@@ -2,12 +2,12 @@
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Finish;
 using Drone.World;
-using Drone.World.Event;
+using GameKit.World;
 using IoC.Attribute;
 using IoC.Util;
 using UnityEngine;
 
-namespace Drone.Location.Service.Control.Finish
+namespace Drone.Location.World.Finish
 {
     public class FinishController : MonoBehaviour, IWorldObjectController<FinishModel>
     {
@@ -24,7 +24,7 @@ namespace Drone.Location.Service.Control.Finish
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
             if (objectType == WorldObjectType.PLAYER) {
-                _gameWorld.Require().Dispatch(new WorldObjectEvent(WorldObjectEvent.FINISHED));
+                
             }
         }
     }
