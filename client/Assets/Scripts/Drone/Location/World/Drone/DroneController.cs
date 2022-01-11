@@ -4,11 +4,8 @@ using AgkCommons.Extension;
 using Cinemachine;
 using Drone.Location.Model;
 using Drone.Location.Model.Drone;
-using Drone.Location.Service.Control;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
-using Drone.World;
-using GameKit.World;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -23,7 +20,7 @@ namespace Drone.Location.World.Drone
         private const string COLLIDER = "DroneCollider";
 
         [Inject]
-        private GameWorld _gameWorld;
+        private DroneWorld _gameWorld;
 
         private DroneTransitionController _transitionController;
         private CinemachineBasicMultiChannelPerlin _cameraNoise;

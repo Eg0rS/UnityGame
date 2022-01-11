@@ -6,9 +6,10 @@ using UnityEngine;
 using Adept.Logger;
 using BezierSolution;
 using Drone.Core.Service;
+using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spline;
-using Drone.World;
+using Drone.Location.World;
 using GameKit.World;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
@@ -32,7 +33,7 @@ namespace Drone.Location.Service.Builder
         private Promise _promise;
         private string _prefab;
         private Transform _container;
-        private GameObject _gameWorld;
+        private GameObject _droneWorld;
         private GameObject _spline;
         private GameObject _player;
         private GameObject _level;
@@ -67,28 +68,28 @@ namespace Drone.Location.Service.Builder
 
         private void CreateGameWorldContainer()
         {
-            _gameWorld = new GameObject(GAME_WORLD);
-            _gameWorld.transform.SetParent(_container, false);
+            _droneWorld = new GameObject(GAME_WORLD);
+            _droneWorld.transform.SetParent(_container, false);
         }
 
         private void CreateSplineContainer()
         {
             _spline = new GameObject(SPLINE);
             _spline.AddComponent<SplineModel>();
-            _spline.transform.SetParent(_gameWorld.transform, false);
+            _spline.transform.SetParent(_droneWorld.transform, false);
         }
 
         private void CreateLevelContainer()
         {
             _level = new GameObject(LEVEL);
             _level.AddComponent<SplineWalkerModel>();
-            _level.transform.SetParent(_gameWorld.transform, false);
+            _level.transform.SetParent(_droneWorld.transform, false);
         }
 
         private void CreatePlayerContainer()
         {
             _player = new GameObject(PLAYER);
-            _player.transform.SetParent(_gameWorld.transform, false);
+            _player.transform.SetParent(_droneWorld.transform, false);
             _player.transform.position = _defaultPlayerPosition;
         }
 
@@ -142,11 +143,13 @@ namespace Drone.Location.Service.Builder
 
         private void CreateGameWorld()
         {
-            GameWorld gameWorld = _gameWorld.AddComponent<GameWorld>();
+            GameWorld gameWorld = _droneWorld.AddComponent<DroneWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
 
             InitControllers(gameWorld);
             InitService();
+            gameWorld.Dispatch(new WorldEvent(WorldEvent.CREATED));
+            
             _promise.Resolve();
         }
 

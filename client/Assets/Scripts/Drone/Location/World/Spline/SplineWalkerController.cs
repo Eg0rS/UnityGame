@@ -1,10 +1,8 @@
 ﻿using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Spline;
-
 using UnityEngine;
 using Drone.Location.Service.Game.Event;
-
 using IoC.Attribute;
 
 namespace Drone.Location.World.Spline
@@ -13,13 +11,13 @@ namespace Drone.Location.World.Spline
     {
         public WorldObjectType ObjectType { get; }
         private const float SPEED = 1f;
-        
+
         [Inject]
-        private GameWorld _gameWorld;
-        
+        private DroneWorld _gameWorld;
+
         private Rigidbody _levelRigidBody;
         private SplineController _splineController;
-        
+
         private float _distanceTraveled = 0f;
         private bool _isCanFly = false;
 

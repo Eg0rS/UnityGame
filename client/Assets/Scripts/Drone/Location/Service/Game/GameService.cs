@@ -11,8 +11,7 @@ using Drone.Levels.Service;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
-using Drone.World;
-using GameKit.World;
+using Drone.Location.World;
 using GameKit.World.Event;
 using IoC.Attribute;
 using UnityEngine;
@@ -24,7 +23,7 @@ namespace Drone.Location.Service.Game
     public class GameService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
-        private GameWorld _gameWorld;
+        private DroneWorld _gameWorld;
 
         [Inject]
         private OverlayManager _overlayManager;

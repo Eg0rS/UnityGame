@@ -9,7 +9,7 @@ using Drone.Location.Model;
 using Drone.Location.Model.Drone;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
-using Drone.World;
+//using Drone.World;
 using GameKit.World;
 using IoC.Attribute;
 using UnityEngine;
@@ -24,7 +24,7 @@ namespace Drone.Location.World.Drone
         private const float CRASH_NOISE_DURATION = 0.5f;
 
         [Inject]
-        private GameWorld _gameWorld;
+        private DroneWorld _gameWorld;
 
         private BezierWalkerWithSpeed _bezier;
         private CinemachineBasicMultiChannelPerlin _cameraNoise;

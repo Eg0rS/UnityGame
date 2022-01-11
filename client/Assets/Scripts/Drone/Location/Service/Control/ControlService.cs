@@ -4,9 +4,8 @@ using AgkCommons.Extension;
 using Drone.Core.Service;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
-using GameKit.World;
+using Drone.Location.World;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
@@ -18,7 +17,7 @@ namespace Drone.Location.Service.Control
     public class ControlService : GameEventDispatcher, IWorldServiceInitiable
     {
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private DroneWorld _gameWorld;
         private const float HORISONTAL_SWIPE_ANGLE = 0.40f;
         private const float VERTICAL_SWIPE_ANGLE = 0.70f;
 
@@ -65,7 +64,7 @@ namespace Drone.Location.Service.Control
                 return;
             }
             _isFirstTapDone = true;
-            _gameWorld.Require().Dispatch(new InGameEvent(InGameEvent.START_GAME));
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.START_GAME));
         }
 
         private void OnTouch(TouchState touchState)
@@ -101,7 +100,7 @@ namespace Drone.Location.Service.Control
                 vector = RoundVector(vector);
                 _isQuickGestureDone = true;
                 _beginPosition = _currentPosition;
-                _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
+                _gameWorld.Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
             }
         }
 
@@ -112,7 +111,7 @@ namespace Drone.Location.Service.Control
             if (distance >= LONG_TERM_GESTURE_TRESHOLD) {
                 vector = RoundVector(vector);
                 _beginPosition = _currentPosition;
-                _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
+                _gameWorld.Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
             }
         }
 

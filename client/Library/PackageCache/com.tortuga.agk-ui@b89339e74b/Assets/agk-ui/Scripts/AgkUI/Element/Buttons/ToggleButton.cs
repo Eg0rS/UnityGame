@@ -66,7 +66,7 @@ namespace AgkUI.Element.Buttons
             if (immediately) {
                 image.color = new Color(image.color.r, image.color.g, image.color.b, _isOn ? onOpacity : offOpacity);
             } else {
-                //image.DOFade(_isOn ? onOpacity : offOpacity, _slideTime);
+                image.material.DOFade(_isOn ? onOpacity : offOpacity, _slideTime);
             }
         }
 

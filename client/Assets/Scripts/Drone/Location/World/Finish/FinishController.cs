@@ -1,7 +1,7 @@
 ﻿using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Finish;
-using Drone.World;
+
 using GameKit.World;
 using IoC.Attribute;
 using IoC.Util;
@@ -13,7 +13,7 @@ namespace Drone.Location.World.Finish
     {
         public WorldObjectType ObjectType { get; private set; }
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private DroneWorld _gameWorld;
 
         public void Init(FinishModel model)
         {

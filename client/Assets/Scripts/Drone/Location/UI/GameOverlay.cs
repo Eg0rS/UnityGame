@@ -6,12 +6,11 @@ using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Control.Drone.Model;
-using Drone.World;
 using IoC.Attribute;
 using TMPro;
 using UnityEngine;
 using DG.Tweening;
-using GameKit.World;
+using Drone.Location.World;
 using UnityEngine.UI;
 
 namespace Drone.Location.UI
@@ -23,7 +22,7 @@ namespace Drone.Location.UI
         private DialogManager _dialogManager;
 
         [Inject]
-        private GameWorld _gameWorld;
+        private DroneWorld _gameWorld;
         [Inject]
         private GameService _gameService;
 
@@ -65,9 +64,6 @@ namespace Drone.Location.UI
         {
             _timer.text = "0,00";
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartGame);
-
-            //_gameWorld.AddListener<EnergyEvent>(EnergyEvent.UPDATE, EnergyUpdate);
-            // _gameWorld.AddListener<DurabilityEvent>(DurabilityEvent.UPDATED, DurabilityUpdate);
 
             _gameWorld.AddListener<ControllEvent>(ControllEvent.MOVEMENT, OnMovement);
 

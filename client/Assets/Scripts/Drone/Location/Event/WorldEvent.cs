@@ -12,7 +12,6 @@ namespace Drone.Location.Event
         public const string ENABLED = "worldEnabled";
 
         private readonly bool _enabled;
-
         public WorldEvent(string name, GameObject target) : base(name, target)
         {
         }

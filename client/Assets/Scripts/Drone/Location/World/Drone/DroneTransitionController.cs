@@ -1,22 +1,20 @@
 ﻿using AgkCommons.Event;
 using DG.Tweening;
 using Drone.Location.Service.Control.Drone.Event;
-using Drone.World;
-using GameKit.World;
 using IoC.Attribute;
 using IoC.Extension;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
     public class DroneTransitionController : GameEventDispatcher
     {
+        [Inject]
+        private DroneWorld _gameWorld;
         [InjectComponent]
         private Rigidbody _rigidbody;
         private Sequence _sequence;
-        [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+
         private float _mobility;
         private Vector3 _currentPosition = Vector3.zero;
 
@@ -48,7 +46,7 @@ namespace Drone.Location.World.Drone
         private Vector3 NewPosition(Vector3 currentPosition, Vector3 swipe)
         {
             Vector3 newPos = currentPosition + swipe;
-            _gameWorld.Require().Dispatch(new ControllEvent(ControllEvent.MOVEMENT, newPos));
+            _gameWorld.Dispatch(new ControllEvent(ControllEvent.MOVEMENT, newPos));
             if (newPos.x > 1.0f) {
                 swipe.x = 0.0f;
             }
