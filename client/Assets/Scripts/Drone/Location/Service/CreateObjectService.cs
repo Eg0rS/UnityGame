@@ -30,15 +30,15 @@ namespace Drone.Location.Service
 
         public CreateObjectService()
         {
-            _controllers[PLAYER] = new ControllerData(typeof(DroneController), InitController<DroneController, DroneModel>);
-            
+            _controllers[PLAYER] = new ControllerData(typeof(PlayerController), InitController<PlayerController, PlayerModel>);
+
             _controllers[SPAWNER] = new ControllerData(typeof(SpawnerController), InitController<SpawnerController, SpawnerModel>);
-            
+
             _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
             _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
-            _controllers[SPLINE_WALKER] = new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
-            
+            _controllers[SPLINE_WALKER] =
+                    new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
         }
 
         public Component AttachController(PrefabModel model)

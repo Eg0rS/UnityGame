@@ -15,7 +15,7 @@ namespace Drone.Location.World
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<DroneWorld>();
         private Dictionary<string, PrefabModel> _controllers;
-        private DroneController _droneController;
+        private PlayerController _playerController;
         private float _currentTimeScale;
 
         [PublicAPI]
@@ -34,14 +34,14 @@ namespace Drone.Location.World
         }
 
         [NotNull]
-        public DroneController Drone
+        public PlayerController Player
         {
             get
             {
-                if (_droneController == null) {
-                    _droneController = FindComponent<DroneController>();
+                if (_playerController == null) {
+                    _playerController = FindComponent<PlayerController>();
                 }
-                return _droneController;
+                return _playerController;
             }
         }
 

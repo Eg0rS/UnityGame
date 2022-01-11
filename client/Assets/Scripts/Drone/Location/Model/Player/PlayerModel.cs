@@ -2,9 +2,9 @@
 
 namespace Drone.Location.Model.Drone
 {
-    public class DroneModel : PrefabModel
+    public class PlayerModel : PrefabModel
     {
-        public DroneModel()
+        public PlayerModel()
         {
             ObjectType = WorldObjectType.PLAYER;
         }

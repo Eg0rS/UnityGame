@@ -38,7 +38,7 @@ namespace Drone.Location.World.Drone
         private bool _isGameRun;
         private Sequence _sequence;
 
-        public void Init(DroneModel model)
+        public void Init(PlayerModel model)
         {
             _bezier = transform.parent.transform.GetComponentInParent<BezierWalkerWithSpeed>();
             //_cameraNoise = _gameWorld.GetDroneCamera().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();

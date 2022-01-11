@@ -62,7 +62,7 @@ namespace AgkUI.Element.Buttons
                 return;
             }
 
-			DOTween.Kill(image);
+            DOTween.Kill(image);
             if (immediately) {
                 image.color = new Color(image.color.r, image.color.g, image.color.b, _isOn ? onOpacity : offOpacity);
             } else {

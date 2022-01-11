@@ -36,7 +36,6 @@ namespace Drone.Location.Service
                                    .Prefab(levelPrefabName)
                                    .CreateContainers()
                                    .Build()
-                                   //.Then(() => Dispatch(new WorldObjectEvent(WorldObjectEvent.WORLD_CREATED)))
                                    .Done();
         }
     }

@@ -27,7 +27,7 @@ namespace Drone.Location.Service.Builder
         private readonly Vector3 _defaultPlayerPosition = new Vector3(0, 1.5f, 0);
 
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
-        private readonly CreateObjectService _createCreateService;
+        private readonly CreateObjectService _createObjectService;
         private readonly ResourceService _resourceService;
 
         private Promise _promise;
@@ -43,7 +43,7 @@ namespace Drone.Location.Service.Builder
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService)
         {
             _resourceService = resourceService;
-            _createCreateService = createService;
+            _createObjectService = createService;
         }
 
         public static LocationBuilder Create(ResourceService resourceService, CreateObjectService createService)
@@ -165,7 +165,7 @@ namespace Drone.Location.Service.Builder
             List<PrefabModel> objectComponents = gameWorld.GetObjectComponents<PrefabModel>();
             foreach (PrefabModel prefabModel in objectComponents) {
                 _logger.Debug("attach");
-                _createCreateService.AttachController(prefabModel);
+                _createObjectService.AttachController(prefabModel);
             }
         }
     }

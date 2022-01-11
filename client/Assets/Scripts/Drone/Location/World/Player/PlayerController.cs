@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneController : GameEventDispatcher, IWorldObjectController<DroneModel>
+    public class PlayerController : GameEventDispatcher, IWorldObjectController<PlayerModel>
     {
         public WorldObjectType ObjectType { get; }
         private const float CRASH_NOISE = 2;
@@ -32,7 +32,7 @@ namespace Drone.Location.World.Drone
 
         private Service.Control.Drone.Model.DroneModel _model;
 
-        public void Init(DroneModel model)
+        public void Init(PlayerModel model)
         {
             ControllerInitialization();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
