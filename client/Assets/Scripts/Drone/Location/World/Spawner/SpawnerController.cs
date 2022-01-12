@@ -32,44 +32,48 @@ namespace Drone.Location.World.Spawner
             ObjectType = model.ObjectType;
 
             _spawnPlaces = gameObject.GetChildren();
-            LoadObstaclesPrefabs().Then(InitControllers);
+            LoadObstaclesPrefabs();
         }
 
         private void InitControllers()
         {
-            List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>();
-            foreach (PrefabModel prefabModel in objectComponents) {
-                _createObjectService.AttachController(prefabModel);
-            }
+            //  List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>();
+            // foreach (PrefabModel prefabModel in objectComponents) {
+            //     _createObjectService.AttachController(prefabModel);
+            // }
         }
 
         private IPromise LoadObstaclesPrefabs()
         {
             _promise = new Promise();
             foreach (GameObject spawnPlace in _spawnPlaces) {
-                _resourceService.LoadPrefab(S).Then(go => Instantiate(go, spawnPlace.transform)).Done();
+                _resourceService.LoadPrefab(S)
+                                .Then(go => Instantiate(go, spawnPlace.transform))
+                                .Done((x) => {
+                                    List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>(x);
+                                    objectComponents.ForEach(pfModel => _createObjectService.AttachController(pfModel));
+                                });
             }
-            _promise.Resolve();
             return _promise;
         }
 
         private void OnPlayerContainerLoaded(GameObject loadedObject, object[] loadparameters)
         {
-            Instantiate(loadedObject, transform);
-            List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>();
-            foreach (PrefabModel prefabModel in objectComponents) {
-                _createObjectService.AttachController(prefabModel);
-            }
+            // Instantiate(loadedObject, transform);
+            // List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>();
+            // foreach (PrefabModel prefabModel in objectComponents) {
+            //     _createObjectService.AttachController(prefabModel);
+            // }
         }
 
-        public List<GameObject> GetSceneObjects()
+        public List<GameObject> GetSceneObjects(GameObject go)
         {
-            return gameObject.GetComponentsOnlyInChildren<Transform>(true).ToList().Select(t => t.gameObject).ToList();
+            return go.GetComponentsOnlyInChildren<Transform>(true).ToList().Select(t => t.gameObject).ToList();
         }
 
-        public List<T> GetObjectComponents<T>()
+        public List<T> GetObjectComponents<T>(GameObject go)
         {
-            return GetSceneObjects().Where(go => go.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
+            return GetSceneObjects(go).Where(go => go.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
         }
     }
 }
