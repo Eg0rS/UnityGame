@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8316285040033107231}
   m_Layer: 0
   m_Name: DroneCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,7 +46,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.12
-  m_Center: {x: 0, y: 0, z: 0.1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8316285040033107231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -57,10 +57,10 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0
+  m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 120
   m_CollisionDetection: 3
 --- !u!1 &6022986809459316686
@@ -90,7 +90,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6022986809459316686}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.29999995, z: -1.6}
+  m_LocalPosition: {x: 0, y: 0.3, z: -1.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6022986811261989235}
@@ -5182,7 +5182,7 @@ MonoBehaviour:
   m_CollideAgainst:
     serializedVersion: 2
     m_Bits: 1
-  m_IgnoreTag: 
+  m_IgnoreTag: Player
   m_TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -10076,8 +10076,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 8583157576413049013}
+  m_Children: []
   m_Father: {fileID: 6022986809196900887}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10224,7 +10223,7 @@ GameObject:
   - component: {fileID: 1242611279944404973}
   m_Layer: 0
   m_Name: pfPlayerContainer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10258,65 +10257,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b553c8dd7d847cba54b614b4e358278, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &1825194913
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 6022986810540477598}
-    m_Modifications:
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8959437551680580014, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-      propertyPath: m_Name
-      value: pfDroneBase1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
---- !u!4 &8583157576413049013 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8583157577960338196, guid: 06fb79293fb999e4a9b57109b2272f45, type: 3}
-  m_PrefabInstance: {fileID: 1825194913}
-  m_PrefabAsset: {fileID: 0}

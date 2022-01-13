@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AgkCommons.Extension;
 using AgkCommons.Resources;
 using Drone.Location.Model;
@@ -7,7 +6,6 @@ using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spawner;
 using Drone.Location.Service;
 using IoC.Attribute;
-using RSG;
 using UnityEngine;
 
 namespace Drone.Location.World.Spawner
@@ -25,8 +23,6 @@ namespace Drone.Location.World.Spawner
 
         private const string S = "AssetObjects/Location/CityZone/CityZoneObstacles/pfObColumn3@embeded";
 
-        private Promise _promise;
-
         public void Init(SpawnerModel model)
         {
             ObjectType = model.ObjectType;
@@ -35,45 +31,16 @@ namespace Drone.Location.World.Spawner
             LoadObstaclesPrefabs();
         }
 
-        private void InitControllers()
+        private void LoadObstaclesPrefabs()
         {
-            //  List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>();
-            // foreach (PrefabModel prefabModel in objectComponents) {
-            //     _createObjectService.AttachController(prefabModel);
-            // }
-        }
-
-        private IPromise LoadObstaclesPrefabs()
-        {
-            _promise = new Promise();
             foreach (GameObject spawnPlace in _spawnPlaces) {
                 _resourceService.LoadPrefab(S)
-                                .Then(go => Instantiate(go, spawnPlace.transform))
+                                .Then(gameObject => Instantiate(gameObject, spawnPlace.transform))
                                 .Done((x) => {
-                                    List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>(x);
+                                    List<PrefabModel> objectComponents = WorldObjectExtension.GetObjectComponents<PrefabModel>(x);
                                     objectComponents.ForEach(pfModel => _createObjectService.AttachController(pfModel));
                                 });
             }
-            return _promise;
-        }
-
-        private void OnPlayerContainerLoaded(GameObject loadedObject, object[] loadparameters)
-        {
-            // Instantiate(loadedObject, transform);
-            // List<PrefabModel> objectComponents = GetObjectComponents<PrefabModel>();
-            // foreach (PrefabModel prefabModel in objectComponents) {
-            //     _createObjectService.AttachController(prefabModel);
-            // }
-        }
-
-        public List<GameObject> GetSceneObjects(GameObject go)
-        {
-            return go.GetComponentsOnlyInChildren<Transform>(true).ToList().Select(t => t.gameObject).ToList();
-        }
-
-        public List<T> GetObjectComponents<T>(GameObject go)
-        {
-            return GetSceneObjects(go).Where(go => go.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
         }
     }
 }

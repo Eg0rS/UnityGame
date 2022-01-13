@@ -26,10 +26,10 @@ namespace Drone.Location.Service
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelDescriptor);
+            CreatedLevel(levelDescriptor);
         }
 
-        private void CreatedWorld(LevelDescriptor levelDescriptor)
+        private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
             string levelPrefabName = levelDescriptor.Graphics.Prefab;
             _locationBuilderManager.CreateDefault()

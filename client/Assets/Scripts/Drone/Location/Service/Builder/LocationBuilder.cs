@@ -12,12 +12,13 @@ using Drone.Location.Model.Spline;
 using Drone.Location.World;
 using GameKit.World;
 using AppContext = IoC.AppContext;
-using Object = UnityEngine.Object;
 
 namespace Drone.Location.Service.Builder
 {
     public class LocationBuilder
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
+
         private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
@@ -26,7 +27,6 @@ namespace Drone.Location.Service.Builder
         private const string LEVEL = "Level";
         private readonly Vector3 _defaultPlayerPosition = new Vector3(0, 1.5f, 0);
 
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
         private readonly CreateObjectService _createObjectService;
         private readonly ResourceService _resourceService;
 
@@ -149,7 +149,7 @@ namespace Drone.Location.Service.Builder
             InitControllers(gameWorld);
             InitService();
             gameWorld.Dispatch(new WorldEvent(WorldEvent.CREATED));
-            
+
             _promise.Resolve();
         }
 
