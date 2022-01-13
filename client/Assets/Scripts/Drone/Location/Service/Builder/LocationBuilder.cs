@@ -11,6 +11,7 @@ using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
 using GameKit.World;
+using JetBrains.Annotations;
 using AppContext = IoC.AppContext;
 
 namespace Drone.Location.Service.Builder
@@ -46,9 +47,23 @@ namespace Drone.Location.Service.Builder
             _createObjectService = createService;
         }
 
+        [NotNull]
         public static LocationBuilder Create(ResourceService resourceService, CreateObjectService createService)
         {
             return new LocationBuilder(resourceService, createService);
+        }
+
+        [NotNull]
+        public LocationBuilder Container(Transform container)
+        {
+            _container = container;
+            return this;
+        }
+
+        [NotNull]
+        public LocationBuilder LevelDescriptor()
+        {
+            return this;
         }
 
         public LocationBuilder Prefab(string prefab)
@@ -59,17 +74,18 @@ namespace Drone.Location.Service.Builder
 
         public LocationBuilder CreateContainers()
         {
-            CreateGameWorldContainer();
             CreateSplineContainer();
             CreateLevelContainer();
             CreatePlayerContainer();
             return this;
         }
 
-        private void CreateGameWorldContainer()
+        [NotNull]
+        public LocationBuilder GameWorldContainer()
         {
             _droneWorld = new GameObject(GAME_WORLD);
             _droneWorld.transform.SetParent(_container, false);
+            return this;
         }
 
         private void CreateSplineContainer()
@@ -90,13 +106,6 @@ namespace Drone.Location.Service.Builder
         {
             _player = new GameObject(PLAYER);
             _player.transform.SetParent(_droneWorld.transform, false);
-            _player.transform.position = _defaultPlayerPosition;
-        }
-
-        public LocationBuilder Container(Transform container)
-        {
-            _container = container;
-            return this;
         }
 
         public IPromise Build()

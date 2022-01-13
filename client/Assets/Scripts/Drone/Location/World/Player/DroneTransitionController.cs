@@ -40,7 +40,7 @@ namespace Drone.Location.World.Drone
         {
             _currentPosition = newPosition;
             Vector3[] path = {newPosition};
-            _rigidbody.DOLocalPath(path, _mobility).SetUpdate(UpdateType.Fixed);
+            _rigidbody.DOLocalPath(path, _mobility).SetUpdate(UpdateType.Fixed).SetEase(Ease.Linear);
         }
 
         private Vector3 NewPosition(Vector3 currentPosition, Vector3 swipe)
