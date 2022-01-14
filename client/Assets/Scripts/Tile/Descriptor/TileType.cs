@@ -1,8 +1,8 @@
 using System.Xml.Serialization;
 
-namespace Drone.Levels.Descriptor
+namespace Tile.Descriptor
 {
-    public enum LevelTileType
+    public enum TileType
     {
         [XmlEnum("start")]
         START,

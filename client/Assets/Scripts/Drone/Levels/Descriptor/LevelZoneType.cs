@@ -1,8 +1,8 @@
 using System.Xml.Serialization;
 
-namespace Tile.Descriptor
+namespace Drone.Levels.Descriptor
 {
-    public enum TileZoneType
+    public enum LevelZoneType
     {
         [XmlEnum("city")]
         CITY

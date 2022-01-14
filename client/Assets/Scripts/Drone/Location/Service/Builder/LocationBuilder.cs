@@ -6,12 +6,14 @@ using UnityEngine;
 using Adept.Logger;
 using BezierSolution;
 using Drone.Core.Service;
+using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
 using GameKit.World;
 using JetBrains.Annotations;
+using Tile.Service;
 using AppContext = IoC.AppContext;
 
 namespace Drone.Location.Service.Builder
@@ -30,6 +32,7 @@ namespace Drone.Location.Service.Builder
 
         private readonly CreateObjectService _createObjectService;
         private readonly ResourceService _resourceService;
+        private readonly TileService _tileService;
 
         private Promise _promise;
         private string _prefab;
@@ -41,16 +44,19 @@ namespace Drone.Location.Service.Builder
 
         private Promise _loadPromise;
 
-        private LocationBuilder(ResourceService resourceService, CreateObjectService createService)
+        private LevelDescriptor _levelDescriptor;
+
+        private LocationBuilder(ResourceService resourceService, CreateObjectService createService, TileService tileService)
         {
             _resourceService = resourceService;
             _createObjectService = createService;
+            _tileService = tileService;
         }
 
         [NotNull]
-        public static LocationBuilder Create(ResourceService resourceService, CreateObjectService createService)
+        public static LocationBuilder Create(ResourceService resourceService, CreateObjectService createService, TileService tileService)
         {
-            return new LocationBuilder(resourceService, createService);
+            return new LocationBuilder(resourceService, createService, tileService);
         }
 
         [NotNull]
@@ -61,8 +67,9 @@ namespace Drone.Location.Service.Builder
         }
 
         [NotNull]
-        public LocationBuilder LevelDescriptor()
+        public LocationBuilder LevelDescriptor(LevelDescriptor levelDescriptor)
         {
+            _levelDescriptor = levelDescriptor;
             return this;
         }
 
@@ -176,6 +183,17 @@ namespace Drone.Location.Service.Builder
                 _logger.Debug("attach");
                 _createObjectService.AttachController(prefabModel);
             }
+        }
+
+        // механизм создания уровня
+
+        private void CreateLevel()
+        {
+            List<GameObject> startEndTiles = new List<GameObject>();
+            List<GameObject> OtherTiles = new List<GameObject>();
+
+            _tileService.LoadTilesByIds(_levelDescriptor.GameData.Tiles.TilesData.Select(x => x.Id).ToArray())
+                        .Then(() => OtherTiles = _tileService.LoadedTiles);
         }
     }
 }
