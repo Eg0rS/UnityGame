@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Xml.Serialization;
 using Drone.Obstacles;
+using JetBrains.Annotations;
 
 namespace Tile.Descriptor
 {
@@ -10,19 +12,14 @@ namespace Tile.Descriptor
         [XmlAttribute("prefab")]
         public string Prefab { get; set; }
         [XmlAttribute("zone")]
-        public string Zone { get; set; }
-        [XmlElement("obstacle_types")]
-        public Type Types { get; set; }
-    }
-
-    public class Type
-    {
-        [XmlElement("type")]
-        public Tp[] ype { get; set; }
-    }
-    public class Tp
-    {
-        [XmlAttribute("type")]
-        public ObstacleType ype { get; set; }
+        public TileZoneType Zone { get; set; }
+        private ObstacleType[] _obstacleTypes;
+        [XmlElement("obstacle_type")]
+        [NotNull]
+        public ObstacleType[] ObstacleTypes
+        {
+            get { return _obstacleTypes.Distinct().ToArray(); }
+            set { _obstacleTypes = value; }
+        }
     }
 }

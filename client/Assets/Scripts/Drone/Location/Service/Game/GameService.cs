@@ -122,12 +122,12 @@ namespace Drone.Location.Service.Game
             // if (_durabilityService.Durability >= _levelDescriptor.Goals.NecessaryDurability) {
             //     countStars++;
             // }
-            if (_countChips >= _levelDescriptor.Goals.NecessaryCountChips) {
-                countStars++;
-            }
-            if (timeInGame <= _levelDescriptor.Goals.NecessaryTime) {
-                countStars++;
-            }
+            // if (_countChips >= _levelDescriptor.Goals.NecessaryCountChips) {
+            //     countStars++;
+            // }
+            // if (timeInGame <= _levelDescriptor.Goals.NecessaryTime) {
+            //     countStars++;
+            // }
 
             return countStars;
         }

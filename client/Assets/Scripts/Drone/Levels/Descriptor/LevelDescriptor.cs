@@ -11,13 +11,13 @@ namespace Drone.Levels.Descriptor
         [XmlAttribute("type")]
         public LevelType Type { get; set; }
 
-        [XmlElement("graphic")]
-        public LevelGraphics Graphics { get; set; }
+        [XmlElement("game_data")]
+        public LevelGameData GameData { get; set; }
 
-        [XmlElement("goals")]
-        public LevelGoals Goals { get; set; }
+        // [XmlElement("goals")]
+        // public LevelGoals Goals { get; set; }
 
-        [XmlElement("referens")]
-        public LevelReference Reference { get; set; }
+        [XmlElement("exposition")]
+        public LevelExposition Exposition { get; set; }
     }
 }

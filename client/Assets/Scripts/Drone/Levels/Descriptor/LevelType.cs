@@ -4,6 +4,8 @@ namespace Drone.Levels.Descriptor
 {
     public enum LevelType
     {
+        [XmlEnum("none")]
+        NONE,
         [XmlEnum("normal")]
         NORMAL,
         [XmlEnum("medium")]

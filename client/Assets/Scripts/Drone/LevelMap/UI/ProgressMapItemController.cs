@@ -2,6 +2,7 @@
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Element.Text;
+using Drone.Levels.Descriptor;
 using Drone.Levels.Model;
 using Drone.Levels.Service;
 using Drone.MainMenu.UI.Panel;
@@ -64,7 +65,7 @@ namespace Drone.LevelMap.UI
         {
             _levelViewModel = levelViewModel;
             DisableSpotProgress();
-            if (_levelViewModel.LevelDescriptor.Graphics.Prefab == "") {
+            if (_levelViewModel.LevelDescriptor.Type == LevelType.NONE) {
                 SetLockedSpot();
             } else if (_levelViewModel.LevelProgress != null) {
                 SetCompletedSpot();

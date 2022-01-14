@@ -86,24 +86,24 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
 
         private void DisplayTitle()
         {
-            _title.text = _levelDescriptor.Reference.Title;
+            _title.text = _levelDescriptor.Exposition.Title;
         }
 
         private void DisplayDescription()
         {
-            _description.text = _levelDescriptor.Reference.Description;
+            _description.text = _levelDescriptor.Exposition.Description;
         }
 
         private void DisplayTasks(string chipText, string durabilityText, string timeText)
         {
-            _chipText.text = String.Format(chipText, _levelDescriptor.Goals.NecessaryCountChips);
-            _durabilityText.text = String.Format(durabilityText, _levelDescriptor.Goals.NecessaryDurability);
-            _timeText.text = String.Format(timeText, _levelDescriptor.Goals.NecessaryTime);
+           // _chipText.text = String.Format(chipText, _levelDescriptor.Goals.NecessaryCountChips);
+           // _durabilityText.text = String.Format(durabilityText, _levelDescriptor.Goals.NecessaryDurability);
+          //  _timeText.text = String.Format(timeText, _levelDescriptor.Goals.NecessaryTime);
         }
 
         private void DisplayImage()
         {
-            _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.Graphics.Image, typeof(Sprite)) as Sprite;
+           // _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.GameData.Image, typeof(Sprite)) as Sprite;
         }
 
         private void CreateChoiseDron()
