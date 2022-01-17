@@ -9,12 +9,14 @@ using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Spawner;
 using Drone.Location.Model.Spline;
+using Drone.Location.Model.StartPlatform;
 using Drone.Location.World;
 using Drone.Location.World.Drone;
 using Drone.Location.World.Finish;
 using Drone.Location.World.Obstacle;
 using Drone.Location.World.Spawner;
 using Drone.Location.World.Spline;
+using Drone.Location.World.StartPlatform;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
 using AppContext = IoC.AppContext;
@@ -30,6 +32,8 @@ namespace Drone.Location.Service
 
         public CreateObjectService()
         {
+            _controllers[START_PLATFORM] =
+                    new ControllerData(typeof(StartPlatformController), InitController<StartPlatformController, StartPlatformModel>);
             _controllers[PLAYER] = new ControllerData(typeof(PlayerController), InitController<PlayerController, PlayerModel>);
 
             _controllers[SPAWNER] = new ControllerData(typeof(SpawnerController), InitController<SpawnerController, SpawnerModel>);
@@ -39,6 +43,7 @@ namespace Drone.Location.Service
             _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
             _controllers[SPLINE_WALKER] =
                     new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
+            
         }
 
         public Component AttachController(PrefabModel model)

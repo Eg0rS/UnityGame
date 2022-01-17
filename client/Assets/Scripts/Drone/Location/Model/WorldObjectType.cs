@@ -13,6 +13,7 @@ namespace Drone.Location.Model
         SPLINE_WALKER,
         SPLINE,
         SPAWNER,
-        TILE
+        TILE,
+        START_PLATFORM
     }
 }

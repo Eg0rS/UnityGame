@@ -15,8 +15,7 @@ namespace Tile.Service
         private TileDescriptors _tileDescriptors;
         [Inject]
         private ResourceService _resourceService;
-
-        private List<GameObject> _loadedTiles = new List<GameObject>();
+        public List<GameObject> LoadedTiles { get; set; }
 
         public void Init()
         {
@@ -24,18 +23,13 @@ namespace Tile.Service
 
         public IPromise LoadTilesByIds(params string[] ids)
         {
-            _loadedTiles = new List<GameObject>();
-            List<IPromise> proms = ids
-                                   .Select(id => _resourceService.LoadPrefab(_tileDescriptors.Tiles.First(x => x.Id == id).Prefab)
-                                                                 .Then(x => _loadedTiles.Add(x)))
-                                   .ToList();
+            LoadedTiles = new List<GameObject>();
+            List<IPromise> proms = new List<IPromise>();
 
+            foreach (string id in ids) {
+                proms.Add(_resourceService.LoadPrefab(_tileDescriptors.Tiles.First(x => x.Id == id).Prefab).Then(go => LoadedTiles.Add(go)));
+            }
             return Promise.All(proms);
-        }
-
-        public List<GameObject> LoadedTiles
-        {
-            get { return _loadedTiles; }
         }
     }
 }

@@ -31,10 +31,7 @@ namespace Drone.Location.Service
 
         private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
-            //string levelPrefabName = levelDescriptor.GameData.Prefab;
-            //_locationBuilderManager.CreateDefault().Prefab(levelPrefabName).GameWorldContainer().CreateContainers().Build().Done();
-
-            // _locationBuilderManager.CreateDefault().LevelDescriptor().GameWorldContainer().CreateContainers().
+            _locationBuilderManager.CreateDefault().LevelDescriptor(levelDescriptor).GameWorldContainer().Check();
         }
     }
 }

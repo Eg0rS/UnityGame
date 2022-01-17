@@ -10,14 +10,14 @@ namespace Drone.Descriptor.IoC
         public void Configure(IIoCContainer container)
         {
             DescriptorRegistry registry = DescriptorRegistry.Instance;
-            
+
             container.RegisterSingleton<IDescriptorLoader, LocalDescriptorLoader>();
-            
+
             container.RegisterSingleton<DescriptorRegistry>(() => DescriptorRegistry.Instance);
             container.RegisterSingleton<LevelsDescriptors>(() => registry.GetSingleDescriptor<LevelsDescriptors>());
-            
-            
+            container.RegisterSingleton<TileDescriptors>(() => registry.GetSingleDescriptor<TileDescriptors>());
         }
+
         private void RegisterCollection<T>(IIoCContainer container, string collectionName)
         {
             DescriptorRegistry registry = DescriptorRegistry.Instance;

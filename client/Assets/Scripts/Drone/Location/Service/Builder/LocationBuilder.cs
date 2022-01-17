@@ -4,6 +4,7 @@ using AgkCommons.Resources;
 using RSG;
 using UnityEngine;
 using Adept.Logger;
+using AgkCommons.Extension;
 using BezierSolution;
 using Drone.Core.Service;
 using Drone.Levels.Descriptor;
@@ -35,7 +36,6 @@ namespace Drone.Location.Service.Builder
         private readonly TileService _tileService;
 
         private Promise _promise;
-        private string _prefab;
         private Transform _container;
         private GameObject _droneWorld;
         private GameObject _spline;
@@ -45,6 +45,8 @@ namespace Drone.Location.Service.Builder
         private Promise _loadPromise;
 
         private LevelDescriptor _levelDescriptor;
+
+        List<GameObject> _otherTiles = new List<GameObject>();
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService, TileService tileService)
         {
@@ -73,18 +75,11 @@ namespace Drone.Location.Service.Builder
             return this;
         }
 
-        public LocationBuilder Prefab(string prefab)
+        private void CreateContainers()
         {
-            _prefab = prefab;
-            return this;
-        }
-
-        public LocationBuilder CreateContainers()
-        {
+            CreatePlayerContainer();
             CreateSplineContainer();
             CreateLevelContainer();
-            CreatePlayerContainer();
-            return this;
         }
 
         [NotNull]
@@ -92,6 +87,7 @@ namespace Drone.Location.Service.Builder
         {
             _droneWorld = new GameObject(GAME_WORLD);
             _droneWorld.transform.SetParent(_container, false);
+            CreateContainers();
             return this;
         }
 
@@ -141,7 +137,7 @@ namespace Drone.Location.Service.Builder
         private IPromise LoadLevel()
         {
             _loadPromise = new Promise();
-            _resourceService.LoadPrefab(_prefab, OnLevelLoaded);
+            //_resourceService.LoadPrefab(_prefab, OnLevelLoaded);
             return _loadPromise;
         }
 
@@ -185,15 +181,54 @@ namespace Drone.Location.Service.Builder
             }
         }
 
-        // механизм создания уровня
-
-        private void CreateLevel()
+        [NotNull]
+        public IPromise LoadTiles()
         {
-            List<GameObject> startEndTiles = new List<GameObject>();
-            List<GameObject> OtherTiles = new List<GameObject>();
+            _promise = new Promise();
+            string[] tilesIds = _levelDescriptor.GameData.Tiles.TilesData.Select(tile => tile.Id).ToArray();
 
-            _tileService.LoadTilesByIds(_levelDescriptor.GameData.Tiles.TilesData.Select(x => x.Id).ToArray())
-                        .Then(() => OtherTiles = _tileService.LoadedTiles);
+            _tileService.LoadTilesByIds(tilesIds)
+                        .Then(() => {
+                            _otherTiles = _tileService.LoadedTiles;
+                            _promise.Resolve();
+                        });
+            return _promise;
+        }
+
+        public void Check()
+        {
+            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline1).Then(CreateGameWorld);
+        }
+
+        private void CreateLevelSpline1()
+        {
+            List<BezierSpline> levelBezier = _level.GetComponentsInChildren<BezierSpline>().ToList();
+            foreach (BezierSpline spline in levelBezier) {
+                List<BezierPoint> points = spline.gameObject.GetComponentsInChildren<BezierPoint>().ToList();
+                foreach (BezierPoint point in points) {
+                    point.gameObject.transform.SetParent(_spline.transform, true);
+                }
+            }
+        }
+
+        private void BuildLevel()
+        {
+            GameObject lastTile = null;
+            foreach (GameObject tile in _otherTiles) {
+                GameObject instTile = Object.Instantiate(tile, _level.transform);
+                if (lastTile == null) {
+                    lastTile = instTile;
+                } else {
+                    GameObject anchors = lastTile.GetChildren().First(x => x.name == "Anchors");
+                    Transform end = anchors.GetChildren().Find(x => x.name == "End").transform;
+
+                    GameObject anchors1 = lastTile.GetChildren().First(x => x.name == "Anchors");
+                    Transform begin = anchors1.GetChildren().Find(x => x.name == "Begin").transform;
+
+                    instTile.transform.position = end.position - begin.localPosition;
+                    lastTile = instTile;
+                }
+            }
         }
     }
 }
