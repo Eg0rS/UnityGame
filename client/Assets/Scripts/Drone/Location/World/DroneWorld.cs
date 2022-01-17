@@ -5,6 +5,8 @@ using Adept.Logger;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.World.Drone;
+using Drone.Obstacles;
+using Drone.Obstacles.Descriptor;
 using GameKit.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -17,6 +19,8 @@ namespace Drone.Location.World
         private Dictionary<string, PrefabModel> _controllers;
         private PlayerController _playerController;
         private float _currentTimeScale;
+
+        private Dictionary<ObstacleType, List<KeyValuePair<ObstacleDescriptor, int>>> _obstacles;
 
         [PublicAPI]
         public void Pause()
@@ -31,18 +35,6 @@ namespace Drone.Location.World
         {
             Time.timeScale = _currentTimeScale;
             Dispatch(new WorldEvent(WorldEvent.UNPAUSED));
-        }
-
-        [NotNull]
-        public PlayerController Player
-        {
-            get
-            {
-                if (_playerController == null) {
-                    _playerController = FindComponent<PlayerController>();
-                }
-                return _playerController;
-            }
         }
 
         private Dictionary<string, PrefabModel> Controllers
@@ -103,7 +95,7 @@ namespace Drone.Location.World
             int position = gameObjectName.LastIndexOf("-", StringComparison.Ordinal);
             return position == -1 ? gameObjectName : gameObjectName.Substring(0, position);
         }
-        
+
         public void OnDestroy()
         {
             _logger.Debug("Destroy HorrorWorld");
@@ -118,6 +110,24 @@ namespace Drone.Location.World
                 gameObject.SetActive(value);
                 Dispatch(new WorldEvent(WorldEvent.ENABLED, value));
             }
+        }
+
+        [NotNull]
+        public PlayerController Player
+        {
+            get
+            {
+                if (_playerController == null) {
+                    _playerController = FindComponent<PlayerController>();
+                }
+                return _playerController;
+            }
+        }
+
+        public Dictionary<ObstacleType, List<KeyValuePair<ObstacleDescriptor, int>>> Obstacles
+        {
+            get { return _obstacles; }
+            set { _obstacles = value; }
         }
     }
 }

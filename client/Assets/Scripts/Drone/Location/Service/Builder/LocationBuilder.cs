@@ -12,6 +12,8 @@ using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
+using Drone.Obstacles;
+using Drone.Obstacles.Descriptor;
 using GameKit.World;
 using JetBrains.Annotations;
 using Tile.Service;
@@ -29,7 +31,6 @@ namespace Drone.Location.Service.Builder
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
-        private readonly Vector3 _defaultPlayerPosition = new Vector3(0, 1.5f, 0);
 
         private readonly CreateObjectService _createObjectService;
         private readonly ResourceService _resourceService;
@@ -46,7 +47,9 @@ namespace Drone.Location.Service.Builder
 
         private LevelDescriptor _levelDescriptor;
 
-        List<GameObject> _otherTiles = new List<GameObject>();
+        Dictionary<string, GameObject> _otherTiles;
+
+        public Dictionary<ObstacleType, List<KeyValuePair<Obstacles.Service.Obstacle, int>>> Obstacles { get; set; }
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService, TileService tileService)
         {
@@ -197,7 +200,7 @@ namespace Drone.Location.Service.Builder
 
         public void Check()
         {
-            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline1).Then(CreateGameWorld);
+            LoadPlayer().Then(LoadTiles).Then(LoadObstacles).Then(BuildLevel).Then(CreateLevelSpline1).Then(CreateGameWorld);
         }
 
         private void CreateLevelSpline1()
@@ -214,8 +217,12 @@ namespace Drone.Location.Service.Builder
         private void BuildLevel()
         {
             GameObject lastTile = null;
-            foreach (GameObject tile in _otherTiles) {
-                GameObject instTile = Object.Instantiate(tile, _level.transform);
+
+            List<string> orderTile = _levelDescriptor.GameData.Tiles.TilesData.Select(x => x.Id).ToList();
+
+            foreach (string order in orderTile) {
+                GameObject instTile = Object.Instantiate(_otherTiles[order], _level.transform);
+
                 if (lastTile == null) {
                     lastTile = instTile;
                 } else {
@@ -229,6 +236,30 @@ namespace Drone.Location.Service.Builder
                     lastTile = instTile;
                 }
             }
+        }
+
+        private IPromise LoadObstacles()
+        {
+            _promise = new Promise();
+            List<string> tilesIds = _levelDescriptor.GameData.Tiles.TilesData.Select(tile => tile.Id).Distinct().ToList();
+            List<ObstacleType> types = new List<ObstacleType>();
+
+            List<ObstacleType[]> t = _tileService.TileDescriptors.Tiles.Where(tile => tilesIds.Exists(tId => tId.Equals(tile.Id)))
+                                                 .Select(x => x.ObstacleTypes)
+                                                 .ToList();
+            foreach (ObstacleType[] anyType in t) {
+                foreach (ObstacleType type in anyType) {
+                    if (!types.Exists(x => x.Equals(type))) {
+                        types.Add(type);
+                    }
+                }
+            }
+            _tileService.ObstaclesService.LoadObstacles(types)
+                        .Then(() => {
+                            Obstacles = _tileService.ObstaclesService.Obstacles;
+                            _promise.Resolve();
+                        });
+            return _promise;
         }
     }
 }
