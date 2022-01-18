@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Resources;
@@ -10,14 +11,15 @@ using Drone.Core.Service;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
 using Drone.Obstacles;
-using Drone.Obstacles.Descriptor;
 using GameKit.World;
 using JetBrains.Annotations;
 using Tile.Service;
 using AppContext = IoC.AppContext;
+using Object = UnityEngine.Object;
 
 namespace Drone.Location.Service.Builder
 {
@@ -49,7 +51,7 @@ namespace Drone.Location.Service.Builder
 
         Dictionary<string, GameObject> _otherTiles;
 
-        public Dictionary<ObstacleType, List<KeyValuePair<Obstacles.Service.Obstacle, int>>> Obstacles { get; set; }
+        public Dictionary<ObstacleType, List<KeyValuePair<GameObject, int>>> Obstacles { get; set; }
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService, TileService tileService)
         {
@@ -80,9 +82,12 @@ namespace Drone.Location.Service.Builder
 
         private void CreateContainers()
         {
-            CreatePlayerContainer();
-            CreateSplineContainer();
-            CreateLevelContainer();
+            CreateContainer<PlayerModel>(PLAYER, ref _player);
+            CreateContainer<SplineModel>(SPLINE, ref _spline);
+            CreateContainer<SplineWalkerModel>(LEVEL, ref _level);
+            // CreatePlayerContainer();
+            // CreateSplineContainer();
+            // CreateLevelContainer();
         }
 
         [NotNull]
@@ -92,6 +97,14 @@ namespace Drone.Location.Service.Builder
             _droneWorld.transform.SetParent(_container, false);
             CreateContainers();
             return this;
+        }
+
+        private void CreateContainer<T>(string name, ref GameObject container)
+                where T : Component
+        {
+            container = new GameObject(name);
+            container.AddComponent<T>();
+            container.transform.SetParent(_droneWorld.transform, false);
         }
 
         private void CreateSplineContainer()
@@ -114,33 +127,10 @@ namespace Drone.Location.Service.Builder
             _player.transform.SetParent(_droneWorld.transform, false);
         }
 
-        public IPromise Build()
-        {
-            _promise = new Promise();
-            LoadPlayer().Then(LoadLevel).Then(CreateLevelSpline).Then(CreateGameWorld);
-            return _promise;
-        }
-
-        private void CreateLevelSpline()
-        {
-            BezierSpline levelBezier = _level.GetComponentInChildren<BezierSpline>();
-            List<BezierPoint> points = levelBezier.gameObject.GetComponentsInChildren<BezierPoint>().ToList();
-            foreach (BezierPoint point in points) {
-                point.gameObject.transform.SetParent(_spline.transform, false);
-            }
-        }
-
         private IPromise LoadPlayer()
         {
             _loadPromise = new Promise();
             _resourceService.LoadPrefab(PLAYER_CONTAINER_PATH, OnPlayerContainerLoaded);
-            return _loadPromise;
-        }
-
-        private IPromise LoadLevel()
-        {
-            _loadPromise = new Promise();
-            //_resourceService.LoadPrefab(_prefab, OnLevelLoaded);
             return _loadPromise;
         }
 
@@ -158,7 +148,7 @@ namespace Drone.Location.Service.Builder
 
         private void CreateGameWorld()
         {
-            GameWorld gameWorld = _droneWorld.AddComponent<DroneWorld>();
+            DroneWorld gameWorld = _droneWorld.AddComponent<DroneWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
 
             InitControllers(gameWorld);
@@ -200,10 +190,10 @@ namespace Drone.Location.Service.Builder
 
         public void Check()
         {
-            LoadPlayer().Then(LoadTiles).Then(LoadObstacles).Then(BuildLevel).Then(CreateLevelSpline1).Then(CreateGameWorld);
+            LoadPlayer().Then(LoadTiles).Then(LoadObstacles).Then(BuildLevel).Then(CreateLevelSpline).Then(CreateGameWorld);
         }
 
-        private void CreateLevelSpline1()
+        private void CreateLevelSpline()
         {
             List<BezierSpline> levelBezier = _level.GetComponentsInChildren<BezierSpline>().ToList();
             foreach (BezierSpline spline in levelBezier) {

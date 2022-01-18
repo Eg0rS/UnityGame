@@ -17,7 +17,7 @@ namespace Drone.Obstacles.Service
         [Inject]
         private ResourceService _resourceService;
 
-        public Dictionary<ObstacleType, List<KeyValuePair<Obstacle, int>>> Obstacles { get; set; }
+        public Dictionary<ObstacleType, List<KeyValuePair<GameObject, int>>> Obstacles { get; set; }
 
         public void Init()
         {
@@ -25,31 +25,17 @@ namespace Drone.Obstacles.Service
 
         public IPromise LoadObstacles(List<ObstacleType> types)
         {
-            Obstacles = new Dictionary<ObstacleType, List<KeyValuePair<Obstacle, int>>>();
+            Obstacles = new Dictionary<ObstacleType, List<KeyValuePair<GameObject, int>>>();
             List<IPromise> proms = new List<IPromise>();
             foreach (ObstacleType type in types) {
+                Obstacles[type] = new List<KeyValuePair<GameObject, int>>();
                 List<ObstacleDescriptor> obstacleDescriptors = _obstacleDescriptors.Obstacles.Where(x => x.Type == type).ToList();
                 foreach (ObstacleDescriptor obstacleDescriptor in obstacleDescriptors) {
                     proms.Add(_resourceService.LoadPrefab(obstacleDescriptor.Prefab)
-                                              .Then(loadedObject =>
-                                                            Obstacles[type]
-                                                                    .Add(new KeyValuePair<Obstacle,
-                                                                                 int>(new Obstacle(loadedObject, obstacleDescriptor.Id), 0))));
+                                              .Then(go => Obstacles[type].Add(new KeyValuePair<GameObject, int>(go, 0))));
                 }
             }
             return Promise.All(proms);
-        }
-    }
-
-    public class Obstacle
-    {
-        public GameObject Object { get; }
-        public string Id { get; }
-
-        public Obstacle(GameObject gameObject, string id)
-        {
-            Object = gameObject;
-            Id = id;
         }
     }
 }

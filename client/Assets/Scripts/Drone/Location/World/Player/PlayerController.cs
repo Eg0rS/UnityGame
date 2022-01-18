@@ -3,7 +3,7 @@ using AgkCommons.Event;
 using AgkCommons.Extension;
 using Cinemachine;
 using Drone.Location.Model;
-using Drone.Location.Model.Drone;
+using Drone.Location.Model.Player;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
 using IoC.Attribute;
@@ -27,13 +27,13 @@ namespace Drone.Location.World.Drone
 
         private GameObject _collider;
         private GameObject _mesh;
-
-        private bool _isGameRun;
+        private GameObject _prefab;
 
         private Service.Control.Drone.Model.DroneModel _model;
 
         public void Init(PlayerModel model)
         {
+            _prefab = gameObject.GetChildren()[0];
             ControllerInitialization();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
@@ -63,7 +63,7 @@ namespace Drone.Location.World.Drone
 
         private void ControllerInitialization()
         {
-            _collider = gameObject.GetChildren().Find(go => go.name == COLLIDER);
+            _collider = _prefab.GetChildren().Find(go => go.name == COLLIDER);
             _mesh = _collider.GetChildren().Find(go => go.name == MESH);
 
             _transitionController = _collider.AddComponent<DroneTransitionController>();
@@ -86,7 +86,7 @@ namespace Drone.Location.World.Drone
 
         private void OnStartGame(InGameEvent obj)
         {
-            _isGameRun = true;
+            
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Drone.Location.Model.BaseModel;
 
-namespace Drone.Location.Model.Drone
+namespace Drone.Location.Model.Player
 {
     public class PlayerModel : PrefabModel
     {

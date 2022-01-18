@@ -6,7 +6,7 @@ using Cinemachine;
 using DG.Tweening;
 using Drone.Location.Event;
 using Drone.Location.Model;
-using Drone.Location.Model.Drone;
+using Drone.Location.Model.Player;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
 //using Drone.World;
