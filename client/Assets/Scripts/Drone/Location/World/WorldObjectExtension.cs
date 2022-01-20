@@ -6,16 +6,16 @@ using UnityEngine;
 
 namespace Drone.Location.World
 {
-    public static class WorldObjectExtension
+    public abstract class WorldObjectExtension : MonoBehaviour
     {
         [NotNull]
-        public static List<T> GetObjectComponents<T>(GameObject gameObject)
+        public List<T> GetObjectComponents<T>()
         {
-            return GetSceneObjects(gameObject).Where(o => o.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
+            return GetSceneObjects().Where(o => o.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
         }
 
         [NotNull]
-        private static List<GameObject> GetSceneObjects(GameObject gameObject)
+        private List<GameObject> GetSceneObjects()
         {
             return gameObject.GetComponentsOnlyInChildren<Transform>(true).ToList().Select(t => t.gameObject).ToList();
         }

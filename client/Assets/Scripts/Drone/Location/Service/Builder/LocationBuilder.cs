@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Resources;
@@ -14,9 +13,11 @@ using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
+using Drone.Location.World.Spawner;
 using Drone.Obstacles;
 using GameKit.World;
 using JetBrains.Annotations;
+using Tile.Descriptor;
 using Tile.Service;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
@@ -49,9 +50,8 @@ namespace Drone.Location.Service.Builder
 
         private LevelDescriptor _levelDescriptor;
 
-        Dictionary<string, GameObject> _otherTiles;
-
-        public Dictionary<ObstacleType, List<KeyValuePair<GameObject, int>>> Obstacles { get; set; }
+        private Dictionary<TileDescriptor, GameObject> _tiles;
+        private List<WorldTile> _worldTiles = new List<WorldTile>();
 
         private LocationBuilder(ResourceService resourceService, CreateObjectService createService, TileService tileService)
         {
@@ -85,9 +85,6 @@ namespace Drone.Location.Service.Builder
             CreateContainer<PlayerModel>(PLAYER, ref _player);
             CreateContainer<SplineModel>(SPLINE, ref _spline);
             CreateContainer<SplineWalkerModel>(LEVEL, ref _level);
-            // CreatePlayerContainer();
-            // CreateSplineContainer();
-            // CreateLevelContainer();
         }
 
         [NotNull]
@@ -107,26 +104,6 @@ namespace Drone.Location.Service.Builder
             container.transform.SetParent(_droneWorld.transform, false);
         }
 
-        private void CreateSplineContainer()
-        {
-            _spline = new GameObject(SPLINE);
-            _spline.AddComponent<SplineModel>();
-            _spline.transform.SetParent(_droneWorld.transform, false);
-        }
-
-        private void CreateLevelContainer()
-        {
-            _level = new GameObject(LEVEL);
-            _level.AddComponent<SplineWalkerModel>();
-            _level.transform.SetParent(_droneWorld.transform, false);
-        }
-
-        private void CreatePlayerContainer()
-        {
-            _player = new GameObject(PLAYER);
-            _player.transform.SetParent(_droneWorld.transform, false);
-        }
-
         private IPromise LoadPlayer()
         {
             _loadPromise = new Promise();
@@ -137,12 +114,6 @@ namespace Drone.Location.Service.Builder
         private void OnPlayerContainerLoaded(GameObject loadedObject, object[] loadparameters)
         {
             Object.Instantiate(loadedObject, _player.transform);
-            _loadPromise.Resolve();
-        }
-
-        private void OnLevelLoaded(GameObject loadedObject, object[] loadparameters)
-        {
-            Object.Instantiate(loadedObject, _level.transform);
             _loadPromise.Resolve();
         }
 
@@ -178,11 +149,9 @@ namespace Drone.Location.Service.Builder
         public IPromise LoadTiles()
         {
             _promise = new Promise();
-            string[] tilesIds = _levelDescriptor.GameData.Tiles.TilesData.Select(tile => tile.Id).ToArray();
-
-            _tileService.LoadTilesByIds(tilesIds)
+            _tileService.LoadTilesByIds(_levelDescriptor)
                         .Then(() => {
-                            _otherTiles = _tileService.LoadedTiles;
+                            _tiles = _tileService.LoadedTiles;
                             _promise.Resolve();
                         });
             return _promise;
@@ -190,7 +159,41 @@ namespace Drone.Location.Service.Builder
 
         public void Check()
         {
-            LoadPlayer().Then(LoadTiles).Then(LoadObstacles).Then(BuildLevel).Then(CreateLevelSpline).Then(CreateGameWorld);
+            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(ConfigurateTiles).Then(CreateLevelSpline).Then(CreateGameWorld);
+        }
+
+        private IPromise ConfigurateTiles()
+        {
+            Promise promise = new Promise();
+            List<ObstacleType> obstacleTypes = new List<ObstacleType>();
+            foreach (WorldTile worldTile in _worldTiles) {
+                obstacleTypes.AddRange(worldTile.Descriptor.ObstacleTypes);
+            }
+            _tileService.ObstaclesService.LoadObstacles(obstacleTypes.Distinct().ToList())
+                        .Then(() => {
+                            Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles = _tileService.ObstaclesService.Obstacles;
+                            foreach (WorldTile worldTile in _worldTiles) {
+                                ConfigTile(allObstacles, worldTile);
+                            }
+                            promise.Resolve();
+                        });
+
+            return promise;
+        }
+
+        private void ConfigTile(Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles, WorldTile tile)
+        {
+            List<ObstacleType> obstacleTypes = tile.Descriptor.ObstacleTypes.ToList();
+            Dictionary<GameObject, int> obstacleOnTile = new Dictionary<GameObject, int>();
+            foreach (Dictionary<GameObject, int> dictionary in allObstacles.Where(ob => obstacleTypes.Exists(x => x == ob.Key)).Select(x => x.Value)) {
+                foreach (KeyValuePair<GameObject, int> o in dictionary) {
+                    obstacleOnTile[o.Key] = o.Value;
+                }
+            }
+            List<SpawnerController> spawners = tile.GetObjectComponents<SpawnerController>();
+            foreach (SpawnerController spawner in spawners) {
+                spawner.SpawnObstacles(ref obstacleOnTile);
+            }
         }
 
         private void CreateLevelSpline()
@@ -206,50 +209,31 @@ namespace Drone.Location.Service.Builder
 
         private void BuildLevel()
         {
-            GameObject lastTile = null;
+            WorldTile lastTile = null;
 
             List<string> orderTile = _levelDescriptor.GameData.Tiles.TilesData.Select(x => x.Id).ToList();
 
             foreach (string order in orderTile) {
-                GameObject instTile = Object.Instantiate(_otherTiles[order], _level.transform);
+                KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(x => x.Key.Id == order);
 
+                GameObject instTile = Object.Instantiate(tile.Value, _level.transform);
+
+                WorldTile worldTile = instTile.AddComponent<WorldTile>();
+                worldTile.Descriptor = tile.Key;
                 if (lastTile == null) {
-                    lastTile = instTile;
+                    lastTile = worldTile;
                 } else {
-                    GameObject anchors = lastTile.GetChildren().First(x => x.name == "Anchors");
+                    GameObject anchors = lastTile.gameObject.GetChildren().First(x => x.name == "Anchors");
                     Transform end = anchors.GetChildren().Find(x => x.name == "End").transform;
 
-                    GameObject anchors1 = lastTile.GetChildren().First(x => x.name == "Anchors");
+                    GameObject anchors1 = lastTile.gameObject.GetChildren().First(x => x.name == "Anchors");
                     Transform begin = anchors1.GetChildren().Find(x => x.name == "Begin").transform;
 
                     instTile.transform.position = end.position - begin.localPosition;
-                    lastTile = instTile;
+                    lastTile = worldTile;
                 }
+                _worldTiles.Add(worldTile);
             }
-        }
-
-        private IPromise LoadObstacles()
-        {
-            _promise = new Promise();
-            List<string> tilesIds = _levelDescriptor.GameData.Tiles.TilesData.Select(tile => tile.Id).Distinct().ToList();
-            List<ObstacleType> types = new List<ObstacleType>();
-
-            List<ObstacleType[]> t = _tileService.TileDescriptors.Tiles.Where(tile => tilesIds.Exists(tId => tId.Equals(tile.Id)))
-                                                 .Select(x => x.ObstacleTypes)
-                                                 .ToList();
-            foreach (ObstacleType[] anyType in t) {
-                foreach (ObstacleType type in anyType) {
-                    if (!types.Exists(x => x.Equals(type))) {
-                        types.Add(type);
-                    }
-                }
-            }
-            _tileService.ObstaclesService.LoadObstacles(types)
-                        .Then(() => {
-                            Obstacles = _tileService.ObstaclesService.Obstacles;
-                            _promise.Resolve();
-                        });
-            return _promise;
         }
     }
 }

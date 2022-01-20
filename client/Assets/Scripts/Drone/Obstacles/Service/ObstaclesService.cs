@@ -17,7 +17,7 @@ namespace Drone.Obstacles.Service
         [Inject]
         private ResourceService _resourceService;
 
-        public Dictionary<ObstacleType, List<KeyValuePair<GameObject, int>>> Obstacles { get; set; }
+        public Dictionary<ObstacleType, Dictionary<GameObject, int>> Obstacles { get; set; }
 
         public void Init()
         {
@@ -25,14 +25,13 @@ namespace Drone.Obstacles.Service
 
         public IPromise LoadObstacles(List<ObstacleType> types)
         {
-            Obstacles = new Dictionary<ObstacleType, List<KeyValuePair<GameObject, int>>>();
             List<IPromise> proms = new List<IPromise>();
+            Obstacles = new Dictionary<ObstacleType, Dictionary<GameObject, int>>();
             foreach (ObstacleType type in types) {
-                Obstacles[type] = new List<KeyValuePair<GameObject, int>>();
+                Obstacles[type] = new Dictionary<GameObject, int>();
                 List<ObstacleDescriptor> obstacleDescriptors = _obstacleDescriptors.Obstacles.Where(x => x.Type == type).ToList();
                 foreach (ObstacleDescriptor obstacleDescriptor in obstacleDescriptors) {
-                    proms.Add(_resourceService.LoadPrefab(obstacleDescriptor.Prefab)
-                                              .Then(go => Obstacles[type].Add(new KeyValuePair<GameObject, int>(go, 0))));
+                    proms.Add(_resourceService.LoadPrefab(obstacleDescriptor.Prefab).Then(go => Obstacles[type].Add(go, 0)));
                 }
             }
             return Promise.All(proms);

@@ -7,14 +7,12 @@ using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
-using Drone.Location.Model.Spawner;
 using Drone.Location.Model.Spline;
 using Drone.Location.Model.StartPlatform;
 using Drone.Location.World;
 using Drone.Location.World.Drone;
 using Drone.Location.World.Finish;
 using Drone.Location.World.Obstacle;
-using Drone.Location.World.Spawner;
 using Drone.Location.World.Spline;
 using Drone.Location.World.StartPlatform;
 using UnityEngine;
@@ -35,8 +33,6 @@ namespace Drone.Location.Service
             _controllers[START_PLATFORM] =
                     new ControllerData(typeof(StartPlatformController), InitController<StartPlatformController, StartPlatformModel>);
             _controllers[PLAYER] = new ControllerData(typeof(PlayerController), InitController<PlayerController, PlayerModel>);
-
-            _controllers[SPAWNER] = new ControllerData(typeof(SpawnerController), InitController<SpawnerController, SpawnerModel>);
 
             _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);

@@ -3,9 +3,12 @@ using System.Linq;
 using AgkCommons.Resources;
 using Drone.Core.Service;
 using Drone.Descriptor;
+using Drone.Levels.Descriptor;
 using Drone.Obstacles.Service;
 using IoC.Attribute;
+using JetBrains.Annotations;
 using RSG;
+using Tile.Descriptor;
 using UnityEngine;
 
 namespace Tile.Service
@@ -16,7 +19,8 @@ namespace Tile.Service
         private TileDescriptors _tileDescriptors;
         [Inject]
         private ResourceService _resourceService;
-        public Dictionary<string, GameObject> LoadedTiles { get; set; }
+        
+        public Dictionary<TileDescriptor, GameObject> LoadedTiles { get; set; }
 
         [Inject]
         public ObstaclesService ObstaclesService;
@@ -25,21 +29,25 @@ namespace Tile.Service
         {
         }
 
-        public IPromise LoadTilesByIds(params string[] ids)
+        public IPromise LoadTilesByIds(LevelDescriptor descriptor)
         {
-            ids = ids.Distinct().ToArray();
-            LoadedTiles = new Dictionary<string, GameObject>();
+            List<TileDescriptor> tilesDescriptors = GetTileDescriptors(descriptor);
+            LoadedTiles = new Dictionary<TileDescriptor, GameObject>();
             List<IPromise> proms = new List<IPromise>();
-
-            foreach (string id in ids) {
-                proms.Add(_resourceService.LoadPrefab(_tileDescriptors.Tiles.First(x => x.Id == id).Prefab).Then(go => LoadedTiles.Add(id, go)));
+            foreach (TileDescriptor tileDescriptor in tilesDescriptors) {
+                proms.Add(_resourceService.LoadPrefab(tileDescriptor.Prefab)
+                                          .Then(tileObject => LoadedTiles.Add(tileDescriptor, tileObject)));
             }
             return Promise.All(proms);
         }
 
-        public TileDescriptors TileDescriptors
+        [NotNull]
+        private List<TileDescriptor> GetTileDescriptors(LevelDescriptor descriptor)
         {
-            get { return _tileDescriptors; }
+            List<TileDescriptor> tilesDescriptor = new List<TileDescriptor>();
+            List<string> tileIds = descriptor.GameData.Tiles.TilesData.Select(tile => tile.Id).Distinct().ToList();
+            tileIds.ForEach(id => tilesDescriptor.Add(_tileDescriptors.Tiles.First(x => x.Id == id)));
+            return tilesDescriptor;
         }
     }
 }
