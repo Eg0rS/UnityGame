@@ -73,23 +73,27 @@ namespace Drone.Location.UI
 
         private void OnMovement(ControllEvent сontrollEvent)
         {
+            float defaultTimeScale = 1 / Time.timeScale;
             Vector2 move = сontrollEvent.Movement;
             if (move == new Vector2(0, 2)) {
-                _upArrow.DOFade(1, 0.5f).OnComplete(() => _upArrow.DOFade(0, 0.5f));
+                _upArrow.DOFade(1, 0.5f).OnComplete(() => _upArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale = defaultTimeScale;
             } else if (move == new Vector2(0, -2)) {
-                _downArrow.DOFade(1, 0.5f).OnComplete(() => _downArrow.DOFade(0, 0.5f));
+                _downArrow.DOFade(1, 0.5f).OnComplete(() => _downArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale = defaultTimeScale;
             } else if (move == new Vector2(-2, 0)) {
-                _leftArrow.DOFade(1, 0.5f).OnComplete(() => _leftArrow.DOFade(0, 0.5f));
+                _leftArrow.DOFade(1, 0.5f).OnComplete(() => _leftArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale = defaultTimeScale;
             } else if (move == new Vector2(2, 0)) {
-                _rightArrow.DOFade(1, 0.5f).OnComplete(() => _rightArrow.DOFade(0, 0.5f));
+                _rightArrow.DOFade(1, 0.5f).OnComplete(() => _rightArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale = defaultTimeScale;
             } else if (move == new Vector2(1, 2) || move == new Vector2(2, 1) || move == new Vector2(2, 2)) {
-                _upRightArrow.DOFade(1, 0.5f).OnComplete(() => _upRightArrow.DOFade(0, 0.5f));
+                _upRightArrow.DOFade(1, 0.5f).OnComplete(() => _upRightArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale =
+                        defaultTimeScale;
             } else if (move == new Vector2(-2, 1) || move == new Vector2(-1, 2) || move == new Vector2(-2, 2)) {
-                _upLeftArrow.DOFade(1, 0.5f).OnComplete(() => _upLeftArrow.DOFade(0, 0.5f));
+                _upLeftArrow.DOFade(1, 0.5f).OnComplete(() => _upLeftArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale = defaultTimeScale;
             } else if (move == new Vector2(1, -2) || move == new Vector2(2, -1) || move == new Vector2(2, -2)) {
-                _downRightArrow.DOFade(1, 0.5f).OnComplete(() => _downRightArrow.DOFade(0, 0.5f));
+                _downRightArrow.DOFade(1, 0.5f).OnComplete(() => _downRightArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale =
+                        defaultTimeScale;
             } else if (move == new Vector2(-1, -2) || move == new Vector2(-2, -1) || move == new Vector2(-2, -2)) {
-                _downLeftArrow.DOFade(1, 0.5f).OnComplete(() => _downLeftArrow.DOFade(0, 0.5f));
+                _downLeftArrow.DOFade(1, 0.5f).OnComplete(() => _downLeftArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale =
+                        defaultTimeScale;
             }
         }
 
@@ -119,7 +123,7 @@ namespace Drone.Location.UI
             if (!_isGame) {
                 return;
             }
-            _time += Time.deltaTime;
+            _time += Time.unscaledDeltaTime;
             _timer.text = _time.ToString("F2");
         }
 

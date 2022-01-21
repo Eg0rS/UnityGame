@@ -15,6 +15,7 @@ using Drone.Location.World.Finish;
 using Drone.Location.World.Obstacle;
 using Drone.Location.World.Spline;
 using Drone.Location.World.StartPlatform;
+using RSG;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
 using AppContext = IoC.AppContext;
@@ -22,13 +23,14 @@ using AppContext = IoC.AppContext;
 namespace Drone.Location.Service
 {
     [Injectable]
-    public class CreateObjectService
+    public class LocationObjectCreateService
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreateObjectService>();
-
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationObjectCreateService>();
+        
         private readonly Dictionary<WorldObjectType, ControllerData> _controllers = new Dictionary<WorldObjectType, ControllerData>();
+       
 
-        public CreateObjectService()
+        public LocationObjectCreateService()
         {
             _controllers[START_PLATFORM] =
                     new ControllerData(typeof(StartPlatformController), InitController<StartPlatformController, StartPlatformModel>);
@@ -39,7 +41,6 @@ namespace Drone.Location.Service
             _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
             _controllers[SPLINE_WALKER] =
                     new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
-            
         }
 
         public Component AttachController(PrefabModel model)
@@ -70,6 +71,13 @@ namespace Drone.Location.Service
                 _logger.Error("Error while init controller. Cant find Controler for PrefabModel: " + model.ObjectType, e);
             }
         }
+
+        public IPromise<GameObject> LoadPrefab(string prefabPath)
+        {
+            return _resourceService.LoadPrefab(prefabPath);
+        }
+
+        
     }
 
     internal class ControllerData

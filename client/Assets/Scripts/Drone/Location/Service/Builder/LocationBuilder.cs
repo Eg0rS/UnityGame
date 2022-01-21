@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using AgkCommons.Resources;
 using RSG;
 using UnityEngine;
 using Adept.Logger;
@@ -18,7 +17,6 @@ using Drone.Obstacles;
 using GameKit.World;
 using JetBrains.Annotations;
 using Tile.Descriptor;
-using Tile.Service;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
 
@@ -35,9 +33,7 @@ namespace Drone.Location.Service.Builder
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
 
-        private readonly CreateObjectService _createObjectService;
-        private readonly ResourceService _resourceService;
-        private readonly TileService _tileService;
+        private readonly LocationObjectCreateService _createObjectService;
 
         private Promise _promise;
         private Transform _container;
@@ -53,17 +49,15 @@ namespace Drone.Location.Service.Builder
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
 
-        private LocationBuilder(ResourceService resourceService, CreateObjectService createService, TileService tileService)
+        private LocationBuilder(LocationObjectCreateService createObjectService)
         {
-            _resourceService = resourceService;
-            _createObjectService = createService;
-            _tileService = tileService;
+            _createObjectService = createObjectService;
         }
 
         [NotNull]
-        public static LocationBuilder Create(ResourceService resourceService, CreateObjectService createService, TileService tileService)
+        public static LocationBuilder Create(LocationObjectCreateService locationObjectCreateService)
         {
-            return new LocationBuilder(resourceService, createService, tileService);
+            return new LocationBuilder(locationObjectCreateService);
         }
 
         [NotNull]
@@ -104,17 +98,16 @@ namespace Drone.Location.Service.Builder
             container.transform.SetParent(_droneWorld.transform, false);
         }
 
+        [NotNull]
         private IPromise LoadPlayer()
         {
-            _loadPromise = new Promise();
-            _resourceService.LoadPrefab(PLAYER_CONTAINER_PATH, OnPlayerContainerLoaded);
-            return _loadPromise;
-        }
-
-        private void OnPlayerContainerLoaded(GameObject loadedObject, object[] loadparameters)
-        {
-            Object.Instantiate(loadedObject, _player.transform);
-            _loadPromise.Resolve();
+            Promise promise = new Promise();
+            _createObjectService.LoadPrefab(PLAYER_CONTAINER_PATH)
+                                .Then((go) => {
+                                    Object.Instantiate(go, _player.transform);
+                                    promise.Resolve();
+                                });
+            return promise;
         }
 
         private void CreateGameWorld()
@@ -185,7 +178,8 @@ namespace Drone.Location.Service.Builder
         {
             List<ObstacleType> obstacleTypes = tile.Descriptor.ObstacleTypes.ToList();
             Dictionary<GameObject, int> obstacleOnTile = new Dictionary<GameObject, int>();
-            foreach (Dictionary<GameObject, int> dictionary in allObstacles.Where(ob => obstacleTypes.Exists(x => x == ob.Key)).Select(x => x.Value)) {
+            foreach (Dictionary<GameObject, int> dictionary in
+                    allObstacles.Where(ob => obstacleTypes.Exists(x => x == ob.Key)).Select(x => x.Value)) {
                 foreach (KeyValuePair<GameObject, int> o in dictionary) {
                     obstacleOnTile[o.Key] = o.Value;
                 }
@@ -219,6 +213,7 @@ namespace Drone.Location.Service.Builder
                 GameObject instTile = Object.Instantiate(tile.Value, _level.transform);
 
                 WorldTile worldTile = instTile.AddComponent<WorldTile>();
+                _worldTiles.Add(worldTile);
                 worldTile.Descriptor = tile.Key;
                 if (lastTile == null) {
                     lastTile = worldTile;
@@ -232,7 +227,6 @@ namespace Drone.Location.Service.Builder
                     instTile.transform.position = end.position - begin.localPosition;
                     lastTile = worldTile;
                 }
-                _worldTiles.Add(worldTile);
             }
         }
     }

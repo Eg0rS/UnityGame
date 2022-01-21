@@ -19,7 +19,7 @@ namespace Tile.Service
         private TileDescriptors _tileDescriptors;
         [Inject]
         private ResourceService _resourceService;
-        
+
         public Dictionary<TileDescriptor, GameObject> LoadedTiles { get; set; }
 
         [Inject]
@@ -35,8 +35,7 @@ namespace Tile.Service
             LoadedTiles = new Dictionary<TileDescriptor, GameObject>();
             List<IPromise> proms = new List<IPromise>();
             foreach (TileDescriptor tileDescriptor in tilesDescriptors) {
-                proms.Add(_resourceService.LoadPrefab(tileDescriptor.Prefab)
-                                          .Then(tileObject => LoadedTiles.Add(tileDescriptor, tileObject)));
+                proms.Add(_resourceService.LoadPrefab(tileDescriptor.Prefab).Then(tileObject => LoadedTiles.Add(tileDescriptor, tileObject)));
             }
             return Promise.All(proms);
         }
@@ -44,10 +43,12 @@ namespace Tile.Service
         [NotNull]
         private List<TileDescriptor> GetTileDescriptors(LevelDescriptor descriptor)
         {
-            List<TileDescriptor> tilesDescriptor = new List<TileDescriptor>();
-            List<string> tileIds = descriptor.GameData.Tiles.TilesData.Select(tile => tile.Id).Distinct().ToList();
-            tileIds.ForEach(id => tilesDescriptor.Add(_tileDescriptors.Tiles.First(x => x.Id == id)));
-            return tilesDescriptor;
+            return _tileDescriptors.Tiles.Where(tileDescriptor =>
+                                                        descriptor.GameData.Tiles.TilesData.Distinct()
+                                                                  .Select(tile => tile.Id)
+                                                                  .ToList()
+                                                                  .Exists(id => id == tileDescriptor.Id))
+                                   .ToList();
         }
     }
 }

@@ -14,10 +14,11 @@ namespace Drone.Location.IoC
     {
         public void Configure(IIoCContainer container)
         {
-            container.RegisterSingleton<LocationService>();
-            container.RegisterSingleton<LocationBuilderManager>();
-            container.RegisterSingleton<CreateObjectService>();
-            container.RegisterSingleton<GameOverlayManager>();
+            container.RegisterSingleton<LocationService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<LocationBuilderManager>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<LocationObjectCreateService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<LoadLocationObjectService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<GameOverlayManager>(null, ScopeType.SCREEN);
 
             container.RegisterSingleton<ControlService>(null, ScopeType.SCREEN);
             container.RegisterSingleton<TileService>(null, ScopeType.SCREEN);
