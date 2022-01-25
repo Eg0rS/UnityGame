@@ -13,7 +13,11 @@ namespace Drone.Core.Filter
 
         public void Run(AppFilterChain chain)
         {
-            _localDescriptorLoader.AddDescriptor<LevelsDescriptors>(Descriptors.LEVELS).Load().Done((() => chain.Next()));
+            _localDescriptorLoader.AddDescriptor<LevelsDescriptors>(Descriptors.LEVELS)
+                                  .AddDescriptor<ObstacleDescriptors>(Descriptors.OBSTACLES)
+                                  .AddDescriptor<TileDescriptors>(Descriptors.TILES)
+                                  .Load()
+                                  .Done(chain.Next);
         }
     }
 }

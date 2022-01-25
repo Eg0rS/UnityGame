@@ -5,7 +5,6 @@ using Drone.Core;
 using Drone.Levels.Descriptor;
 using Drone.Location.Service.Builder;
 using Drone.Location.UI.Screen;
-using Drone.World.Event;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -14,7 +13,7 @@ namespace Drone.Location.Service
     [Injectable]
     public class LocationService : GameEventDispatcher
     {
-        [Inject] 
+        [Inject]
         private ScreenManager _screenManager;
 
         [Inject]
@@ -27,17 +26,12 @@ namespace Drone.Location.Service
         {
             _overlayManager.Require().ShowPreloader();
             _screenManager.LoadScreen<LocationScreen>();
-            CreatedWorld(levelDescriptor);
+            CreatedLevel(levelDescriptor);
         }
 
-        private void CreatedWorld(LevelDescriptor levelDescriptor)
+        private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
-            string levelPrefabName = levelDescriptor.Graphics.Prefab;
-            _locationBuilderManager.CreateDefault()
-                                   .Prefab(levelPrefabName)
-                                   .Build()
-                                   .Then(() => Dispatch(new WorldObjectEvent(WorldObjectEvent.WORLD_CREATED)))
-                                   .Done();
+            _locationBuilderManager.CreateDefault().LevelDescriptor(levelDescriptor).GameWorldContainer().Check();
         }
     }
 }

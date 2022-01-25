@@ -9,7 +9,7 @@ using Drone.Descriptor.IoC;
 using Drone.Inventory.IoC;
 using Drone.Levels.IoC;
 using Drone.Location.IoC;
-using Drone.Location.World.Drone.Module;
+using Drone.Location.Service.Control.Drone.Module;
 using Drone.PowerUp.IoC;
 using Drone.Settings.IoC;
 using Drone.Shop.IoC;

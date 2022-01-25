@@ -2,7 +2,8 @@
 using AgkUI.Screens.Service;
 using AgkUI.Screens.Ui;
 using Drone.Core.UI.Dialog.Service;
-using Drone.World;
+using Drone.Location.World;
+using GameKit.World;
 using IoC;
 using IoC.Api;
 using IoC.Scope;
@@ -27,7 +28,7 @@ namespace Drone.Core.UI.IoC
             container.RegisterSingleton<DialogService>();
 
             container.RegisterSingleton<ScreenStructureManager>();
-            container.RegisterSingleton<GameWorld>(GetMainWorld, null, ScopeType.SCREEN);
+            container.RegisterSingleton<DroneWorld>(GetMainWorld, null, ScopeType.SCREEN);
             container.RegisterSingleton<DialogManager>(CreateDialogManager, null, ScopeType.SCREEN);
             _screenStructureManager = AppContext.Resolve<ScreenStructureManager>();
         }

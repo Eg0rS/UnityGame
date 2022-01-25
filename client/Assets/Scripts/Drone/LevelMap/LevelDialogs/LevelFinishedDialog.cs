@@ -69,7 +69,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _levelId = _levelService.SelectedLevelId;
             _levelViewModel = _levelService.GetLevels().Find(x => x.LevelDescriptor.Id.Equals(_levelId));
-            _levelTitle.text = _levelViewModel.LevelDescriptor.Reference.Title;
+            _levelTitle.text = _levelViewModel.LevelDescriptor.Exposition.Title;
             _countStars = 0;
             SetChipstask();
             SetDurabilityTask();
@@ -87,35 +87,35 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void SetTimeTask()
         {
-            float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryTime;
-            float score = _levelViewModel.LevelProgress.TransitTime;
-            SetTask(_timerTask, TIME_TASK_GOAL, TIME_TASK_SCORE, goal, score);
-            if (score <= goal) {
-                _timerMark.SetActive(true);
-                _countStars++;
-            }
+            // float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryTime;
+            // float score = _levelViewModel.LevelProgress.TransitTime;
+            // SetTask(_timerTask, TIME_TASK_GOAL, TIME_TASK_SCORE, goal, score);
+            // if (score <= goal) {
+            //     _timerMark.SetActive(true);
+            //     _countStars++;
+            // }
         }
 
         private void SetDurabilityTask()
         {
-            float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryDurability;
-            float score = _levelViewModel.LevelProgress.Durability;
-            SetTask(_durabilityTask, DURABILITY_TASK_GOAL, DURABILITY_TASK_SCORE, goal, score);
-            if (score >= goal) {
-                _durabilityMark.SetActive(true);
-                _countStars++;
-            }
+            // float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryDurability;
+            // float score = _levelViewModel.LevelProgress.Durability;
+            // SetTask(_durabilityTask, DURABILITY_TASK_GOAL, DURABILITY_TASK_SCORE, goal, score);
+            // if (score >= goal) {
+            //     _durabilityMark.SetActive(true);
+            //     _countStars++;
+            // }
         }
 
         private void SetChipstask()
         {
-            float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryCountChips;
-            float score = _levelViewModel.LevelProgress.CountChips;
-            SetTask(_chipTask, CHIPS_TASK_GOAL, CHIPS_TASK_SCORE, goal, score);
-            if (score >= goal) {
-                _chipMark.SetActive(true);
-                _countStars++;
-            }
+            // float goal = _levelViewModel.LevelDescriptor.Goals.NecessaryCountChips;
+            // float score = _levelViewModel.LevelProgress.CountChips;
+            // SetTask(_chipTask, CHIPS_TASK_GOAL, CHIPS_TASK_SCORE, goal, score);
+            // if (score >= goal) {
+            //     _chipMark.SetActive(true);
+            //     _countStars++;
+            // }
         }
 
         private void SetTask(GameObject container, string patternGoal, string patternValue, float goal, float score)

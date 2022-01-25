@@ -2,9 +2,7 @@
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Obstacle;
-using Drone.World;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.World.Obstacle
@@ -14,7 +12,7 @@ namespace Drone.Location.World.Obstacle
         public WorldObjectType ObjectType { get; private set; }
 
         [Inject]
-        private IoCProvider<GameWorld> _gameWorld;
+        private DroneWorld _gameWorld;
 
         public void Init(ObstacleModel model)
         {
@@ -24,11 +22,11 @@ namespace Drone.Location.World.Obstacle
         private void OnCollisionEnter(Collision otherCollision)
         {
             WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType != WorldObjectType.DRON) {
+            if (objectType != WorldObjectType.PLAYER) {
                 return;
             }
             ContactPoint[] contactPoints = otherCollision.contacts;
-            _gameWorld.Require().Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT, contactPoints, ImmersionDepth(otherCollision)));
+            _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT, contactPoints, ImmersionDepth(otherCollision)));
         }
 
         private float ImmersionDepth(Collision otherCollision)

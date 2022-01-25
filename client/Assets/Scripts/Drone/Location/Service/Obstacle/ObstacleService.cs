@@ -1,7 +1,7 @@
 using AgkCommons.Event;
 using Drone.Core.Service;
 using Drone.Location.Event;
-using Drone.World;
+using Drone.Location.World;
 using IoC.Attribute;
 
 namespace Drone.Location.Service.Obstacle
@@ -11,7 +11,7 @@ namespace Drone.Location.Service.Obstacle
         private const float DAMAGE = -3.0f;
         private const float MAX_DISTANCE_DEPTH_COLLIDER = 0.029f;
         [Inject]
-        private GameWorld _gameWorld;
+        private DroneWorld _gameWorld;
 
         public void Init()
         {

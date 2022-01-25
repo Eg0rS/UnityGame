@@ -4,25 +4,17 @@ using Adept.Logger;
 using AgkCommons.CodeStyle;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
-using Drone.Location.Model.Battery;
-using Drone.Location.Model.BonusChips;
-using Drone.Location.Model.Drone;
 using Drone.Location.Model.Finish;
-using Drone.Location.Model.Magnet;
 using Drone.Location.Model.Obstacle;
-using Drone.Location.Model.ShieldBooster;
-using Drone.Location.Model.SpeedBooster;
-using Drone.Location.Model.X2Booster;
+using Drone.Location.Model.Player;
+using Drone.Location.Model.Spline;
+using Drone.Location.Model.StartPlatform;
 using Drone.Location.World;
 using Drone.Location.World.Drone;
-using Drone.Location.World.Battery;
-using Drone.Location.World.BonusChips;
 using Drone.Location.World.Finish;
-using Drone.Location.World.Magnet;
 using Drone.Location.World.Obstacle;
-using Drone.Location.World.ShieldBooster;
-using Drone.Location.World.SpeedBooster;
-using Drone.Location.World.X2Booster;
+using Drone.Location.World.Spline;
+using Drone.Location.World.StartPlatform;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
 using AppContext = IoC.AppContext;
@@ -38,19 +30,15 @@ namespace Drone.Location.Service
 
         public CreateObjectService()
         {
-            _controllers[DRON] = new ControllerData(typeof(DroneController), InitController<DroneController, DronePrefabModel>);
+            _controllers[START_PLATFORM] =
+                    new ControllerData(typeof(StartPlatformController), InitController<StartPlatformController, StartPlatformModel>);
+            _controllers[PLAYER] = new ControllerData(typeof(PlayerController), InitController<PlayerController, PlayerModel>);
+
             _controllers[OBSTACLE] = new ControllerData(typeof(ObstacleController), InitController<ObstacleController, ObstacleModel>);
-            _controllers[BONUS_CHIPS] = new ControllerData(typeof(BonusChipsController), InitController<BonusChipsController, BonusChipsModel>);
-            _controllers[SPEED_BOOSTER] =
-                    new ControllerData(typeof(SpeedBoosterController), InitController<SpeedBoosterController, SpeedBoosterModel>);
-            _controllers[SHIELD_BOOSTER] =
-                    new ControllerData(typeof(ShieldBoosterController), InitController<ShieldBoosterController, ShieldBoosterModel>);
-            _controllers[X2_BOOSTER] =
-                    new ControllerData(typeof(X2BoosterController), InitController<X2BoosterController, X2BoosterModel>);
-            _controllers[MAGNET_BOOSTER] =
-                    new ControllerData(typeof(MagnetBoosterController), InitController<MagnetBoosterController, MagnetBoosterModel>);
-            _controllers[BATTERY] = new ControllerData(typeof(BatteryController), InitController<BatteryController, BatteryModel>);
             _controllers[FINISH] = new ControllerData(typeof(FinishController), InitController<FinishController, FinishModel>);
+            _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
+            _controllers[SPLINE_WALKER] =
+                    new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
             
         }
 
