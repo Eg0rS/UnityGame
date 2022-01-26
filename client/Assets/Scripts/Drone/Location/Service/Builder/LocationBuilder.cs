@@ -12,7 +12,6 @@ using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
-using Drone.Location.World.Spawner;
 using Drone.Obstacles;
 using GameKit.World;
 using JetBrains.Annotations;
@@ -166,22 +165,6 @@ namespace Drone.Location.Service.Builder
                               });
             return promise;
         }
-
-        // private void ConfigTile(ref Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles, WorldTile tile)
-        // {
-        //     List<ObstacleType> obstacleTypes = tile.Descriptor.ObstacleTypes.ToList();
-        //     Dictionary<GameObject, int> obstacleOnTile = new Dictionary<GameObject, int>();
-        //     foreach (Dictionary<GameObject, int> dictionary in
-        //             allObstacles.Where(ob => obstacleTypes.Exists(x => x == ob.Key)).Select(x => x.Value)) {
-        //         foreach (KeyValuePair<GameObject, int> o in dictionary) {
-        //             obstacleOnTile[o.Key] = o.Value;
-        //         }
-        //     }
-        //     List<SpawnerController> spawners = tile.GetObjectComponents<SpawnerController>();
-        //     foreach (SpawnerController spawner in spawners) {
-        //         spawner.SpawnObstacles(ref obstacleOnTile);
-        //     }
-        // }
 
         private void CreateLevelSpline()
         {

@@ -22,7 +22,7 @@ namespace Drone.Location.World.Drone
         [Inject]
         private DroneWorld _gameWorld;
 
-        private DroneTransitionController _transitionController;
+        private PlayerTransitionController _transitionController;
         private CinemachineBasicMultiChannelPerlin _cameraNoise;
 
         private GameObject _collider;
@@ -66,8 +66,8 @@ namespace Drone.Location.World.Drone
             _collider = _prefab.GetChildren().Find(go => go.name == COLLIDER);
             _mesh = _collider.GetChildren().Find(go => go.name == MESH);
 
-            _transitionController = _collider.AddComponent<DroneTransitionController>();
-            _transitionController.Configure();
+            //_transitionController = _collider.AddComponent<PlayerTransitionController>();
+            //_transitionController.Configure();
             //  _animationController = _mesh.AddComponent<DroneAnimationController>();
         }
 
