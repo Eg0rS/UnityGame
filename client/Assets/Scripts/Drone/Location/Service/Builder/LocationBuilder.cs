@@ -33,31 +33,31 @@ namespace Drone.Location.Service.Builder
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
 
-        private readonly LocationObjectCreateService _createObjectService;
+        private readonly CreateLocationObjectService _createObjectService;
+        private readonly LoadLocationObjectService _loadObjectService;
 
-        private Promise _promise;
         private Transform _container;
         private GameObject _droneWorld;
         private GameObject _spline;
         private GameObject _player;
         private GameObject _level;
 
-        private Promise _loadPromise;
-
         private LevelDescriptor _levelDescriptor;
 
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
+        private Dictionary<ObstacleType, Dictionary<GameObject, int>> _obstacles;
 
-        private LocationBuilder(LocationObjectCreateService createObjectService)
+        private LocationBuilder(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
         {
             _createObjectService = createObjectService;
+            _loadObjectService = loadObjectService;
         }
 
         [NotNull]
-        public static LocationBuilder Create(LocationObjectCreateService locationObjectCreateService)
+        public static LocationBuilder Create(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
         {
-            return new LocationBuilder(locationObjectCreateService);
+            return new LocationBuilder(createObjectService, loadObjectService);
         }
 
         [NotNull]
@@ -98,15 +98,14 @@ namespace Drone.Location.Service.Builder
             container.transform.SetParent(_droneWorld.transform, false);
         }
 
-        [NotNull]
         private IPromise LoadPlayer()
         {
             Promise promise = new Promise();
-            _createObjectService.LoadPrefab(PLAYER_CONTAINER_PATH)
-                                .Then((go) => {
-                                    Object.Instantiate(go, _player.transform);
-                                    promise.Resolve();
-                                });
+            _loadObjectService.LoadResource<GameObject>(PLAYER_CONTAINER_PATH)
+                              .Then(loadObject => {
+                                  Object.Instantiate(loadObject, _player.transform);
+                                  promise.Resolve();
+                              });
             return promise;
         }
 
@@ -118,8 +117,6 @@ namespace Drone.Location.Service.Builder
             InitControllers(gameWorld);
             InitService();
             gameWorld.Dispatch(new WorldEvent(WorldEvent.CREATED));
-
-            _promise.Resolve();
         }
 
         private static void InitService()
@@ -139,15 +136,15 @@ namespace Drone.Location.Service.Builder
         }
 
         [NotNull]
-        public IPromise LoadTiles()
+        private IPromise LoadTiles()
         {
-            _promise = new Promise();
-            _tileService.LoadTilesByIds(_levelDescriptor)
-                        .Then(() => {
-                            _tiles = _tileService.LoadedTiles;
-                            _promise.Resolve();
-                        });
-            return _promise;
+            Promise promise = new Promise();
+            _loadObjectService.LoadLevelTiles(_levelDescriptor)
+                              .Then(tiles => {
+                                  _tiles = tiles;
+                                  promise.Resolve();
+                              });
+            return promise;
         }
 
         public void Check()
@@ -158,37 +155,33 @@ namespace Drone.Location.Service.Builder
         private IPromise ConfigurateTiles()
         {
             Promise promise = new Promise();
-            List<ObstacleType> obstacleTypes = new List<ObstacleType>();
-            foreach (WorldTile worldTile in _worldTiles) {
-                obstacleTypes.AddRange(worldTile.Descriptor.ObstacleTypes);
-            }
-            _tileService.ObstaclesService.LoadObstacles(obstacleTypes.Distinct().ToList())
-                        .Then(() => {
-                            Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles = _tileService.ObstaclesService.Obstacles;
-                            foreach (WorldTile worldTile in _worldTiles) {
-                                ConfigTile(allObstacles, worldTile);
-                            }
-                            promise.Resolve();
-                        });
 
+            _loadObjectService.LoadLevelObstacles(_levelDescriptor)
+                              .Then(loadedObstacles => {
+                                  _obstacles = loadedObstacles;
+                                  foreach (WorldTile worldTile in _worldTiles) {
+                                      worldTile.Configurate(ref _obstacles);
+                                  }
+                                  promise.Resolve();
+                              });
             return promise;
         }
 
-        private void ConfigTile(Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles, WorldTile tile)
-        {
-            List<ObstacleType> obstacleTypes = tile.Descriptor.ObstacleTypes.ToList();
-            Dictionary<GameObject, int> obstacleOnTile = new Dictionary<GameObject, int>();
-            foreach (Dictionary<GameObject, int> dictionary in
-                    allObstacles.Where(ob => obstacleTypes.Exists(x => x == ob.Key)).Select(x => x.Value)) {
-                foreach (KeyValuePair<GameObject, int> o in dictionary) {
-                    obstacleOnTile[o.Key] = o.Value;
-                }
-            }
-            List<SpawnerController> spawners = tile.GetObjectComponents<SpawnerController>();
-            foreach (SpawnerController spawner in spawners) {
-                spawner.SpawnObstacles(ref obstacleOnTile);
-            }
-        }
+        // private void ConfigTile(ref Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles, WorldTile tile)
+        // {
+        //     List<ObstacleType> obstacleTypes = tile.Descriptor.ObstacleTypes.ToList();
+        //     Dictionary<GameObject, int> obstacleOnTile = new Dictionary<GameObject, int>();
+        //     foreach (Dictionary<GameObject, int> dictionary in
+        //             allObstacles.Where(ob => obstacleTypes.Exists(x => x == ob.Key)).Select(x => x.Value)) {
+        //         foreach (KeyValuePair<GameObject, int> o in dictionary) {
+        //             obstacleOnTile[o.Key] = o.Value;
+        //         }
+        //     }
+        //     List<SpawnerController> spawners = tile.GetObjectComponents<SpawnerController>();
+        //     foreach (SpawnerController spawner in spawners) {
+        //         spawner.SpawnObstacles(ref obstacleOnTile);
+        //     }
+        // }
 
         private void CreateLevelSpline()
         {
@@ -209,10 +202,7 @@ namespace Drone.Location.Service.Builder
 
             foreach (string order in orderTile) {
                 KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(x => x.Key.Id == order);
-
-                GameObject instTile = Object.Instantiate(tile.Value, _level.transform);
-
-                WorldTile worldTile = instTile.AddComponent<WorldTile>();
+                WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>();
                 _worldTiles.Add(worldTile);
                 worldTile.Descriptor = tile.Key;
                 if (lastTile == null) {
@@ -224,7 +214,7 @@ namespace Drone.Location.Service.Builder
                     GameObject anchors1 = lastTile.gameObject.GetChildren().First(x => x.name == "Anchors");
                     Transform begin = anchors1.GetChildren().Find(x => x.name == "Begin").transform;
 
-                    instTile.transform.position = end.position - begin.localPosition;
+                    worldTile.gameObject.transform.position = end.position - begin.localPosition;
                     lastTile = worldTile;
                 }
             }

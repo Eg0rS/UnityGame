@@ -7,16 +7,18 @@ namespace Drone.Location.Service.Builder
     [Injectable]
     public class LocationBuilderManager
     {
-
         [Inject]
-        private LocationObjectCreateService _locationObjectCreateService;
+        private CreateLocationObjectService _createLocationObjectService;
+        [Inject]
+        private LoadLocationObjectService _loadLocationObjectService;
 
         [Inject]
         private ScreenStructureManager _screenStructureManager;
 
         public LocationBuilder CreateDefault()
         {
-            return LocationBuilder.Create(_locationObjectCreateService).Container(_screenStructureManager.ScreenWorldViewContainer.transform);
+            return LocationBuilder.Create(_createLocationObjectService, _loadLocationObjectService)
+                                  .Container(_screenStructureManager.ScreenWorldViewContainer.transform);
         }
     }
 }

@@ -22,14 +22,14 @@ using AppContext = IoC.AppContext;
 namespace Drone.Location.Service
 {
     [Injectable]
-    public class LocationObjectCreateService
+    public class CreateLocationObjectService
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationObjectCreateService>();
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreateLocationObjectService>();
         
         private readonly Dictionary<WorldObjectType, ControllerData> _controllers = new Dictionary<WorldObjectType, ControllerData>();
        
 
-        public LocationObjectCreateService()
+        public CreateLocationObjectService()
         {
             _controllers[START_PLATFORM] =
                     new ControllerData(typeof(StartPlatformController), InitController<StartPlatformController, StartPlatformModel>);
