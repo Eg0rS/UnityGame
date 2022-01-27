@@ -2,6 +2,7 @@
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Drone.Core.Service;
+using Drone.Location.Event;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.World;
@@ -38,24 +39,23 @@ namespace Drone.Location.Service.Control
         public void Init()
         {
             _width = Screen.width;
+            _gameWorld.AddListener(WorldEvent.CREATED, OnWorldCreated);
+            _inputControl = new InputControl();
+            TouchSimulation.Enable();
+           
         }
 
-        private void OnEnable()
+        private void OnWorldCreated(GameEvent obj)
         {
             _inputControl.Enable();
+            _inputControl.Player.Touch.performed += ctx => OnTouch(ctx.ReadValue<TouchState>());
+            _inputControl.Player.Tap.started += ctx => OnTap(ctx);
         }
 
+        
         private void OnDisable()
         {
             _inputControl.Disable();
-        }
-
-        private void Awake()
-        {
-            _inputControl = new InputControl();
-            TouchSimulation.Enable();
-            _inputControl.Player.Touch.performed += ctx => OnTouch(ctx.ReadValue<TouchState>());
-            _inputControl.Player.Tap.started += ctx => OnTap(ctx);
         }
 
         private void OnTap(InputAction.CallbackContext ctx)

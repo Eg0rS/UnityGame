@@ -66,8 +66,8 @@ namespace Drone.Location.World.Drone
             _collider = _prefab.GetChildren().Find(go => go.name == COLLIDER);
             _mesh = _collider.GetChildren().Find(go => go.name == MESH);
 
-            //_transitionController = _collider.AddComponent<PlayerTransitionController>();
-            //_transitionController.Configure();
+            _transitionController = _collider.AddComponent<PlayerTransitionController>();
+            _transitionController.Configure();
             //  _animationController = _mesh.AddComponent<DroneAnimationController>();
         }
 

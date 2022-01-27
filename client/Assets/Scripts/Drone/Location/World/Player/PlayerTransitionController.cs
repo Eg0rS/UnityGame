@@ -16,15 +16,13 @@ namespace Drone.Location.World.Drone
 
         private float _mobility;
         private Vector3 _currentPosition = Vector3.zero;
+        
+        private Sequence _sequence;
 
         public void Configure()
         {
             this.InjectComponents();
             this.Inject();
-            DOTween.defaultUpdateType = UpdateType.Fixed;
-            Vector3 newPosition = new Vector3(0,1,0);
-            Vector3[] path = {newPosition};
-            transform.DOLocalPath(path, _mobility);
         }
 
         public void OnGesture(ControllEvent controllEvent)
@@ -39,16 +37,16 @@ namespace Drone.Location.World.Drone
 
         private void Move(Vector3 newPosition)
         {
+            _sequence = DOTween.Sequence().SetAutoKill(false).SetUpdate(UpdateType.Fixed);
             _currentPosition = newPosition;
             Vector3[] path = {newPosition};
-            transform.DOLocalMove(newPosition, _mobility);
-            // _rigidbody.DOLocalPath(path, _mobility);
+            _sequence.Append(_rigidbody.DOLocalPath(path, _mobility, PathType.Linear, PathMode.Full3D, 1, Color.green).SetEase(Ease.OutQuad));
         }
 
         private Vector3 NewPosition(Vector3 currentPosition, Vector3 swipe)
         {
             Vector3 newPos = currentPosition + swipe;
-           // _gameWorld.Dispatch(new ControllEvent(ControllEvent.MOVEMENT, newPos));
+            _gameWorld.Dispatch(new ControllEvent(ControllEvent.MOVEMENT, newPos));
             if (newPos.x > 1.0f) {
                 swipe.x = 0.0f;
             }
@@ -69,6 +67,11 @@ namespace Drone.Location.World.Drone
         {
             get { return _mobility; }
             set { _mobility = value; }
+        }
+
+        private void OnDestroy()
+        {
+            _sequence.Kill();
         }
     }
 }

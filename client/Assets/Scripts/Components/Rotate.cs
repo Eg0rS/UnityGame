@@ -7,9 +7,17 @@ namespace Components
     {
         [SerializeField]
         private float _twistTime;
+
+        private Tween _rotateTwin;
+
         private void Start()
         {
-            transform.DORotate(new Vector3(0, 360, 0), _twistTime, RotateMode.FastBeyond360).SetLoops(-1).SetEase(Ease.Flash);
+            _rotateTwin = transform.DORotate(new Vector3(0, 360, 0), _twistTime, RotateMode.FastBeyond360).SetLoops(-1).SetEase(Ease.Flash);
+        }
+
+        private void OnDestroy()
+        {
+            _rotateTwin.Kill();
         }
     }
 }

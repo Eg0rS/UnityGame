@@ -146,15 +146,15 @@ namespace Drone.Location.Service.Builder
             return promise;
         }
 
-        public void Check()
+        public void Build()
         {
             LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(ConfigurateTiles).Then(CreateLevelSpline).Then(CreateGameWorld);
         }
 
+        [NotNull]
         private IPromise ConfigurateTiles()
         {
             Promise promise = new Promise();
-
             _loadObjectService.LoadLevelObstacles(_levelDescriptor)
                               .Then(loadedObstacles => {
                                   _obstacles = loadedObstacles;

@@ -11,7 +11,7 @@ namespace Drone.Core.UI.Overlay
     {
         private const float PREDICT_TIME = 8;
         private const float SLOW_FILL_SPEED = 0.1f;
-        private const float FAST_FILL_SPEED = 1f;
+        private const float FAST_FILL_SPEED = 2f;
         private const int MAX_NOT_LOADED_PROGRESS = 95;
         private const int MIN_NOT_LOADED_PROGRESS = 5;
         private const float DECREASING_СOEFFICIENT = 0.5f;
