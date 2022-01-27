@@ -10,7 +10,7 @@ namespace Drone.Location.World.Spline
     public class SplineWalkerController : MonoBehaviour, IWorldObjectController<SplineWalkerModel>
     {
         public WorldObjectType ObjectType { get; }
-        private const float SPEED = 3f;
+        private const float SPEED = 1f;
 
         [Inject]
         private DroneWorld _gameWorld;
@@ -52,7 +52,7 @@ namespace Drone.Location.World.Spline
             if (!_isCanFly) {
                 return;
             }
-            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedDeltaTime);
+            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedDeltaTime, 50);
             position *= -1;
             _levelRigidBody.MovePosition(position);
             BezierSpline.Segment segment = _splineController.BezierSpline.GetSegmentAt(_distanceTraveled);

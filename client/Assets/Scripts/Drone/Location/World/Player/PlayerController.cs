@@ -38,6 +38,15 @@ namespace Drone.Location.World.Drone
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
             _gameWorld.AddListener<ControllEvent>(ControllEvent.GESTURE, OnGesture);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CHANGE_SPLINE_SEGMENT, OnChangeSplineSegment);
+        }
+
+        private void OnChangeSplineSegment(InGameEvent obj)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(obj.BezierSegment.GetTangent(), obj.BezierSegment.GetNormal());
+            if (targetRotation != transform.rotation) {
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.fixedTime);
+            }
         }
 
         private void OnGesture(ControllEvent obj)
@@ -86,7 +95,6 @@ namespace Drone.Location.World.Drone
 
         private void OnStartGame(InGameEvent obj)
         {
-            
         }
     }
 }
