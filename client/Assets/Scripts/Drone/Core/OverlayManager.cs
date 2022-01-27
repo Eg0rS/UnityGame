@@ -37,7 +37,7 @@ namespace Drone.Core
                 if (_preloaderOverlay != null) {
                     return _preloaderOverlay;
                 }
-                GameObject prefab = Resources.Load("Embeded/Preloader/pfPreloader", typeof(GameObject)) as GameObject;
+                GameObject prefab = Resources.Load("Embeded/UI_Prototype/Preloader/pfPreloader", typeof(GameObject)) as GameObject;
                 GameObject go = Instantiate(prefab, transform);
                 _preloaderOverlay = go.GetComponent<PreloaderOverlay>();
                 return _preloaderOverlay;

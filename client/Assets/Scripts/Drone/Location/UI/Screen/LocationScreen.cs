@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Drone.Location.UI.Screen
 {
-    [UIController("UI/Screen/pfLocationScreen@embeded")]
+    [UIController("UI_Prototype/Screen/pfLocationScreen@embeded")]
     public class LocationScreen : MonoBehaviour
     {
         [Inject]
