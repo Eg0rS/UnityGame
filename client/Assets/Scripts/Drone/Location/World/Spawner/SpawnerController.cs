@@ -2,7 +2,7 @@
 using System.Linq;
 using AgkCommons.Extension;
 using Drone.Obstacles;
-using FluffyUnderware.DevTools.Extensions;
+using RSG.Promises;
 using UnityEngine;
 using Random = System.Random;
 
@@ -27,7 +27,7 @@ namespace Drone.Location.World.Spawner
             }
             allObstacles.Where(x => obstacleTypesOnTile.Contains(x.Key))
                         .Select(x => x.Value)
-                        .ForEach(dictionary => tileObstacles.ForEach(matched => {
+                        .Each(dictionary => tileObstacles.Each(matched => {
                             if (dictionary.ContainsKey(matched.Key)) {
                                 dictionary[matched.Key] = matched.Value;
                             }
