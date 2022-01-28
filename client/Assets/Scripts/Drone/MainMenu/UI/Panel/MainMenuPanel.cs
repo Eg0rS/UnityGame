@@ -21,7 +21,7 @@ namespace Drone.MainMenu.UI.Panel
     public class MainMenuPanel : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
-        private const string PREFAB = "UI/MainMenu/Panel/pfMainScreenPanel@embeded";
+        private const string PREFAB = "UI_Prototype/Panel/MainMenuScreen/pfMainScreenPanel@embeded";
 
         [Inject]
         private OverlayManager _overlayManager;
@@ -35,13 +35,13 @@ namespace Drone.MainMenu.UI.Panel
         [Inject]
         private DialogManager _dialogManager;
 
-        [UIObjectBinding("MiddlePanel")]
+        //[UIObjectBinding("MiddlePanel")]
         private GameObject _middlePanel;
 
-        [UIComponentBinding("ChipsValue")]
+       // [UIComponentBinding("ChipsValue")]
         private TextMeshProUGUI _countChips;
 
-        [UIComponentBinding("CryptValue")]
+       // [UIComponentBinding("CryptValue")]
         private TextMeshProUGUI _countCrypto;
 
         public void Init()

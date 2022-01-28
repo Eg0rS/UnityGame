@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Drone.MainMenu.UI.Screen
 {
-    [UIController("UI/MainMenu/Screen/pfMainMenuScreen@embeded")]
+    [UIController("UI_Prototype/Screen/pfMainMenuScreen@embeded")]
     public class MainMenuScreen : MonoBehaviour
     {
         
