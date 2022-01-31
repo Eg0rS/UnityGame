@@ -48,6 +48,7 @@ namespace Drone.Location.Service.Game
 
         public void Init()
         {
+            Time.timeScale = 1f;
             DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;

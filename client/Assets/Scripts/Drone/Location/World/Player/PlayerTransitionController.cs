@@ -7,21 +7,20 @@ using UnityEngine;
 
 namespace Drone.Location.World.Drone
 {
-    public class DroneTransitionController : GameEventDispatcher
+    public class PlayerTransitionController : GameEventDispatcher
     {
         [Inject]
         private DroneWorld _gameWorld;
         [InjectComponent]
         private Rigidbody _rigidbody;
-        private Sequence _sequence;
 
         private float _mobility;
         private Vector3 _currentPosition = Vector3.zero;
+        
+        private Sequence _sequence;
 
         public void Configure()
         {
-            _sequence = DOTween.Sequence();
-            _sequence.SetAutoKill(false);
             this.InjectComponents();
             this.Inject();
         }
@@ -38,9 +37,10 @@ namespace Drone.Location.World.Drone
 
         private void Move(Vector3 newPosition)
         {
+            _sequence = DOTween.Sequence().SetAutoKill(false).SetUpdate(UpdateType.Fixed);
             _currentPosition = newPosition;
             Vector3[] path = {newPosition};
-            _rigidbody.DOLocalPath(path, _mobility).SetUpdate(UpdateType.Fixed).SetEase(Ease.Linear);
+            _sequence.Append(_rigidbody.DOLocalPath(path, _mobility, PathType.Linear, PathMode.Full3D, 1, Color.green).SetEase(Ease.OutQuad));
         }
 
         private Vector3 NewPosition(Vector3 currentPosition, Vector3 swipe)
@@ -67,6 +67,11 @@ namespace Drone.Location.World.Drone
         {
             get { return _mobility; }
             set { _mobility = value; }
+        }
+
+        private void OnDestroy()
+        {
+            _sequence.Kill();
         }
     }
 }

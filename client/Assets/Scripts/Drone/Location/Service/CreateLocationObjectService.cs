@@ -22,13 +22,14 @@ using AppContext = IoC.AppContext;
 namespace Drone.Location.Service
 {
     [Injectable]
-    public class CreateObjectService
+    public class CreateLocationObjectService
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreateObjectService>();
-
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreateLocationObjectService>();
+        
         private readonly Dictionary<WorldObjectType, ControllerData> _controllers = new Dictionary<WorldObjectType, ControllerData>();
+       
 
-        public CreateObjectService()
+        public CreateLocationObjectService()
         {
             _controllers[START_PLATFORM] =
                     new ControllerData(typeof(StartPlatformController), InitController<StartPlatformController, StartPlatformModel>);
@@ -39,7 +40,6 @@ namespace Drone.Location.Service
             _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
             _controllers[SPLINE_WALKER] =
                     new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
-            
         }
 
         public Component AttachController(PrefabModel model)

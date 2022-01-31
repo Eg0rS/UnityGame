@@ -31,7 +31,7 @@ namespace Drone.Location.Service
 
         private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
-            _locationBuilderManager.CreateDefault().LevelDescriptor(levelDescriptor).GameWorldContainer().Check();
+            _locationBuilderManager.CreateDefault().LevelDescriptor(levelDescriptor).GameWorldContainer().Build();
         }
     }
 }

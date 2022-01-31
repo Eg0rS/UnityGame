@@ -1,7 +1,6 @@
 ﻿using BezierSolution;
 using Drone.Location.Model;
 using Drone.Location.Model.Spline;
-using Drone.Location.Service.Control;
 using UnityEngine;
 
 namespace Drone.Location.World.Spline
@@ -14,7 +13,7 @@ namespace Drone.Location.World.Spline
         public void Init(SplineModel model)
         {
             _bezierSpline = gameObject.AddComponent<BezierSpline>();
-            _bezierSpline.Refresh();
+            _bezierSpline.ConstructLinearPath();
         }
 
         public BezierSpline BezierSpline

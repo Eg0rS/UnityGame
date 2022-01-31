@@ -1,8 +1,6 @@
 using AgkCommons.CodeStyle;
-using AgkCommons.Resources;
 using AgkUI.Screens.Service;
 using IoC.Attribute;
-using Tile.Service;
 
 namespace Drone.Location.Service.Builder
 {
@@ -10,20 +8,17 @@ namespace Drone.Location.Service.Builder
     public class LocationBuilderManager
     {
         [Inject]
-        private ResourceService _resourceService;
-
+        private CreateLocationObjectService _createLocationObjectService;
         [Inject]
-        private CreateObjectService _createService;
+        private LoadLocationObjectService _loadLocationObjectService;
 
-        [Inject]
-        private TileService _tileService;
-        
         [Inject]
         private ScreenStructureManager _screenStructureManager;
 
         public LocationBuilder CreateDefault()
         {
-            return LocationBuilder.Create(_resourceService, _createService, _tileService).Container(_screenStructureManager.ScreenWorldViewContainer.transform);
+            return LocationBuilder.Create(_createLocationObjectService, _loadLocationObjectService)
+                                  .Container(_screenStructureManager.ScreenWorldViewContainer.transform);
         }
     }
 }
