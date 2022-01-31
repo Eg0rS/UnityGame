@@ -1,5 +1,4 @@
-﻿using System;
-using AgkUI.Binding.Attributes;
+﻿using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
@@ -12,18 +11,16 @@ using Drone.Inventory.Service;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
-using Image = UnityEngine.UI.Image;
 using LocationService = Drone.Location.Service.LocationService;
 
-namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
+namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
 {
     [UIController(PREFAB_NAME)]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class DescriptionLevelDialog : MonoBehaviour
     {
-        private const string PREFAB_NAME = "UI/Dialog/pfDescriptionLevelDialog@embeded";
+        private const string PREFAB_NAME = "UI_Prototype/Dialog/DescriptionLevel/pfDescriptionLevelDialog@embeded";
 
         [Inject]
         private UIService _uiService;
@@ -36,9 +33,6 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
 
         [Inject]
         private InventoryService _inventoryService;
-
-        // [Inject]
-        // private GameService _gameService;
 
         [Inject]
         private LocationService _locationService;
@@ -128,7 +122,7 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
             _endlessScroll.MoveLeft();
         }
 
-        [UIOnClick("StartGameButton")]
+        [UIOnClick("StartButton")]
         private void OnStartGameButton()
         {
             string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
@@ -138,7 +132,7 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
             //_gameService.StartGame(_levelDescriptor, dronId);
         }
 
-        [UIOnClick("pfBackground")]
+        [UIOnClick]
         private void CloseDialog()
         {
             _dialogManager.Hide(gameObject);

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Event;
+using AgkCommons.Resources;
 using AgkUI.Dialog.Service;
 using Drone.Billing.Service;
 using Drone.Core.Service;
 using Drone.Descriptor;
 using Drone.LevelMap.Levels.Model;
-using Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog;
+using Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Event;
 using Drone.Levels.Model;

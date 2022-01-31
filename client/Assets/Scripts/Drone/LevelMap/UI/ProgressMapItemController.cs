@@ -1,6 +1,7 @@
-﻿using Adept.Logger;
+﻿using System.Collections.Generic;
+using Adept.Logger;
 using AgkUI.Binding.Attributes;
-using AgkUI.Binding.Attributes.Method;
+using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Model;
@@ -11,43 +12,37 @@ using UnityEngine;
 
 namespace Drone.LevelMap.UI
 {
-    [UIController("UI/Panel/pfLevelProgressItemPanel@embeded")]
+    [UIController("UI_Prototype/Button/pfLevelButton@embeded")]
     public class ProgressMapItemController : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
 
         [Inject]
         private LevelService _levelService;
-        [UIObjectBinding("Stars")]
-        private GameObject _stars;
 
-        [UIObjectBinding("StageCurrent")]
-        private GameObject _stageCurrent;
+        [UIComponentBinding("Star1")]
+        private ToggleButton _star1;
+        [UIComponentBinding("Star2")]
+        private ToggleButton _star2;
+        [UIComponentBinding("Star3")]
+        private ToggleButton _star3;
 
-        [UIObjectBinding("StageCompleted")]
-        private GameObject _stageCompleted;
+        [UIComponentBinding("LevelLabel")]
+        private UILabel _label;
 
-        [UIObjectBinding("StageNotOpen")]
-        private GameObject _stageNotOpen;
+        [UIComponentBinding]
+        private UIButton _button;
+        [UIObjectBinding("Open")]
+        private GameObject _open;
+        [UIObjectBinding("Close")]
+        private GameObject _close;
 
-        [UIObjectBinding("StageLock")]
-        private GameObject _stageLock;
+        private List<ToggleButton> _stars1;
 
-        [UIObjectBinding("Order")]
-        private GameObject _order;
+        [UIObjectBinding("Progress")]
+        private GameObject _progress;
 
-        [UIObjectBinding("Star1")]
-        private GameObject _oneStar;
-
-        [UIObjectBinding("Star2")]
-        private GameObject _twoStar;
-
-        [UIObjectBinding("Star3")]
-        private GameObject _threeStar;
-
-        private UILabel _orderLabel;
         private LevelViewModel _levelViewModel;
-        private bool _isCanClick;
 
         public LevelViewModel LevelViewModel
         {
@@ -57,7 +52,12 @@ namespace Drone.LevelMap.UI
         [UICreated]
         private void Init(LevelViewModel levelViewModel, bool isCurrent)
         {
-            _orderLabel = _order.GetComponent<UILabel>();
+            _stars1 = new List<ToggleButton>() {
+                    _star1,
+                    _star2,
+                    _star3
+            };
+            _button.onClick.AddListener(Test1);
             UpdateSpot(levelViewModel, isCurrent);
         }
 
@@ -66,76 +66,49 @@ namespace Drone.LevelMap.UI
             _levelViewModel = levelViewModel;
             DisableSpotProgress();
             if (_levelViewModel.LevelDescriptor.Type == LevelType.NONE) {
-                SetLockedSpot();
-            } else if (_levelViewModel.LevelProgress != null) {
-                SetCompletedSpot();
-            } else if (_levelViewModel.LevelProgress == null && isCurrent) {
-                SetCurrentSpot();
-            } else {
-                SetNotOpenSpot();
+                _close.SetActive(true);
+                return;
             }
-        }
+            _open.SetActive(true);
+            _label.text = _levelViewModel.LevelDescriptor.Order.ToString();
 
-        private void SetLockedSpot()
-        {
-            _stageLock.SetActive(true);
-            _stageNotOpen.SetActive(true);
+            if (_levelViewModel.LevelProgress == null && !isCurrent) {
+                _button.interactable = false;
+                return;
+            }
+            _button.interactable = true;
+            if (isCurrent) {
+                _button.Select();
+            }
+            SetCompletedSpot();
         }
 
         private void SetCompletedSpot()
         {
-            _stageCompleted.SetActive(true);
-            _stars.SetActive(true);
-            if (_levelViewModel.LevelProgress.CountStars == 1) {
-                _oneStar.SetActive(true);
-            } else if (_levelViewModel.LevelProgress.CountStars == 2) {
-                _twoStar.SetActive(true);
-            } else if (_levelViewModel.LevelProgress.CountStars == 3) {
-                _threeStar.SetActive(true);
+            _progress.SetActive(true);
+            int placedStars = 0;
+            foreach (ToggleButton star in _stars1) {
+                star.Interactable = false;
+                if (_levelViewModel.LevelProgress != null) {
+                    if (_levelViewModel.LevelProgress.CountStars <= placedStars) {
+                        star.IsOn = true;
+                        continue;
+                    }
+                }
+                star.IsOn = false;
             }
-            SetOrder();
-            _isCanClick = true;
-        }
-
-        private void SetCurrentSpot()
-        {
-            _stageCurrent.SetActive(true);
-            SetOrder();
-            _orderLabel.color = Color.black;
-            _isCanClick = true;
-        }
-
-        private void SetNotOpenSpot()
-        {
-            _stageNotOpen.SetActive(true);
-            SetOrder();
-            _isCanClick = false;
         }
 
         private void DisableSpotProgress()
         {
-            _stars.SetActive(false);
-            _oneStar.SetActive(false);
-            _twoStar.SetActive(false);
-            _threeStar.SetActive(false);
-            _stageLock.SetActive(false);
-            _stageNotOpen.SetActive(false);
-            _stageCompleted.SetActive(false);
-            _stageCurrent.SetActive(false);
-            _order.SetActive(false);
-            _orderLabel.color = Color.white;
+            _open.SetActive(false);
+            _close.SetActive(false);
+            _progress.SetActive(false);
         }
 
-        private void SetOrder()
+        private void Test1()
         {
-            _order.SetActive(true);
-            _orderLabel.text = _levelViewModel.LevelDescriptor.Order.ToString();
-        }
-
-        [UIOnClick("pfLocationItemSpot")]
-        private void OnSpotClick()
-        {
-            if (!_isCanClick) {
+            if (!_button.interactable) {
                 return;
             }
             _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);

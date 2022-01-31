@@ -7,7 +7,7 @@ using IoC.Attribute;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
+namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
 {
     [UIController(PREFAB_NAME)]
     public class ViewDronePanel : MonoBehaviour

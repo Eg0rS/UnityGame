@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Drone.LevelMap.UI
 {
-    [UIController("UI/Panel/pfMiddlePanel@embeded")]
+    [UIController("UI_prototype/Panel/LevelMap/pfLevelMapPanel@embeded")]
     public class LevelsMapController : MonoBehaviour
     {
         [Inject]
@@ -23,6 +23,9 @@ namespace Drone.LevelMap.UI
         private List<ProgressMapItemController> _progressMapItemController = new List<ProgressMapItemController>();
 
         private string _currentLevelId;
+
+        [UIObjectBinding("Content")]
+        private GameObject _levelsContainer;
 
         [UICreated]
         private void Init()
@@ -46,10 +49,10 @@ namespace Drone.LevelMap.UI
         {
             _currentLevelId = levelViewModels.Find(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel())).LevelDescriptor.Id;
             foreach (LevelViewModel levelViewModel in levelViewModels) {
-                GameObject levelContainer = GameObject.Find($"level{levelViewModel.LevelDescriptor.Order}");
+                
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,
                                                                         levelViewModel.LevelDescriptor.Id.Equals(_currentLevelId))
-                                                                    .Container(levelContainer))
+                                                                    .Container(_levelsContainer))
                           .Then(controller => _progressMapItemController.Add(controller))
                           .Done();
             }
