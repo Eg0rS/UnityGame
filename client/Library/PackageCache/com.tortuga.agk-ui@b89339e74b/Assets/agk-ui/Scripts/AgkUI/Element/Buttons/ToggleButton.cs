@@ -52,7 +52,7 @@ namespace AgkUI.Element.Buttons
             }
 
             _isOn = !_isOn;
-            PlaySwitchAnimation();
+            PlaySwitchAnimation(true);
             OnClick.Invoke();
         }
 

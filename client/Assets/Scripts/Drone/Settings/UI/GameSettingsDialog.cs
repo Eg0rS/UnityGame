@@ -5,23 +5,18 @@ using AgkUI.Dialog.Service;
 using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
+using AgkUI.Element.Buttons;
 using Drone.Core.UI.Dialog;
 using Drone.Settings.Service;
 using UnityEngine;
 
 namespace Drone.Settings.UI
 {
-    [UIController("UI/Dialog/pfSettingsDialog@embeded")]
+    [UIController("UI_Prototype/Dialog/Settings/pfSettingsDialog@embeded")]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class GameSettingsDialog : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<GameSettingsDialog>();
-
-        [UIComponentBinding("Handle_Sound")]
-        private SwitchButton _toggleSoundButton;
-
-        [UIComponentBinding("Handle_Music")]
-        private SwitchButton _toggleMusicButton;
 
         [Inject]
         private SettingsService _settingsService;
@@ -29,12 +24,19 @@ namespace Drone.Settings.UI
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
 
-        private void Start()
+        [UIComponentBinding("SoundButton")]
+        private ToggleButton _soundButton;
+
+        [UIComponentBinding("MusicButton")]
+        private ToggleButton _musicButton;
+
+        [UICreated]
+        private void Init()
         {
-            _toggleMusicButton._isSwitchOn = _settingsService.GetMusicMute();
-            _toggleSoundButton._isSwitchOn = _settingsService.GetSoundMute();
-            _toggleMusicButton.SwitchCheck();
-            _toggleSoundButton.SwitchCheck();
+            _soundButton.IsOn = _settingsService.GetSoundMute();
+            _musicButton.IsOn = _settingsService.GetMusicMute();
+            _soundButton.OnClick.AddListener(OnSoundButton);
+            _musicButton.OnClick.AddListener(OnMusicButton);
         }
 
         private void OnGUI()
@@ -44,41 +46,22 @@ namespace Drone.Settings.UI
             }
         }
 
-        [UIOnClick("Button_close")]
-        private void OnCloseButton()
-        {
-            CloseDialog();
-        }
-
-        [UIOnClick("Handle_Sound")]
-        private void OnSoundButton()
-        {
-            _logger.Debug("MuteSound");
-            _settingsService.SetSoundMute(_toggleSoundButton._isSwitchOn);
-        }
-
-        [UIOnClick("Handle_Music")]
-        private void OnMusicButton()
-        {
-            _logger.Debug("MuteMusic");
-            _settingsService.SetMusicMute(_toggleMusicButton._isSwitchOn);
-        }
-
-        [UIOnClick("BackGroundDialog")]
-        private void OnBackGround()
-        {
-            CloseDialog();
-        }
-
+        [UIOnClick("Close")]
         private void CloseDialog()
         {
             _dialogManager.Require().Hide(gameObject);
         }
-        // [UIOnClick("ResetButton")]
-        // private void OnResetButton()
-        // {
-        //     _logger.Debug("Reset");
-        //     _settingsService.ResetAllProgress();
-        // }
+
+        private void OnSoundButton()
+        {
+            _logger.Debug("MuteSound");
+            _settingsService.SetSoundMute(_soundButton.IsOn);
+        }
+
+        private void OnMusicButton()
+        {
+            _logger.Debug("MuteMusic");
+            _settingsService.SetMusicMute(_musicButton.IsOn);
+        }
     }
 }

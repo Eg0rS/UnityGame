@@ -6,6 +6,7 @@ namespace Drone.Levels.Descriptor
     {
         [XmlElement("tiles")]
         public Tiles Tiles { get; set; }
+        
     }
 
     public class Tiles
@@ -19,4 +20,5 @@ namespace Drone.Levels.Descriptor
         [XmlAttribute("id")]
         public string Id { get; set; }
     }
+    
 }

@@ -4,6 +4,7 @@ using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
+using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using Drone.Core.UI.Dialog;
 using Drone.Inventory.Model;
@@ -14,7 +15,7 @@ using IoC.Attribute;
 using UnityEngine;
 using LocationService = Drone.Location.Service.LocationService;
 
-namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
+namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
 {
     [UIController(PREFAB_NAME)]
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
@@ -37,23 +38,12 @@ namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
         [Inject]
         private LocationService _locationService;
 
-        [UIComponentBinding("Title")]
+        [UIComponentBinding("LevelName")]
         private UILabel _title;
 
-        [UIComponentBinding("Description")]
-        private UILabel _description;
+        [UIComponentBinding("Close")]
+        private UIButton _closeButton;
 
-        [UIComponentBinding("ChipsTask")]
-        private UILabel _chipText;
-
-        [UIComponentBinding("DurabilityTask")]
-        private UILabel _durabilityText;
-
-        [UIComponentBinding("TimeTask")]
-        private UILabel _timeText;
-
-        [UIObjectBinding("CargoImage")]
-        private GameObject _cargoImage;
         private LevelDescriptor _levelDescriptor;
         private EndlessScrollView _endlessScroll;
 
@@ -64,10 +54,9 @@ namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
             string durabilityText = "Сохранить не менее {0}% груза";
             string timeText = "Уложиться в {0} сек.";
             _levelDescriptor = levelDescriptor;
+            _closeButton.onClick.AddListener(CloseDialog);
             DisplayTitle();
-            DisplayDescription();
-            DisplayImage();
-            DisplayTasks(chipText, durabilityText, timeText);
+            
             CreateChoiseDron();
         }
 
@@ -83,26 +72,9 @@ namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
             _title.text = _levelDescriptor.Exposition.Title;
         }
 
-        private void DisplayDescription()
-        {
-            _description.text = _levelDescriptor.Exposition.Description;
-        }
-
-        private void DisplayTasks(string chipText, string durabilityText, string timeText)
-        {
-            // _chipText.text = String.Format(chipText, _levelDescriptor.Goals.NecessaryCountChips);
-            // _durabilityText.text = String.Format(durabilityText, _levelDescriptor.Goals.NecessaryDurability);
-            //  _timeText.text = String.Format(timeText, _levelDescriptor.Goals.NecessaryTime);
-        }
-
-        private void DisplayImage()
-        {
-            // _cargoImage.GetComponent<Image>().sprite = Resources.Load(_levelDescriptor.GameData.Image, typeof(Sprite)) as Sprite;
-        }
-
         private void CreateChoiseDron()
         {
-            GameObject itemContainer = GameObject.Find("ScrollContainer");
+            GameObject itemContainer = GameObject.Find("Scroll");
             _endlessScroll = itemContainer.GetComponent<EndlessScrollView>();
             foreach (InventoryItemModel item in _inventoryService.Inventory.Items) {
                 _uiService.Create<ViewDronePanel>(UiModel.Create<ViewDronePanel>(item).Container(itemContainer))
@@ -111,12 +83,12 @@ namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
                           .Done();
             }
         }
-
+        [UIOnClick("Left")]
         private void MoveLeft()
         {
             _endlessScroll.MoveRight();
         }
-
+        [UIOnClick("Right")]
         private void MoveRight()
         {
             _endlessScroll.MoveLeft();
@@ -129,25 +101,12 @@ namespace Drone.LevelMap.UI.LevelDescription.DescriptionLevelDialog
             _levelService.SelectedLevelId = _levelDescriptor.Id;
             _levelService.SelectedDroneId = dronId;
             _locationService.SwitchLocation(_levelDescriptor);
-            //_gameService.StartGame(_levelDescriptor, dronId);
         }
-
-        [UIOnClick]
+        
         private void CloseDialog()
         {
             _dialogManager.Hide(gameObject);
         }
-
-        [UIOnClick("LeftArrow")]
-        private void OnLeftClick()
-        {
-            MoveLeft();
-        }
-
-        [UIOnClick("RightArrow")]
-        private void OnRightClick()
-        {
-            MoveRight();
-        }
+        
     }
 }

@@ -57,7 +57,7 @@ namespace Drone.LevelMap.UI
                     _star2,
                     _star3
             };
-            _button.onClick.AddListener(Test1);
+            _button.onClick.AddListener(Click);
             UpdateSpot(levelViewModel, isCurrent);
         }
 
@@ -65,8 +65,9 @@ namespace Drone.LevelMap.UI
         {
             _levelViewModel = levelViewModel;
             DisableSpotProgress();
-            if (_levelViewModel.LevelDescriptor.Type == LevelType.NONE) {
+            if (_levelViewModel.LevelDescriptor.Type == LevelType.NONE || (_levelViewModel.LevelProgress == null && !isCurrent)) {
                 _close.SetActive(true);
+                _button.interactable = false;
                 return;
             }
             _open.SetActive(true);
@@ -106,7 +107,7 @@ namespace Drone.LevelMap.UI
             _progress.SetActive(false);
         }
 
-        private void Test1()
+        private void Click()
         {
             if (!_button.interactable) {
                 return;
