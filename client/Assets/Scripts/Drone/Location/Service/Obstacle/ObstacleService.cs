@@ -9,7 +9,7 @@ namespace Drone.Location.Service.Obstacle
 {
     public class ObstacleService : GameEventDispatcher, IWorldServiceInitiable
     {
-        private const float DEATH_TIME = 0.5F;
+        private const float DEATH_TIME = 0.1F;
         private Tween _tween;
         [Inject]
         private DroneWorld _gameWorld;

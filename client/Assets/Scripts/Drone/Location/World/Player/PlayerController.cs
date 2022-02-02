@@ -6,6 +6,7 @@ using Drone.Location.Model;
 using Drone.Location.Model.Player;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game.Event;
+using Drone.Location.World.Player;
 using IoC.Attribute;
 using UnityEngine;
 

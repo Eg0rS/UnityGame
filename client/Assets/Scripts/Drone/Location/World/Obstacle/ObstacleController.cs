@@ -1,5 +1,4 @@
-﻿using System;
-using Adept.Logger;
+﻿using Adept.Logger;
 using Drone.Location.Event;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
@@ -32,21 +31,19 @@ namespace Drone.Location.World.Obstacle
             Debug.Log(1);
             WorldObjectType objectType = otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
             if (objectType != WorldObjectType.PLAYER) {
-                _logger.Warn("Collider non-player contact.");
+                _logger.Warn("Enter non-player Collider.");
                 return;
             }
-            Debug.Log(Time.time);
             _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT_BEGIN));
         }
 
         private void OnCollisionExit(Collision otherCollision)
         {
-            WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
+            WorldObjectType objectType = otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
             if (objectType != WorldObjectType.PLAYER) {
-                _logger.Warn("Exit collider non-player contact.");
+                _logger.Warn("Exit non-player collider.");
                 return;
             }
-            Debug.Log(Time.time);
             _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT_END));
         }
     }

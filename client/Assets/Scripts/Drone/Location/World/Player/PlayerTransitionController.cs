@@ -1,12 +1,11 @@
 ﻿using AgkCommons.Event;
 using DG.Tweening;
-using Drone.Location.Model.BaseModel;
 using Drone.Location.Service.Control.Drone.Event;
 using IoC.Attribute;
 using IoC.Extension;
 using UnityEngine;
 
-namespace Drone.Location.World.Drone
+namespace Drone.Location.World.Player
 {
     public class PlayerTransitionController : GameEventDispatcher
     {
@@ -19,12 +18,6 @@ namespace Drone.Location.World.Drone
         private Vector3 _currentPosition = Vector3.zero;
         
         private Sequence _sequence;
-
-        private void OnCollisionEnter(Collision otherCollision)
-        {
-            Debug.Log(otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType);
-            Debug.Log("colision drone");
-        }
         public void Configure()
         {
             this.InjectComponents();
