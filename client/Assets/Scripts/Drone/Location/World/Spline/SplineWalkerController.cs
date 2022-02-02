@@ -10,7 +10,7 @@ namespace Drone.Location.World.Spline
     public class SplineWalkerController : MonoBehaviour, IWorldObjectController<SplineWalkerModel>
     {
         public WorldObjectType ObjectType { get; }
-        private const float SPEED = 1f;
+        private const float SPEED = 5f;
 
         [Inject]
         private DroneWorld _gameWorld;

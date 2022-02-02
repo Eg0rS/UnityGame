@@ -8,6 +8,7 @@ using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
+using Drone.Location.Event;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
@@ -55,11 +56,16 @@ namespace Drone.Location.Service.Game
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, DroneModel));
 
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
-            
+            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.CRUSH, OnPlayerdeth);
             //событие смерти
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartFlight);
 
             _overlayManager.HideLoadingOverlay(true);
+        }
+
+        private void OnPlayerdeth(ObstacleEvent obj)
+        {
+            Debug.Log("DETH");
         }
 
         private void OnEndGame(InGameEvent inGameEvent)

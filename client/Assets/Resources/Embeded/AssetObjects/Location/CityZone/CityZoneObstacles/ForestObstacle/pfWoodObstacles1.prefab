@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8307925461467407270}
   - component: {fileID: 5882844954366980435}
   - component: {fileID: 1380954695246876202}
-  - component: {fileID: 6092152631426675104}
   - component: {fileID: 8255648113565414097}
   m_Layer: 0
   m_Name: pfWoodKitSmall
@@ -83,18 +82,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6092152631426675104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524988676742907243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &8255648113565414097
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -117,6 +104,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8877028119550385275}
+  - component: {fileID: 5234314814662124058}
+  - component: {fileID: 2638953512502061709}
   m_Layer: 0
   m_Name: pfWoodObstacles1
   m_TagString: Untagged
@@ -141,6 +130,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &5234314814662124058
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4192423944777722057}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &2638953512502061709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4192423944777722057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4796305929928382279
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +169,6 @@ GameObject:
   - component: {fileID: 1309518539209854703}
   - component: {fileID: 7016813767630145717}
   - component: {fileID: 1925149152876603003}
-  - component: {fileID: 38613900133806183}
   - component: {fileID: 2218207157274289012}
   m_Layer: 0
   m_Name: pfWoodKitSmall (1)
@@ -224,18 +240,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &38613900133806183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4796305929928382279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &2218207157274289012
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -260,7 +264,6 @@ GameObject:
   - component: {fileID: 8489242819736570172}
   - component: {fileID: 3822646923907064587}
   - component: {fileID: 5347548745602079187}
-  - component: {fileID: 7653423041510991189}
   - component: {fileID: 5531369043088360208}
   m_Layer: 0
   m_Name: pfWoodKitBig
@@ -332,18 +335,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7653423041510991189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7246700498294855749}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd328f861abdb9c4fbb0fb356fc6d8eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &5531369043088360208
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -47,7 +47,7 @@ namespace Drone.Location.World.Drone
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, OnStartGame);
             _gameWorld.AddListener<ControllEvent>(ControllEvent.GESTURE, OnGesture);
 
-            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.OBSTACLE_CONTACT, OnCrush);
+            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.OBSTACLE_CONTACT_BEGIN, OnCrush);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
 
             // _gameWorld.AddListener<AcceleratorEvent>(AcceleratorEvent.ACCELERATION, OnAccelerator);

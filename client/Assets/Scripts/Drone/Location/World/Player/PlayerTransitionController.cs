@@ -1,5 +1,6 @@
 ﻿using AgkCommons.Event;
 using DG.Tweening;
+using Drone.Location.Model.BaseModel;
 using Drone.Location.Service.Control.Drone.Event;
 using IoC.Attribute;
 using IoC.Extension;
@@ -19,6 +20,11 @@ namespace Drone.Location.World.Drone
         
         private Sequence _sequence;
 
+        private void OnCollisionEnter(Collision otherCollision)
+        {
+            Debug.Log(otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType);
+            Debug.Log("colision drone");
+        }
         public void Configure()
         {
             this.InjectComponents();

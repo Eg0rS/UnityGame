@@ -6,8 +6,8 @@ namespace Tile.Descriptor
     {
         [XmlEnum("start")]
         START,
-        [XmlEnum("end")]
-        END,
+        [XmlEnum("finish")]
+        FINISH,
         [XmlEnum("regular")]
         REGULAR,
         [XmlEnum("bonus")]
