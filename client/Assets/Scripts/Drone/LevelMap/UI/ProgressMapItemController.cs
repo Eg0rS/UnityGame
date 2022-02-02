@@ -72,11 +72,6 @@ namespace Drone.LevelMap.UI
             }
             _open.SetActive(true);
             _label.text = _levelViewModel.LevelDescriptor.Order.ToString();
-
-            if (_levelViewModel.LevelProgress == null && !isCurrent) {
-                _button.interactable = false;
-                return;
-            }
             _button.interactable = true;
             if (isCurrent) {
                 _button.Select();

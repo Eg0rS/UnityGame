@@ -1,14 +1,13 @@
-﻿using Adept.Logger;
-using AgkUI.Binding.Attributes;
+﻿using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
-using Drone.Location.Service.Game;
+using Drone.Levels.Service;
+using Drone.Location.World;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.LevelMap.LevelDialogs
@@ -17,32 +16,38 @@ namespace Drone.LevelMap.LevelDialogs
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class LevelPauseDialog : MonoBehaviour
     {
-        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LevelPauseDialog>();
-        private const string PREFAB_NAME = "UI/Pause/pfLevelPauseDialog@embeded";
+        private const string PREFAB_NAME = "UI_Prototype/Dialog/Pause/pfPause@embeded";
 
         [Inject]
         private DialogManager _dialogManager;
 
         [Inject]
         private ScreenManager _screenManager;
+        [Inject]
+        private DroneWorld _droneWorld;
+        [Inject]
+        private LevelService _levelService;
 
-        [UICreated]
-        public void Init()
-        {
-            Time.timeScale = 0;
-        }
-
-        [UIOnClick("ButtonExit")]
-        private void ExitClick()
+        [UIOnClick("MainMenuButton")]
+        private void MainMenuClick()
         {
             _screenManager.LoadScreen<MainMenuScreen>();
         }
 
-        [UIOnClick("ButtonResume")]
+        [UIOnClick("RestartButton")]
+        private void RestartClick()
+        {
+            _dialogManager.Hide(this);
+            _screenManager.LoadScreen<MainMenuScreen>();
+            _levelService.ShowStartLevelDialog(_levelService.SelectedLevelId);
+        }
+        
+        
+        [UIOnClick("ResumeButton")]
         private void ResumeClick()
         {
             _dialogManager.Hide(this);
-            Time.timeScale = 1;
+            _droneWorld.Resume();
         }
     }
 }

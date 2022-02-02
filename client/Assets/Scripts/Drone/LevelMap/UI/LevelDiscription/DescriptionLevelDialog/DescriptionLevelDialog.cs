@@ -1,4 +1,6 @@
-﻿using AgkUI.Binding.Attributes;
+﻿using System.Collections.Generic;
+using AgkCommons.Extension;
+using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
@@ -11,7 +13,9 @@ using Drone.Inventory.Model;
 using Drone.Inventory.Service;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
+using EndlessScroll;
 using IoC.Attribute;
+using RSG;
 using UnityEngine;
 using LocationService = Drone.Location.Service.LocationService;
 
@@ -43,21 +47,24 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
 
         [UIComponentBinding("Close")]
         private UIButton _closeButton;
+        [UIComponentBinding("StartButton")]
+        private UIButton _startButton;
+
+        [UIComponentBinding("Scroll")]
+        private EndlessScrollView _endlessScroll;
 
         private LevelDescriptor _levelDescriptor;
-        private EndlessScrollView _endlessScroll;
 
         [UICreated]
         public void Init(LevelDescriptor levelDescriptor)
         {
-            string chipText = "Собрать {0} чипов";
-            string durabilityText = "Сохранить не менее {0}% груза";
-            string timeText = "Уложиться в {0} сек.";
             _levelDescriptor = levelDescriptor;
             _closeButton.onClick.AddListener(CloseDialog);
+            _startButton.onClick.AddListener(OnStartGameButton);
+            _startButton.Select();
             DisplayTitle();
-            
-            CreateChoiseDron();
+
+            CreateChoiseDron().Then(() => _endlessScroll.Init());
         }
 
         private void OnGUI()
@@ -72,29 +79,29 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
             _title.text = _levelDescriptor.Exposition.Title;
         }
 
-        private void CreateChoiseDron()
+        private IPromise CreateChoiseDron()
         {
-            GameObject itemContainer = GameObject.Find("Scroll");
-            _endlessScroll = itemContainer.GetComponent<EndlessScrollView>();
+            List<IPromise> promises = new List<IPromise>();
             foreach (InventoryItemModel item in _inventoryService.Inventory.Items) {
-                _uiService.Create<ViewDronePanel>(UiModel.Create<ViewDronePanel>(item).Container(itemContainer))
-                          .Then(controller => { _endlessScroll.ScrollPanelList.Add(controller.gameObject); })
-                          .Then(() => { _endlessScroll.Init(); })
-                          .Done();
+                Promise promise = new Promise();
+                promises.Add(promise);
+                _uiService.Create<ViewDronePanel>(UiModel.Create<ViewDronePanel>(item).Container(_endlessScroll)).Then((e) => promise.Resolve());
             }
+            return Promise.All(promises);
         }
+
         [UIOnClick("Left")]
         private void MoveLeft()
         {
             _endlessScroll.MoveRight();
         }
+
         [UIOnClick("Right")]
         private void MoveRight()
         {
             _endlessScroll.MoveLeft();
         }
 
-        [UIOnClick("StartButton")]
         private void OnStartGameButton()
         {
             string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
@@ -102,11 +109,16 @@ namespace Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog
             _levelService.SelectedDroneId = dronId;
             _locationService.SwitchLocation(_levelDescriptor);
         }
-        
+
+        [UIOnSwipe("ChoiseDrone")]
+        private void OnSwipe()
+        {
+            Debug.Log(1);
+        }
+
         private void CloseDialog()
         {
             _dialogManager.Hide(gameObject);
         }
-        
     }
 }

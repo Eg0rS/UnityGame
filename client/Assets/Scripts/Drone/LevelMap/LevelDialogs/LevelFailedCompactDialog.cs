@@ -4,17 +4,13 @@ using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
-using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
 using Drone.Levels.Service;
-using Drone.Location.Service;
-using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Drone.LevelMap.LevelDialogs

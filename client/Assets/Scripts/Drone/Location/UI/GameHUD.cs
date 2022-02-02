@@ -1,13 +1,13 @@
 ﻿using AgkUI.Binding.Attributes;
-using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Service;
+using AgkUI.Element.Buttons;
+using AgkUI.Element.Text;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using IoC.Attribute;
-using TMPro;
 using UnityEngine;
 using DG.Tweening;
 using Drone.Location.World;
@@ -15,8 +15,8 @@ using UnityEngine.UI;
 
 namespace Drone.Location.UI
 {
-    [UIController("UI/GameOverlay/pfGameOverlay@embeded")]
-    public class GameOverlay : MonoBehaviour
+    [UIController("UI_Prototype/HUD/pfHUD@embeded")]
+    public class GameHUD : MonoBehaviour
     {
         [Inject]
         private DialogManager _dialogManager;
@@ -26,17 +26,11 @@ namespace Drone.Location.UI
         [Inject]
         private GameService _gameService;
 
-        [UIComponentBinding("ChipsValue")]
-        private TextMeshProUGUI _countChips;
+        [UIComponentBinding("SettingsButton")]
+        private UIButton _pause;
 
-        [UIComponentBinding("TimeValue")]
-        private TextMeshProUGUI _timer;
-
-        [UIComponentBinding("EnergyValue")]
-        private TextMeshProUGUI _countEnergy;
-
-        [UIComponentBinding("DurabilityValue")]
-        private TextMeshProUGUI _durability;
+        [UIComponentBinding("TimerLabel")]
+        private UILabel _timer;
 
         [UIComponentBinding("UpArrow")]
         private Image _upArrow;
@@ -62,13 +56,39 @@ namespace Drone.Location.UI
         [UICreated]
         private void Init()
         {
+            _pause.onClick.AddListener(OnPauseButton);
             _timer.text = "0,00";
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartGame);
 
             _gameWorld.AddListener<ControllEvent>(ControllEvent.MOVEMENT, OnMovement);
 
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, EndGame);
-            SetStats(_gameService.DroneModel);
+        }
+
+        private void EndGame(InGameEvent inGameEvent)
+        {
+            _isGame = false;
+            _dialogManager.Hide(gameObject);
+        }
+
+        private void StartGame(InGameEvent inGameEvent)
+        {
+            _isGame = true;
+        }
+
+        private void Update()
+        {
+            if (_gameWorld.IsPauseWorld || !_isGame) {
+                return;
+            }
+            _time += Time.unscaledDeltaTime;
+            _timer.text = _time.ToString("F1");
+        }
+
+        private void OnPauseButton()
+        {
+            _gameWorld.Pause();
+            _dialogManager.ShowModal<LevelPauseDialog>();
         }
 
         private void OnMovement(ControllEvent сontrollEvent)
@@ -95,49 +115,6 @@ namespace Drone.Location.UI
                 _downLeftArrow.DOFade(1, 0.5f).OnComplete(() => _downLeftArrow.DOFade(0, 0.5f).timeScale = defaultTimeScale).timeScale =
                         defaultTimeScale;
             }
-        }
-
-        // private void DurabilityUpdate(DurabilityEvent obstacleEvent)
-        // {
-        //     _durability.text = ((obstacleEvent.DurabilityValue / _droneModel.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
-        // }
-
-        // private void EnergyUpdate(EnergyEvent energyEvent)
-        // {
-        //     _countEnergy.text = energyEvent.EnergyValue.ToString("F0");
-        // }
-
-        private void EndGame(InGameEvent inGameEvent)
-        {
-            _isGame = false;
-            _dialogManager.Hide(gameObject);
-        }
-
-        private void StartGame(InGameEvent inGameEvent)
-        {
-            _isGame = true;
-        }
-
-        private void Update()
-        {
-            if (!_isGame) {
-                return;
-            }
-            _time += Time.unscaledDeltaTime;
-            _timer.text = _time.ToString("F2");
-        }
-
-        private void SetStats(DroneModel model)
-        {
-            _countChips.text = model.countChips.ToString();
-            _countEnergy.text = model.energy.ToString("F0");
-            _durability.text = ((model.durability / model.DroneDescriptor.Durability) * 100).ToString("F0") + "%";
-        }
-
-        [UIOnClick("PauseButton")]
-        private void OnPauseButton()
-        {
-            _dialogManager.ShowModal<LevelPauseDialog>();
         }
     }
 }
