@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 6022986809459316722}
   - component: {fileID: 6022986809459316721}
   - component: {fileID: 6022986809459316720}
-  - component: {fileID: 3837032380520078311}
+  - component: {fileID: 7267174222996758567}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -162,7 +162,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3837032380520078311
+--- !u!114 &7267174222996758567
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -215,14 +215,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6022986809459316686}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sharedProfile: {fileID: 11400000, guid: 928289a263663a84eaf29878ec4d3a11, type: 2}
-  isGlobal: 0
+  isGlobal: 1
+  priority: 0
   blendDistance: 0
   weight: 1
-  priority: 0
+  sharedProfile: {fileID: 11400000, guid: 94028842634c80f4497233e05e1a284e, type: 2}
 --- !u!1 &6022986809597148136
 GameObject:
   m_ObjectHideFlags: 0
