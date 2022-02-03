@@ -16,13 +16,9 @@ namespace Drone.Location.World.Obstacle
 
         [Inject]
         private DroneWorld _gameWorld;
-        [InjectComponent]
-        private Rigidbody _rb;
 
         public void Init(ObstacleModel model)
         {
-            this.InjectComponents();
-            _rb.WakeUp();
             ObjectType = model.ObjectType;
         }
 
@@ -32,6 +28,7 @@ namespace Drone.Location.World.Obstacle
             WorldObjectType objectType = otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
             if (objectType != WorldObjectType.PLAYER) {
                 _logger.Warn("Enter non-player Collider.");
+                Debug.LogWarning(gameObject.name);
                 return;
             }
             _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT_BEGIN));

@@ -44,6 +44,7 @@ namespace Drone.Location.World.Spline
             _levelRigidBody = gameObject.AddComponent<Rigidbody>();
             _levelRigidBody.useGravity = false;
             _levelRigidBody.mass = 200;
+            _levelRigidBody.isKinematic = true;
             _levelRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
