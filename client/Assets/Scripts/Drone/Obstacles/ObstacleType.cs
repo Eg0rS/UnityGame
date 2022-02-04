@@ -9,6 +9,9 @@ namespace Drone.Obstacles
         [XmlEnum("column")]
         COLUMN,
         [XmlEnum("tube")]
-        TUBE
+        TUBE,
+        [XmlEnum("base")]
+        BASE
+        
     }
 }
