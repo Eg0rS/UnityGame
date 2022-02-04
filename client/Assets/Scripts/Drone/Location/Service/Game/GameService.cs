@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
+using AmazingAssets.CurvedWorld;
+using DG.Tweening;
 using Drone.Core;
 using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
@@ -13,10 +15,11 @@ using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
 using Drone.Location.World;
-using Drone.Location.World.Spline;
+using FluffyUnderware.DevTools.Extensions;
 using IoC.Attribute;
 using RSG.Promises;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Drone.Location.Service.Game
 {
@@ -44,8 +47,11 @@ namespace Drone.Location.Service.Game
 
         private int _countChips;
 
+        private CurvedWorldController _curvedWorldController;
+
         public void Init()
         {
+            InitCurveWorldController();
             Time.timeScale = 1f;
             DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
@@ -53,6 +59,25 @@ namespace Drone.Location.Service.Game
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, droneModel));
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
             _overlayManager.HideLoadingOverlay(true);
+        }
+
+        private void InitCurveWorldController()
+        {
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CHANGE_TILE, ChangeTile);
+            _curvedWorldController = gameObject.AddComponent<CurvedWorldController>();
+            _curvedWorldController.bendType = BEND_TYPE.ClassicRunner_Z_Positive;
+            _curvedWorldController.bendHorizontalSize = 3;
+            _curvedWorldController.bendVerticalSize = 1.5f;
+        }
+
+        private void ChangeTile(InGameEvent obj)
+        {
+            float fromHorizontal = _curvedWorldController.bendHorizontalSize;
+            float toHorizontal = fromHorizontal * -1;
+            DOVirtual.Float(fromHorizontal, toHorizontal, 10.0f, value => _curvedWorldController.bendHorizontalSize = value);
+            float fromVertical = _curvedWorldController.bendVerticalSize;
+            float toVertical = Random.Range(-1.5f, 1.5f);
+            DOVirtual.Float(fromVertical, toVertical, 10.0f, value => _curvedWorldController.bendVerticalSize = value);
         }
 
         private void OnEndGame(InGameEvent inGameEvent)
@@ -91,6 +116,11 @@ namespace Drone.Location.Service.Game
         {
             SetStatsInProgress(true);
             _dialogManager.ShowModal<LevelFinishedDialog>();
+        }
+
+        private void OnDestroy()
+        {
+            _curvedWorldController.Destroy();
         }
     }
 }
