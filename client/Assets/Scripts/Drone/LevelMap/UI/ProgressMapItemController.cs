@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Adept.Logger;
 using AgkUI.Binding.Attributes;
+using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Model;
-using Drone.Levels.Service;
 using Drone.MainMenu.UI.Panel;
 using IoC.Attribute;
 using UnityEngine;
@@ -18,7 +18,7 @@ namespace Drone.LevelMap.UI
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
 
         [Inject]
-        private LevelService _levelService;
+        private DialogManager _dialogManager;
 
         [UIComponentBinding("Star1")]
         private ToggleButton _star1;
@@ -86,8 +86,9 @@ namespace Drone.LevelMap.UI
             foreach (ToggleButton star in _stars1) {
                 star.Interactable = false;
                 if (_levelViewModel.LevelProgress != null) {
-                    if (_levelViewModel.LevelProgress.CountStars <= placedStars) {
+                    if (_levelViewModel.LevelProgress.CountStars > placedStars) {
                         star.IsOn = true;
+                        placedStars++;
                         continue;
                     }
                 }
@@ -107,7 +108,7 @@ namespace Drone.LevelMap.UI
             if (!_button.interactable) {
                 return;
             }
-            _levelService.ShowStartLevelDialog(_levelViewModel.LevelDescriptor.Id);
+            _dialogManager.Show<DescriptionLevelDialog.DescriptionLevelDialog>(_levelViewModel);
             _logger.Debug("start dialog: " + _levelViewModel.LevelDescriptor.Id);
         }
     }

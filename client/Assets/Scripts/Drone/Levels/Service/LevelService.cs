@@ -5,8 +5,7 @@ using AgkUI.Dialog.Service;
 using Drone.Billing.Service;
 using Drone.Core.Service;
 using Drone.Descriptor;
-using Drone.LevelMap.Levels.Model;
-using Drone.LevelMap.UI.LevelDiscription.DescriptionLevelDialog;
+using Drone.LevelMap.UI.DescriptionLevelDialog;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Event;
 using Drone.Levels.Model;
@@ -14,6 +13,7 @@ using Drone.Levels.Repository;
 using IoC.Attribute;
 using IoC.Util;
 using JetBrains.Annotations;
+using RSG.Promises;
 
 namespace Drone.Levels.Service
 {
@@ -36,28 +36,34 @@ namespace Drone.Levels.Service
         {
         }
 
-        public void ShowStartLevelDialog(string leveId)
-        {
-            LevelDescriptor levelDescriptor = _levelsViewModels.Find(x => x.LevelDescriptor.Id.Equals(leveId)).LevelDescriptor;
-            _dialogManager.Require().Show<DescriptionLevelDialog>(levelDescriptor);
-        }
-
-        public void SetLevelProgress(string levelId, int countStars, int countChips, float transitTime, int durability)
+        public void SetLevelProgress(string levelId, Dictionary<LevelTask, bool> levelTasks, int countChips)
         {
             PlayerProgressModel model = GetPlayerProgressModel();
             LevelProgress levelProgress = model.LevelsProgress.FirstOrDefault(a => a.Id == levelId);
             if (levelProgress == null) {
                 levelProgress = new LevelProgress() {
-                        Id = levelId
+                        Id = levelId,
+                        LevelTasks = new Dictionary<string, bool>()
                 };
                 model.LevelsProgress.Add(levelProgress);
             }
-            levelProgress.CountChips = countChips;
-            if (levelProgress.CountStars < countStars) {
-                levelProgress.CountStars = countStars;
+            foreach (KeyValuePair<LevelTask, bool> task in levelTasks) {
+                if (levelProgress.LevelTasks.ContainsKey(task.Key.Description)) {
+                    levelProgress.LevelTasks[task.Key.Description] = task.Value ? task.Value : levelProgress.LevelTasks[task.Key.Description];
+                } else {
+                    levelProgress.LevelTasks[task.Key.Description] = task.Value;
+                }
             }
-            levelProgress.TransitTime = transitTime;
-            levelProgress.Durability = durability;
+            int countTasks = levelProgress.LevelTasks.Count;
+            int doneTasks = levelProgress.LevelTasks.Count(x => x.Value);
+            float doneProcent = doneTasks / countTasks;
+            if (doneProcent <= 0.40f) {
+                levelProgress.CountStars = 1;
+            } else if (doneProcent > 0.40f && doneProcent <= 0.75f) {
+                levelProgress.CountStars = 2;
+            } else if (doneProcent > 0.75f) {
+                levelProgress.CountStars = 3;
+            }
             _billingService.AddCredits(countChips);
             SaveProgress(model);
         }

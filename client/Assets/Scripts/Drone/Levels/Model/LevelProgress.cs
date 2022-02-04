@@ -1,41 +1,37 @@
-﻿namespace Drone.Levels.Model
+﻿using System.Collections.Generic;
+using Drone.Levels.Descriptor;
+
+namespace Drone.Levels.Model
 {
     public class LevelProgress
     {
         private string _id;
-        private float _transitTime;
         private int _countStars;
         private int _countChips;
-        private float _durability;
+        private Dictionary<string, bool> _levelTasks;
 
         public string Id
         {
-            get => _id;
-            set => _id = value;
-        }
-
-        public float TransitTime
-        {
-            get => _transitTime;
-            set => _transitTime = value;
+            get { return _id; }
+            set { _id = value; }
         }
 
         public int CountStars
         {
-            get => _countStars;
-            set => _countStars = value;
+            get { return _countStars; }
+            set { _countStars = value; }
         }
 
         public int CountChips
         {
-            get => _countChips;
-            set => _countChips = value;
+            get { return _countChips; }
+            set { _countChips = value; }
         }
 
-        public float Durability
+        public Dictionary<string, bool> LevelTasks
         {
-            get => _durability;
-            set => _durability = value;
+            get { return _levelTasks; }
+            set { _levelTasks = value; }
         }
     }
 }

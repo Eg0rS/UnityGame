@@ -4,7 +4,6 @@ using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Obstacle;
 using IoC.Attribute;
-using IoC.Extension;
 using UnityEngine;
 
 namespace Drone.Location.World.Obstacle
@@ -24,7 +23,6 @@ namespace Drone.Location.World.Obstacle
 
         private void OnCollisionEnter(Collision otherCollision)
         {
-            Debug.Log(1);
             WorldObjectType objectType = otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
             if (objectType != WorldObjectType.PLAYER) {
                 _logger.Warn("Enter non-player Collider.");

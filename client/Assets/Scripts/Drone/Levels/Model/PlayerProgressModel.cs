@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Drone.Levels.Model;
 
-namespace Drone.LevelMap.Levels.Model
+namespace Drone.Levels.Model
 {
     public class PlayerProgressModel
     {

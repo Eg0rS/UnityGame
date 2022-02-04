@@ -18,12 +18,13 @@ namespace Drone.Console
         public static void UnlockLevel(int order)
         {
             LevelService levelService = AppContext.Resolve<LevelService>();
-            
+
             List<LevelDescriptor> levels = levelService.LevelsDescriptors.Levels.ToList();
             for (int i = 0; i < order; i++) {
-                levelService.SetLevelProgress(levels[i].Id, 0, 0, 0, 0);
+                levelService.SetLevelProgress(levels[i].Id, new Dictionary<LevelTask, bool>(), 0);
             }
         }
+
         [ConsoleMethod("resetProgress", "reset all progress")]
         [UsedImplicitly]
         public static void ResetProgress()

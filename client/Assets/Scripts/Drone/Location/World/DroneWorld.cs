@@ -4,7 +4,7 @@ using System.Linq;
 using Adept.Logger;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
-using Drone.Location.World.Drone;
+using Drone.Location.World.Player;
 using GameKit.World;
 using JetBrains.Annotations;
 using UnityEngine;

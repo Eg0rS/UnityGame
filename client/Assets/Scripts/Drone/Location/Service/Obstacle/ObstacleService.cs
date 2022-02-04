@@ -2,6 +2,7 @@ using AgkCommons.Event;
 using DG.Tweening;
 using Drone.Core.Service;
 using Drone.Location.Event;
+using Drone.Location.Service.Game.Event;
 using Drone.Location.World;
 using IoC.Attribute;
 
@@ -9,7 +10,7 @@ namespace Drone.Location.Service.Obstacle
 {
     public class ObstacleService : GameEventDispatcher, IWorldServiceInitiable
     {
-        private const float DEATH_TIME = 0.1F;
+        private const float DEATH_TIME = 0.08F;
         private Tween _tween;
         [Inject]
         private DroneWorld _gameWorld;
@@ -27,7 +28,7 @@ namespace Drone.Location.Service.Obstacle
 
         private void OnObstacleContactBegin(ObstacleEvent obstacleEvent)
         {
-            _tween = DOVirtual.DelayedCall(DEATH_TIME, () => _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.CRUSH)), false);
+            _tween = DOVirtual.DelayedCall(DEATH_TIME, () => _gameWorld.Dispatch(new InGameEvent(InGameEvent.END_GAME, EndGameReasons.CRUSH)), false);
         }
     }
 }

@@ -3,10 +3,8 @@ using AgkUI.Dialog.Service;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using Drone.LevelMap.LevelDialogs;
-using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Event;
-using Drone.Location.Service.Control.Drone.Model;
 using IoC.Attribute;
 using UnityEngine;
 using DG.Tweening;
@@ -23,8 +21,6 @@ namespace Drone.Location.UI
 
         [Inject]
         private DroneWorld _gameWorld;
-        [Inject]
-        private GameService _gameService;
 
         [UIComponentBinding("SettingsButton")]
         private UIButton _pause;
@@ -68,7 +64,7 @@ namespace Drone.Location.UI
         private void EndGame(InGameEvent inGameEvent)
         {
             _isGame = false;
-            _dialogManager.Hide(gameObject);
+            gameObject.SetActive(false);
         }
 
         private void StartGame(InGameEvent inGameEvent)

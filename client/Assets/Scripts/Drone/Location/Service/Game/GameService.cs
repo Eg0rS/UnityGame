@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
@@ -8,18 +9,17 @@ using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
-using Drone.Location.Event;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
 using Drone.Location.World;
-using GameKit.World.Event;
+using Drone.Location.World.Spline;
 using IoC.Attribute;
+using RSG.Promises;
 using UnityEngine;
 
 namespace Drone.Location.Service.Game
 {
-
     [Injectable]
     public class GameService : GameEventDispatcher, IWorldServiceInitiable
     {
@@ -42,101 +42,55 @@ namespace Drone.Location.Service.Game
 
         private LevelDescriptor _levelDescriptor;
 
-        private float _startTime;
-
         private int _countChips;
-        public DroneModel DroneModel { get; private set; }
 
         public void Init()
         {
             Time.timeScale = 1f;
-            DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
+            DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, DroneModel));
-
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, droneModel));
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
-            _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.CRUSH, OnPlayerdeth);
-            //событие смерти
-            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartFlight);
-
             _overlayManager.HideLoadingOverlay(true);
-        }
-
-        private void OnPlayerdeth(ObstacleEvent obj)
-        {
-            Debug.Log("DETH");
         }
 
         private void OnEndGame(InGameEvent inGameEvent)
         {
             EndGameReasons reason = inGameEvent.EndGameReason;
             switch (reason) {
-                case EndGameReasons.OUT_OF_DURABILITY:
-                case EndGameReasons.OUT_OF_ENERGY:
-                    StartCoroutine(GameFailed(reason));
+                case EndGameReasons.CRUSH:
+                    StartCoroutine(GameFailed());
                     break;
                 case EndGameReasons.VICTORY:
                     Victory();
                     break;
                 default:
                     throw new Exception($"Reason {reason} is not implemented");
-                    break;
             }
         }
 
-        private IEnumerator GameFailed(EndGameReasons reason)
+        private IEnumerator GameFailed()
         {
             yield return new WaitForSeconds(TIME_FOR_DEAD);
             SetStatsInProgress(false);
-            _dialogManager.ShowModal<LevelFailedCompactDialog>(reason);
-        }
-
-        private void StartFlight(InGameEvent obj)
-        {
-            _startTime = Time.time;
+            _dialogManager.ShowModal<FailLevelDialog>();
         }
 
         private void SetStatsInProgress(bool isWin)
         {
-            float timeInGame = Time.time - _startTime;
-            if (isWin) {
-                // _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _countChips, timeInGame,
-                //                                (int) ((_durabilityService.Durability / _durabilityService.MaxDurability) * 100));
+            if (!isWin) {
+                return;
             }
-        }
-
-        private void OnTakeChip(WorldObjectEvent worldObjectEvent)
-        {
-            _countChips++;
-        }
-
-        private void OnFinished(WorldObjectEvent worldObjectEvent)
-        {
-            Victory();
+            Dictionary<LevelTask, bool> tasks = new Dictionary<LevelTask, bool>();
+            _levelDescriptor.GameData.LevelTasks.Each(x => tasks.Add(x, true));
+            _levelService.SetLevelProgress(_levelService.SelectedLevelId, tasks, _countChips);
         }
 
         private void Victory()
         {
             SetStatsInProgress(true);
             _dialogManager.ShowModal<LevelFinishedDialog>();
-        }
-
-        private int CalculateStars(float timeInGame)
-        {
-            int countStars = 0;
-
-            // if (_durabilityService.Durability >= _levelDescriptor.Goals.NecessaryDurability) {
-            //     countStars++;
-            // }
-            // if (_countChips >= _levelDescriptor.Goals.NecessaryCountChips) {
-            //     countStars++;
-            // }
-            // if (timeInGame <= _levelDescriptor.Goals.NecessaryTime) {
-            //     countStars++;
-            // }
-
-            return countStars;
         }
     }
 }

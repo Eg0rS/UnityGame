@@ -18,7 +18,7 @@ namespace Drone.Location.World.Spline
         private Rigidbody _levelRigidBody;
         private SplineController _splineController;
 
-        private float _distanceTraveled = 0f;
+        public float _distanceTraveled = 0f;
         private bool _isCanFly = false;
 
         public void Init(SplineWalkerModel model)
@@ -45,6 +45,7 @@ namespace Drone.Location.World.Spline
             _levelRigidBody.useGravity = false;
             _levelRigidBody.mass = 200;
             _levelRigidBody.isKinematic = true;
+            _levelRigidBody.interpolation = RigidbodyInterpolation.Interpolate;
             _levelRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
@@ -56,6 +57,7 @@ namespace Drone.Location.World.Spline
             Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedDeltaTime, 50);
             position *= -1;
             _levelRigidBody.MovePosition(position);
+            Time.timeScale = 1.0f + 3.0f * _distanceTraveled;
             BezierSpline.Segment segment = _splineController.BezierSpline.GetSegmentAt(_distanceTraveled);
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.CHANGE_SPLINE_SEGMENT, segment));
         }
