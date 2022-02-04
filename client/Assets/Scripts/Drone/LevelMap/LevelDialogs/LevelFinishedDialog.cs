@@ -7,6 +7,7 @@ using AgkUI.Element.Buttons;
 using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
 using Drone.LevelMap.UI.DescriptionLevelDialog;
+using Drone.Levels.Descriptor;
 using Drone.Levels.Model;
 using Drone.Levels.Service;
 using Drone.MainMenu.UI.Screen;
@@ -36,6 +37,10 @@ namespace Drone.LevelMap.LevelDialogs
         private LevelService _levelService;
         [UIComponentBinding("Star")]
         private ToggleButton _star;
+        [UIObjectBinding("Next")]
+        private GameObject _next;
+
+        private LevelDescriptor _nextDescriptor;
 
         [UICreated]
         public void Init()
@@ -44,6 +49,10 @@ namespace Drone.LevelMap.LevelDialogs
             _star.IsOn = true;
             _levelId = _levelService.SelectedLevelId;
             _levelViewModel = _levelService.GetLevels().Find(x => x.LevelDescriptor.Id.Equals(_levelId));
+            _nextDescriptor = _levelService.GetNextLevelDescriptor(_levelId);
+            if (_nextDescriptor == null) {
+                _next.SetActive(false);
+            }
         }
 
         [UIOnClick("RestartButton")]
@@ -59,11 +68,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _dialogManager.Require()
-                          .Show<DescriptionLevelDialog>(_levelService.GetLevels()
-                                                                     .First(x => x.LevelDescriptor.Id == _levelService
-                                                                                         .GetNextLevelDescriptor(_levelViewModel.LevelDescriptor.Id)
-                                                                                         ?.Id));
+            _dialogManager.Require().Show<DescriptionLevelDialog>(_levelService.GetLevels().First(x => x.LevelDescriptor.Id == _nextDescriptor.Id));
         }
 
         [UIOnClick("MainMenuButton")]

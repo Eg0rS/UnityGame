@@ -78,7 +78,7 @@ namespace Drone.Levels.Service
         public LevelDescriptor GetNextLevelDescriptor(string levelId)
         {
             LevelDescriptor levelDescriptor = _levelsDescriptors.Levels.ToList().Find(x => x.Id == levelId);
-            LevelDescriptor nextLevel = _levelsDescriptors.Levels.ToList().Find(x => x.Order == levelDescriptor.Order + 1);
+            LevelDescriptor nextLevel = _levelsDescriptors.Levels.ToList().FirstOrDefault(x => x.Order == levelDescriptor.Order + 1);
             return nextLevel;
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AgkUI.Binding.Attributes;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
@@ -47,9 +48,12 @@ namespace Drone.LevelMap.UI
 
         private void CreateLevels(List<LevelViewModel> levelViewModels)
         {
-            _currentLevelId = levelViewModels.Find(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel())).LevelDescriptor.Id;
+            LevelViewModel ViewModel = levelViewModels.FirstOrDefault(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel()));
+            _currentLevelId = null;
+            if (ViewModel != null) {
+                _currentLevelId = ViewModel.LevelDescriptor.Id;
+            }
             foreach (LevelViewModel levelViewModel in levelViewModels) {
-                
                 _uiService.Create<ProgressMapItemController>(UiModel.Create<ProgressMapItemController>(levelViewModel,
                                                                         levelViewModel.LevelDescriptor.Id.Equals(_currentLevelId))
                                                                     .Container(_levelsContainer))
