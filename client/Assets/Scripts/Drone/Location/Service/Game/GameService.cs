@@ -15,7 +15,6 @@ using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
 using Drone.Location.World;
-using FluffyUnderware.DevTools.Extensions;
 using IoC.Attribute;
 using RSG.Promises;
 using UnityEngine;
@@ -120,7 +119,7 @@ namespace Drone.Location.Service.Game
 
         private void OnDestroy()
         {
-            _curvedWorldController.Destroy();
+            Destroy(_curvedWorldController.gameObject);
         }
     }
 }
