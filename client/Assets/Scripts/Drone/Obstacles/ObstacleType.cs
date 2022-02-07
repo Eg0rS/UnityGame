@@ -4,6 +4,8 @@ namespace Drone.Obstacles
 {
     public enum ObstacleType
     {
+        [XmlEnum("none")]
+        NONE,
         [XmlEnum("base")]
         BASE,
         [XmlEnum("column")]
