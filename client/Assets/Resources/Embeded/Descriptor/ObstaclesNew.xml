@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<obstacle_types>
+    <type id="column">
+        <complexity id="easy">
+        </complexity>
+
+        <complexity id="normal">
+            <obstacle id="column1"
+                      prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfObColumn1@embeded"/>
+            <obstacle id="column2"
+                      prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfObColumn2@embeded"/>
+        </complexity>
+
+        <complexity id="hard">
+            <obstacle id="column3"
+                      prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfObColumn3@embeded"/>
+        </complexity>
+    </type>
+
+    <type id="wood">
+        <complexity id="easy">
+        </complexity>
+
+        <complexity id="normal">
+            <obstacle id="WoodObstacles1"
+                      prefab="AssetObjects/Location/CityZone/CityZoneObstacles/ForestObstacle/pfWoodObstacles1@embeded"/>
+        </complexity>
+
+        <complexity id="hard">
+            <obstacle id="BigWoodObstacles"
+                      prefab="AssetObjects/Location/CityZone/CityZoneObstacles/ForestObstacle/pfBigWoodObstacles@embeded"
+            />
+        </complexity>
+    </type>
+
+    <type type="tube">
+        <complexity id="easy">
+
+        </complexity>
+        <complexity id="normal">
+
+        </complexity>
+        <complexity id="hard">
+
+        </complexity>
+        <obstacle id="TubeCollectorHard1"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CollectorObstacles/pfTubeCollectorHard1@embeded"
+        />
+        <obstacle id="TubeCollectorLow1"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CollectorObstacles/pfTubeCollectorLow1@embeded"
+        />
+        <obstacle id="TubeCollectorLow2"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CollectorObstacles/pfTubeCollectorLow2@embeded"
+        />
+        <obstacle id="TubeCollectorLow3"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CollectorObstacles/pfTubeCollectorLow3@embeded"
+        />
+        <obstacle id="TubeCollectorMid1"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CollectorObstacles/pfTubeCollectorMid1@embeded"
+        />
+    </type>
+    <type id="base">
+        <complexity id="easy">
+
+        </complexity>
+        <complexity id="normal">
+
+        </complexity>
+        <complexity id="hard">
+
+        </complexity>
+        <obstacle id="BaseObstacleMid1"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfBaseObstacleMid1@embeded"
+        />
+        <obstacle id="BaseObstacleMid2"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfBaseObstacleMid2@embeded"
+        />
+        <obstacle id="BaseObstacleMid3"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfBaseObstacleMid3@embeded"
+        />
+        <obstacle id="BaseObstacleMid4"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfBaseObstacleMid4@embeded"
+        />
+        <obstacle id="BaseObstacleMid5"
+                  prefab="AssetObjects/Location/CityZone/CityZoneObstacles/CityPortTunnelObstacle/pfBaseObstacleMid5@embeded"
+        />
+    </type>
+
+</obstacle_types>

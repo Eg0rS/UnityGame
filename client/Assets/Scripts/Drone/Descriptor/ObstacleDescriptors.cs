@@ -3,10 +3,10 @@ using Drone.Obstacles.Descriptor;
 
 namespace Drone.Descriptor
 {
-    [XmlRoot("obstacles")]
+    [XmlRoot("obstacle_types")]
     public class ObstacleDescriptors
     {
-        [XmlElement("obstacle")]
-        public ObstacleDescriptor[] Obstacles { get; set; }
+        [XmlElement("type")]
+        public ObstacleTypeDescriptor[] Types { get; set; }
     }
 }

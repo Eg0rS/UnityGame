@@ -4,14 +4,13 @@ namespace Drone.Obstacles
 {
     public enum ObstacleType
     {
-        [XmlEnum("wood")]
-        WOOD,
+        [XmlEnum("base")]
+        BASE,
         [XmlEnum("column")]
         COLUMN,
+        [XmlEnum("wood")]
+        WOOD,
         [XmlEnum("tube")]
-        TUBE,
-        [XmlEnum("base")]
-        BASE
-        
+        TUBE
     }
 }

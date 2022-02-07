@@ -26,22 +26,22 @@ namespace Drone.Location.Service
         [Inject]
         private ResourceService _resourceService;
 
-        public IPromise<Dictionary<ObstacleType, Dictionary<GameObject, int>>> LoadLevelObstacles(LevelDescriptor descriptor)
-        {
-            Dictionary<ObstacleType, Dictionary<GameObject, int>> levelObstacles = new Dictionary<ObstacleType, Dictionary<GameObject, int>>();
-            List<IPromise> promises = new List<IPromise>();
-            List<ObstacleType> obstacleTypes = GetUniqueObstacleTypes(GetUniqueTileDescriptors(descriptor));
-            foreach (ObstacleType obstacleType in obstacleTypes) {
-                levelObstacles[obstacleType] = new Dictionary<GameObject, int>();
-                List<ObstacleDescriptor> obstacleDescriptors =
-                        _obstacleDescriptors.Obstacles.Where(obstacleDescriptor => obstacleDescriptor.Type == obstacleType).ToList();
-                foreach (ObstacleDescriptor obstacleDescriptor in obstacleDescriptors) {
-                    promises.Add(LoadResource<GameObject>(obstacleDescriptor.Prefab)
-                                         .Then(loadedObject => { levelObstacles[obstacleType].Add(loadedObject, 0); }));
-                }
-            }
-            return Promise.All(promises).Then(() => Promise<Dictionary<ObstacleType, Dictionary<GameObject, int>>>.Resolved(levelObstacles));
-        }
+        // public IPromise<Dictionary<ObstacleType, Dictionary<GameObject, int>>> LoadLevelObstacles(LevelDescriptor descriptor)
+        // {
+        //     Dictionary<ObstacleType, Dictionary<GameObject, int>> levelObstacles = new Dictionary<ObstacleType, Dictionary<GameObject, int>>();
+        //     List<IPromise> promises = new List<IPromise>();
+        //     List<ObstacleType> obstacleTypes = GetUniqueObstacleTypes(GetUniqueTileDescriptors(descriptor));
+        //     foreach (ObstacleType obstacleType in obstacleTypes) {
+        //         levelObstacles[obstacleType] = new Dictionary<GameObject, int>();
+        //         List<ObstacleDescriptor> obstacleDescriptors =
+        //                 _obstacleDescriptors.Obstacles.Where(obstacleDescriptor => obstacleDescriptor.Type == obstacleType).ToList();
+        //         foreach (ObstacleDescriptor obstacleDescriptor in obstacleDescriptors) {
+        //             promises.Add(LoadResource<GameObject>(obstacleDescriptor.Prefab)
+        //                                  .Then(loadedObject => { levelObstacles[obstacleType].Add(loadedObject, 0); }));
+        //         }
+        //     }
+        //     return Promise.All(promises).Then(() => Promise<Dictionary<ObstacleType, Dictionary<GameObject, int>>>.Resolved(levelObstacles));
+        // }
 
         public IPromise<Dictionary<TileDescriptor, GameObject>> LoadLevelTiles(LevelDescriptor descriptor)
         {
