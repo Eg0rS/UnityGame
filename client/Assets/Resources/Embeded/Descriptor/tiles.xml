@@ -1,29 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tiles>
-    <tile id="Start" prefab="AssetObjects\Location\CityZone\CityZoneTile\pfStartTile50@embeded" zone="city" type="start">
-        <obstacle_type>column</obstacle_type>
-        <obstacle_type>base</obstacle_type>
+    <tile id="Start" prefab="AssetObjects\Location\CityZone\CityZoneTile\pfStartTile50@embeded" zone="city"
+          type="start">
+        <obstacle_types>
+            <type>column</type>
+            <type id="column"/>
+            <type id="base"/>
+        </obstacle_types>
     </tile>
-    <tile id="Finish" prefab="AssetObjects\Location\CityZone\CityZoneTile\pfFinishTile50@embeded" zone="city" type="finish">
-        <obstacle_type>column</obstacle_type>
-        <obstacle_type>base</obstacle_type>
+    <tile id="Finish" prefab="AssetObjects\Location\CityZone\CityZoneTile\pfFinishTile50@embeded" zone="city"
+          type="finish">
+        <obstacle_types>
+            <type id="column"/>
+            <type id="base"/>
+        </obstacle_types>
     </tile>
-    <tile id="Forest1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfForestTile100@embeded" zone="city" type="regular">
-        <obstacle_type>wood</obstacle_type>
+    <tile id="Forest1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfForestTile100@embeded"
+          zone="city" type="regular">
+        <obstacle_types>
+            <type id="wood"/>
+        </obstacle_types>
     </tile>
-    <tile id="Tunnel1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfTunnelTile100@embeded" zone="city" type="regular">
-        <obstacle_type>column</obstacle_type>
-        <obstacle_type>base</obstacle_type>
+    <tile id="Tunnel1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfTunnelTile100@embeded"
+          zone="city" type="regular">
+        <obstacle_types>
+            <type id="column"/>
+            <type id="base"/>
+        </obstacle_types>
     </tile>
-    <tile id="Collector1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfCollectorTile100@embeded" zone="city" type="regular">
-        <obstacle_type>tube</obstacle_type>
+    <tile id="Collector1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfCollectorTile100@embeded"
+          zone="city" type="regular">
+        <obstacle_types>
+            <type id="tube"/>
+        </obstacle_types>
     </tile>
-    <tile id="City1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfCityTile100@embeded" zone="city" type="regular">
-        <obstacle_type>column</obstacle_type>
-        <obstacle_type>base</obstacle_type>
+    <tile id="City1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfCityTile100@embeded" zone="city"
+          type="regular">
+        <obstacle_types>
+            <type id="column"/>
+            <type id="base"/>
+        </obstacle_types>
     </tile>
-    <tile id="Port1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfPortTile100@embeded" zone="city" type="regular">
-        <obstacle_type>column</obstacle_type>
-        <obstacle_type>base</obstacle_type>
+    <tile id="Port1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfPortTile100@embeded" zone="city"
+          type="regular">
+        <obstacle_types>
+            <type id="column"/>
+            <type id="base"/>
+        </obstacle_types>
     </tile>
 </tiles>

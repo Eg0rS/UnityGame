@@ -2,7 +2,6 @@ using System.Linq;
 using System.Xml.Serialization;
 using Drone.Levels.Descriptor;
 using Drone.Obstacles;
-using JetBrains.Annotations;
 
 namespace Tile.Descriptor
 {
@@ -16,13 +15,19 @@ namespace Tile.Descriptor
         public LevelZoneType Zone { get; set; }
         [XmlAttribute("type")]
         public TileType Type { get; set; }
-        private ObstacleType[] _obstacleTypes;
-        [XmlElement("obstacle_type")]
-        [NotNull]
-        public ObstacleType[] ObstacleTypes
-        {
-            get { return _obstacleTypes.Distinct().ToArray(); }
-            set { _obstacleTypes = value; }
-        }
+        // [XmlAnyElement("obstacle_types")]
+        // private ObstacleType[] _obstacleTypes;
+
+        [XmlElement("")]
+        public ObstacleType[] ObstacleTypes { get; set; }
+
+        [XmlElement("obstacle_types")]
+        public Obs[] ObstacleTypes1 { get; set; }
+    }
+
+    public class Obs
+    {
+        [XmlArrayItem("type")]
+        public string type;
     }
 }

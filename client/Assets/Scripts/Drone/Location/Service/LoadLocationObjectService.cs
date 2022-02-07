@@ -5,7 +5,6 @@ using AgkCommons.Resources;
 using Drone.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Obstacles;
-using Drone.Obstacles.Descriptor;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using RSG;
