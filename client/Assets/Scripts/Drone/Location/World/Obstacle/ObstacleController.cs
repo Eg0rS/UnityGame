@@ -1,4 +1,5 @@
-﻿using Drone.Location.Event;
+﻿using Adept.Logger;
+using Drone.Location.Event;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Obstacle;
@@ -9,6 +10,7 @@ namespace Drone.Location.World.Obstacle
 {
     public class ObstacleController : MonoBehaviour, IWorldObjectController<ObstacleModel>
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<ObstacleController>();
         public WorldObjectType ObjectType { get; private set; }
 
         [Inject]
@@ -21,20 +23,23 @@ namespace Drone.Location.World.Obstacle
 
         private void OnCollisionEnter(Collision otherCollision)
         {
-            WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
+            WorldObjectType objectType = otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
             if (objectType != WorldObjectType.PLAYER) {
+                _logger.Warn("Enter non-player Collider.");
+                Debug.LogWarning(gameObject.name);
                 return;
             }
-            ContactPoint[] contactPoints = otherCollision.contacts;
-            _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT, contactPoints, ImmersionDepth(otherCollision)));
+            _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT_BEGIN));
         }
 
-        private float ImmersionDepth(Collision otherCollision)
+        private void OnCollisionExit(Collision otherCollision)
         {
-            Physics.ComputePenetration(gameObject.GetComponent<Collider>(), transform.position, transform.rotation, otherCollision.collider,
-                                       otherCollision.transform.position, otherCollision.transform.rotation, out Vector3 direction,
-                                       out float distance);
-            return distance;
+            WorldObjectType objectType = otherCollision.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
+            if (objectType != WorldObjectType.PLAYER) {
+                _logger.Warn("Exit non-player collider.");
+                return;
+            }
+            _gameWorld.Dispatch(new ObstacleEvent(ObstacleEvent.OBSTACLE_CONTACT_END));
         }
     }
 }

@@ -9,12 +9,14 @@ using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.Model.StartPlatform;
+using Drone.Location.Model.WorldGeomertyRotation;
 using Drone.Location.World;
-using Drone.Location.World.Drone;
 using Drone.Location.World.Finish;
 using Drone.Location.World.Obstacle;
+using Drone.Location.World.Player;
 using Drone.Location.World.Spline;
 using Drone.Location.World.StartPlatform;
+using Drone.Location.World.WorldGeomertyRotation;
 using UnityEngine;
 using static Drone.Location.Model.WorldObjectType;
 using AppContext = IoC.AppContext;
@@ -25,9 +27,8 @@ namespace Drone.Location.Service
     public class CreateLocationObjectService
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<CreateLocationObjectService>();
-        
+
         private readonly Dictionary<WorldObjectType, ControllerData> _controllers = new Dictionary<WorldObjectType, ControllerData>();
-       
 
         public CreateLocationObjectService()
         {
@@ -40,6 +41,8 @@ namespace Drone.Location.Service
             _controllers[SPLINE] = new ControllerData(typeof(SplineController), InitController<SplineController, SplineModel>);
             _controllers[SPLINE_WALKER] =
                     new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
+            _controllers[GEOMETRY_ROTATION] = new ControllerData(typeof(WorldGeometryRotationController),
+                                                                 InitController<WorldGeometryRotationController, WorldGeometryRotationModel>);
         }
 
         public Component AttachController(PrefabModel model)

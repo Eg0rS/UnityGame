@@ -4,9 +4,7 @@ using System.Linq;
 using Adept.Logger;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
-using Drone.Location.World.Drone;
-using Drone.Obstacles;
-using Drone.Obstacles.Descriptor;
+using Drone.Location.World.Player;
 using GameKit.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -19,12 +17,12 @@ namespace Drone.Location.World
         private Dictionary<string, PrefabModel> _controllers;
         private PlayerController _playerController;
         private float _currentTimeScale;
-
-        private Dictionary<ObstacleType, List<KeyValuePair<ObstacleDescriptor, int>>> _obstacles;
+        private bool _isPauseWorld = false;
 
         [PublicAPI]
         public void Pause()
         {
+            _isPauseWorld = true;
             _currentTimeScale = Time.timeScale;
             Time.timeScale = 0;
             Dispatch(new WorldEvent(WorldEvent.PAUSED));
@@ -33,6 +31,7 @@ namespace Drone.Location.World
         [PublicAPI]
         public void Resume()
         {
+            _isPauseWorld = false;
             Time.timeScale = _currentTimeScale;
             Dispatch(new WorldEvent(WorldEvent.UNPAUSED));
         }
@@ -123,11 +122,9 @@ namespace Drone.Location.World
                 return _playerController;
             }
         }
-
-        public Dictionary<ObstacleType, List<KeyValuePair<ObstacleDescriptor, int>>> Obstacles
+        public bool IsPauseWorld
         {
-            get { return _obstacles; }
-            set { _obstacles = value; }
+            get { return _isPauseWorld; }
         }
     }
 }

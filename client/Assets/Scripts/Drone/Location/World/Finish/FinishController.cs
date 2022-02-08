@@ -1,16 +1,16 @@
-﻿using Drone.Location.Model;
+﻿using Adept.Logger;
+using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Finish;
-
-using GameKit.World;
+using Drone.Location.Service.Game.Event;
 using IoC.Attribute;
-using IoC.Util;
 using UnityEngine;
 
 namespace Drone.Location.World.Finish
 {
     public class FinishController : MonoBehaviour, IWorldObjectController<FinishModel>
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<FinishController>();
         public WorldObjectType ObjectType { get; private set; }
         [Inject]
         private DroneWorld _gameWorld;
@@ -20,12 +20,15 @@ namespace Drone.Location.World.Finish
             ObjectType = model.ObjectType;
         }
 
-        private void OnCollisionEnter(Collision otherCollision)
+        private void OnTriggerEnter(Collider other)
         {
-            WorldObjectType objectType = otherCollision.gameObject.GetComponent<PrefabModel>().ObjectType;
-            if (objectType == WorldObjectType.PLAYER) {
-                
+            WorldObjectType objectType = other.gameObject.GetComponentInParent<PrefabModel>().ObjectType;
+            if (objectType != WorldObjectType.PLAYER) {
+                _logger.Warn("Enter non-player Collider.");
+                Debug.LogWarning(gameObject.name);
+                return;
             }
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.END_GAME, EndGameReasons.VICTORY));
         }
     }
 }

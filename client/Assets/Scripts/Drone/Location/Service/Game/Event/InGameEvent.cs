@@ -10,6 +10,7 @@ namespace Drone.Location.Service.Game.Event
         public const string START_GAME = "startGame";
         public const string END_GAME = "endGame";
         public const string CHANGE_SPLINE_SEGMENT = "changeRotation";
+        public const string CHANGE_TILE = "changeTile";
 
         public BezierSpline.Segment BezierSegment { get; private set; }
         public EndGameReasons EndGameReason { get; private set; }

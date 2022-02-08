@@ -1,5 +1,5 @@
 ﻿using Drone.Core.Repository;
-using Drone.LevelMap.Levels.Model;
+using Drone.Levels.Model;
 
 namespace Drone.Levels.Repository
 {

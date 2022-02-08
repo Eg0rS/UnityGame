@@ -18,6 +18,7 @@ using Drone.Inventory.Service;
 using Drone.Shop.Descriptor;
 using Drone.Shop.Event;
 using Drone.Shop.Service;
+using EndlessScroll;
 using UnityEngine;
 
 namespace Drone.Shop.UI
@@ -36,7 +37,7 @@ namespace Drone.Shop.UI
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
-        
+
         [Inject]
         private ShopService _shopService;
 
@@ -47,10 +48,10 @@ namespace Drone.Shop.UI
 
         [UIComponentBinding("CountChips")]
         private UILabel _countChips;
-        
+
         [UIComponentBinding("CountCrypto")]
         private UILabel _countCrypto;
-        
+
         private ShopDescriptor _shopDescriptor;
 
         [UICreated]
@@ -87,7 +88,8 @@ namespace Drone.Shop.UI
             foreach (ShopItemDescriptor itemDescriptor in shopItemDescriptors) {
                 bool isHasItem = _inventoryService.Inventory.HasItem(itemDescriptor.Id);
                 _uiService.Create<ShopItemPanel>(UiModel.Create<ShopItemPanel>(itemDescriptor, isHasItem).Container(itemContainer))
-                          .Then(controller => { _endlessScroll.ScrollPanelList.Add(controller.gameObject); })
+                          .Then(controller => { /*_endlessScroll.ScrollPanelList.Add(controller.gameObject); */
+                                })
                           .Then(() => { _endlessScroll.Init(); })
                           .Done();
             }
@@ -106,7 +108,7 @@ namespace Drone.Shop.UI
             _logger.Debug("clickRight");
             _endlessScroll.MoveLeft();
         }
-        
+
         [UIOnClick("CloseButton")]
         private void CloseButton()
         {

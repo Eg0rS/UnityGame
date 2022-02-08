@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
+using AmazingAssets.CurvedWorld;
+using DG.Tweening;
 using Drone.Core;
 using Drone.Core.Service;
 using Drone.LevelMap.LevelDialogs;
@@ -12,13 +15,13 @@ using Drone.Location.Service.Game.Event;
 using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
 using Drone.Location.World;
-using GameKit.World.Event;
 using IoC.Attribute;
+using RSG.Promises;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Drone.Location.Service.Game
 {
-
     [Injectable]
     public class GameService : GameEventDispatcher, IWorldServiceInitiable
     {
@@ -41,73 +44,71 @@ namespace Drone.Location.Service.Game
 
         private LevelDescriptor _levelDescriptor;
 
-        private float _startTime;
-
         private int _countChips;
-        public DroneModel DroneModel { get; private set; }
+
+        private CurvedWorldController _curvedWorldController;
 
         public void Init()
         {
+            InitCurveWorldController();
             Time.timeScale = 1f;
-            DroneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
+            DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, DroneModel));
-
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, droneModel));
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
-            
-            //событие смерти
-            _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartFlight);
-
             _overlayManager.HideLoadingOverlay(true);
+        }
+
+        private void InitCurveWorldController()
+        {
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CHANGE_TILE, ChangeTile);
+            _curvedWorldController = gameObject.AddComponent<CurvedWorldController>();
+            _curvedWorldController.bendType = BEND_TYPE.ClassicRunner_Z_Positive;
+            _curvedWorldController.bendHorizontalSize = 3;
+            _curvedWorldController.bendVerticalSize = 1.5f;
+        }
+
+        private void ChangeTile(InGameEvent obj)
+        {
+            float fromHorizontal = _curvedWorldController.bendHorizontalSize;
+            float toHorizontal = fromHorizontal * -1;
+            DOVirtual.Float(fromHorizontal, toHorizontal, 10.0f, value => _curvedWorldController.bendHorizontalSize = value);
+            float fromVertical = _curvedWorldController.bendVerticalSize;
+            float toVertical = Random.Range(-1.5f, 1.5f);
+            DOVirtual.Float(fromVertical, toVertical, 10.0f, value => _curvedWorldController.bendVerticalSize = value);
         }
 
         private void OnEndGame(InGameEvent inGameEvent)
         {
             EndGameReasons reason = inGameEvent.EndGameReason;
             switch (reason) {
-                case EndGameReasons.OUT_OF_DURABILITY:
-                case EndGameReasons.OUT_OF_ENERGY:
-                    StartCoroutine(GameFailed(reason));
+                case EndGameReasons.CRUSH:
+                    StartCoroutine(GameFailed());
                     break;
                 case EndGameReasons.VICTORY:
                     Victory();
                     break;
                 default:
                     throw new Exception($"Reason {reason} is not implemented");
-                    break;
             }
         }
 
-        private IEnumerator GameFailed(EndGameReasons reason)
+        private IEnumerator GameFailed()
         {
             yield return new WaitForSeconds(TIME_FOR_DEAD);
             SetStatsInProgress(false);
-            _dialogManager.ShowModal<LevelFailedCompactDialog>(reason);
-        }
-
-        private void StartFlight(InGameEvent obj)
-        {
-            _startTime = Time.time;
+            _dialogManager.ShowModal<FailLevelDialog>();
         }
 
         private void SetStatsInProgress(bool isWin)
         {
-            float timeInGame = Time.time - _startTime;
-            if (isWin) {
-                // _levelService.SetLevelProgress(_levelService.SelectedLevelId, CalculateStars(timeInGame), _countChips, timeInGame,
-                //                                (int) ((_durabilityService.Durability / _durabilityService.MaxDurability) * 100));
+            if (!isWin) {
+                return;
             }
-        }
-
-        private void OnTakeChip(WorldObjectEvent worldObjectEvent)
-        {
-            _countChips++;
-        }
-
-        private void OnFinished(WorldObjectEvent worldObjectEvent)
-        {
-            Victory();
+            Dictionary<LevelTask, bool> tasks = new Dictionary<LevelTask, bool>();
+            _levelDescriptor.GameData.LevelTasks.Each(x => tasks.Add(x, true));
+            _levelService.SetLevelProgress(_levelService.SelectedLevelId, tasks, _countChips);
         }
 
         private void Victory()
@@ -116,21 +117,9 @@ namespace Drone.Location.Service.Game
             _dialogManager.ShowModal<LevelFinishedDialog>();
         }
 
-        private int CalculateStars(float timeInGame)
+        private void OnDestroy()
         {
-            int countStars = 0;
-
-            // if (_durabilityService.Durability >= _levelDescriptor.Goals.NecessaryDurability) {
-            //     countStars++;
-            // }
-            // if (_countChips >= _levelDescriptor.Goals.NecessaryCountChips) {
-            //     countStars++;
-            // }
-            // if (timeInGame <= _levelDescriptor.Goals.NecessaryTime) {
-            //     countStars++;
-            // }
-
-            return countStars;
+            Destroy(_curvedWorldController.gameObject);
         }
     }
 }

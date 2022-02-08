@@ -19,12 +19,12 @@ namespace Drone.Location.Service.Control
     {
         [Inject]
         private DroneWorld _gameWorld;
-        private const float HORISONTAL_SWIPE_ANGLE = 0.40f;
+        private const float HORIZONTAL_SWIPE_ANGLE = 0.40f;
         private const float VERTICAL_SWIPE_ANGLE = 0.70f;
 
-        private const float QUICK_GESTURE_TRESHOLD = 0.10f;
-        private const float LONG_TERM_GESTURE_TRESHOLD = 0.20f;
-        private const float GESTURE_SWITCH_TIME = 0.5f;
+        private const float QUICK_GESTURE_THRESHOLD = 0.10f;
+        private const float LONG_TERM_GESTURE_THRESHOLD = 0.35f;
+        private const float GESTURE_SWITCH_TIME = 0.6f;
 
         private Vector2 _beginPosition;
         private Vector2 _currentPosition;
@@ -42,7 +42,6 @@ namespace Drone.Location.Service.Control
             _gameWorld.AddListener(WorldEvent.CREATED, OnWorldCreated);
             _inputControl = new InputControl();
             TouchSimulation.Enable();
-           
         }
 
         private void OnWorldCreated(GameEvent obj)
@@ -96,7 +95,7 @@ namespace Drone.Location.Service.Control
         {
             Vector2 vector = _currentPosition - _beginPosition;
             float distance = Vector2.Distance(_currentPosition, _beginPosition) / _width;
-            if (distance >= QUICK_GESTURE_TRESHOLD && !_isQuickGestureDone) {
+            if (distance >= QUICK_GESTURE_THRESHOLD && !_isQuickGestureDone) {
                 vector = RoundVector(vector);
                 _isQuickGestureDone = true;
                 _beginPosition = _currentPosition;
@@ -108,7 +107,7 @@ namespace Drone.Location.Service.Control
         {
             Vector2 vector = _currentPosition - _beginPosition;
             float distance = Vector2.Distance(_currentPosition, _beginPosition) / _width;
-            if (distance >= LONG_TERM_GESTURE_TRESHOLD) {
+            if (distance >= LONG_TERM_GESTURE_THRESHOLD) {
                 vector = RoundVector(vector);
                 _beginPosition = _currentPosition;
                 _gameWorld.Dispatch(new ControllEvent(ControllEvent.GESTURE, vector));
@@ -125,10 +124,10 @@ namespace Drone.Location.Service.Control
             double angle = Math.Sin(absVector.y / hypotenuse);
 
             Vector2 gestureVector = new Vector2();
-            if (angle >= 0.00 && angle <= HORISONTAL_SWIPE_ANGLE) {
+            if (angle >= 0.00 && angle <= HORIZONTAL_SWIPE_ANGLE) {
                 gestureVector.x = 1 * xSign;
                 gestureVector.y = 0;
-            } else if (angle > HORISONTAL_SWIPE_ANGLE && angle < VERTICAL_SWIPE_ANGLE) {
+            } else if (angle > HORIZONTAL_SWIPE_ANGLE && angle < VERTICAL_SWIPE_ANGLE) {
                 gestureVector.x = 1 * xSign;
                 gestureVector.y = 1 * ySign;
             } else if (angle >= VERTICAL_SWIPE_ANGLE && angle <= 0.90) {

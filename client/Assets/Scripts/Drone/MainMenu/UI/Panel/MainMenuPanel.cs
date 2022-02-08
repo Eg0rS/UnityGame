@@ -4,15 +4,13 @@ using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
 using AgkUI.Core.Service;
 using AgkUI.Dialog.Service;
+using AgkUI.Element.Text;
 using Drone.Billing.Event;
 using Drone.Billing.Service;
-using Drone.Billing.UI;
 using Drone.Core;
 using Drone.LevelMap.UI;
 using Drone.Settings.UI;
-using Drone.Shop.UI;
 using IoC.Attribute;
-using TMPro;
 using UnityEngine;
 
 namespace Drone.MainMenu.UI.Panel
@@ -21,7 +19,7 @@ namespace Drone.MainMenu.UI.Panel
     public class MainMenuPanel : MonoBehaviour
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<MainMenuPanel>();
-        private const string PREFAB = "UI/MainMenu/Panel/pfMainScreenPanel@embeded";
+        private const string PREFAB = "UI_Prototype/Panel/MainMenuScreen/pfMainScreenPanel@embeded";
 
         [Inject]
         private OverlayManager _overlayManager;
@@ -35,19 +33,19 @@ namespace Drone.MainMenu.UI.Panel
         [Inject]
         private DialogManager _dialogManager;
 
-        [UIObjectBinding("MiddlePanel")]
-        private GameObject _middlePanel;
+        [UIObjectBinding("LevelMapPanel")]
+        private GameObject _levelMapPanel;
 
-        [UIComponentBinding("ChipsValue")]
-        private TextMeshProUGUI _countChips;
+        [UIComponentBinding("ValueStandart")]
+        private UILabel _standartValue;
 
-        [UIComponentBinding("CryptValue")]
-        private TextMeshProUGUI _countCrypto;
+        [UIComponentBinding("ValueGem")]
+        private UILabel _gemValue;
 
         public void Init()
         {
             _overlayManager.HideLoadingOverlay(true);
-            _uiService.Create<LevelsMapController>(UiModel.Create<LevelsMapController>().Container(_middlePanel)).Done();
+            _uiService.Create<LevelsMapController>(UiModel.Create<LevelsMapController>().Container(_levelMapPanel)).Done();
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             UpdateCredits();
             _logger.Debug("MainMenuPanel start init");
@@ -60,8 +58,8 @@ namespace Drone.MainMenu.UI.Panel
 
         private void UpdateCredits()
         {
-            _countChips.text = _billingService.GetCreditsCount().ToString();
-            _countCrypto.text = _billingService.GetCryptoCount().ToString();
+            _standartValue.text = _billingService.GetCreditsCount().ToString();
+            _gemValue.text = _billingService.GetCryptoCount().ToString();
         }
 
         private void OnResourceUpdated(BillingEvent resourceEvent)
@@ -69,24 +67,11 @@ namespace Drone.MainMenu.UI.Panel
             UpdateCredits();
         }
 
-        [UIOnClick("ShopButton")]
-        private void OnStore()
-        {
-            _dialogManager.Show<ShopDialog>();
-            _logger.Debug("Click on store");
-        }
-
-        [UIOnClick("ButtonSetting")]
+        [UIOnClick("SettingsButton")]
         private void OnSettingsPanel()
         {
             _dialogManager.Show<GameSettingsDialog>();
             _logger.Debug("Click on settings");
-        }
-
-        //[UIOnClick("StatusChips")]
-        private void OnCreditsPanel()
-        {
-            _dialogManager.Show<BillingDialog>();
         }
     }
 }

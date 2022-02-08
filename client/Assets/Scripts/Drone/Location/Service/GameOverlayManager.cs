@@ -17,18 +17,18 @@ namespace Drone.Location.Service
         [Inject]
         private ScreenStructureManager _screenStructureManager;
 
-        private GameOverlay _gameOverlay;
+        private GameHUD _gameHUD;
 
         public IPromise LoadGameOverlay()
         {
-            return _uiService.Create<GameOverlay>(UiModel.Create<GameOverlay>()).Then(Attach);
+            return _uiService.Create<GameHUD>(UiModel.Create<GameHUD>()).Then(Attach);
         }
         
-        private IPromise Attach(GameOverlay arg)
+        private IPromise Attach(GameHUD arg)
         {
             Promise promise = new Promise();
-            _gameOverlay = arg;
-            _screenStructureManager.AttachToSafeArea(_gameOverlay.gameObject);
+            _gameHUD = arg;
+            _screenStructureManager.AttachToSafeArea(_gameHUD.gameObject);
             promise.Resolve();
             return promise;
         }

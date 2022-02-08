@@ -14,6 +14,7 @@ namespace Drone.Location.Model
         SPLINE,
         SPAWNER,
         TILE,
-        START_PLATFORM
+        START_PLATFORM,
+        GEOMETRY_ROTATION
     }
 }
