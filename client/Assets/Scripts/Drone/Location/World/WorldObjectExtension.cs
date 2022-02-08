@@ -11,11 +11,11 @@ namespace Drone.Location.World
         [NotNull]
         public List<T> GetObjectComponents<T>()
         {
-            return GetSceneObjects().Where(o => o.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
+            return GetInnerObjects().Where(o => o.GetComponent<T>() != null).Select(go => go.GetComponent<T>()).ToList();
         }
 
         [NotNull]
-        private List<GameObject> GetSceneObjects()
+        public List<GameObject> GetInnerObjects()
         {
             return gameObject.GetComponentsOnlyInChildren<Transform>(true).ToList().Select(t => t.gameObject).ToList();
         }

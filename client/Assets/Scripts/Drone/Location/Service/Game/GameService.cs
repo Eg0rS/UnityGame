@@ -119,7 +119,7 @@ namespace Drone.Location.Service.Game
 
         private void OnDestroy()
         {
-            Destroy(_curvedWorldController.gameObject);
+            Destroy(_curvedWorldController);
         }
     }
 }

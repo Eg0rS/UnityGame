@@ -4,48 +4,58 @@
           type="start">
         <obstacle_types>
             <type>column</type>
-            <type id="column"/>
-            <type id="base"/>
+            <type>base</type>
         </obstacle_types>
+        <dead_zones>
+            <zone begin="0" end="20"/>
+        </dead_zones>
     </tile>
     <tile id="Finish" prefab="AssetObjects\Location\CityZone\CityZoneTile\pfFinishTile50@embeded" zone="city"
           type="finish">
         <obstacle_types>
-            <type id="column"/>
-            <type id="base"/>
+            <type>column</type>
+            <type>base</type>
         </obstacle_types>
+        <dead_zones>
+            <zone begin="30" end="40"/>
+        </dead_zones>
     </tile>
     <tile id="Forest1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfForestTile100@embeded"
           zone="city" type="regular">
         <obstacle_types>
-            <type id="wood"/>
+            <type>wood</type>
         </obstacle_types>
     </tile>
     <tile id="Tunnel1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfTunnelTile100@embeded"
           zone="city" type="regular">
         <obstacle_types>
-            <type id="column"/>
-            <type id="base"/>
+            <type>column</type>
+            <type>base</type>
         </obstacle_types>
+        
     </tile>
     <tile id="Collector1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfCollectorTile100@embeded"
           zone="city" type="regular">
         <obstacle_types>
-            <type id="tube"/>
+            <type>tube</type>
         </obstacle_types>
     </tile>
     <tile id="City1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfCityTile100@embeded" zone="city"
           type="regular">
         <obstacle_types>
-            <type id="column"/>
-            <type id="base"/>
+            <type>column</type>
+            <type>base</type>
         </obstacle_types>
+        <dead_zones>
+            <zone begin="0" end="20"/>
+            <zone begin="70" end="90"/>
+        </dead_zones>
     </tile>
     <tile id="Port1" prefab="AssetObjects\Location\CityZone\CityZoneTile\CompleteTile\pfPortTile100@embeded" zone="city"
           type="regular">
         <obstacle_types>
-            <type id="column"/>
-            <type id="base"/>
+            <type>column</type>
+            <type>base</type>
         </obstacle_types>
     </tile>
 </tiles>
