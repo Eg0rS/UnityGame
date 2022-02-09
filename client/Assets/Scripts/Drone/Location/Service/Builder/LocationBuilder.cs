@@ -3,7 +3,6 @@ using System.Linq;
 using RSG;
 using UnityEngine;
 using Adept.Logger;
-using AgkCommons.Extension;
 using BezierSolution;
 using Drone.Core.Service;
 using Drone.Levels.Descriptor;
@@ -152,11 +151,11 @@ namespace Drone.Location.Service.Builder
 
         public void Build()
         {
-            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline).Then(ConfigurateTiles).Then(CreateGameWorld);
+            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreateGameWorld);
         }
 
         [NotNull]
-        private IPromise ConfigurateTiles()
+        private IPromise ConfigureTiles()
         {
             Promise promise = new Promise();
 
