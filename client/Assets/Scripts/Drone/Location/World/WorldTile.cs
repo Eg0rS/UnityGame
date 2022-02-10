@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Drone.Location.Model.Spawner;
 using Tile.Descriptor;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ namespace Drone.Location.World
         private Transform _begin;
         private Transform _end;
         private GameObject _spot;
-        private Transform _obstacles;
+        private SpawnerModel _spawner;
 
         public void Init(TileDescriptor tileDescriptor, GameObject spot)
         {
@@ -29,7 +30,8 @@ namespace Drone.Location.World
             List<GameObject> allObjects = GetInnerObjects();
             _begin = allObjects.Find(x => x.name == "Begin").transform;
             _end = allObjects.Find(x => x.name == "End").transform;
-            _obstacles = allObjects.Find(x => x.gameObject.name == "Obstacle").transform;
+            _spawner = gameObject.GetComponentInChildren<SpawnerModel>();
+            _spawner.TileDescriptor = _descriptor;
         }
 
         public void Configure()
@@ -42,7 +44,7 @@ namespace Drone.Location.World
                     pos = new Vector3(0, 0, flag.End);
                 }
                 if ((pos + step).magnitude <= _end.localPosition.magnitude || flag == null) {
-                    GameObject instSpot = Instantiate(_spot, _obstacles);
+                    GameObject instSpot = Instantiate(_spot, _spawner.transform);
                     instSpot.transform.localPosition = pos;
                 }
                 pos += step;

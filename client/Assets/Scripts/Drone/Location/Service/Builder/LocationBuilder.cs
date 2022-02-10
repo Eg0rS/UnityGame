@@ -25,7 +25,7 @@ namespace Drone.Location.Service.Builder
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
 
         private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
-        private const string SPOT_PATH = "World/pfMetric@embeded";
+        private const string SPOT_PATH = "World/pfSpot@embeded";
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
         private const string SPLINE = "Spline";

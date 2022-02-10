@@ -127,5 +127,6 @@ namespace Drone.Location.World
         {
             get { return _isPauseWorld; }
         }
+        public Dictionary<string, GameObject> LoadedCache { get; set; }
     }
 }
