@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1383993840091224932
+--- !u!114 &-943685676563414563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18,9 +18,9 @@ MonoBehaviour:
     Downsample: 0
     Source: 1
     NormalSamples: 1
-    Intensity: 10
-    DirectLightingStrength: 0.205
-    Radius: 0.03
+    Intensity: 3
+    DirectLightingStrength: 0.25
+    Radius: 0.035
     SampleCount: 6
 --- !u!114 &11400000
 MonoBehaviour:
@@ -35,8 +35,8 @@ MonoBehaviour:
   m_Name: CustomForwardRendererData
   m_EditorClassIdentifier: 
   m_RendererFeatures:
-  - {fileID: -1383993840091224932}
-  m_RendererFeatureMap: 9ca40866ef10cbec
+  - {fileID: -943685676563414563}
+  m_RendererFeatureMap: dd41d084e05ae7f2
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
