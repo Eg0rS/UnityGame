@@ -5,13 +5,13 @@ using UnityEngine;
 using Adept.Logger;
 using BezierSolution;
 using Drone.Core.Service;
+using Drone.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
-using Drone.Obstacles;
 using GameKit.World;
 using JetBrains.Annotations;
 using Tile.Descriptor;
@@ -44,9 +44,10 @@ namespace Drone.Location.Service.Builder
 
         private LevelDescriptor _levelDescriptor;
 
+        private DifficultDescriptors _difficultDescriptors;
+
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
-        private Dictionary<ObstacleType, Dictionary<GameObject, int>> _obstacles;
 
         private LocationBuilder(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
         {
@@ -64,6 +65,12 @@ namespace Drone.Location.Service.Builder
         public LocationBuilder Container(Transform container)
         {
             _container = container;
+            return this;
+        }
+
+        public LocationBuilder Difficult(DifficultDescriptors difficultDescriptors)
+        {
+            _difficultDescriptors = difficultDescriptors;
             return this;
         }
 
@@ -185,7 +192,7 @@ namespace Drone.Location.Service.Builder
             foreach (string order in orderTile) {
                 KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(x => x.Key.Id == order);
                 WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>();
-                worldTile.Init(tile.Key, _spot);
+                worldTile.Init(tile.Key, _spot, _difficultDescriptors.Descriptors.FirstOrDefault(x => x.DifficultName == _levelDescriptor.Type));
                 _worldTiles.Add(worldTile);
                 if (lastTile == null) {
                     lastTile = worldTile;

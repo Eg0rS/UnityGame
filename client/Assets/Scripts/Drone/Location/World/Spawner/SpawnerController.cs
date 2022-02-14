@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Extension;
+using Drone.Levels.Descriptor;
 using Drone.Location.Model;
+using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Spawner;
 using Drone.Location.Service;
 using IoC.Attribute;
@@ -13,11 +15,7 @@ namespace Drone.Location.World.Spawner
 {
     public class SpawnerController : MonoBehaviour, IWorldObjectController<SpawnerModel>
     {
-        private const string PRE_PATH = "AssetObjects/Location/CityZone/Obstacles/";
-        private const string BUNDLE_NAME = "@embeded";
-        [Inject]
-        private DroneWorld _droneWorld;
-
+        private const float ROLLING_INTEREST = 20.0f;
         [Inject]
         private CreateLocationObjectService _createLocationObjectService;
         [Inject]
@@ -27,14 +25,14 @@ namespace Drone.Location.World.Spawner
         private Transform[] _spawnSpots;
         private TileDescriptor _descriptor;
 
-        private Dictionary<Dif, float> _difficult = new Dictionary<Dif, float>() {
-                {Dif.EASY, 0.6f},
-                {Dif.NORMAL, 0.6f},
-                {Dif.HARD, 0.6f},
-        };
+        private Dictionary<LevelType, float> _difficult = new Dictionary<LevelType, float>();
 
         public void Init(SpawnerModel model)
         {
+            _difficult.Add(LevelType.EASY, model.Diffcult.EasySpawnChance);
+            _difficult.Add(LevelType.NORMAL, model.Diffcult.NormalSpawnChance);
+            _difficult.Add(LevelType.HARD, model.Diffcult.HardSpawnChance);
+
             ObjectType = model.ObjectType;
             _descriptor = model.TileDescriptor;
             _spawnSpots = gameObject.GetComponentsOnlyInChildren<Transform>();
@@ -49,28 +47,21 @@ namespace Drone.Location.World.Spawner
                 float random = Random.Range(0, sum);
 
                 float step = 0;
-                foreach (KeyValuePair<Dif, float> anyDif in _difficult) {
+                foreach (KeyValuePair<LevelType, float> anyDif in _difficult) {
                     step += anyDif.Value;
-                    if (random < step) {
-                        string type = _descriptor.ObstacleTypes1[Random.Range(0, _descriptor.ObstacleTypes1.Length)].UnderscoreToCamelCase();
-                        _loadLocationObjectService
-                                .LoadResource<GameObject>(PRE_PATH + type + "/pf" + anyDif.Key.ToString().UnderscoreToCamelCase() + BUNDLE_NAME)
-                                .Then(go => {
-                                    GameObject instantiate = Instantiate(go, spawnSpot);
-                                    instantiate.GetChildren()[Random.Range(0, instantiate.GetChildren().Count)].SetActive(true);
-                                    
-                                });
-                        break;
+                    if (!(random < step)) {
+                        continue;
                     }
+                    string type = _descriptor.ObstacleTypes[Random.Range(0, _descriptor.ObstacleTypes.Length)].UnderscoreToCamelCase();
+                    _loadLocationObjectService.LoadObstacle(_descriptor, type, anyDif.Key)
+                                              .Then(go => {
+                                                  GameObject instantiate = Instantiate(go, spawnSpot);
+                                                  instantiate.GetChildren()[Random.Range(0, instantiate.GetChildren().Count)].SetActive(true);
+                                                  _createLocationObjectService.AttachController(instantiate.GetComponent<PrefabModel>());
+                                              });
+                    break;
                 }
             }
         }
-    }
-
-    public enum Dif
-    {
-        EASY,
-        NORMAL,
-        HARD
     }
 }

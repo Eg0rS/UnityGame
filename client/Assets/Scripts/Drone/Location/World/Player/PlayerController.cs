@@ -1,3 +1,4 @@
+using System.Linq;
 using AgkCommons.Event;
 using AgkCommons.Extension;
 using Drone.Location.Model;
@@ -23,12 +24,14 @@ namespace Drone.Location.World.Player
         private GameObject _collider;
         private GameObject _mesh;
         private GameObject _prefab;
+        private GameObject _particles;
 
         private Service.Control.Drone.Model.DroneModel _model;
 
         public void Init(PlayerModel model)
         {
             _prefab = gameObject.GetChildren()[0];
+            _particles = _prefab.GetChildren().First(x => x.name == "pfParticleWorld");
             ControllerInitialization();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.CHANGE_SPLINE_SEGMENT, OnChangeSplineSegment);
@@ -49,6 +52,7 @@ namespace Drone.Location.World.Player
             _animatorController = _mesh.AddComponent<PlayerAnimatorController>();
             _transitionController = _collider.AddComponent<PlayerTransitionController>();
             _animatorController.Configure();
+            _animatorController.Particles = _particles;
             _transitionController.Configure(_mesh);
         }
 

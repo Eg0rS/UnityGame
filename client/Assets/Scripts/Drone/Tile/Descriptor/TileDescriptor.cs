@@ -1,6 +1,5 @@
 using System.Xml.Serialization;
 using Drone.Levels.Descriptor;
-using Drone.Obstacles;
 
 namespace Tile.Descriptor
 {
@@ -15,12 +14,10 @@ namespace Tile.Descriptor
         [XmlAttribute("type")]
         public TileType Type { get; set; }
 
-        [XmlElement("")]
-        public ObstacleType[] ObstacleTypes { get; set; }
-
         [XmlArray("obstacle_types")]
         [XmlArrayItem("type")]
-        public string[] ObstacleTypes1 { get; set; }
+        public string[] ObstacleTypes { get; set; }
+        
         [XmlArray("dead_zones")]
         [XmlArrayItem("zone")]
         public DeadZone[] DeadZones { get; set; }

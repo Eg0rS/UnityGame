@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Drone.LevelDifficult.Descriptor;
 using Drone.Location.Model.Spawner;
 using Tile.Descriptor;
 using UnityEngine;
@@ -8,7 +9,6 @@ namespace Drone.Location.World
 {
     public class WorldTile : WorldObjectExtension
     {
-        private const int SPAWN_STEP = 20;
         public Transform Begin
         {
             get { return _begin; }
@@ -22,8 +22,9 @@ namespace Drone.Location.World
         private Transform _end;
         private GameObject _spot;
         private SpawnerModel _spawner;
+        private float _spawnStep;
 
-        public void Init(TileDescriptor tileDescriptor, GameObject spot)
+        public void Init(TileDescriptor tileDescriptor, GameObject spot, DifficultDescriptor difficultDescriptor)
         {
             _descriptor = tileDescriptor;
             _spot = spot;
@@ -32,11 +33,13 @@ namespace Drone.Location.World
             _end = allObjects.Find(x => x.name == "End").transform;
             _spawner = gameObject.GetComponentInChildren<SpawnerModel>();
             _spawner.TileDescriptor = _descriptor;
+            _spawner.Diffcult = difficultDescriptor;
+            _spawnStep = difficultDescriptor.SpawnStep;
         }
 
         public void Configure()
         {
-            Vector3 step = new Vector3(0, 0, SPAWN_STEP);
+            Vector3 step = new Vector3(0, 0, _spawnStep);
             Vector3 pos = Vector3.zero;
             while (pos.magnitude <= _end.localPosition.magnitude) {
                 DeadZone flag = _descriptor.DeadZones?.FirstOrDefault(x => pos.magnitude >= x.Begin && pos.magnitude <= x.End);
