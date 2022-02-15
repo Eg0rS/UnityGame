@@ -1,37 +1,67 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Extension;
-using Drone.Obstacles;
-using RSG.Promises;
+using Drone.Levels.Descriptor;
+using Drone.Location.Model;
+using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.Spawner;
+using Drone.Location.Service;
+using IoC.Attribute;
+using Tile.Descriptor;
 using UnityEngine;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
 namespace Drone.Location.World.Spawner
 {
-    public class SpawnerController : MonoBehaviour
+    public class SpawnerController : MonoBehaviour, IWorldObjectController<SpawnerModel>
     {
-        public void SpawnObstacles(ref Dictionary<ObstacleType, Dictionary<GameObject, int>> allObstacles, List<ObstacleType> obstacleTypesOnTile)
-        {
-            List<GameObject> spawnPlaces = gameObject.GetChildren();
-            Dictionary<GameObject, int> tileObstacles = new Dictionary<GameObject, int>();
-            foreach (Dictionary<GameObject, int> dictionary in allObstacles.Where(x => obstacleTypesOnTile.Contains(x.Key)).Select(x => x.Value)) {
-                tileObstacles = tileObstacles.Union(dictionary).ToDictionary(x => x.Key, x => x.Value);
-            }
+        private const float ROLLING_INTEREST = 20.0f;
+        [Inject]
+        private CreateLocationObjectService _createLocationObjectService;
+        [Inject]
+        private LoadLocationObjectService _loadLocationObjectService;
+        public WorldObjectType ObjectType { get; set; }
 
-            foreach (GameObject place in spawnPlaces) {
-                int min = tileObstacles.Min(x => x.Value);
-                List<GameObject> gameObjects = tileObstacles.Where(x => x.Value == min).Select(pair => pair.Key).ToList();
-                GameObject go = gameObjects[new Random().Next(gameObjects.Count)];
-                tileObstacles[go]++;
-                Instantiate(go, place.transform);
+        private Transform[] _spawnSpots;
+        private TileDescriptor _descriptor;
+
+        private Dictionary<LevelType, float> _difficult = new Dictionary<LevelType, float>();
+
+        public void Init(SpawnerModel model)
+        {
+            _difficult.Add(LevelType.EASY, model.Diffcult.EasySpawnChance);
+            _difficult.Add(LevelType.NORMAL, model.Diffcult.NormalSpawnChance);
+            _difficult.Add(LevelType.HARD, model.Diffcult.HardSpawnChance);
+
+            ObjectType = model.ObjectType;
+            _descriptor = model.TileDescriptor;
+            _spawnSpots = gameObject.GetComponentsOnlyInChildren<Transform>();
+            SpawnObstacles();
+        }
+
+        private void SpawnObstacles()
+        {
+            foreach (Transform spawnSpot in _spawnSpots) {
+                float sum = _difficult.Values.Sum();
+
+                float random = Random.Range(0, sum);
+
+                float step = 0;
+                foreach (KeyValuePair<LevelType, float> anyDif in _difficult) {
+                    step += anyDif.Value;
+                    if (!(random < step)) {
+                        continue;
+                    }
+                    string type = _descriptor.ObstacleTypes[Random.Range(0, _descriptor.ObstacleTypes.Length)].UnderscoreToCamelCase();
+                    _loadLocationObjectService.LoadObstacle(_descriptor, type, anyDif.Key)
+                                              .Then(go => {
+                                                  GameObject instantiate = Instantiate(go, spawnSpot);
+                                                  instantiate.GetChildren()[Random.Range(0, instantiate.GetChildren().Count)].SetActive(true);
+                                                  _createLocationObjectService.AttachController(instantiate.GetComponent<PrefabModel>());
+                                              });
+                    break;
+                }
             }
-            allObstacles.Where(x => obstacleTypesOnTile.Contains(x.Key))
-                        .Select(x => x.Value)
-                        .Each(dictionary => tileObstacles.Each(matched => {
-                            if (dictionary.ContainsKey(matched.Key)) {
-                                dictionary[matched.Key] = matched.Value;
-                            }
-                        }));
         }
     }
 }

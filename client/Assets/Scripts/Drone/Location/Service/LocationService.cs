@@ -2,6 +2,7 @@ using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Screens.Service;
 using Drone.Core;
+using Drone.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Service.Builder;
 using Drone.Location.UI.Screen;
@@ -22,6 +23,9 @@ namespace Drone.Location.Service
         [Inject]
         private IoCProvider<OverlayManager> _overlayManager;
 
+        [Inject]
+        private DifficultDescriptors _difficultDescriptors;
+
         public void SwitchLocation(LevelDescriptor levelDescriptor)
         {
             _overlayManager.Require().ShowPreloader();
@@ -31,7 +35,7 @@ namespace Drone.Location.Service
 
         private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
-            _locationBuilderManager.CreateDefault().LevelDescriptor(levelDescriptor).GameWorldContainer().Build();
+            _locationBuilderManager.CreateDefault().Difficult(_difficultDescriptors).LevelDescriptor(levelDescriptor).GameWorldContainer().Build();
         }
     }
 }

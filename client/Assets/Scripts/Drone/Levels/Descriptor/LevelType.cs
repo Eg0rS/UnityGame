@@ -6,10 +6,10 @@ namespace Drone.Levels.Descriptor
     {
         [XmlEnum("none")]
         NONE,
+        [XmlEnum("easy")]
+        EASY,
         [XmlEnum("normal")]
         NORMAL,
-        [XmlEnum("medium")]
-        MEDIUM,
         [XmlEnum("hard")]
         HARD,
         [XmlEnum("boss")]

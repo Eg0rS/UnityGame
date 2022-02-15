@@ -18,6 +18,7 @@ namespace Drone.Location.World
         private PlayerController _playerController;
         private float _currentTimeScale;
         private bool _isPauseWorld = false;
+        private Dictionary<string, GameObject> _loadedCache = new Dictionary<string, GameObject>();
 
         [PublicAPI]
         public void Pause()
@@ -126,5 +127,6 @@ namespace Drone.Location.World
         {
             get { return _isPauseWorld; }
         }
+        public Dictionary<string, GameObject> LoadedCache { get; set; }
     }
 }

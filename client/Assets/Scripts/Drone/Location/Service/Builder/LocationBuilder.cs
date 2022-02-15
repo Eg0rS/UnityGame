@@ -3,16 +3,15 @@ using System.Linq;
 using RSG;
 using UnityEngine;
 using Adept.Logger;
-using AgkCommons.Extension;
 using BezierSolution;
 using Drone.Core.Service;
+using Drone.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
-using Drone.Obstacles;
 using GameKit.World;
 using JetBrains.Annotations;
 using Tile.Descriptor;
@@ -26,6 +25,7 @@ namespace Drone.Location.Service.Builder
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
 
         private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
+        private const string SPOT_PATH = "World/pfSpot@embeded";
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
         private const string SPLINE = "Spline";
@@ -40,12 +40,14 @@ namespace Drone.Location.Service.Builder
         private GameObject _spline;
         private GameObject _player;
         private GameObject _level;
+        private GameObject _spot;
 
         private LevelDescriptor _levelDescriptor;
 
+        private DifficultDescriptors _difficultDescriptors;
+
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
-        private Dictionary<ObstacleType, Dictionary<GameObject, int>> _obstacles;
 
         private LocationBuilder(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
         {
@@ -63,6 +65,12 @@ namespace Drone.Location.Service.Builder
         public LocationBuilder Container(Transform container)
         {
             _container = container;
+            return this;
+        }
+
+        public LocationBuilder Difficult(DifficultDescriptors difficultDescriptors)
+        {
+            _difficultDescriptors = difficultDescriptors;
             return this;
         }
 
@@ -101,10 +109,12 @@ namespace Drone.Location.Service.Builder
         {
             Promise promise = new Promise();
             _loadObjectService.LoadResource<GameObject>(PLAYER_CONTAINER_PATH)
-                              .Then(loadObject => {
-                                  Object.Instantiate(loadObject, _player.transform);
-                                  promise.Resolve();
-                              });
+                              .Then(loadObject => { Object.Instantiate(loadObject, _player.transform); })
+                              .Then(() => _loadObjectService.LoadResource<GameObject>(SPOT_PATH)
+                                                            .Then(loadObject => {
+                                                                _spot = loadObject;
+                                                                promise.Resolve();
+                                                            }));
             return promise;
         }
 
@@ -148,21 +158,18 @@ namespace Drone.Location.Service.Builder
 
         public void Build()
         {
-            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(ConfigurateTiles).Then(CreateLevelSpline).Then(CreateGameWorld);
+            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreateGameWorld);
         }
 
         [NotNull]
-        private IPromise ConfigurateTiles()
+        private IPromise ConfigureTiles()
         {
             Promise promise = new Promise();
-            _loadObjectService.LoadLevelObstacles(_levelDescriptor)
-                              .Then(loadedObstacles => {
-                                  _obstacles = loadedObstacles;
-                                  foreach (WorldTile worldTile in _worldTiles) {
-                                      worldTile.Configurate(ref _obstacles);
-                                  }
-                                  promise.Resolve();
-                              });
+
+            foreach (WorldTile worldTile in _worldTiles) {
+                worldTile.Configure();
+            }
+            promise.Resolve();
             return promise;
         }
 
@@ -182,24 +189,17 @@ namespace Drone.Location.Service.Builder
             WorldTile lastTile = null;
 
             List<string> orderTile = _levelDescriptor.GameData.Tiles.TilesData.Select(x => x.Id).ToList();
-
             foreach (string order in orderTile) {
                 KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(x => x.Key.Id == order);
                 WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>();
+                worldTile.Init(tile.Key, _spot, _difficultDescriptors.Descriptors.FirstOrDefault(x => x.DifficultName == _levelDescriptor.Type));
                 _worldTiles.Add(worldTile);
-                worldTile.Descriptor = tile.Key;
                 if (lastTile == null) {
                     lastTile = worldTile;
-                } else {
-                    GameObject anchors = lastTile.gameObject.GetChildren().First(x => x.name == "Anchors");
-                    Transform end = anchors.GetChildren().Find(x => x.name == "End").transform;
-
-                    GameObject anchors1 = lastTile.gameObject.GetChildren().First(x => x.name == "Anchors");
-                    Transform begin = anchors1.GetChildren().Find(x => x.name == "Begin").transform;
-
-                    worldTile.gameObject.transform.position = end.position - begin.localPosition;
-                    lastTile = worldTile;
+                    continue;
                 }
+                worldTile.gameObject.transform.position = lastTile.End.position - lastTile.Begin.localPosition;
+                lastTile = worldTile;
             }
         }
     }
