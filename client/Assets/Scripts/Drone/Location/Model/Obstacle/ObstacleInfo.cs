@@ -23,7 +23,7 @@ namespace Drone.Location.Model.Obstacle
     [System.Serializable]
     public class ColumnsData
     {
-        public bool[] columns;
+        public bool[] columns = {true, true, true};
     }
 
     [System.Serializable]
