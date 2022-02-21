@@ -17,7 +17,7 @@ namespace Drone.Location.Service
     [Injectable]
     public class LoadLocationObjectService
     {
-        private const string PRE_PATH = "AssetObjects/Location/Zones/";
+        private const string PRE_PATH = "AssetObjects/Zones/";
         private const string BUNDLE_NAME = "@embeded";
         private const string TILE = "/Tile/";
         private const string OBSTACLE = "/Obstacle/";
