@@ -4,7 +4,7 @@ Shader "Amazing Assets/Curved World/Simple Lit"
     // Keep properties of StandardSpecular shader for upgrade reasons.
     Properties
     {
-        [CurvedWorldBendSettings] _CurvedWorldBendSettings("0,27|1|1", Vector) = (0, 0, 0, 0)
+        [CurvedWorldBendSettings] _CurvedWorldBendSettings("0|1|1", Vector) = (0, 0, 0, 0)
 
         [MainTexture] _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         [MainColor] _BaseMap("Base Map (RGB) Smoothness / Alpha (A)", 2D) = "white" {}
@@ -102,7 +102,7 @@ Shader "Amazing Assets/Curved World/Simple Lit"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/SimpleLitInput.hlsl"
 
 
-#pragma shader_feature_local CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE CURVEDWORLD_BEND_TYPE_TWISTEDSPIRAL_X_POSITIVE
+#define CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
 #define CURVEDWORLD_BEND_ID_1
 #pragma shader_feature_local CURVEDWORLD_DISABLED_ON
 #pragma shader_feature_local CURVEDWORLD_NORMAL_TRANSFORMATION_ON
@@ -143,7 +143,7 @@ Shader "Amazing Assets/Curved World/Simple Lit"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/SimpleLitInput.hlsl"
 
 
-#pragma shader_feature_local CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE CURVEDWORLD_BEND_TYPE_TWISTEDSPIRAL_X_POSITIVE
+#define CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
 #define CURVEDWORLD_BEND_ID_1
 #pragma shader_feature_local CURVEDWORLD_DISABLED_ON
 #pragma shader_feature_local CURVEDWORLD_NORMAL_TRANSFORMATION_ON
@@ -184,7 +184,7 @@ Shader "Amazing Assets/Curved World/Simple Lit"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/SimpleLitInput.hlsl"
 
 
-#pragma shader_feature_local CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE CURVEDWORLD_BEND_TYPE_TWISTEDSPIRAL_X_POSITIVE
+#define CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
 #define CURVEDWORLD_BEND_ID_1
 #pragma shader_feature_local CURVEDWORLD_DISABLED_ON
 #pragma shader_feature_local CURVEDWORLD_NORMAL_TRANSFORMATION_ON
@@ -268,7 +268,7 @@ Shader "Amazing Assets/Curved World/Simple Lit"
             #pragma fragment fragScenePickingPass
 
 
-#pragma shader_feature_local CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE CURVEDWORLD_BEND_TYPE_TWISTEDSPIRAL_X_POSITIVE
+#define CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
 #define CURVEDWORLD_BEND_ID_1
 #pragma shader_feature_local CURVEDWORLD_DISABLED_ON
 
@@ -304,7 +304,7 @@ Shader "Amazing Assets/Curved World/Simple Lit"
             #pragma fragment fragSceneHighlightPass
 
 
-#pragma shader_feature_local CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE CURVEDWORLD_BEND_TYPE_TWISTEDSPIRAL_X_POSITIVE
+#define CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
 #define CURVEDWORLD_BEND_ID_1
 #pragma shader_feature_local CURVEDWORLD_DISABLED_ON
 
