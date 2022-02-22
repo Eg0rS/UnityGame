@@ -6,6 +6,7 @@ using IoC.Attribute;
 using IoC.Util;
 using Adept.Logger;
 using AgkUI.Element.Buttons;
+using AgkUI.Element.Text;
 using Drone.Core.UI.Dialog;
 using Drone.Settings.Service;
 using UnityEngine;
@@ -29,6 +30,8 @@ namespace Drone.Settings.UI
 
         [UIComponentBinding("MusicButton")]
         private ToggleButton _musicButton;
+        [UIComponentBinding("Seed")]
+        private UILabel _seed;
 
         [UICreated]
         private void Init()
@@ -37,6 +40,7 @@ namespace Drone.Settings.UI
             _musicButton.IsOn = _settingsService.GetMusicMute();
             _soundButton.OnClick.AddListener(OnSoundButton);
             _musicButton.OnClick.AddListener(OnMusicButton);
+            _seed.text = "seed: " + _settingsService.GetSeed();
         }
 
         private void OnGUI()

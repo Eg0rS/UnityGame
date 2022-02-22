@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
@@ -16,24 +15,27 @@ using Drone.Location.Service.Control.Drone.Model;
 using Drone.Location.Service.Control.Drone.Service;
 using Drone.Location.World;
 using IoC.Attribute;
-using RSG.Promises;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Drone.Location.Service.Game
 {
     [Injectable]
     public class GameService : GameEventDispatcher, IWorldServiceInitiable
     {
-        [Inject] private DroneWorld _gameWorld;
+        [Inject]
+        private DroneWorld _gameWorld;
 
-        [Inject] private OverlayManager _overlayManager;
+        [Inject]
+        private OverlayManager _overlayManager;
 
-        [Inject] private DialogManager _dialogManager;
+        [Inject]
+        private DialogManager _dialogManager;
 
-        [Inject] private LevelService _levelService;
+        [Inject]
+        private LevelService _levelService;
 
-        [Inject] private DroneService _droneService;
+        [Inject]
+        private DroneService _droneService;
 
         private const float TIME_FOR_DEAD = 0.3f;
 
@@ -47,8 +49,7 @@ namespace Drone.Location.Service.Game
         {
             InitCurveWorldController();
             Time.timeScale = 1f;
-            DroneModel droneModel =
-                new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
+            DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, droneModel));
@@ -69,18 +70,16 @@ namespace Drone.Location.Service.Game
         {
             float fromHorizontal = _curvedWorldController.bendHorizontalSize;
             float toHorizontal = fromHorizontal * -1;
-            DOVirtual.Float(fromHorizontal, toHorizontal, 10.0f,
-                value => _curvedWorldController.bendHorizontalSize = value);
+            DOVirtual.Float(fromHorizontal, toHorizontal, 10.0f, value => _curvedWorldController.bendHorizontalSize = value);
             float fromVertical = _curvedWorldController.bendVerticalSize;
-            float toVertical = Random.Range(-1.5f, 1.5f);
+            float toVertical = UnityEngine.Random.Range(-1.5f, 1.5f);
             DOVirtual.Float(fromVertical, toVertical, 10.0f, value => _curvedWorldController.bendVerticalSize = value);
         }
 
         private void OnEndGame(InGameEvent inGameEvent)
         {
             EndGameReasons reason = inGameEvent.EndGameReason;
-            switch (reason)
-            {
+            switch (reason) {
                 case EndGameReasons.CRUSH:
                     StartCoroutine(GameFailed());
                     break;
@@ -101,14 +100,10 @@ namespace Drone.Location.Service.Game
 
         private void SetStatsInProgress(bool isWin)
         {
-            if (!isWin)
-            {
+            if (!isWin) {
                 return;
             }
-
-            Dictionary<LevelTask, bool> tasks = new Dictionary<LevelTask, bool>();
-            _levelDescriptor.GameData.LevelTasks.Each(x => tasks.Add(x, true));
-            _levelService.SetLevelProgress(_levelService.SelectedLevelId, tasks, _countChips);
+            _levelService.SetLevelProgress(_levelDescriptor, _countChips);
         }
 
         private void Victory()

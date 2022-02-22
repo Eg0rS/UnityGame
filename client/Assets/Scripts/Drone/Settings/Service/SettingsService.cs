@@ -1,14 +1,16 @@
-﻿using Drone.Billing.Service;
+﻿using AgkCommons.Event;
+using Drone.Billing.Service;
 using Drone.Core.Audio.Service;
 using Drone.Core.Service;
 using Drone.Inventory.Service;
 using Drone.Levels.Service;
 using Drone.Settings.Model;
 using IoC.Attribute;
+using IoC.Util;
 
 namespace Drone.Settings.Service
 {
-    public class SettingsService : IConfigurable
+    public class SettingsService : GameEventDispatcher, IConfigurable
     {
         [Inject]
         private SettingsRepository _settingsRepository;
@@ -17,14 +19,14 @@ namespace Drone.Settings.Service
         private BillingService _billingService;
 
         [Inject]
-        private LevelService _levelService;
+        private IoCProvider<LevelService> _levelService;
 
         [Inject]
         private InventoryService _inventoryService;
 
         [Inject]
         private AudioService _audioService;
-        
+
         private void UpdateSettings()
         {
             SettingsModel settingsModel = RequireSettingsModel();
@@ -49,9 +51,11 @@ namespace Drone.Settings.Service
         public void Configure()
         {
             if (!HasSettingsModel()) {
-                SettingsModel settingsModel = new SettingsModel();
-                settingsModel.IsMusicMute = true;
-                settingsModel.IsSoundMute = true;
+                SettingsModel settingsModel = new SettingsModel {
+                        IsMusicMute = true,
+                        IsSoundMute = true,
+                        Seed = UnityEngine.Random.Range(0, 10000)
+                };
                 _settingsRepository.Set(settingsModel);
             }
             UpdateSettings();
@@ -83,23 +87,16 @@ namespace Drone.Settings.Service
             _settingsRepository.Set(settingsModel);
         }
 
+        public int GetSeed()
+        {
+            return RequireSettingsModel().Seed;
+        }
+
         public void ResetAllProgress()
         {
             _inventoryService.ResetInventory();
-            _levelService.ResetPlayerProgress();
+            _levelService.Require().ResetPlayerProgress();
             _billingService.SetCreditsCount(0);
-        }
-        
-        public void SetSwipeControl(bool value)
-        {
-            SettingsModel settingsModel = RequireSettingsModel();
-            settingsModel.IsSwipe = value;
-            _settingsRepository.Set(settingsModel);
-        }
-        
-        public bool GetSwipeControl()
-        {
-            return RequireSettingsModel().IsSwipe;
         }
     }
 }

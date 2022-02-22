@@ -9,7 +9,6 @@ using Drone.Location.Service;
 using IoC.Attribute;
 using Tile.Descriptor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Drone.Location.World.Spawner
 {
@@ -44,7 +43,7 @@ namespace Drone.Location.World.Spawner
             foreach (Transform spawnSpot in _spawnSpots) {
                 float sum = _difficult.Values.Sum();
 
-                float random = Random.Range(0, sum);
+                float random = UnityEngine.Random.Range(0, sum);
 
                 float step = 0;
                 foreach (KeyValuePair<LevelType, float> anyDif in _difficult) {
@@ -52,11 +51,12 @@ namespace Drone.Location.World.Spawner
                     if (!(random < step)) {
                         continue;
                     }
-                    string type = _descriptor.ObstacleTypes[Random.Range(0, _descriptor.ObstacleTypes.Length)].UnderscoreToCamelCase();
+                    string type = _descriptor.ObstacleTypes[UnityEngine.Random.Range(0, _descriptor.ObstacleTypes.Length)].UnderscoreToCamelCase();
                     _loadLocationObjectService.LoadObstacle(_descriptor, type, anyDif.Key)
                                               .Then(go => {
                                                   GameObject instantiate = Instantiate(go, spawnSpot);
-                                                  instantiate.GetChildren()[Random.Range(0, instantiate.GetChildren().Count)].SetActive(true);
+                                                  instantiate.GetChildren()[UnityEngine.Random.Range(0, instantiate.GetChildren().Count)]
+                                                             .SetActive(true);
                                                   _createLocationObjectService.AttachController(instantiate.GetComponent<PrefabModel>());
                                               });
                     break;

@@ -5,7 +5,6 @@ using AgkCommons.Extension;
 using AgkCommons.Resources;
 using Drone.Descriptor;
 using Drone.Levels.Descriptor;
-using Drone.Location.World.Spawner;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using RSG;

@@ -6,6 +6,7 @@ using Drone.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Service.Builder;
 using Drone.Location.UI.Screen;
+using Drone.Random;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -25,6 +26,8 @@ namespace Drone.Location.Service
 
         [Inject]
         private DifficultDescriptors _difficultDescriptors;
+        [Inject]
+        private RandomGenerator _randomGenerator;
 
         public void SwitchLocation(LevelDescriptor levelDescriptor)
         {
@@ -35,6 +38,7 @@ namespace Drone.Location.Service
 
         private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
+            _randomGenerator.InitGenerator();
             _locationBuilderManager.CreateDefault().Difficult(_difficultDescriptors).LevelDescriptor(levelDescriptor).GameWorldContainer().Build();
         }
     }
