@@ -11,7 +11,6 @@ using Drone.Levels.IoC;
 using Drone.Location.IoC;
 using Drone.Location.Service.Control.Drone.Module;
 using Drone.PowerUp.IoC;
-using Drone.Random;
 using Drone.Settings.IoC;
 using Drone.Shop.IoC;
 using IoC;
@@ -48,7 +47,6 @@ namespace Drone.Core.Filter
             context.RegisterModule(new InventoryModule());
             context.RegisterModule(new LevelModule());
             context.RegisterModule(new SettingsModule());
-            context.RegisterSingleton<RandomGenerator>();
             context.RegisterModule(new BillingModule());
             context.RegisterModule(new ShopModule());
             context.RegisterModule(new DroneModule());
