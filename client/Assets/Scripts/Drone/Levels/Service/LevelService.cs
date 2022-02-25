@@ -1,19 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Event;
-using AgkUI.Dialog.Service;
 using Drone.Billing.Service;
 using Drone.Core.Service;
 using Drone.Descriptor;
-using Drone.LevelMap.UI.DescriptionLevelDialog;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Event;
 using Drone.Levels.Model;
 using Drone.Levels.Repository;
 using IoC.Attribute;
-using IoC.Util;
 using JetBrains.Annotations;
-using RSG.Promises;
 
 namespace Drone.Levels.Service
 {
@@ -21,8 +17,6 @@ namespace Drone.Levels.Service
     {
         [Inject]
         private ProgressRepository _progressRepository;
-        [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
         [Inject]
         private BillingService _billingService;
         [Inject]
@@ -32,40 +26,17 @@ namespace Drone.Levels.Service
         public string SelectedLevelId { get; set; }
         public string SelectedDroneId { get; set; }
 
-        public void Configure()
+        public void SetLevelProgress(LevelDescriptor levelDescriptor, int countChips)
         {
-        }
-
-        public void SetLevelProgress(string levelId, Dictionary<LevelTask, bool> levelTasks, int countChips)
-        {
-            PlayerProgressModel model = GetPlayerProgressModel();
-            LevelProgress levelProgress = model.LevelsProgress.FirstOrDefault(a => a.Id == levelId);
-            if (levelProgress == null) {
-                levelProgress = new LevelProgress() {
-                        Id = levelId,
-                        LevelTasks = new Dictionary<string, bool>()
-                };
-                model.LevelsProgress.Add(levelProgress);
-            }
-            foreach (KeyValuePair<LevelTask, bool> task in levelTasks) {
-                if (levelProgress.LevelTasks.ContainsKey(task.Key.Description)) {
-                    levelProgress.LevelTasks[task.Key.Description] = task.Value ? task.Value : levelProgress.LevelTasks[task.Key.Description];
-                } else {
-                    levelProgress.LevelTasks[task.Key.Description] = task.Value;
-                }
-            }
-            int countTasks = levelProgress.LevelTasks.Count;
-            int doneTasks = levelProgress.LevelTasks.Count(x => x.Value);
-            float doneProcent = doneTasks / countTasks;
-            if (doneProcent <= 0.40f) {
-                levelProgress.CountStars = 1;
-            } else if (doneProcent > 0.40f && doneProcent <= 0.75f) {
-                levelProgress.CountStars = 2;
-            } else if (doneProcent > 0.75f) {
-                levelProgress.CountStars = 3;
-            }
+            PlayerProgressModel playerProgress = GetPlayerProgressModel();
+            LevelProgress levelProgress = new LevelProgress() {
+                    Id = levelDescriptor.Id,
+                    LevelVersion = levelDescriptor.Version,
+                    CountChips = countChips
+            };
+            playerProgress.LevelsProgress.Add(levelProgress);
             _billingService.AddCredits(countChips);
-            SaveProgress(model);
+            SaveProgress(playerProgress);
         }
 
         public void ResetPlayerProgress()
@@ -85,8 +56,9 @@ namespace Drone.Levels.Service
         public int GetCurrentLevel()
         {
             List<LevelDescriptor> descriptors = _levelsDescriptors.Levels.OrderBy(o => o.Order).ToList();
+            PlayerProgressModel playerProgress = GetPlayerProgressModel();
             foreach (LevelDescriptor descriptor in descriptors) {
-                LevelProgress progress = GetPlayerProgressModel().LevelsProgress.FirstOrDefault(a => a.Id == descriptor.Id);
+                LevelProgress progress = playerProgress.LevelsProgress.FirstOrDefault(a => a.Id == descriptor.Id);
                 if (progress == null) {
                     return descriptor.Order;
                 }
@@ -129,9 +101,11 @@ namespace Drone.Levels.Service
             Dispatch(new LevelEvent(LevelEvent.UPDATED));
         }
 
-        public LevelsDescriptors LevelsDescriptors
+        public void Configure()
         {
-            get { return _levelsDescriptors; }
+            if (!HasPlayerProgress()) {
+                _progressRepository.Set(new PlayerProgressModel());
+            }
         }
     }
 }

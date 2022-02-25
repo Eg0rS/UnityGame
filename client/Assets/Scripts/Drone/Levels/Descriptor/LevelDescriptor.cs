@@ -16,5 +16,7 @@ namespace Drone.Levels.Descriptor
         public LevelExposition Exposition { get; set; }
         [XmlAttribute("zone")]
         public LevelZoneType Zone { get; set; }
+        [XmlAttribute("version")]
+        public int Version { get; set; }
     }
 }

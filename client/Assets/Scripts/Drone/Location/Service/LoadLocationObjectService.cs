@@ -5,7 +5,6 @@ using AgkCommons.Extension;
 using AgkCommons.Resources;
 using Drone.Descriptor;
 using Drone.Levels.Descriptor;
-using Drone.Location.World.Spawner;
 using IoC.Attribute;
 using JetBrains.Annotations;
 using RSG;
@@ -17,7 +16,7 @@ namespace Drone.Location.Service
     [Injectable]
     public class LoadLocationObjectService
     {
-        private const string PRE_PATH = "AssetObjects/Location/Zones/";
+        private const string PRE_PATH = "AssetObjects/Zones/";
         private const string BUNDLE_NAME = "@embeded";
         private const string TILE = "/Tile/";
         private const string OBSTACLE = "/Obstacle/";
