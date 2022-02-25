@@ -82,15 +82,11 @@ namespace Drone.LevelMap.UI
         private void SetCompletedSpot()
         {
             _progress.SetActive(true);
-            int placedStars = 0;
             foreach (ToggleButton star in _stars1) {
                 star.Interactable = false;
                 if (_levelViewModel.LevelProgress != null) {
-                    if (_levelViewModel.LevelProgress.CountStars > placedStars) {
-                        star.IsOn = true;
-                        placedStars++;
-                        continue;
-                    }
+                    star.IsOn = true;
+                    continue;
                 }
                 star.IsOn = false;
             }

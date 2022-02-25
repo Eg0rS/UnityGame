@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AgkUI.Binding.Attributes;
 using AgkUI.Binding.Attributes.Method;
 using AgkUI.Core.Model;
@@ -11,7 +10,6 @@ using AgkUI.Element.Text;
 using Drone.Core.UI.Dialog;
 using Drone.Inventory.Model;
 using Drone.Inventory.Service;
-using Drone.Levels.Descriptor;
 using Drone.Levels.Model;
 using Drone.Levels.Service;
 using EndlessScroll;
@@ -67,25 +65,7 @@ namespace Drone.LevelMap.UI.DescriptionLevelDialog
             _startButton.onClick.AddListener(OnStartGameButton);
             _startButton.Select();
             DisplayTitle();
-            DisplayTasks();
             CreateChoiseDron().Then(() => _endlessScroll.Init());
-        }
-
-        private void DisplayTasks()
-        {
-            if (_levelViewModel.LevelDescriptor.GameData.LevelTasks == null) {
-                return;
-            }
-            foreach (LevelTask levelTask in _levelViewModel.LevelDescriptor.GameData.LevelTasks) {
-                if (_levelViewModel.LevelProgress != null) {
-                    if (_levelViewModel.LevelProgress.LevelTasks.ContainsKey(levelTask.Description)) {
-                        _uiService.Create<LevelTaskView>(UiModel.Create<LevelTaskView>(levelTask, _levelViewModel.LevelProgress.LevelTasks[levelTask.Description])
-                                                                .Container(_taskList));
-                        continue;
-                    }
-                }
-                _uiService.Create<LevelTaskView>(UiModel.Create<LevelTaskView>(levelTask, false).Container(_taskList));
-            }
         }
 
         private void OnGUI()

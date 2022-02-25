@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using Drone.Levels.Descriptor;
-
-namespace Drone.Levels.Model
+﻿namespace Drone.Levels.Model
 {
     public class LevelProgress
     {
         private string _id;
-        private int _countStars;
         private int _countChips;
-        private Dictionary<string, bool> _levelTasks;
+        private int _levelVersion;
+        private int _randomSeed;
 
         public string Id
         {
@@ -16,22 +13,21 @@ namespace Drone.Levels.Model
             set { _id = value; }
         }
 
-        public int CountStars
+        public int LevelVersion
         {
-            get { return _countStars; }
-            set { _countStars = value; }
+            get { return _levelVersion; }
+            set { _levelVersion = value; }
+        }
+        public int RandomSeed
+        {
+            get { return _randomSeed; }
+            set { _randomSeed = value; }
         }
 
         public int CountChips
         {
             get { return _countChips; }
             set { _countChips = value; }
-        }
-
-        public Dictionary<string, bool> LevelTasks
-        {
-            get { return _levelTasks; }
-            set { _levelTasks = value; }
         }
     }
 }

@@ -15,13 +15,17 @@ namespace Drone.Billing.Service
 {
     public class BillingService : GameEventDispatcher, IConfigurable
     {
-        [Inject] private BillingRepository _billingRepository;
+        [Inject]
+        private BillingRepository _billingRepository;
 
-        [Inject] private ResourceService _resourceService;
+        [Inject]
+        private ResourceService _resourceService;
 
-        [Inject] private BillingDescriptorRegistry _billingDescriptorRegistry;
+        [Inject]
+        private BillingDescriptorRegistry _billingDescriptorRegistry;
 
-        [Inject] private IoCProvider<DialogManager> _dialogManager;
+        [Inject]
+        private IoCProvider<DialogManager> _dialogManager;
 
         private PlayerResourceModel _resourceModel;
 
@@ -33,8 +37,7 @@ namespace Drone.Billing.Service
 
         private void OnConfigLoaded(Configuration config, object[] loadparameters)
         {
-            foreach (Configuration temp in config.GetList<Configuration>("billing.billingItem"))
-            {
+            foreach (Configuration temp in config.GetList<Configuration>("billing.billingItem")) {
                 BillingDescriptor shopItemDescriptor = new BillingDescriptor();
                 shopItemDescriptor.Configure(temp);
                 _billingDescriptorRegistry.BillingDescriptors.Add(shopItemDescriptor);
@@ -44,8 +47,7 @@ namespace Drone.Billing.Service
         public PlayerResourceModel RequirePlayerResourceModel()
         {
             PlayerResourceModel model = _billingRepository.Get();
-            if (model == null)
-            {
+            if (model == null) {
                 InitPlayerResourceModel();
             }
             return _billingRepository.Require();
@@ -58,10 +60,9 @@ namespace Drone.Billing.Service
 
         private void InitPlayerResourceModel()
         {
-            PlayerResourceModel playerResourceModel = new PlayerResourceModel
-            {
-                CreditsCount = 0,
-                CryptoCount = 0
+            PlayerResourceModel playerResourceModel = new PlayerResourceModel {
+                    CreditsCount = 0,
+                    CryptoCount = 0
             };
             _billingRepository.Set(playerResourceModel);
         }

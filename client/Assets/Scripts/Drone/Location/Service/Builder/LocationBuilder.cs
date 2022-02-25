@@ -49,6 +49,8 @@ namespace Drone.Location.Service.Builder
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
 
+        private uint _seed;
+
         private LocationBuilder(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
         {
             _createObjectService = createObjectService;
@@ -65,6 +67,13 @@ namespace Drone.Location.Service.Builder
         public LocationBuilder Container(Transform container)
         {
             _container = container;
+            return this;
+        }
+
+        [NotNull]
+        public LocationBuilder SetSeed(uint seed)
+        {
+            _seed = seed;
             return this;
         }
 
@@ -122,7 +131,7 @@ namespace Drone.Location.Service.Builder
         {
             DroneWorld gameWorld = _droneWorld.AddComponent<DroneWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
-
+            gameWorld.InitRng(_seed);
             InitControllers(gameWorld);
             InitService();
             gameWorld.Dispatch(new WorldEvent(WorldEvent.CREATED));
