@@ -54,7 +54,6 @@ namespace Drone.Settings.Service
                 SettingsModel settingsModel = new SettingsModel {
                         IsMusicMute = true,
                         IsSoundMute = true,
-                        Seed = UnityEngine.Random.Range(0, 10000)
                 };
                 _settingsRepository.Set(settingsModel);
             }
@@ -85,11 +84,6 @@ namespace Drone.Settings.Service
             SettingsModel settingsModel = RequireSettingsModel();
             settingsModel.IsSoundMute = isMute;
             _settingsRepository.Set(settingsModel);
-        }
-
-        public int GetSeed()
-        {
-            return RequireSettingsModel().Seed;
         }
 
         public void ResetAllProgress()

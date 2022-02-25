@@ -17,6 +17,6 @@ namespace Drone.Levels.Descriptor
         [XmlAttribute("zone")]
         public LevelZoneType Zone { get; set; }
         [XmlAttribute("version")]
-        public string Version { get; set; }
+        public int Version { get; set; }
     }
 }

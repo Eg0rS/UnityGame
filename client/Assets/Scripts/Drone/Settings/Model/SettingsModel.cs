@@ -4,13 +4,6 @@
     {
         private bool _isMusicMute;
         private bool _isSoundMute;
-        private int _seed;
-
-        public int Seed
-        {
-            get { return _seed; }
-            set { _seed = value; }
-        }
 
         public bool IsSoundMute
         {

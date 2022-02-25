@@ -4,7 +4,7 @@
     {
         private string _id;
         private int _countChips;
-        private string _levelVersion;
+        private int _levelVersion;
         private int _randomSeed;
 
         public string Id
@@ -13,7 +13,7 @@
             set { _id = value; }
         }
 
-        public string LevelVersion
+        public int LevelVersion
         {
             get { return _levelVersion; }
             set { _levelVersion = value; }
