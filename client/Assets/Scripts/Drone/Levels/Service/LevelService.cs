@@ -2,18 +2,18 @@
 using System.Linq;
 using AgkCommons.Event;
 using Drone.Billing.Service;
+using Drone.Core.Service;
 using Drone.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Event;
 using Drone.Levels.Model;
 using Drone.Levels.Repository;
-using Drone.Random;
 using IoC.Attribute;
 using JetBrains.Annotations;
 
 namespace Drone.Levels.Service
 {
-    public class LevelService : GameEventDispatcher
+    public class LevelService : GameEventDispatcher, IConfigurable
     {
         [Inject]
         private ProgressRepository _progressRepository;
@@ -21,8 +21,6 @@ namespace Drone.Levels.Service
         private BillingService _billingService;
         [Inject]
         private LevelsDescriptors _levelsDescriptors;
-        [Inject]
-        private RandomGenerator _randomGenerator;
 
         private List<LevelViewModel> _levelsViewModels = new List<LevelViewModel>();
         public string SelectedLevelId { get; set; }
@@ -33,7 +31,6 @@ namespace Drone.Levels.Service
             PlayerProgressModel playerProgress = GetPlayerProgressModel();
             LevelProgress levelProgress = new LevelProgress() {
                     Id = levelDescriptor.Id,
-                    RandomSeed = _randomGenerator.RandomSeed,
                     LevelVersion = levelDescriptor.Version,
                     CountChips = countChips
             };
@@ -102,6 +99,13 @@ namespace Drone.Levels.Service
         {
             _progressRepository.Set(model);
             Dispatch(new LevelEvent(LevelEvent.UPDATED));
+        }
+
+        public void Configure()
+        {
+            if (!HasPlayerProgress()) {
+                _progressRepository.Set(new PlayerProgressModel());
+            }
         }
     }
 }

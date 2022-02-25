@@ -9,16 +9,19 @@ using Drone.Location.Service;
 using IoC.Attribute;
 using Tile.Descriptor;
 using UnityEngine;
+using LocationService = Drone.Location.Service.LocationService;
 
 namespace Drone.Location.World.Spawner
 {
     public class SpawnerController : MonoBehaviour, IWorldObjectController<SpawnerModel>
     {
-        private const float ROLLING_INTEREST = 20.0f;
         [Inject]
         private CreateLocationObjectService _createLocationObjectService;
         [Inject]
         private LoadLocationObjectService _loadLocationObjectService;
+
+        [Inject]
+        private DroneWorld _droneWorld;
         public WorldObjectType ObjectType { get; set; }
 
         private Transform[] _spawnSpots;
@@ -43,19 +46,20 @@ namespace Drone.Location.World.Spawner
             foreach (Transform spawnSpot in _spawnSpots) {
                 float sum = _difficult.Values.Sum();
 
-                float random = UnityEngine.Random.Range(0, sum);
-
+                float random = _droneWorld.randomGenerator.Range(0, sum);
                 float step = 0;
                 foreach (KeyValuePair<LevelType, float> anyDif in _difficult) {
                     step += anyDif.Value;
                     if (!(random < step)) {
                         continue;
                     }
-                    string type = _descriptor.ObstacleTypes[UnityEngine.Random.Range(0, _descriptor.ObstacleTypes.Length)].UnderscoreToCamelCase();
+
+                    string type = _descriptor.ObstacleTypes[_droneWorld.randomGenerator.Range(0, _descriptor.ObstacleTypes.Length)]
+                                             .UnderscoreToCamelCase();
                     _loadLocationObjectService.LoadObstacle(_descriptor, type, anyDif.Key)
                                               .Then(go => {
                                                   GameObject instantiate = Instantiate(go, spawnSpot);
-                                                  instantiate.GetChildren()[UnityEngine.Random.Range(0, instantiate.GetChildren().Count)]
+                                                  instantiate.GetChildren()[_droneWorld.randomGenerator.Range(0, instantiate.GetChildren().Count)]
                                                              .SetActive(true);
                                                   _createLocationObjectService.AttachController(instantiate.GetComponent<PrefabModel>());
                                               });

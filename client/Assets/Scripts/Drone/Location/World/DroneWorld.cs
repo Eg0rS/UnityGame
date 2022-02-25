@@ -5,6 +5,7 @@ using Adept.Logger;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.World.Player;
+using Drone.Random.MersenneTwister;
 using GameKit.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -18,7 +19,12 @@ namespace Drone.Location.World
         private PlayerController _playerController;
         private float _currentTimeScale;
         private bool _isPauseWorld = false;
-        private Dictionary<string, GameObject> _loadedCache = new Dictionary<string, GameObject>();
+        public MTRandomGenerator randomGenerator;
+
+        public void InitRng(uint seed)
+        {
+            randomGenerator = new MTRandomGenerator(seed);
+        }
 
         [PublicAPI]
         public void Pause()
@@ -127,6 +133,5 @@ namespace Drone.Location.World
         {
             get { return _isPauseWorld; }
         }
-        public Dictionary<string, GameObject> LoadedCache { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using Adept.Logger;
 using AgkUI.Element.Buttons;
 using AgkUI.Element.Text;
 using Drone.Core.UI.Dialog;
+using Drone.Levels.Repository;
 using Drone.Settings.Service;
 using UnityEngine;
 
@@ -21,6 +22,9 @@ namespace Drone.Settings.UI
 
         [Inject]
         private SettingsService _settingsService;
+
+        [Inject]
+        private ProgressRepository _progressRepository;
 
         [Inject]
         private IoCProvider<DialogManager> _dialogManager;
@@ -40,7 +44,7 @@ namespace Drone.Settings.UI
             _musicButton.IsOn = _settingsService.GetMusicMute();
             _soundButton.OnClick.AddListener(OnSoundButton);
             _musicButton.OnClick.AddListener(OnMusicButton);
-            _seed.text = "seed: " + _settingsService.GetSeed();
+            _seed.text = "seed: " + _progressRepository.Get().Seed;
         }
 
         private void OnGUI()

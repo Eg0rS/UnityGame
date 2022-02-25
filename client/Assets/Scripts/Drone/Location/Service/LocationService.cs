@@ -4,9 +4,10 @@ using AgkUI.Screens.Service;
 using Drone.Core;
 using Drone.Descriptor;
 using Drone.Levels.Descriptor;
+using Drone.Levels.Repository;
 using Drone.Location.Service.Builder;
 using Drone.Location.UI.Screen;
-using Drone.Random;
+using Drone.Random.MersenneTwister;
 using IoC.Attribute;
 using IoC.Util;
 
@@ -26,8 +27,9 @@ namespace Drone.Location.Service
 
         [Inject]
         private DifficultDescriptors _difficultDescriptors;
+
         [Inject]
-        private RandomGenerator _randomGenerator;
+        private ProgressRepository _progressRepository;
 
         public void SwitchLocation(LevelDescriptor levelDescriptor)
         {
@@ -38,8 +40,12 @@ namespace Drone.Location.Service
 
         private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
-            _randomGenerator.InitGenerator();
-            _locationBuilderManager.CreateDefault().Difficult(_difficultDescriptors).LevelDescriptor(levelDescriptor).GameWorldContainer().Build();
+            _locationBuilderManager.CreateDefault()
+                                   .Difficult(_difficultDescriptors)
+                                   .SetSeed(_progressRepository.Get().Seed)
+                                   .LevelDescriptor(levelDescriptor)
+                                   .GameWorldContainer()
+                                   .Build();
         }
     }
 }
