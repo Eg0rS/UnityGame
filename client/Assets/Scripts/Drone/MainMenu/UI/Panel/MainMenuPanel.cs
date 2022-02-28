@@ -8,7 +8,6 @@ using AgkUI.Element.Text;
 using Drone.Billing.Event;
 using Drone.Billing.Service;
 using Drone.Core;
-using Drone.LevelMap.UI;
 using Drone.Settings.UI;
 using IoC.Attribute;
 using UnityEngine;
@@ -22,13 +21,13 @@ namespace Drone.MainMenu.UI.Panel
         private const string PREFAB = "UI_Prototype/Panel/MainMenuScreen/pfMainScreenPanel@embeded";
 
         [Inject]
+        private UIService _uiService;
+        
+        [Inject]
         private OverlayManager _overlayManager;
 
         [Inject]
         private BillingService _billingService;
-
-        [Inject]
-        private UIService _uiService;
 
         [Inject]
         private DialogManager _dialogManager;
@@ -37,15 +36,17 @@ namespace Drone.MainMenu.UI.Panel
         private GameObject _levelMapPanel;
 
         [UIComponentBinding("ValueStandart")]
-        private UILabel _standartValue;
+        private UILabel _standardValue;
 
         [UIComponentBinding("ValueGem")]
         private UILabel _gemValue;
+        [UIObjectBinding("StartGameContainer")]
+        private GameObject _startGameContainer;
 
         public void Init()
         {
             _overlayManager.HideLoadingOverlay(true);
-            _uiService.Create<LevelsMapController>(UiModel.Create<LevelsMapController>().Container(_levelMapPanel)).Done();
+            _uiService.Create<StartGamePanelController>(UiModel.Create<StartGamePanelController>().Container(_startGameContainer)).Done();
             _billingService.AddListener<BillingEvent>(BillingEvent.UPDATED, OnResourceUpdated);
             UpdateCredits();
             _logger.Debug("MainMenuPanel start init");
@@ -58,7 +59,7 @@ namespace Drone.MainMenu.UI.Panel
 
         private void UpdateCredits()
         {
-            _standartValue.text = _billingService.GetCreditsCount().ToString();
+            _standardValue.text = _billingService.GetCreditsCount().ToString();
             _gemValue.text = _billingService.GetCryptoCount().ToString();
         }
 

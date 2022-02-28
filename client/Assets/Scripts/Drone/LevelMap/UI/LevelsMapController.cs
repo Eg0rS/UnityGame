@@ -48,7 +48,7 @@ namespace Drone.LevelMap.UI
 
         private void CreateLevels(List<LevelViewModel> levelViewModels)
         {
-            LevelViewModel ViewModel = levelViewModels.FirstOrDefault(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel()));
+            LevelViewModel ViewModel = levelViewModels.FirstOrDefault(x => x.LevelDescriptor.Equals(_levelService.GetCurrentLevelDescriptor()));
             _currentLevelId = null;
             if (ViewModel != null) {
                 _currentLevelId = ViewModel.LevelDescriptor.Id;
@@ -64,18 +64,12 @@ namespace Drone.LevelMap.UI
 
         private void UpdateLevels(List<LevelViewModel> levelViewModels)
         {
-            _currentLevelId = levelViewModels.Find(x => x.LevelDescriptor.Order.Equals(_levelService.GetCurrentLevel())).LevelDescriptor.Id;
+            _currentLevelId = levelViewModels.Find(x => x.LevelDescriptor.Equals(_levelService.GetCurrentLevelDescriptor())).LevelDescriptor.Id;
             foreach (ProgressMapItemController spotController in _progressMapItemController) {
                 LevelDescriptor descriptor = spotController.LevelViewModel.LevelDescriptor;
                 LevelViewModel model = levelViewModels.Find(x => x.LevelDescriptor.Id.Equals(descriptor.Id));
                 spotController.UpdateSpot(model, model.LevelDescriptor.Id.Equals(_currentLevelId));
             }
-        }
-
-        public string CurrentLevelId
-        {
-            get { return _currentLevelId; }
-            set { _currentLevelId = value; }
         }
     }
 }

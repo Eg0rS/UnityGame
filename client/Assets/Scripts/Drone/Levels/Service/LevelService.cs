@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Event;
 using Drone.Billing.Service;
@@ -53,17 +54,17 @@ namespace Drone.Levels.Service
             return nextLevel;
         }
 
-        public int GetCurrentLevel()
+        public LevelDescriptor GetCurrentLevelDescriptor()
         {
             List<LevelDescriptor> descriptors = _levelsDescriptors.Levels.OrderBy(o => o.Order).ToList();
             PlayerProgressModel playerProgress = GetPlayerProgressModel();
             foreach (LevelDescriptor descriptor in descriptors) {
                 LevelProgress progress = playerProgress.LevelsProgress.FirstOrDefault(a => a.Id == descriptor.Id);
                 if (progress == null) {
-                    return descriptor.Order;
+                    return descriptor;
                 }
             }
-            return 0;
+            return null;
         }
 
         public List<LevelViewModel> GetLevels()
@@ -78,6 +79,21 @@ namespace Drone.Levels.Service
                 _levelsViewModels.Add(levelViewModel);
             }
             return _levelsViewModels;
+        }
+
+        [NotNull]
+        public LevelViewModel GetLevel(string id)
+        {
+            PlayerProgressModel playerProgressModel = GetPlayerProgressModel();
+            LevelDescriptor descriptor = _levelsDescriptors.Levels.FirstOrDefault(x => x.Id == id);
+            if (descriptor == null) {
+                throw new NullReferenceException($"Level with id = {id} is not exists");
+            }
+            LevelProgress progress = playerProgressModel.LevelsProgress.FirstOrDefault(x => x.Id == id);
+            return new LevelViewModel() {
+                    LevelProgress = progress,
+                    LevelDescriptor = descriptor
+            };
         }
 
         public LevelDescriptor GetLevelDescriptorById(string levelId)
