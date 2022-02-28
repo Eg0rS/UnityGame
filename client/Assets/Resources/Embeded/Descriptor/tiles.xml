@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tiles>
+
     <tile id="Start" prefab="pfStartTile50" zone="city"
           type="start">
         <obstacle_types>
@@ -10,6 +11,7 @@
             <zone begin="0" end="20"/>
         </dead_zones>
     </tile>
+
     <tile id="Finish" prefab="pfFinishTile50" zone="city"
           type="finish">
         <obstacle_types>
@@ -20,38 +22,43 @@
             <zone begin="30" end="40"/>
         </dead_zones>
     </tile>
+
     <tile id="Forest1" prefab="pfForestTile100"
           zone="city" type="regular">
         <obstacle_types>
             <type>wood</type>
         </obstacle_types>
     </tile>
+
     <tile id="Tunnel1" prefab="pfTunnelTile100"
           zone="city" type="regular">
         <obstacle_types>
             <type>column</type>
             <type>base</type>
         </obstacle_types>
-
     </tile>
+
     <tile id="Collector1" prefab="pfCollectorTile100"
           zone="city" type="regular">
         <obstacle_types>
             <type>tube</type>
         </obstacle_types>
-        <dead_zones>
-            <zone begin="0" end="2"/>
-            <zone begin="7" end="9"/>
-            <zone begin="17" end="19"/>
-            <zone begin="27" end="29"/>
-            <zone begin="37" end="39"/>
-            <zone begin="47" end="49"/>
-            <zone begin="57" end="59"/>
-            <zone begin="67" end="69"/>
-            <zone begin="77" end="79"/>
-            <zone begin="90" end="100"/>
-        </dead_zones>
+        <zones>
+            <zone id ="red">
+                <zone begin="0" end="2"/>
+                <zone begin="7" end="9"/>
+                <zone begin="17" end="19"/>
+                <zone begin="27" end="29"/>
+                <zone begin="37" end="39"/>
+                <zone begin="47" end="49"/>
+                <zone begin="57" end="59"/>
+                <zone begin="67" end="69"/>
+                <zone begin="77" end="79"/>
+                <zone begin="90" end="100"/>
+            </zone>
+        </zones>
     </tile>
+
     <tile id="City1" prefab="pfCityTile100" zone="city"
           type="regular">
         <obstacle_types>
@@ -59,6 +66,7 @@
             <type>base</type>
         </obstacle_types>
     </tile>
+
     <tile id="Port1" prefab="pfPortTile100" zone="city"
           type="regular">
         <obstacle_types>
@@ -66,4 +74,5 @@
             <type>base</type>
         </obstacle_types>
     </tile>
+
 </tiles>

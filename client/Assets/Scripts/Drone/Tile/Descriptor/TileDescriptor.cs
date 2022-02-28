@@ -18,12 +18,13 @@ namespace Tile.Descriptor
         [XmlArrayItem("type")]
         public string[] ObstacleTypes { get; set; }
         
-        [XmlArray("dead_zones")]
-        [XmlArrayItem("zone")]
-        public DeadZone[] DeadZones { get; set; }
+        [XmlArray("zones")]
+        [XmlArrayItem("red")]
+        [XmlElement("zone")]
+        public TileZone[] RedZone { get; set; }
     }
 
-    public class DeadZone
+    public class TileZone
     {
         [XmlAttribute("begin")]
         public float Begin { get; set; }

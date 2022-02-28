@@ -42,7 +42,7 @@ namespace Drone.Location.World
             Vector3 step = new Vector3(0, 0, _spawnStep);
             Vector3 pos = Vector3.zero;
             while (pos.magnitude <= _end.localPosition.magnitude) {
-                DeadZone flag = _descriptor.DeadZones?.FirstOrDefault(x => pos.magnitude >= x.Begin && pos.magnitude <= x.End);
+                TileZone flag = _descriptor.RedZone?.FirstOrDefault(x => pos.magnitude >= x.Begin && pos.magnitude <= x.End);
                 if (flag != null) {
                     pos = new Vector3(0, 0, flag.End);
                 }
