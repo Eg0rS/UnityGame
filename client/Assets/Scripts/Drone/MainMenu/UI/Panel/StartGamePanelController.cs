@@ -47,18 +47,17 @@ namespace Drone.MainMenu.UI.Panel
                 _startButton.gameObject.SetActive(false);
             }
             _startButton.onClick.AddListener(OnStartGameButton);
-            CreateDroneChoice().Then(() => _endlessScroll.Init());
+            CreateDroneChoice();
         }
 
-        private IPromise CreateDroneChoice()
+        private void CreateDroneChoice()
         {
-            List<IPromise> promises = new List<IPromise>();
+            List<IPromise<ViewDronePanel>> promises = new List<IPromise<ViewDronePanel>>();
             foreach (InventoryItemModel item in _inventoryService.Inventory.Items) {
-                Promise promise = new Promise();
+                IPromise<ViewDronePanel> promise = _uiService.Create<ViewDronePanel>(UiModel.Create<ViewDronePanel>(item).Container(_endlessScroll));
                 promises.Add(promise);
-                _uiService.Create<ViewDronePanel>(UiModel.Create<ViewDronePanel>(item).Container(_endlessScroll)).Then((e) => promise.Resolve());
             }
-            return Promise.All(promises);
+            Promise<ViewDronePanel>.All(promises).Done(resolved => _endlessScroll.Init());
         }
 
         [UIOnClick("Left")]
