@@ -133,7 +133,6 @@ namespace Drone.Location.Service.Builder
         {
             DroneWorld gameWorld = _droneWorld.AddComponent<DroneWorld>();
             gameWorld.CreateWorld(WORLD_NAME);
-            gameWorld.InitRng(_seed);
             InitControllers(gameWorld);
             InitService();
             gameWorld.Dispatch(new WorldEvent(WorldEvent.CREATED));
@@ -174,6 +173,7 @@ namespace Drone.Location.Service.Builder
 
         private void ConfigureTiles()
         {
+            //new ObstacleFactory(_worldTiles, _difficultDescriptor, _seed);
         }
 
         private void CreateLevelSpline()

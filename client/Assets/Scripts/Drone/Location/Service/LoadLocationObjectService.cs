@@ -86,20 +86,20 @@ namespace Drone.Location.Service
             return _resourceService.LoadResource<T>(prefabPath);
         }
 
-        public IPromise<GameObject> LoadGameObject(string prefabPath)
+        private IPromise<GameObject> LoadGameObject(string prefabPath)
         {
             Promise<GameObject> promise = new Promise<GameObject>();
-            if (_loadedCache.ContainsKey(prefabPath)) {
-                promise.Resolve(_loadedCache[prefabPath]);
-                return promise;
+            if (!_loadedCache.ContainsKey(prefabPath)) {
+                return _resourceService.LoadResource<GameObject>(prefabPath).Then(go => _loadedCache[prefabPath] = go);
             }
-            return _resourceService.LoadResource<GameObject>(prefabPath).Then(go => _loadedCache[prefabPath] = go);
+            promise.Resolve(_loadedCache[prefabPath]);
+            return promise;
         }
 
-        public IPromise<GameObject> LoadObstacle(TileDescriptor tileDescriptor, string obstacleType, LevelType obstacleDifficult)
+        public IPromise<GameObject> LoadObstacle(TileDescriptor tileDescriptor, string obstacleType)
         {
-            string path = PRE_PATH + tileDescriptor.Zone.ToString().UnderscoreToCamelCase() + OBSTACLE + obstacleType + "/pf"
-                          + obstacleDifficult.ToString().UnderscoreToCamelCase() + BUNDLE_NAME;
+            string path = PRE_PATH + tileDescriptor.Zone.ToString().UnderscoreToCamelCase() + OBSTACLE + obstacleType + "/pf" + obstacleType
+                          + "Obstacle" + BUNDLE_NAME;
             return LoadGameObject(path);
         }
     }
