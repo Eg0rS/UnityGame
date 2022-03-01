@@ -5,7 +5,7 @@ using UnityEngine;
 using Adept.Logger;
 using BezierSolution;
 using Drone.Core.Service;
-using Drone.Descriptor;
+using Drone.LevelDifficult.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
@@ -14,6 +14,7 @@ using Drone.Location.Model.Spline;
 using Drone.Location.World;
 using GameKit.World;
 using JetBrains.Annotations;
+using RSG.Promises;
 using Tile.Descriptor;
 using AppContext = IoC.AppContext;
 using Object = UnityEngine.Object;
@@ -44,7 +45,7 @@ namespace Drone.Location.Service.Builder
 
         private LevelDescriptor _levelDescriptor;
 
-        private DifficultDescriptors _difficultDescriptors;
+        private DifficultDescriptor _difficultDescriptor;
 
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
@@ -77,9 +78,10 @@ namespace Drone.Location.Service.Builder
             return this;
         }
 
-        public LocationBuilder Difficult(DifficultDescriptors difficultDescriptors)
+        [NotNull]
+        public LocationBuilder Difficult(DifficultDescriptor difficultDescriptors)
         {
-            _difficultDescriptors = difficultDescriptors;
+            _difficultDescriptor = difficultDescriptors;
             return this;
         }
 
@@ -170,16 +172,8 @@ namespace Drone.Location.Service.Builder
             LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreateGameWorld);
         }
 
-        [NotNull]
-        private IPromise ConfigureTiles()
+        private void ConfigureTiles()
         {
-            Promise promise = new Promise();
-
-            foreach (WorldTile worldTile in _worldTiles) {
-                worldTile.Configure();
-            }
-            promise.Resolve();
-            return promise;
         }
 
         private void CreateLevelSpline()
@@ -196,20 +190,12 @@ namespace Drone.Location.Service.Builder
         private void BuildLevel()
         {
             WorldTile lastTile = null;
-
-            List<string> orderTile = _levelDescriptor.GameData.Tiles.TilesData.Select(x => x.Id).ToList();
-            foreach (string order in orderTile) {
-                KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(x => x.Key.Id == order);
-                WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>();
-                worldTile.Init(tile.Key, _spot, _difficultDescriptors.Descriptors.FirstOrDefault(x => x.DifficultName == _levelDescriptor.Type));
+            _levelDescriptor.GameData.Tiles.TilesData.Each(tileId => {
+                KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(pair => pair.Key.Id == tileId.Id);
+                WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>().Init(tile.Key, lastTile);
                 _worldTiles.Add(worldTile);
-                if (lastTile == null) {
-                    lastTile = worldTile;
-                    continue;
-                }
-                worldTile.gameObject.transform.position = lastTile.End.position - lastTile.Begin.localPosition;
                 lastTile = worldTile;
-            }
+            });
         }
     }
 }
