@@ -2,13 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using AgkCommons.Extension;
 using Drone.LevelDifficult.Descriptor;
-using Drone.Location.Event;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.World;
 using Drone.Random.MersenneTwister;
 using JetBrains.Annotations;
 using RSG;
-using RSG.Promises;
 using Tile.Descriptor;
 using UnityEngine;
 
@@ -16,23 +14,40 @@ namespace Drone.Location.Service.Builder
 {
     public class ObstacleFactory
     {
-        private Vector3 _lastObstaclePosition = Vector3.zero;
+        #region Util
+
         private MTRandomGenerator _randomGenerator;
         private readonly LoadLocationObjectService _loadObjectService;
+
+        #endregion
+
+        #region VariablesToGenerate
+
+        private Vector3 _lastObstaclePosition = Vector3.zero;
         private List<WorldTile> _tiles;
         private uint _seed;
         private DifficultDescriptor _difficultDescriptor;
+        private Vector3 _spawnStep;
+
+        #endregion
+
+        #region Promises
+
+        private Promise _spawnObstaclesPromise;
+        private Promise _configTilePromise;
+
+        #endregion
 
         #region Interface
 
         [NotNull]
-        public ObstacleFactory Create(LoadLocationObjectService loadObjectService)
+        public static ObstacleFactory Create(LoadLocationObjectService loadObjectService)
         {
             return new ObstacleFactory(loadObjectService);
         }
 
         [NotNull]
-        public ObstacleFactory WorldTiles(List<WorldTile> tiles)
+        public ObstacleFactory SetWorldTiles(List<WorldTile> tiles)
         {
             _tiles = tiles;
             return this;
@@ -49,13 +64,15 @@ namespace Drone.Location.Service.Builder
         public ObstacleFactory SetDifficult(DifficultDescriptor difficultDescriptor)
         {
             _difficultDescriptor = difficultDescriptor;
+            _spawnStep = new Vector3(0, 0, _difficultDescriptor.SpawnStep);
             return this;
         }
 
-        public void StartConfigureTiles()
+        public IPromise StartConfigureTiles()
         {
             _randomGenerator = new MTRandomGenerator(_seed);
-            ConfigureTiles();
+            _configTilePromise = new Promise();
+            return ConfigureTiles(0).Then(() => { Debug.Log("Tiles configuration completed"); });
         }
 
         #endregion
@@ -71,48 +88,56 @@ namespace Drone.Location.Service.Builder
 
         #region Implementaton
 
-        private IPromise ConfigureTiles()
+        private IPromise ConfigureTiles(int i)
         {
-            List<IPromise> promises = new List<IPromise>();
-            _tiles.Each(tile => promises.Add(ConfigureTile(tile)));
-            return Promise.All(promises);
-        }
-
-        private IPromise ConfigureTile(WorldTile tile)
-        {
-            List<IPromise> promises = new List<IPromise>();
-            Transform obstacles = tile.gameObject.GetChildren().First(x => x.name == "Obstacle").transform;
-            Vector3 step = new Vector3(0, 0, _difficultDescriptor.SpawnStep);
-            Vector3 position = _lastObstaclePosition;
-            while (position.magnitude <= tile.End.position.magnitude) {
-                Zone flag = tile.Descriptor.RedZones?.FirstOrDefault(x => position.magnitude >= x.Begin && position.magnitude <= x.End);
-                if (flag != null) {
-                    position.z += flag.End;
-                }
-                if (position.magnitude <= tile.End.position.magnitude || flag == null) {
-                    CreateObstacle(obstacles, position, tile.Descriptor);
-                }
-                position += step;
+            if (i < _tiles.Count) {
+                ConfigTile(_tiles[i])
+                        .Then((() => {
+                                      if (i + 1 < _tiles.Count) {
+                                          _configTilePromise = (Promise) ConfigureTiles(i + 1);
+                                      } else {
+                                          _configTilePromise.Resolve();
+                                      }
+                                  }));
+            } else {
+                _configTilePromise.Resolve();
             }
-            _lastObstaclePosition = position;
-            
+            return _configTilePromise;
         }
 
-        private IPromise CreateObstacle(Transform parent, Vector3 position, TileDescriptor tileDescriptor)
+        private IPromise ConfigTile(WorldTile worldTile)
         {
-            Promise promise = new Promise();
-            string type = tileDescriptor.ObstacleTypes[_randomGenerator.Range(0, tileDescriptor.ObstacleTypes.Length)].UnderscoreToCamelCase();
-            _loadObjectService.LoadObstacle(tileDescriptor, type)
-                              .Then(go => {
-                                  GameObject instantiate = Object.Instantiate(go, parent);
-                                  instantiate.transform.position = position;
-                                  ObstacleInfo skin = instantiate.GetChildren()[_randomGenerator.Range(0, instantiate.GetChildren().Count)]
-                                                                 .GetComponent<ObstacleInfo>();
-                                  skin.gameObject.SetActive(true);
-                                  position.z += skin.Depth;
-                                  promise.Resolve();
-                              });
-            return promise;
+            Transform parentObstacles = worldTile.gameObject.GetChildren().First(x => x.name == "Obstacle").transform;
+            _spawnObstaclesPromise = new Promise();
+            return SpawnObstacle(worldTile, parentObstacles);
+        }
+
+        private IPromise SpawnObstacle(WorldTile worldTile, Transform parentObstacles)
+        {
+            if (_lastObstaclePosition.magnitude < worldTile.End.position.magnitude) {
+                Zone flag = worldTile.Descriptor.RedZones?.FirstOrDefault(x => _lastObstaclePosition.magnitude >= x.Begin
+                                                                               && _lastObstaclePosition.magnitude < x.End);
+                if (flag != null) {
+                    _lastObstaclePosition.z += flag.End;
+                    _spawnObstaclesPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
+                } else {
+                    string type = worldTile.Descriptor.ObstacleTypes[_randomGenerator.Range(0, worldTile.Descriptor.ObstacleTypes.Length)]
+                                           .UnderscoreToCamelCase();
+                    _loadObjectService.LoadObstacle(worldTile.Descriptor, type)
+                                      .Then(go => {
+                                          GameObject instantiate = Object.Instantiate(go, parentObstacles);
+                                          instantiate.transform.position = _lastObstaclePosition;
+                                          ObstacleInfo skin = instantiate.GetChildren()[_randomGenerator.Range(0, instantiate.GetChildren().Count)]
+                                                                         .GetComponent<ObstacleInfo>();
+                                          skin.gameObject.SetActive(true);
+                                          _lastObstaclePosition += _spawnStep + new Vector3(0, 0, skin.Depth);
+                                          _spawnObstaclesPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
+                                      });
+                }
+            } else {
+                _spawnObstaclesPromise.Resolve();
+            }
+            return _spawnObstaclesPromise;
         }
 
         #endregion

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RSG;
@@ -25,38 +26,45 @@ namespace Drone.Location.Service.Builder
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<LocationBuilder>();
 
+        #region Const
+
         private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
-        private const string SPOT_PATH = "World/pfSpot@embeded";
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
 
+        #endregion
+
+        #region Util
+
         private readonly CreateLocationObjectService _createObjectService;
         private readonly LoadLocationObjectService _loadObjectService;
+
+        #endregion
+
+        #region Containers
 
         private Transform _container;
         private GameObject _droneWorld;
         private GameObject _spline;
         private GameObject _player;
         private GameObject _level;
-        private GameObject _spot;
+
+        #endregion
+
+        #region VariablesToGenerate
 
         private LevelDescriptor _levelDescriptor;
-
         private DifficultDescriptor _difficultDescriptor;
-
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
-
         private uint _seed;
 
-        private LocationBuilder(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
-        {
-            _createObjectService = createObjectService;
-            _loadObjectService = loadObjectService;
-        }
+        #endregion
+
+        #region Inteface
 
         [NotNull]
         public static LocationBuilder Create(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
@@ -92,13 +100,6 @@ namespace Drone.Location.Service.Builder
             return this;
         }
 
-        private void CreateContainers()
-        {
-            CreateContainer<PlayerModel>(PLAYER, ref _player);
-            CreateContainer<SplineModel>(SPLINE, ref _spline);
-            CreateContainer<SplineWalkerModel>(LEVEL, ref _level);
-        }
-
         [NotNull]
         public LocationBuilder GameWorldContainer()
         {
@@ -108,25 +109,80 @@ namespace Drone.Location.Service.Builder
             return this;
         }
 
-        private void CreateContainer<T>(string name, ref GameObject container)
-                where T : Component
+        public void Build()
         {
-            container = new GameObject(name);
-            container.AddComponent<T>();
-            container.transform.SetParent(_droneWorld.transform, false);
+            LoadPlayer().Then(LoadTiles).Then(CreateLevelTiles).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreateGameWorld);
         }
+
+        #endregion
+
+        #region Constructor
+
+        private LocationBuilder(CreateLocationObjectService createObjectService, LoadLocationObjectService loadObjectService)
+        {
+            _createObjectService = createObjectService;
+            _loadObjectService = loadObjectService;
+        }
+
+        #endregion
+
+        #region Implementation
+
+        #region LoadMethods
 
         private IPromise LoadPlayer()
         {
-            Promise promise = new Promise();
-            _loadObjectService.LoadResource<GameObject>(PLAYER_CONTAINER_PATH)
-                              .Then(loadObject => { Object.Instantiate(loadObject, _player.transform); })
-                              .Then(() => _loadObjectService.LoadResource<GameObject>(SPOT_PATH)
-                                                            .Then(loadObject => {
-                                                                _spot = loadObject;
-                                                                promise.Resolve();
-                                                            }));
-            return promise;
+            return _loadObjectService.LoadResource<GameObject>(PLAYER_CONTAINER_PATH)
+                                     .Then(loadObject => { Object.Instantiate(loadObject, _player.transform); });
+        }
+
+        [NotNull]
+        private IPromise LoadTiles()
+        {
+            return _loadObjectService.LoadLevelTiles(_levelDescriptor).Then(tiles => { _tiles = tiles; });
+        }
+
+        #endregion
+
+        #region СreationMethods
+
+        [NotNull]
+        private GameObject CreateContainer<T>(string name)
+                where T : Component
+        {
+            GameObject container = new GameObject(name);
+            container.AddComponent<T>();
+            container.transform.SetParent(_droneWorld.transform, false);
+            return container;
+        }
+
+        private void CreateContainers()
+        {
+            _player = CreateContainer<PlayerModel>(PLAYER);
+            _spline = CreateContainer<SplineModel>(SPLINE);
+            _level = CreateContainer<SplineWalkerModel>(LEVEL);
+        }
+
+        private void CreateLevelSpline()
+        {
+            List<BezierSpline> levelBezier = _level.GetComponentsInChildren<BezierSpline>().ToList();
+            foreach (BezierSpline spline in levelBezier) {
+                List<BezierPoint> points = spline.gameObject.GetComponentsInChildren<BezierPoint>().ToList();
+                foreach (BezierPoint point in points) {
+                    point.gameObject.transform.SetParent(_spline.transform, true);
+                }
+            }
+        }
+
+        private void CreateLevelTiles()
+        {
+            WorldTile lastTile = null;
+            _levelDescriptor.GameData.Tiles.TilesData.Each(tileId => {
+                KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(pair => pair.Key.Id == tileId.Id);
+                WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>().Init(tile.Key, lastTile);
+                _worldTiles.Add(worldTile);
+                lastTile = worldTile;
+            });
         }
 
         private void CreateGameWorld()
@@ -137,6 +193,10 @@ namespace Drone.Location.Service.Builder
             InitService();
             gameWorld.Dispatch(new WorldEvent(WorldEvent.CREATED));
         }
+
+        #endregion
+
+        #region InitMethods
 
         private static void InitService()
         {
@@ -154,48 +214,21 @@ namespace Drone.Location.Service.Builder
             }
         }
 
-        [NotNull]
-        private IPromise LoadTiles()
+        #endregion
+
+        #region ConfigureMethods
+
+        private IPromise ConfigureTiles()
         {
-            Promise promise = new Promise();
-            _loadObjectService.LoadLevelTiles(_levelDescriptor)
-                              .Then(tiles => {
-                                  _tiles = tiles;
-                                  promise.Resolve();
-                              });
-            return promise;
+            return ObstacleFactory.Create(_loadObjectService)
+                                  .SetWorldTiles(_worldTiles)
+                                  .SetSeed(_seed)
+                                  .SetDifficult(_difficultDescriptor)
+                                  .StartConfigureTiles();
         }
 
-        public void Build()
-        {
-            LoadPlayer().Then(LoadTiles).Then(BuildLevel).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreateGameWorld);
-        }
+        #endregion
 
-        private void ConfigureTiles()
-        {
-            //new ObstacleFactory(_worldTiles, _difficultDescriptor, _seed);
-        }
-
-        private void CreateLevelSpline()
-        {
-            List<BezierSpline> levelBezier = _level.GetComponentsInChildren<BezierSpline>().ToList();
-            foreach (BezierSpline spline in levelBezier) {
-                List<BezierPoint> points = spline.gameObject.GetComponentsInChildren<BezierPoint>().ToList();
-                foreach (BezierPoint point in points) {
-                    point.gameObject.transform.SetParent(_spline.transform, true);
-                }
-            }
-        }
-
-        private void BuildLevel()
-        {
-            WorldTile lastTile = null;
-            _levelDescriptor.GameData.Tiles.TilesData.Each(tileId => {
-                KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(pair => pair.Key.Id == tileId.Id);
-                WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>().Init(tile.Key, lastTile);
-                _worldTiles.Add(worldTile);
-                lastTile = worldTile;
-            });
-        }
+        #endregion
     }
 }
