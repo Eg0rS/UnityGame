@@ -36,7 +36,7 @@ namespace Drone.Location.Service.Builder
 
         #region Promises
 
-        private Promise _spawnObstaclesPromise;
+        private Promise _allObstaclesSpawnPromise;
         private Promise _configTilePromise;
 
         #endregion
@@ -120,37 +120,44 @@ namespace Drone.Location.Service.Builder
         private IPromise ConfigTile(WorldTile worldTile)
         {
             Transform parentObstacles = worldTile.gameObject.GetChildren().First(x => x.name == "Obstacle").transform;
-            _spawnObstaclesPromise = new Promise();
+            _allObstaclesSpawnPromise = new Promise();
             return SpawnObstacle(worldTile, parentObstacles);
         }
 
         private IPromise SpawnObstacle(WorldTile worldTile, Transform parentObstacles)
         {
             if (_lastObstaclePosition.magnitude < worldTile.End.position.magnitude) {
-                Zone flag = worldTile.Descriptor.RedZones?.FirstOrDefault(x => _lastObstaclePosition.magnitude >= x.Begin
-                                                                               && _lastObstaclePosition.magnitude < x.End);
-                if (flag != null) {
-                    _lastObstaclePosition.z += flag.End;
-                    _spawnObstaclesPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
-                } else {
-                    string type = worldTile.Descriptor.ObstacleTypes[_randomGenerator.Range(0, worldTile.Descriptor.ObstacleTypes.Length)]
-                                           .UnderscoreToCamelCase();
+                Zone redZone = worldTile.Descriptor.RedZones?.FirstOrDefault(x => _lastObstaclePosition.magnitude >= x.Begin
+                                                                                  && _lastObstaclePosition.magnitude < x.End);
+                if (redZone == null) {
+                    string type = ChoiceObstacleType(worldTile.Descriptor.ObstacleTypes);
                     _loadObjectService.LoadObstacle(worldTile.Descriptor, type)
                                       .Then(go => {
-                                          GameObject instantiate = Object.Instantiate(go, parentObstacles);
-                                          instantiate.transform.position = _lastObstaclePosition;
-                                          ObstacleInfo skin = instantiate.GetChildren()[_randomGenerator.Range(0, instantiate.GetChildren().Count)]
-                                                                         .GetComponent<ObstacleInfo>();
-                                          skin.gameObject.SetActive(true);
-                                          _obstacleInfos.Add(skin);
-                                          _lastObstaclePosition += _spawnStep + new Vector3(0, 0, skin.Depth);
-                                          _spawnObstaclesPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
+                                          InitObstacle(Object.Instantiate(go, parentObstacles));
+                                          _allObstaclesSpawnPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
                                       });
+                } else {
+                    _lastObstaclePosition.z += redZone.End;
+                    _allObstaclesSpawnPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
                 }
             } else {
-                _spawnObstaclesPromise.Resolve();
+                _allObstaclesSpawnPromise.Resolve();
             }
-            return _spawnObstaclesPromise;
+            return _allObstaclesSpawnPromise;
+        }
+
+        private void InitObstacle(GameObject obstacle)
+        {
+            obstacle.transform.position = _lastObstaclePosition;
+            ObstacleInfo skin = obstacle.GetChildren()[_randomGenerator.Range(0, obstacle.GetChildren().Count)].GetComponent<ObstacleInfo>();
+            skin.gameObject.SetActive(true);
+            _obstacleInfos.Add(skin);
+            _lastObstaclePosition += _spawnStep + new Vector3(0, 0, skin.Depth);
+        }
+
+        private string ChoiceObstacleType(string[] obstacleTypes)
+        {
+            return obstacleTypes[_randomGenerator.Range(0, obstacleTypes.Length)].UnderscoreToCamelCase();
         }
 
         #endregion

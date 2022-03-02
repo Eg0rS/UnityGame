@@ -88,12 +88,9 @@ namespace Drone.Location.Service
 
         private IPromise<GameObject> LoadGameObject(string prefabPath)
         {
-            Promise<GameObject> promise = new Promise<GameObject>();
-            if (!_loadedCache.ContainsKey(prefabPath)) {
-                return _resourceService.LoadResource<GameObject>(prefabPath).Then(go => _loadedCache[prefabPath] = go);
-            }
-            promise.Resolve(_loadedCache[prefabPath]);
-            return promise;
+            return _loadedCache.ContainsKey(prefabPath)
+                           ? Promise<GameObject>.Resolved(_loadedCache[prefabPath])
+                           : _resourceService.LoadResource<GameObject>(prefabPath).Then(go => _loadedCache[prefabPath] = go);
         }
 
         public IPromise<GameObject> LoadObstacle(TileDescriptor tileDescriptor, string obstacleType)
