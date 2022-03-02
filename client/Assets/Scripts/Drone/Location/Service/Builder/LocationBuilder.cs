@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RSG;
@@ -224,7 +223,8 @@ namespace Drone.Location.Service.Builder
                                   .SetWorldTiles(_worldTiles)
                                   .SetSeed(_seed)
                                   .SetDifficult(_difficultDescriptor)
-                                  .StartConfigureTiles();
+                                  .StartConfigureTiles()
+                                  .Then(list => { _logger.Debug("Generate path"); });
         }
 
         #endregion

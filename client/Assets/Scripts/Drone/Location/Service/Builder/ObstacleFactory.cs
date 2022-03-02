@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Adept.Logger;
 using AgkCommons.Extension;
 using Drone.LevelDifficult.Descriptor;
 using Drone.Location.Model.Obstacle;
@@ -14,6 +15,8 @@ namespace Drone.Location.Service.Builder
 {
     public class ObstacleFactory
     {
+        private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<ObstacleFactory>();
+
         #region Util
 
         private MTRandomGenerator _randomGenerator;
@@ -35,6 +38,12 @@ namespace Drone.Location.Service.Builder
 
         private Promise _spawnObstaclesPromise;
         private Promise _configTilePromise;
+
+        #endregion
+
+        #region ReturnValues
+
+        private List<ObstacleInfo> _obstacleInfos;
 
         #endregion
 
@@ -68,11 +77,12 @@ namespace Drone.Location.Service.Builder
             return this;
         }
 
-        public IPromise StartConfigureTiles()
+        public IPromise<List<ObstacleInfo>> StartConfigureTiles()
         {
+            _obstacleInfos = new List<ObstacleInfo>();
             _randomGenerator = new MTRandomGenerator(_seed);
             _configTilePromise = new Promise();
-            return ConfigureTiles(0).Then(() => { Debug.Log("Tiles configuration completed"); });
+            return Promise.All(ConfigureTiles(0)).Then((() => Promise<List<ObstacleInfo>>.Resolved(_obstacleInfos)));
         }
 
         #endregion
@@ -96,10 +106,12 @@ namespace Drone.Location.Service.Builder
                                       if (i + 1 < _tiles.Count) {
                                           _configTilePromise = (Promise) ConfigureTiles(i + 1);
                                       } else {
+                                          _logger.Debug("Tiles configuration completed");
                                           _configTilePromise.Resolve();
                                       }
                                   }));
             } else {
+                _logger.Debug("Tiles configuration completed");
                 _configTilePromise.Resolve();
             }
             return _configTilePromise;
@@ -130,6 +142,7 @@ namespace Drone.Location.Service.Builder
                                           ObstacleInfo skin = instantiate.GetChildren()[_randomGenerator.Range(0, instantiate.GetChildren().Count)]
                                                                          .GetComponent<ObstacleInfo>();
                                           skin.gameObject.SetActive(true);
+                                          _obstacleInfos.Add(skin);
                                           _lastObstaclePosition += _spawnStep + new Vector3(0, 0, skin.Depth);
                                           _spawnObstaclesPromise = (Promise) SpawnObstacle(worldTile, parentObstacles);
                                       });
