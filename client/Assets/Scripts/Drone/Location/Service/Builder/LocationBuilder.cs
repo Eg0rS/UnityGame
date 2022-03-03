@@ -34,6 +34,7 @@ namespace Drone.Location.Service.Builder
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
+        private const string PATH = "Path";
 
         #endregion
 
@@ -162,7 +163,7 @@ namespace Drone.Location.Service.Builder
             _player = CreateContainer<PlayerModel>(PLAYER);
             _spline = CreateContainer<SplineModel>(SPLINE);
             _level = CreateContainer<SplineWalkerModel>(LEVEL);
-            _path = CreateContainer<PathCreator>("Path");
+            _path = CreateContainer<PathCreator>(PATH);
         }
 
         private void CreateLevelSpline()
@@ -191,7 +192,6 @@ namespace Drone.Location.Service.Builder
         {
             PathCreator path = _path.GetComponent<PathCreator>();
             path.Init(obj);
-            
         }
 
         private void CreateGameWorld()

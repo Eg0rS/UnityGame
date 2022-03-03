@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BezierSolution;
 using Drone.Location.Model.Obstacle;
@@ -18,14 +19,15 @@ namespace Drone.Location.Service.Builder
             _obstacleInfos = obstacleInfos;
             CreatePoint();
             foreach (ObstacleInfo obstacle in _obstacleInfos) {
-                _pointPosition += new Vector3(0, 0, obstacle.gameObject.transform.position.z);
-                int[] cord = PassCalculated(obstacle.PassThroughGrid);
-                _pointPosition += new Vector3(cord[0], cord[1], 0);
+                _pointPosition = new Vector3(0, 0, obstacle.gameObject.transform.position.z);
+                Vector2 cord = PassCalculated(obstacle.PassThroughGrid);
+                _pointPosition = new Vector3(cord.x, cord.y, _pointPosition.z);
                 CreatePoint();
                 _pointPosition += new Vector3(0, 0, obstacle.Depth);
                 CreatePoint();
             }
             _bezierSpline.ConstructLinearPath();
+            transform.position = new Vector3(0, 1.5f, 0);
         }
 
         private void CreatePoint()
@@ -36,16 +38,24 @@ namespace Drone.Location.Service.Builder
             bPoint.transform.position = _pointPosition;
         }
 
-        private int[] PassCalculated(PassThroughGrid grid)
+        private Vector2 PassCalculated(PassThroughGrid grid)
         {
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 2; j++) {
-                    if (grid.rows[i].columns[j] == false) {
-                        return new[] {i, j};
-                    }
+            const float MAXDELTA = 2.0f;
+            int selectIndex = 0;
+            float minDelta = MAXDELTA;
+            for (int i = 0; i < 9; i++) {
+                if (grid._cellDatas[i]._isFilled) {
+                    continue;
                 }
+                Vector2 pp = new Vector2(_pointPosition.x, _pointPosition.y);
+                float delta = Math.Abs(Vector2.Distance(pp, grid._cellDatas[i].Coords));
+                if (!(delta < minDelta)) {
+                    continue;
+                }
+                minDelta = delta;
+                selectIndex = i;
             }
-            return null;
+            return grid._cellDatas[selectIndex].Coords;
         }
     }
 }

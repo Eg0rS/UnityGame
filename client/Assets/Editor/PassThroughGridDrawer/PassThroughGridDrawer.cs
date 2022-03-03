@@ -17,17 +17,15 @@ namespace Editor.PassThroughGridDrawer
             contentPosition.width = CELL_SIZE;
             contentPosition.height = CELL_SIZE;
 
-            SerializedProperty grid = property.FindPropertyRelative("rows");
-            grid.arraySize = MATRIX_SIZE;
+            SerializedProperty grid = property.FindPropertyRelative("_cellDatas");
             for (int i = 0; i < grid.arraySize; i++) {
-                SerializedProperty row = grid.GetArrayElementAtIndex(i).FindPropertyRelative("columns");
-                row.arraySize = MATRIX_SIZE;
-                contentPosition.y = position.y + 5 + CELL_SIZE * i;
-                contentPosition.x = CELL_SIZE;
-                for (int j = 0; j < row.arraySize; j++) {
-                    EditorGUI.PropertyField(contentPosition, row.GetArrayElementAtIndex(j), GUIContent.none);
-                    contentPosition.x += CELL_SIZE;
+                SerializedProperty row = grid.GetArrayElementAtIndex(i).FindPropertyRelative("_isFilled");
+                if (i % 3 == 0) {
+                    contentPosition.y = position.y + 5 + CELL_SIZE * i / 3;
+                    contentPosition.x = CELL_SIZE;
                 }
+                EditorGUI.PropertyField(contentPosition, row, GUIContent.none);
+                contentPosition.x += CELL_SIZE;
             }
             EditorGUI.EndProperty();
         }
