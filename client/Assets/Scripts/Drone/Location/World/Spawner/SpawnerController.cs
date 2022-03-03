@@ -43,29 +43,29 @@ namespace Drone.Location.World.Spawner
 
         private void SpawnObstacles()
         {
-            foreach (Transform spawnSpot in _spawnSpots) {
-                float sum = _difficult.Values.Sum();
-
-                float random = _droneWorld.randomGenerator.Range(0, sum);
-                float step = 0;
-                foreach (KeyValuePair<LevelType, float> anyDif in _difficult) {
-                    step += anyDif.Value;
-                    if (!(random < step)) {
-                        continue;
-                    }
-
-                    string type = _descriptor.ObstacleTypes[_droneWorld.randomGenerator.Range(0, _descriptor.ObstacleTypes.Length)]
-                                             .UnderscoreToCamelCase();
-                    _loadLocationObjectService.LoadObstacle(_descriptor, type, anyDif.Key)
-                                              .Then(go => {
-                                                  GameObject instantiate = Instantiate(go, spawnSpot);
-                                                  instantiate.GetChildren()[_droneWorld.randomGenerator.Range(0, instantiate.GetChildren().Count)]
-                                                             .SetActive(true);
-                                                  _createLocationObjectService.AttachController(instantiate.GetComponent<PrefabModel>());
-                                              });
-                    break;
-                }
-            }
+            // foreach (Transform spawnSpot in _spawnSpots) {
+            //     float sum = _difficult.Values.Sum();
+            //
+            //     float random = _droneWorld.randomGenerator.Range(0, sum);
+            //     float step = 0;
+            //     foreach (KeyValuePair<LevelType, float> anyDif in _difficult) {
+            //         step += anyDif.Value;
+            //         if (!(random < step)) {
+            //             continue;
+            //         }
+            //
+            //         string type = _descriptor.ObstacleTypes[_droneWorld.randomGenerator.Range(0, _descriptor.ObstacleTypes.Length)]
+            //                                  .UnderscoreToCamelCase();
+            //         _loadLocationObjectService.LoadObstacle(_descriptor, type, anyDif.Key)
+            //                                   .Then(go => {
+            //                                       GameObject instantiate = Instantiate(go, spawnSpot);
+            //                                       instantiate.GetChildren()[_droneWorld.randomGenerator.Range(0, instantiate.GetChildren().Count)]
+            //                                                  .SetActive(true);
+            //                                       _createLocationObjectService.AttachController(instantiate.GetComponent<PrefabModel>());
+            //                                   });
+            //         break;
+            //     }
+            // }
         }
     }
 }

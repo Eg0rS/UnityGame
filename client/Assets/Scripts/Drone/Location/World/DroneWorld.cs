@@ -19,12 +19,6 @@ namespace Drone.Location.World
         private PlayerController _playerController;
         private float _currentTimeScale;
         private bool _isPauseWorld = false;
-        public MTRandomGenerator randomGenerator;
-
-        public void InitRng(uint seed)
-        {
-            randomGenerator = new MTRandomGenerator(seed);
-        }
 
         [PublicAPI]
         public void Pause()
