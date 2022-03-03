@@ -9,6 +9,7 @@ using Drone.LevelDifficult.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
 using Drone.Location.World;
@@ -50,6 +51,7 @@ namespace Drone.Location.Service.Builder
         private GameObject _spline;
         private GameObject _player;
         private GameObject _level;
+        private GameObject _path;
 
         #endregion
 
@@ -110,7 +112,7 @@ namespace Drone.Location.Service.Builder
 
         public void Build()
         {
-            LoadPlayer().Then(LoadTiles).Then(CreateLevelTiles).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreateGameWorld);
+            LoadPlayer().Then(LoadTiles).Then(CreateLevelTiles).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreatePath).Then(CreateGameWorld);
         }
 
         #endregion
@@ -160,6 +162,7 @@ namespace Drone.Location.Service.Builder
             _player = CreateContainer<PlayerModel>(PLAYER);
             _spline = CreateContainer<SplineModel>(SPLINE);
             _level = CreateContainer<SplineWalkerModel>(LEVEL);
+            _path = CreateContainer<PathCreator>("Path");
         }
 
         private void CreateLevelSpline()
@@ -182,6 +185,13 @@ namespace Drone.Location.Service.Builder
                 _worldTiles.Add(worldTile);
                 lastTile = worldTile;
             });
+        }
+
+        private void CreatePath(List<ObstacleInfo> obj)
+        {
+            PathCreator path = _path.GetComponent<PathCreator>();
+            path.Init(obj);
+            
         }
 
         private void CreateGameWorld()
@@ -217,14 +227,13 @@ namespace Drone.Location.Service.Builder
 
         #region ConfigureMethods
 
-        private IPromise ConfigureTiles()
+        private IPromise<List<ObstacleInfo>> ConfigureTiles()
         {
             return ObstacleFactory.Create(_loadObjectService)
                                   .SetWorldTiles(_worldTiles)
                                   .SetSeed(_seed)
                                   .SetDifficult(_difficultDescriptor)
-                                  .StartConfigureTiles()
-                                  .Then(list => { _logger.Debug("Generate path"); });
+                                  .StartConfigureTiles();
         }
 
         #endregion
