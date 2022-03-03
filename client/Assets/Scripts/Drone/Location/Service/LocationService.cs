@@ -1,8 +1,10 @@
+using System.Linq;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Screens.Service;
 using Drone.Core;
 using Drone.Descriptor;
+using Drone.LevelDifficult.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Repository;
 using Drone.Location.Service.Builder;
@@ -40,8 +42,9 @@ namespace Drone.Location.Service
 
         private void CreatedLevel(LevelDescriptor levelDescriptor)
         {
+            DifficultDescriptor difficultDescriptor = _difficultDescriptors.Descriptors.FirstOrDefault(x => x.DifficultName == levelDescriptor.Type);
             _locationBuilderManager.CreateDefault()
-                                   .Difficult(_difficultDescriptors)
+                                   .Difficult(difficultDescriptor)
                                    .SetSeed(_progressRepository.Get().Seed)
                                    .LevelDescriptor(levelDescriptor)
                                    .GameWorldContainer()
