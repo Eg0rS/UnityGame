@@ -47,11 +47,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _passThroughGrid:
-    rows:
-    - columns: 000100
-    - columns: 010101
-    - columns: 010101
-  _depth: 0
+    _cellDatas:
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+  _depth: 1
 --- !u!1001 &5109204375871614701
 PrefabInstance:
   m_ObjectHideFlags: 0

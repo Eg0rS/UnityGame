@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1725894034053012871
 Transform:
   m_ObjectHideFlags: 0
@@ -53,10 +53,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _passThroughGrid:
-    rows:
-    - columns: 010001
-    - columns: 010001
-    - columns: 010101
+    _cellDatas:
+    - _isFilled: 1
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
   _depth: 1
 --- !u!1001 &541379691201325250
 PrefabInstance:

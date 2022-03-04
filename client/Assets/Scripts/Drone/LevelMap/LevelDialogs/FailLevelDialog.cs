@@ -6,11 +6,11 @@ using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
 using AgkUI.Screens.Service;
 using Drone.Core.UI.Dialog;
-using Drone.LevelMap.UI.DescriptionLevelDialog;
 using Drone.Levels.Service;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
 using IoC.Util;
+using LocationService = Drone.Location.Service.LocationService;
 
 namespace Drone.LevelMap.LevelDialogs
 {
@@ -31,6 +31,9 @@ namespace Drone.LevelMap.LevelDialogs
         [Inject]
         private LevelService _levelService;
 
+        [Inject]
+        private LocationService _locationService;
+
         [UICreated]
         public void Init()
         {
@@ -42,7 +45,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _dialogManager.Require().Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
-            _dialogManager.Require().Show<DescriptionLevelDialog>(_levelService.GetLevels().First(x => x.LevelDescriptor.Id == _levelId));
+            _locationService.SwitchLocation(_levelService.GetLevels().First(x => x.LevelDescriptor.Id == _levelId).LevelDescriptor);
         }
 
         [UIOnClick("MainMenuButton")]
