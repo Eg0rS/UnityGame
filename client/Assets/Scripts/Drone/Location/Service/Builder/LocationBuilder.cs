@@ -35,6 +35,7 @@ namespace Drone.Location.Service.Builder
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
         private const string PATH = "Path";
+        private const string CHIPS = "Chips";
 
         #endregion
 
@@ -53,6 +54,7 @@ namespace Drone.Location.Service.Builder
         private GameObject _player;
         private GameObject _level;
         private GameObject _path;
+        private GameObject _chips;
 
         #endregion
 
@@ -113,7 +115,14 @@ namespace Drone.Location.Service.Builder
 
         public void Build()
         {
-            LoadPlayer().Then(LoadTiles).Then(CreateLevelTiles).Then(CreateLevelSpline).Then(ConfigureTiles).Then(CreatePath).Then(CreateGameWorld);
+            LoadPlayer()
+                    .Then(LoadTiles)
+                    .Then(CreateLevelTiles)
+                    .Then(CreateLevelSpline)
+                    .Then(ConfigureTiles)
+                    .Then(CreateShortestPath)
+                    .Then(CreateChipsPath)
+                    .Then(CreateGameWorld);
         }
 
         #endregion
@@ -149,21 +158,22 @@ namespace Drone.Location.Service.Builder
         #region СreationMethods
 
         [NotNull]
-        private GameObject CreateContainer<T>(string name)
+        private GameObject CreateContainer<T>(string name, Transform parent)
                 where T : Component
         {
             GameObject container = new GameObject(name);
             container.AddComponent<T>();
-            container.transform.SetParent(_droneWorld.transform, false);
+            container.transform.SetParent(parent, false);
             return container;
         }
 
         private void CreateContainers()
         {
-            _player = CreateContainer<PlayerModel>(PLAYER);
-            _spline = CreateContainer<SplineModel>(SPLINE);
-            _level = CreateContainer<SplineWalkerModel>(LEVEL);
-            _path = CreateContainer<PathCreator>(PATH);
+            _player = CreateContainer<PlayerModel>(PLAYER, _droneWorld.transform);
+            _spline = CreateContainer<SplineModel>(SPLINE, _droneWorld.transform);
+            _level = CreateContainer<SplineWalkerModel>(LEVEL, _droneWorld.transform);
+            _path = CreateContainer<PathCreator>(PATH, _level.transform);
+            _chips = CreateContainer<ChipsLineCreator>(CHIPS, _level.transform);
         }
 
         private void CreateLevelSpline()
@@ -188,10 +198,17 @@ namespace Drone.Location.Service.Builder
             });
         }
 
-        private void CreatePath(List<ObstacleInfo> obj)
+        private List<ObstacleInfo> CreateShortestPath(List<ObstacleInfo> obstacles)
         {
             PathCreator path = _path.GetComponent<PathCreator>();
-            path.Init(obj);
+            path.Init(obstacles);
+            return obstacles;
+        }
+
+        private IPromise CreateChipsPath(List<ObstacleInfo> obstacles)
+        {
+            ChipsLineCreator chips = _chips.GetComponent<ChipsLineCreator>();
+            return chips.Init(obstacles, _seed, 30, _loadObjectService);
         }
 
         private void CreateGameWorld()

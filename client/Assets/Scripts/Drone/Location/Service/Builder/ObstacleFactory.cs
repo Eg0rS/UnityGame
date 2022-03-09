@@ -127,8 +127,9 @@ namespace Drone.Location.Service.Builder
         private IPromise SpawnObstacle(WorldTile worldTile, Transform parentObstacles)
         {
             if (_lastObstaclePosition.magnitude < worldTile.End.position.magnitude) {
-                Zone redZone = worldTile.Descriptor.RedZones?.FirstOrDefault(x => _lastObstaclePosition.magnitude >= x.Begin
-                                                                                  && _lastObstaclePosition.magnitude < x.End);
+                Zone redZone =
+                        worldTile.Descriptor.RedZones?.FirstOrDefault(x => (_lastObstaclePosition - worldTile.Begin.position).magnitude >= x.Begin
+                                                                           && (_lastObstaclePosition - worldTile.Begin.position).magnitude <= x.End);
                 if (redZone == null) {
                     string type = ChoiceObstacleType(worldTile.Descriptor.ObstacleTypes);
                     _loadObjectService.LoadObstacle(worldTile.Descriptor, type)
