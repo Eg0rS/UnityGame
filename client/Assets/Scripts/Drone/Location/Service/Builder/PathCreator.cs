@@ -25,7 +25,8 @@ namespace Drone.Location.Service.Builder
             CreatePoint();
             foreach (ObstacleInfo obstacle in _obstacleInfos) {
                 _pointPosition = new Vector3(0, 0, obstacle.gameObject.transform.position.z);
-                Vector2 cord = PathCalculated(obstacle.PassThroughGrid);
+                //Vector2 cord = PathCalculated(obstacle.PassThroughGrid);
+                Vector2 cord = Vector2.down;
                 _pointPosition = new Vector3(cord.x, cord.y, _pointPosition.z);
                 CreatePoint();
                 _pointPosition += new Vector3(0, 0, obstacle.Depth);
