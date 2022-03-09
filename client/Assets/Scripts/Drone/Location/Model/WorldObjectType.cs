@@ -8,7 +8,7 @@ namespace Drone.Location.Model
         NONE,
         PLAYER,
         OBSTACLE,
-        BONUS_CHIPS,
+        CHIP,
         FINISH,
         SPLINE_WALKER,
         SPLINE,

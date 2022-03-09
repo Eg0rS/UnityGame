@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1183861989811877804}
-  - component: {fileID: 1708470036527643502}
+  - component: {fileID: 264848867127493620}
   m_Layer: 0
   m_Name: pfBaseObstacleMid4
   m_TagString: Untagged
@@ -34,7 +34,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1708470036527643502
+--- !u!114 &264848867127493620
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,12 +46,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19073746d13d41c8999f67855970cd53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _passThroughGrid:
-    rows:
-    - columns: 000100
-    - columns: 010101
-    - columns: 010101
-  _depth: 0
+  PassThroughGrids:
+  - _cellDatas:
+    - _isFilled: 0
+    - _isFilled: 0
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+  - _cellDatas:
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 0
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 0
+    - _isFilled: 0
+    - _isFilled: 1
+    - _isFilled: 0
+  Depth: 2
 --- !u!1001 &5109204375871614701
 PrefabInstance:
   m_ObjectHideFlags: 0

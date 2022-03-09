@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4195136720360137748}
-  - component: {fileID: 1216856432810943999}
+  - component: {fileID: 9192104124199776779}
   m_Layer: 0
   m_Name: pfBaseObstacleMid1
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1216856432810943999
+--- !u!114 &9192104124199776779
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,12 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19073746d13d41c8999f67855970cd53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _passThroughGrid:
-    rows:
-    - columns: 010101
-    - columns: 010101
-    - columns: 010001
-  _depth: 0
+  PassThroughGrids:
+  - _cellDatas:
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 1
+    - _isFilled: 0
+    - _isFilled: 1
+  Depth: 1
 --- !u!1001 &4522137442890677680
 PrefabInstance:
   m_ObjectHideFlags: 0
