@@ -120,7 +120,6 @@ namespace Drone.Location.Service.Builder
                     .Then(CreateLevelTiles)
                     .Then(CreateLevelSpline)
                     .Then(ConfigureTiles)
-                    .Then(CreateShortestPath)
                     .Then(CreateChipsPath)
                     .Then(CreateGameWorld);
         }
