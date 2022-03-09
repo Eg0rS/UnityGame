@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Drone.Location.Model.Obstacle
 {
@@ -8,7 +7,6 @@ namespace Drone.Location.Model.Obstacle
     {
         [SerializeField]
         public List<PassThroughGrid> PassThroughGrids = new List<PassThroughGrid>();
-        [FormerlySerializedAs("Depth")]
         [SerializeField]
         [Min(0)]
         public int Depth;
