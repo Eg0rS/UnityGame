@@ -4,6 +4,7 @@ using System.Linq;
 using BezierSolution;
 using Drone.Location.Model.Obstacle;
 using Drone.Random.MersenneTwister;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Drone.Location.Service.Builder
@@ -16,6 +17,7 @@ namespace Drone.Location.Service.Builder
         private Vector3 _pointPosition = Vector3.zero;
         private bool _isShotest;
         private MTRandomGenerator _randomGenerator;
+        private const float MAX_DELTA = 2.0f;
 
         public BezierSpline Init(List<ObstacleInfo> obstacleInfos, bool shotest = true, uint seed = 0)
         {
@@ -30,7 +32,7 @@ namespace Drone.Location.Service.Builder
                 Vector2 cord = Vector2.down;
                 _pointPosition = new Vector3(cord.x, cord.y, _pointPosition.z);
                 CreatePoint();
-               // _pointPosition += new Vector3(0, 0, obstacle.Depth);
+                // _pointPosition += new Vector3(0, 0, obstacle.Depth);
                 CreatePoint();
             }
             _bezierSpline.ConstructLinearPath();
@@ -78,22 +80,46 @@ namespace Drone.Location.Service.Builder
             _obstInfos = obstacleInfos;
         }
 
-        // private bool IsCanFly(Vector3 position)
-        // {
-        //     float delta = -1;
-        //     ObstacleInfo info = null;
-        //     foreach (var obstInfo in _obstInfos) {
-        //         float curDelta = Vector3.Distance(obstInfo.gameObject.transform.position, new Vector3(0, 0, position.z));
-        //         if (curDelta < delta || delta == -1) {
-        //             delta = curDelta;
-        //             info = obstInfo;
-        //         }
-        //     }
-        //     if (delta < info.Depth / 2) {
-        //         return true;
-        //     }
-        //     
-        //     
-        // }
+        [NotNull]
+        public List<Vector3> GetShortestPath(Transform start, Transform finish)
+        {
+            List<Vector3> points = new List<Vector3> {
+                    Vector3.zero
+            };
+            for (int z = (int) start.position.z; z < (int) finish.position.z; z++) {
+                Vector3 curPoint = new Vector3(points.Last().x, points.Last().y, z);
+                points.Add(ConfigPoint(curPoint));
+            }
+            return points;
+        }
+
+        private Vector3 ConfigPoint(Vector3 point)
+        {
+            float minDelta = MAX_DELTA;
+            Vector2 coords = Vector2.zero;
+            ObstacleInfo info = IsClearCell(point);
+            if (info == null) {
+                return point;
+            }
+            for (int i = 0; i < 9; i++) {
+                if (info.PassThroughGrid._cellDatas[i]._isFilled) {
+                    continue;
+                }
+                Vector2 pointPosition = new Vector2(_pointPosition.x, _pointPosition.y);
+                float delta = Math.Abs(Vector2.Distance(pointPosition, info.PassThroughGrid._cellDatas[i].Coords));
+                if (!(delta < minDelta)) {
+                    continue;
+                }
+                minDelta = delta;
+                coords = info.PassThroughGrid._cellDatas[i].Coords;
+            }
+            return new Vector3(coords.x, coords.y, point.z);
+        }
+
+        [CanBeNull]
+        private ObstacleInfo IsClearCell(Vector3 position)
+        {
+            return _obstInfos.FirstOrDefault(x => Math.Abs(x.transform.position.z - position.z) < 1f);
+        }
     }
 }

@@ -32,7 +32,6 @@ namespace Drone.Location.Model.Obstacle
     public class CellData
     {
         private Vector2 _coords;
-        [SerializeField]
         public bool _isFilled;
 
         public CellData(Vector2 coords, bool isFilled)

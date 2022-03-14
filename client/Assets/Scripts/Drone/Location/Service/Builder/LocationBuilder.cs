@@ -9,9 +9,11 @@ using Drone.LevelDifficult.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
+using Drone.Location.Model.StartPlatform;
 using Drone.Location.World;
 using GameKit.World;
 using JetBrains.Annotations;
@@ -64,6 +66,8 @@ namespace Drone.Location.Service.Builder
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
         private uint _seed;
+        private StartPlatformModel _start;
+        private FinishModel _finish;
 
         #endregion
 
@@ -190,6 +194,12 @@ namespace Drone.Location.Service.Builder
             _levelDescriptor.GameData.Tiles.TilesData.Each(tileId => {
                 KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(pair => pair.Key.Id == tileId.Id);
                 WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>().Init(tile.Key, lastTile);
+                if (_start == null) {
+                    _start = worldTile.GetComponentInChildren<StartPlatformModel>();
+                }
+                if (_finish == null) {
+                    _finish = worldTile.GetComponentInChildren<FinishModel>();
+                }
                 _worldTiles.Add(worldTile);
                 lastTile = worldTile;
             });
@@ -197,9 +207,11 @@ namespace Drone.Location.Service.Builder
 
         private IPromise CreateChipsPath(List<ObstacleInfo> obstacles)
         {
+            
+            return Promise.Resolved();
             ChipsLineCreator chips = _chips.GetComponent<ChipsLineCreator>();
             PathCreator p = _chips.AddComponent<PathCreator>();
-            
+
             return chips.Init(obstacles, _seed, 30, _loadObjectService);
         }
 
