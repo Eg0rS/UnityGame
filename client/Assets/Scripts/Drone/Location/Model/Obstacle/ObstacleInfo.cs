@@ -1,15 +1,11 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Drone.Location.Model.Obstacle
 {
     public class ObstacleInfo : MonoBehaviour
     {
         [SerializeField]
-        public List<PassThroughGrid> PassThroughGrids = new List<PassThroughGrid>();
-        [SerializeField]
-        [Min(0)]
-        public int Depth;
+        public PassThroughGrid PassThroughGrid = new PassThroughGrid();
     }
 
     [System.Serializable]

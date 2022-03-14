@@ -15,7 +15,7 @@ namespace Drone.Location.Service.Builder
         public IPromise Init(List<ObstacleInfo> obstacleInfos, uint seed, int chipsCount, LoadLocationObjectService objectService)
         {
             _chipCount = chipsCount;
-            _bezierSpline = gameObject.AddComponent<PathCreator>().Init(obstacleInfos, false, seed);
+                    
             return objectService.LoadResource<GameObject>(CHIP_PATH).Then(CreateChipsPath);
         }
 

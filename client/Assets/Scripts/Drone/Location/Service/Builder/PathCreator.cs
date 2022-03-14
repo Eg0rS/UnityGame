@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BezierSolution;
 using Drone.Location.Model.Obstacle;
 using Drone.Random.MersenneTwister;
@@ -29,7 +30,7 @@ namespace Drone.Location.Service.Builder
                 Vector2 cord = Vector2.down;
                 _pointPosition = new Vector3(cord.x, cord.y, _pointPosition.z);
                 CreatePoint();
-                _pointPosition += new Vector3(0, 0, obstacle.Depth);
+               // _pointPosition += new Vector3(0, 0, obstacle.Depth);
                 CreatePoint();
             }
             _bezierSpline.ConstructLinearPath();
@@ -69,5 +70,30 @@ namespace Drone.Location.Service.Builder
             }
             return _isShotest ? grid._cellDatas[selectIndex].Coords : clearCells[_randomGenerator.Range(0, clearCells.Count)];
         }
+
+        private List<ObstacleInfo> _obstInfos;
+
+        public void Init(List<ObstacleInfo> obstacleInfos)
+        {
+            _obstInfos = obstacleInfos;
+        }
+
+        // private bool IsCanFly(Vector3 position)
+        // {
+        //     float delta = -1;
+        //     ObstacleInfo info = null;
+        //     foreach (var obstInfo in _obstInfos) {
+        //         float curDelta = Vector3.Distance(obstInfo.gameObject.transform.position, new Vector3(0, 0, position.z));
+        //         if (curDelta < delta || delta == -1) {
+        //             delta = curDelta;
+        //             info = obstInfo;
+        //         }
+        //     }
+        //     if (delta < info.Depth / 2) {
+        //         return true;
+        //     }
+        //     
+        //     
+        // }
     }
 }

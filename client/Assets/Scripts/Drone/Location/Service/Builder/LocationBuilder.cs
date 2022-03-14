@@ -34,7 +34,6 @@ namespace Drone.Location.Service.Builder
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
-        private const string PATH = "Path";
         private const string CHIPS = "Chips";
 
         #endregion
@@ -171,7 +170,6 @@ namespace Drone.Location.Service.Builder
             _player = CreateContainer<PlayerModel>(PLAYER, _droneWorld.transform);
             _spline = CreateContainer<SplineModel>(SPLINE, _droneWorld.transform);
             _level = CreateContainer<SplineWalkerModel>(LEVEL, _droneWorld.transform);
-            _path = CreateContainer<PathCreator>(PATH, _level.transform);
             _chips = CreateContainer<ChipsLineCreator>(CHIPS, _level.transform);
         }
 
@@ -197,16 +195,11 @@ namespace Drone.Location.Service.Builder
             });
         }
 
-        private List<ObstacleInfo> CreateShortestPath(List<ObstacleInfo> obstacles)
-        {
-            PathCreator path = _path.GetComponent<PathCreator>();
-            path.Init(obstacles);
-            return obstacles;
-        }
-
         private IPromise CreateChipsPath(List<ObstacleInfo> obstacles)
         {
             ChipsLineCreator chips = _chips.GetComponent<ChipsLineCreator>();
+            PathCreator p = _chips.AddComponent<PathCreator>();
+            
             return chips.Init(obstacles, _seed, 30, _loadObjectService);
         }
 
