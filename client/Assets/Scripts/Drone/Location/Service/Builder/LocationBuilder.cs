@@ -207,12 +207,9 @@ namespace Drone.Location.Service.Builder
 
         private IPromise CreateChipsPath(List<ObstacleInfo> obstacles)
         {
-            
-            return Promise.Resolved();
             ChipsLineCreator chips = _chips.GetComponent<ChipsLineCreator>();
-            PathCreator p = _chips.AddComponent<PathCreator>();
 
-            return chips.Init(obstacles, _seed, 30, _loadObjectService);
+            return chips.Init(obstacles, _seed, 30, _loadObjectService, _start.transform, _finish.transform);
         }
 
         private void CreateGameWorld()
