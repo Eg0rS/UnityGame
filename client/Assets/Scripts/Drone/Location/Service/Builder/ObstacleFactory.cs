@@ -150,10 +150,11 @@ namespace Drone.Location.Service.Builder
         private void InitObstacle(GameObject obstacle)
         {
             obstacle.transform.position = _lastObstaclePosition;
-            ObstacleInfo skin = obstacle.GetChildren()[_randomGenerator.Range(0, obstacle.GetChildren().Count)].GetComponent<ObstacleInfo>();
-            skin.gameObject.SetActive(true);
-            _obstacleInfos.Add(skin);
-            _lastObstaclePosition += _spawnStep + new Vector3(0, 0, skin.Depth);
+            GameObject skin = obstacle.GetChildren()[_randomGenerator.Range(0, obstacle.GetChildren().Count)];
+            skin.SetActive(true);
+            ObstacleInfo[] obstacleInfos = skin.GetComponentsInChildren<ObstacleInfo>();
+            _obstacleInfos.AddRange(obstacleInfos);
+            _lastObstaclePosition += _spawnStep + new Vector3(0, 0, obstacleInfos.Length);
         }
 
         private string ChoiceObstacleType(string[] obstacleTypes)

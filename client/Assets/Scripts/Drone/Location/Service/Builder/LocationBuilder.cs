@@ -9,9 +9,11 @@ using Drone.LevelDifficult.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
 using Drone.Location.Model.Spline;
+using Drone.Location.Model.StartPlatform;
 using Drone.Location.World;
 using GameKit.World;
 using JetBrains.Annotations;
@@ -34,7 +36,6 @@ namespace Drone.Location.Service.Builder
         private const string SPLINE = "Spline";
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
-        private const string PATH = "Path";
         private const string CHIPS = "Chips";
 
         #endregion
@@ -65,6 +66,8 @@ namespace Drone.Location.Service.Builder
         private Dictionary<TileDescriptor, GameObject> _tiles;
         private List<WorldTile> _worldTiles = new List<WorldTile>();
         private uint _seed;
+        private StartPlatformModel _start;
+        private FinishModel _finish;
 
         #endregion
 
@@ -120,7 +123,6 @@ namespace Drone.Location.Service.Builder
                     .Then(CreateLevelTiles)
                     .Then(CreateLevelSpline)
                     .Then(ConfigureTiles)
-                    .Then(CreateShortestPath)
                     .Then(CreateChipsPath)
                     .Then(CreateGameWorld);
         }
@@ -172,7 +174,6 @@ namespace Drone.Location.Service.Builder
             _player = CreateContainer<PlayerModel>(PLAYER, _droneWorld.transform);
             _spline = CreateContainer<SplineModel>(SPLINE, _droneWorld.transform);
             _level = CreateContainer<SplineWalkerModel>(LEVEL, _droneWorld.transform);
-            _path = CreateContainer<PathCreator>(PATH, _level.transform);
             _chips = CreateContainer<ChipsLineCreator>(CHIPS, _level.transform);
         }
 
@@ -193,22 +194,22 @@ namespace Drone.Location.Service.Builder
             _levelDescriptor.GameData.Tiles.TilesData.Each(tileId => {
                 KeyValuePair<TileDescriptor, GameObject> tile = _tiles.First(pair => pair.Key.Id == tileId.Id);
                 WorldTile worldTile = Object.Instantiate(tile.Value, _level.transform).gameObject.AddComponent<WorldTile>().Init(tile.Key, lastTile);
+                if (_start == null) {
+                    _start = worldTile.GetComponentInChildren<StartPlatformModel>();
+                }
+                if (_finish == null) {
+                    _finish = worldTile.GetComponentInChildren<FinishModel>();
+                }
                 _worldTiles.Add(worldTile);
                 lastTile = worldTile;
             });
         }
 
-        private List<ObstacleInfo> CreateShortestPath(List<ObstacleInfo> obstacles)
-        {
-            PathCreator path = _path.GetComponent<PathCreator>();
-            path.Init(obstacles);
-            return obstacles;
-        }
-
         private IPromise CreateChipsPath(List<ObstacleInfo> obstacles)
         {
             ChipsLineCreator chips = _chips.GetComponent<ChipsLineCreator>();
-            return chips.Init(obstacles, _seed, 30, _loadObjectService);
+
+            return chips.Init(obstacles, _seed, 30, _loadObjectService, _start.transform, _finish.transform);
         }
 
         private void CreateGameWorld()

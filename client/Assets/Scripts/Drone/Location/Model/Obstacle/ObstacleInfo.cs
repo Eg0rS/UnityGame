@@ -5,19 +5,7 @@ namespace Drone.Location.Model.Obstacle
     public class ObstacleInfo : MonoBehaviour
     {
         [SerializeField]
-        private PassThroughGrid _passThroughGrid = new PassThroughGrid();
-        [SerializeField]
-        [Range(0, 20)]
-        private int _depth;
-
-        public PassThroughGrid PassThroughGrid
-        {
-            get { return _passThroughGrid; }
-        }
-        public int Depth
-        {
-            get { return _depth; }
-        }
+        public PassThroughGrid PassThroughGrid = new PassThroughGrid();
     }
 
     [System.Serializable]
@@ -44,7 +32,6 @@ namespace Drone.Location.Model.Obstacle
     public class CellData
     {
         private Vector2 _coords;
-        [SerializeField]
         public bool _isFilled;
 
         public CellData(Vector2 coords, bool isFilled)
