@@ -1,5 +1,6 @@
 ﻿using AgkCommons.Event;
 using DG.Tweening;
+using Drone.Location.Interface;
 using Drone.Location.Service.Control.Drone.Event;
 using IoC.Attribute;
 using IoC.Extension;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace Drone.Location.World.Player
 {
-    public class PlayerTransitionController : GameEventDispatcher
+    public class PlayerTransitionController : GameEventDispatcher, IInteractiveObject
     {
         [Inject]
         private DroneWorld _gameWorld;
@@ -75,6 +76,11 @@ namespace Drone.Location.World.Player
         {
             get { return _mobility; }
             set { _mobility = value; }
+        }
+
+        public void SetCurrentPosition()
+        {
+            _rigidbody.DOLocalPath(new[] {_currentPosition}, 0f);
         }
     }
 }

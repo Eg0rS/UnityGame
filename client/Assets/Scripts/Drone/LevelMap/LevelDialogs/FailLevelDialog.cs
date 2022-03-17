@@ -1,16 +1,16 @@
-﻿using System.Linq;
-using AgkCommons.Event;
+﻿using AgkCommons.Event;
 using AgkUI.Binding.Attributes;
-using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
-using AgkUI.Screens.Service;
+using AgkUI.Element.Buttons;
+using AgkUI.Element.Text;
 using Drone.Core.UI.Dialog;
-using Drone.Levels.Service;
-using Drone.MainMenu.UI.Screen;
+using Drone.Location.Service.Game;
+using Drone.Location.Service.Game.Event;
+using Drone.Location.World;
+using GameKit.World;
 using IoC.Attribute;
-using IoC.Util;
-using LocationService = Drone.Location.Service.LocationService;
+using Image = UnityEngine.UI.Image;
 
 namespace Drone.LevelMap.LevelDialogs
 {
@@ -18,41 +18,35 @@ namespace Drone.LevelMap.LevelDialogs
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class FailLevelDialog : GameEventDispatcher
     {
-        private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedCompactDialog@embeded";
+        private const string PREFAB_NAME = "UI_Prototype/Dialog/Respawn/pfRespawnDialog@embeded";
 
         private string _levelId;
 
         [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
+        private DialogManager _dialogManager;
 
         [Inject]
-        private ScreenManager _screenManager;
+        private DroneWorld _gameWorld;
 
-        [Inject]
-        private LevelService _levelService;
+        [UIComponentBinding("RespawnButton")]
+        private UIButton _restartButton;
 
-        [Inject]
-        private LocationService _locationService;
+        [UIComponentBinding("FiledArea")]
+        private Image _filedArea;
+
+        [UIComponentBinding("TimelLabel")]
+        private UILabel _timerLabel;
 
         [UICreated]
         public void Init()
         {
-            _levelId = _levelService.SelectedLevelId;
+            _restartButton.onClick.AddListener(RespawnButtonClick);
         }
 
-        [UIOnClick("RestartButton")]
-        private void RestartButtonClicked()
+        private void RespawnButtonClick()
         {
-            _dialogManager.Require().Hide(this);
-            _screenManager.LoadScreen<MainMenuScreen>();
-            _locationService.SwitchLocation(_levelService.GetLevels().First(x => x.LevelDescriptor.Id == _levelId).LevelDescriptor);
-        }
-
-        [UIOnClick("MainMenuButton")]
-        private void LevelMapButtonClicked()
-        {
-            _dialogManager.Require().Hide(this);
-            _screenManager.LoadScreen<MainMenuScreen>();
+            _dialogManager.Hide(this);
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.RESPAWN));
         }
     }
 }

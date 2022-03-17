@@ -27,6 +27,7 @@ namespace Drone.Location.World.Spline
             _splineController = _gameWorld.RequireObjectComponent<SplineController>();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, OnStartGame);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, OnStartGame);
         }
 
         private void OnEndGame(InGameEvent obj)
@@ -37,6 +38,7 @@ namespace Drone.Location.World.Spline
         private void OnStartGame(InGameEvent obj)
         {
             _isCanFly = true;
+            _levelRigidBody.position = new Vector3(0, 0, _levelRigidBody.position.z);
         }
 
         private void ConfigureRigidBody()

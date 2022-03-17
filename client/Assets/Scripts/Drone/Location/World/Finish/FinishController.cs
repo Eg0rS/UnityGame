@@ -1,4 +1,5 @@
 ﻿using Adept.Logger;
+using Drone.Location.Interface;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.Finish;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Drone.Location.World.Finish
 {
-    public class FinishController : MonoBehaviour, IWorldObjectController<FinishModel>
+    public class FinishController : MonoBehaviour, IWorldObjectController<FinishModel>, IInteractiveObject
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<FinishController>();
         public WorldObjectType ObjectType { get; private set; }
