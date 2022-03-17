@@ -4,6 +4,7 @@ using AgkCommons.Extension;
 using Drone.Core.Service;
 using Drone.Location.Event;
 using Drone.Location.Service.Control.Drone.Event;
+using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.World;
 using IoC.Attribute;
@@ -40,8 +41,21 @@ namespace Drone.Location.Service.Control
         {
             _width = Screen.width;
             _gameWorld.AddListener(WorldEvent.CREATED, OnWorldCreated);
+            _gameWorld.AddListener(InGameEvent.END_GAME, OnEndGame);
+            _gameWorld.AddListener(InGameEvent.RESPAWN, OnRespawn);
             _inputControl = new InputControl();
             TouchSimulation.Enable();
+        }
+
+        private void OnRespawn(GameEvent obj)
+        {
+            
+            _inputControl.Enable();
+        }
+
+        private void OnEndGame(GameEvent obj)
+        {
+            _inputControl.Disable();
         }
 
         private void OnWorldCreated(GameEvent obj)
@@ -51,7 +65,6 @@ namespace Drone.Location.Service.Control
             _inputControl.Player.Tap.started += ctx => OnTap(ctx);
         }
 
-        
         private void OnDisable()
         {
             _inputControl.Disable();

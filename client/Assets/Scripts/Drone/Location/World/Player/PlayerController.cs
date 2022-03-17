@@ -1,6 +1,7 @@
 using System.Linq;
 using AgkCommons.Event;
 using AgkCommons.Extension;
+using Drone.Location.Interface;
 using Drone.Location.Model;
 using Drone.Location.Model.Player;
 using Drone.Location.Service.Game.Event;
@@ -35,6 +36,19 @@ namespace Drone.Location.World.Player
             ControllerInitialization();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.CHANGE_SPLINE_SEGMENT, OnChangeSplineSegment);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, OnRespawn);
+        }
+
+        private void OnRespawn(InGameEvent obj)
+        {
+            Collider[] overLappedColliders = Physics.OverlapSphere(transform.position, 25);
+            foreach (Collider collider in overLappedColliders) {
+                IInteractiveObject interactiveObject = collider.GetComponent<IInteractiveObject>();
+                if (interactiveObject == null) {
+                    collider.gameObject.SetActive(false);
+                }
+            }
+            _transitionController.SetCurrentPosition();
         }
 
         private void OnChangeSplineSegment(InGameEvent obj)

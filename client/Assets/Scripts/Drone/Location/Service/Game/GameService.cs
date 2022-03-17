@@ -95,7 +95,7 @@ namespace Drone.Location.Service.Game
         {
             yield return new WaitForSeconds(TIME_FOR_DEAD);
             SetStatsInProgress(false);
-            _dialogManager.ShowModal<FailLevelDialog>();
+            _dialogManager.Show<FailLevelDialog>();
         }
 
         private void SetStatsInProgress(bool isWin)

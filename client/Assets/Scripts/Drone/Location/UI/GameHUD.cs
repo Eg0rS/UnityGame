@@ -59,6 +59,13 @@ namespace Drone.Location.UI
             _gameWorld.AddListener<ControllEvent>(ControllEvent.MOVEMENT, OnMovement);
 
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, EndGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, Respawn);
+        }
+
+        private void Respawn(InGameEvent obj)
+        {
+            _isGame = true;
+            gameObject.SetActive(true);
         }
 
         private void EndGame(InGameEvent inGameEvent)

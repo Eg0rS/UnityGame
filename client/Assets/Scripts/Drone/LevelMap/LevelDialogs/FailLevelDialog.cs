@@ -1,16 +1,18 @@
-﻿using System.Linq;
-using AgkCommons.Event;
+﻿using AgkCommons.Event;
 using AgkUI.Binding.Attributes;
-using AgkUI.Binding.Attributes.Method;
 using AgkUI.Dialog.Attributes;
 using AgkUI.Dialog.Service;
+using AgkUI.Element.Buttons;
+using AgkUI.Element.Text;
 using AgkUI.Screens.Service;
+using DG.Tweening;
 using Drone.Core.UI.Dialog;
-using Drone.Levels.Service;
+using Drone.Location.Service.Game.Event;
+using Drone.Location.World;
 using Drone.MainMenu.UI.Screen;
 using IoC.Attribute;
-using IoC.Util;
-using LocationService = Drone.Location.Service.LocationService;
+using UnityEngine;
+using Image = UnityEngine.UI.Image;
 
 namespace Drone.LevelMap.LevelDialogs
 {
@@ -18,41 +20,60 @@ namespace Drone.LevelMap.LevelDialogs
     [UIDialogFog(FogPrefabs.EMBEDED_SHADOW_FOG)]
     public class FailLevelDialog : GameEventDispatcher
     {
-        private const string PREFAB_NAME = "UI/Dialog/pfLevelFailedCompactDialog@embeded";
-
+        private const string PREFAB_NAME = "UI_Prototype/Dialog/Respawn/pfRespawnDialog@embeded";
+        private const float TIME_FOR_END = 10f;
         private string _levelId;
 
-        [Inject]
-        private IoCProvider<DialogManager> _dialogManager;
-
+        private float _timeForEndLeft = TIME_FOR_END;
         [Inject]
         private ScreenManager _screenManager;
+        [Inject]
+        private DialogManager _dialogManager;
 
         [Inject]
-        private LevelService _levelService;
+        private DroneWorld _gameWorld;
 
-        [Inject]
-        private LocationService _locationService;
+        [UIComponentBinding("RespawnButton")]
+        private UIButton _restartButton;
+
+        [UIComponentBinding("FiledArea")]
+        private Image _filedArea;
+
+        [UIComponentBinding("TimelLabel")]
+        private UILabel _timerLabel;
 
         [UICreated]
         public void Init()
         {
-            _levelId = _levelService.SelectedLevelId;
+            _restartButton.onClick.AddListener(RespawnButtonClick);
         }
 
-        [UIOnClick("RestartButton")]
-        private void RestartButtonClicked()
+        private void Update()
         {
-            _dialogManager.Require().Hide(this);
-            _screenManager.LoadScreen<MainMenuScreen>();
-            _locationService.SwitchLocation(_levelService.GetLevels().First(x => x.LevelDescriptor.Id == _levelId).LevelDescriptor);
+            _timeForEndLeft -= Time.unscaledDeltaTime;
+            if (_timeForEndLeft <= 0f) {
+                OnComplete();
+                return;
+            }
+            float percent = _timeForEndLeft / TIME_FOR_END;
+            if (percent <= 0.3f) {
+                _filedArea.color = new Color(1, 0.02745098f, 0.02745098f);
+                _timerLabel.color = new Color(1, 0.02745098f, 0.02745098f);
+            }
+            _filedArea.fillAmount = _timeForEndLeft / TIME_FOR_END;
+            _timerLabel.text = _timeForEndLeft.ToString("F1");
         }
 
-        [UIOnClick("MainMenuButton")]
-        private void LevelMapButtonClicked()
+        private void OnComplete()
         {
-            _dialogManager.Require().Hide(this);
+            _dialogManager.Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
+        }
+
+        private void RespawnButtonClick()
+        {
+            _dialogManager.Hide(this);
+            _gameWorld.Dispatch(new InGameEvent(InGameEvent.RESPAWN));
         }
     }
 }

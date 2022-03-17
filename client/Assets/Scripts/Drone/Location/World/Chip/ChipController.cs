@@ -1,13 +1,13 @@
 ﻿using Adept.Logger;
+using Drone.Location.Interface;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.ChipModel;
-using Drone.Location.Service.Game.Event;
 using UnityEngine;
 
 namespace Drone.Location.World.Chip
 {
-    public class ChipController : MonoBehaviour, IWorldObjectController<ChipModel>
+    public class ChipController : MonoBehaviour, IWorldObjectController<ChipModel>, IInteractiveObject
     {
         private static readonly IAdeptLogger _logger = LoggerFactory.GetLogger<ChipController>();
         public WorldObjectType ObjectType { get; }
