@@ -9,11 +9,10 @@ namespace Drone.Location.Service.Game.Event
         public const string SET_DRONE_PARAMETERS = "setDroneParameters";
         public const string START_GAME = "startGame";
         public const string END_GAME = "endGame";
-        public const string CHANGE_SPLINE_SEGMENT = "changeRotation";
+        public const string CHIP_UP = "chipUp";
         public const string CHANGE_TILE = "changeTile";
         public const string RESPAWN = "respawn";
-
-        public BezierSpline.Segment BezierSegment { get; private set; }
+        
         public EndGameReasons EndGameReason { get; private set; }
         public DroneModel DroneModel { get; private set; }
 
@@ -27,10 +26,6 @@ namespace Drone.Location.Service.Game.Event
         public InGameEvent(string name, EndGameReasons endGameReason) : base(name)
         {
             EndGameReason = endGameReason;
-        }
-        public InGameEvent(string name, BezierSpline.Segment segment) : base(name)
-        {
-            BezierSegment = segment;
         }
     }
 }

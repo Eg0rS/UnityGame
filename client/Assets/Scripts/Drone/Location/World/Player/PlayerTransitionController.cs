@@ -18,7 +18,6 @@ namespace Drone.Location.World.Player
 
         private float _mobility;
         private Vector3 _currentPosition = Vector3.zero;
-        
 
         public void Configure(GameObject mesh)
         {
@@ -78,9 +77,10 @@ namespace Drone.Location.World.Player
             set { _mobility = value; }
         }
 
-        public void SetCurrentPosition()
+        public void SetDefaultPosition()
         {
-            _rigidbody.DOLocalPath(new[] {_currentPosition}, 0f);
+            _currentPosition = Vector3.zero;
+            _rigidbody.DOLocalPath(new[] {Vector3.zero}, 0f);
         }
     }
 }

@@ -35,7 +35,6 @@ namespace Drone.Location.World.Player
             _particles = _prefab.GetChildren().First(x => x.name == "pfParticleWorld");
             ControllerInitialization();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
-            _gameWorld.AddListener<InGameEvent>(InGameEvent.CHANGE_SPLINE_SEGMENT, OnChangeSplineSegment);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, OnRespawn);
         }
 
@@ -48,15 +47,7 @@ namespace Drone.Location.World.Player
                     collider.gameObject.SetActive(false);
                 }
             }
-            _transitionController.SetCurrentPosition();
-        }
-
-        private void OnChangeSplineSegment(InGameEvent obj)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(obj.BezierSegment.GetTangent(), obj.BezierSegment.GetNormal());
-            if (targetRotation != transform.rotation) {
-                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10f * Time.fixedTime);
-            }
+            _transitionController.SetDefaultPosition();
         }
 
         private void ControllerInitialization()

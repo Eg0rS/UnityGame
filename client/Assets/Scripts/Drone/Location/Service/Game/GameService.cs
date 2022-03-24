@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using AgkCommons.CodeStyle;
 using AgkCommons.Event;
 using AgkUI.Dialog.Service;
@@ -37,8 +36,6 @@ namespace Drone.Location.Service.Game
         [Inject]
         private DroneService _droneService;
 
-        private const float TIME_FOR_DEAD = 0.3f;
-
         private LevelDescriptor _levelDescriptor;
 
         private int _countChips;
@@ -54,7 +51,13 @@ namespace Drone.Location.Service.Game
             _countChips = 0;
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, droneModel));
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CHIP_UP, OnChipUp);
             _overlayManager.HideLoadingOverlay(true);
+        }
+
+        private void OnChipUp(InGameEvent obj)
+        {
+            _countChips += 1;
         }
 
         private void InitCurveWorldController()
@@ -87,13 +90,6 @@ namespace Drone.Location.Service.Game
                 default:
                     throw new Exception($"Reason {inGameEvent.EndGameReason} is not implemented");
             }
-        }
-
-        private IEnumerator GameFailed()
-        {
-            yield return new WaitForSeconds(TIME_FOR_DEAD);
-            SetStatsInProgress(false);
-            _dialogManager.Show<RespawnDialog>();
         }
 
         private void SetStatsInProgress(bool isWin)

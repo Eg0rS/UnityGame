@@ -49,23 +49,26 @@ namespace Drone.LevelMap.LevelDialogs
         [UIComponentBinding("ChipCount")]
         private UILabel _chipCount;
 
+        [UIComponentBinding("Close")]
+        private UIButton _close;
+
         private bool _isFreeRespawn;
 
         [UICreated]
-        public void Init()
+        public void Init(int respawnPrice)
         {
-            SetRespawnPrice();
+            SetRespawnPrice(respawnPrice);
             _restartButton.onClick.AddListener(RespawnButtonClick);
+            _close.onClick.AddListener(ExitDialog);
         }
 
-        private void SetRespawnPrice()
+        private void SetRespawnPrice(int respawnPrice)
         {
-            int price = _respawnService.SetRespawnPrice();
-            if (price == -1) {
+            if (respawnPrice == 0) {
                 _chipCount.text = "FREE";
                 _isFreeRespawn = true;
             } else {
-                //_chipCount.text = price;
+                _chipCount.text = respawnPrice.ToString();
             }
         }
 
@@ -73,7 +76,7 @@ namespace Drone.LevelMap.LevelDialogs
         {
             _timeForEndLeft -= Time.unscaledDeltaTime;
             if (_timeForEndLeft <= 0f) {
-                OnComplete();
+                ExitDialog();
                 return;
             }
             float percent = _timeForEndLeft / TIME_FOR_END;
@@ -85,7 +88,7 @@ namespace Drone.LevelMap.LevelDialogs
             _timerLabel.text = _timeForEndLeft.ToString("F1");
         }
 
-        private void OnComplete()
+        private void ExitDialog()
         {
             _dialogManager.Hide(this);
             _screenManager.LoadScreen<MainMenuScreen>();
@@ -93,13 +96,13 @@ namespace Drone.LevelMap.LevelDialogs
 
         private void RespawnButtonClick()
         {
-            _levelService.AddRespawnCount();
             if (!_isFreeRespawn) {
                 if (!_respawnService.BuyRespawn()) {
                     _restartButton.image.color = RED;
                     return;
                 }
             }
+            _levelService.AddRespawnCount();
             _dialogManager.Hide(this);
             _gameWorld.Dispatch(new InGameEvent(InGameEvent.RESPAWN));
         }

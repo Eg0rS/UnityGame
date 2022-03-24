@@ -20,6 +20,9 @@ namespace Drone.Location.World.Spline
 
         public float _distanceTraveled = 0f;
         private bool _isCanFly = false;
+        private Vector3 _startPosition;
+        private Vector3 _curentPosition = Vector3.zero;
+        private const float OVERCLOCKING_DISTANCE = 75f;
 
         public void Init(SplineWalkerModel model)
         {
@@ -37,6 +40,7 @@ namespace Drone.Location.World.Spline
 
         private void OnStartGame(InGameEvent obj)
         {
+            _startPosition = _curentPosition;
             _isCanFly = true;
             _levelRigidBody.position = new Vector3(0, 0, _levelRigidBody.position.z);
         }
@@ -56,13 +60,11 @@ namespace Drone.Location.World.Spline
             if (!_isCanFly) {
                 return;
             }
-            Vector3 position = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedDeltaTime, 50);
-            position *= -1;
-            _levelRigidBody.MovePosition(position);
-            float multiplyCoefficient = _distanceTraveled * 1.70f > 1 ? 1.0f : _distanceTraveled * 1.70f;
+            _curentPosition = _splineController.BezierSpline.MoveAlongSpline(ref _distanceTraveled, SPEED * Time.fixedDeltaTime, 50) * -1;
+            _levelRigidBody.MovePosition(_curentPosition);
+            float overclocking = Vector3.Distance(_curentPosition, _startPosition) / 75;
+            float multiplyCoefficient = overclocking > 1f ? 1.0f : overclocking;
             Time.timeScale = 1.0f + 1.5f * multiplyCoefficient;
-            BezierSpline.Segment segment = _splineController.BezierSpline.GetSegmentAt(_distanceTraveled);
-            _gameWorld.Dispatch(new InGameEvent(InGameEvent.CHANGE_SPLINE_SEGMENT, segment));
         }
     }
 }
