@@ -16,6 +16,7 @@ namespace Drone.Core.Filter
             _localDescriptorLoader.AddDescriptor<LevelsDescriptors>(Descriptors.LEVELS)
                                   .AddDescriptor<TileDescriptors>(Descriptors.TILES)
                                   .AddDescriptor<DifficultDescriptors>(Descriptors.DIFFICULT)
+                                  .AddDescriptor<RespawnDescriptors>(Descriptors.RESPAWN)
                                   .Load()
                                   .Done(chain.Next);
         }

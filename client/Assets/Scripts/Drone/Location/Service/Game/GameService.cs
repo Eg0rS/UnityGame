@@ -78,16 +78,14 @@ namespace Drone.Location.Service.Game
 
         private void OnEndGame(InGameEvent inGameEvent)
         {
-            EndGameReasons reason = inGameEvent.EndGameReason;
-            switch (reason) {
+            switch (inGameEvent.EndGameReason) {
                 case EndGameReasons.CRUSH:
-                    StartCoroutine(GameFailed());
                     break;
                 case EndGameReasons.VICTORY:
                     Victory();
                     break;
                 default:
-                    throw new Exception($"Reason {reason} is not implemented");
+                    throw new Exception($"Reason {inGameEvent.EndGameReason} is not implemented");
             }
         }
 
@@ -95,7 +93,7 @@ namespace Drone.Location.Service.Game
         {
             yield return new WaitForSeconds(TIME_FOR_DEAD);
             SetStatsInProgress(false);
-            _dialogManager.Show<FailLevelDialog>();
+            _dialogManager.Show<RespawnDialog>();
         }
 
         private void SetStatsInProgress(bool isWin)
@@ -103,7 +101,7 @@ namespace Drone.Location.Service.Game
             if (!isWin) {
                 return;
             }
-            _levelService.SetLevelProgress(_levelDescriptor, _countChips);
+            _levelService.SetLevelProgress(_levelDescriptor, _countChips + _levelDescriptor.RewardForPassing);
         }
 
         private void Victory()
@@ -115,6 +113,12 @@ namespace Drone.Location.Service.Game
         private void OnDestroy()
         {
             Destroy(_curvedWorldController);
+        }
+
+        public int ChipsCount
+        {
+            get { return _countChips; }
+            set { _countChips = value; }
         }
     }
 }

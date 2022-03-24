@@ -17,6 +17,7 @@ namespace Drone.Descriptor.IoC
             container.RegisterSingleton<LevelsDescriptors>(() => registry.GetSingleDescriptor<LevelsDescriptors>());
             container.RegisterSingleton<TileDescriptors>(() => registry.GetSingleDescriptor<TileDescriptors>());
             container.RegisterSingleton<DifficultDescriptors>(() => registry.GetSingleDescriptor<DifficultDescriptors>());
+            container.RegisterSingleton<RespawnDescriptors>(() => registry.GetSingleDescriptor<RespawnDescriptors>());
         }
 
         private void RegisterCollection<T>(IIoCContainer container, string collectionName)

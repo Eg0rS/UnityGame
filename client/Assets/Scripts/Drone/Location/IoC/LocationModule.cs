@@ -21,6 +21,7 @@ namespace Drone.Location.IoC
             container.RegisterSingleton<ControlService>(null, ScopeType.SCREEN);
 
             container.RegisterSingleton<ObstacleService>(null, ScopeType.SCREEN);
+            container.RegisterSingleton<RespawnService>(null, ScopeType.SCREEN);
 
             //должен быть создан самым последним 
             container.RegisterSingleton<GameService>(null, ScopeType.SCREEN);

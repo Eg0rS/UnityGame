@@ -101,7 +101,7 @@ namespace Drone.Levels.Service
             return _levelsDescriptors.Levels.ToList().Find(x => x.Id == levelId);
         }
 
-        private PlayerProgressModel GetPlayerProgressModel()
+        public PlayerProgressModel GetPlayerProgressModel()
         {
             return !HasPlayerProgress() ? new PlayerProgressModel() : _progressRepository.Require();
         }
@@ -122,6 +122,13 @@ namespace Drone.Levels.Service
             if (!HasPlayerProgress()) {
                 _progressRepository.Set(new PlayerProgressModel());
             }
+        }
+
+        public void AddRespawnCount()
+        {
+            PlayerProgressModel playerProgress = GetPlayerProgressModel();
+            playerProgress.RespawnCount++;
+            SaveProgress(playerProgress);
         }
     }
 }

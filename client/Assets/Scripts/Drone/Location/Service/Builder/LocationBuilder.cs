@@ -209,7 +209,7 @@ namespace Drone.Location.Service.Builder
         {
             ChipsLineCreator chips = _chips.GetComponent<ChipsLineCreator>();
 
-            return chips.Init(obstacles, _seed, 30, _loadObjectService, _start.transform, _finish.transform);
+            return chips.Init(obstacles, _seed, _levelDescriptor.ChipsForPassing, _loadObjectService, _start.transform, _finish.transform);
         }
 
         private void CreateGameWorld()

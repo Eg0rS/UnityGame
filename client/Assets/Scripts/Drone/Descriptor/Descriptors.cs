@@ -5,5 +5,6 @@ namespace Drone.Descriptor
         public const string LEVELS = "levels";
         public const string DIFFICULT = "difficult";
         public const string TILES = "tiles";
+        public const string RESPAWN = "respawn";
     }
 }
