@@ -1,4 +1,4 @@
-﻿using Drone.Location.Service.Control.Drone.Descriptor;
+﻿using Drone.Location.World.Player.Descriptor;
 
 namespace Drone.Location.Service.Control.Drone.Model
 {

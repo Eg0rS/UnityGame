@@ -10,8 +10,6 @@ using Drone.LevelMap.LevelDialogs;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
 using Drone.Location.Service.Game.Event;
-using Drone.Location.Service.Control.Drone.Model;
-using Drone.Location.Service.Control.Drone.Service;
 using Drone.Location.World;
 using IoC.Attribute;
 using UnityEngine;
@@ -33,9 +31,6 @@ namespace Drone.Location.Service.Game
         [Inject]
         private LevelService _levelService;
 
-        [Inject]
-        private DroneService _droneService;
-
         private LevelDescriptor _levelDescriptor;
 
         private int _countChips;
@@ -46,10 +41,8 @@ namespace Drone.Location.Service.Game
         {
             InitCurveWorldController();
             Time.timeScale = 1f;
-            DroneModel droneModel = new DroneModel(_droneService.GetDronById(_levelService.SelectedDroneId).DroneDescriptor);
             _levelDescriptor = _levelService.GetLevelDescriptorById(_levelService.SelectedLevelId);
             _countChips = 0;
-            _gameWorld.Dispatch(new InGameEvent(InGameEvent.SET_DRONE_PARAMETERS, droneModel));
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.CHIP_UP, OnChipUp);
             _overlayManager.HideLoadingOverlay(true);

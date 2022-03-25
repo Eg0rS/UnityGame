@@ -3,13 +3,13 @@ using AgkCommons.Configurations;
 using AgkCommons.Resources;
 using Drone.Core.Service;
 using Drone.Inventory.Service;
-using Drone.Location.Service.Control.Drone.Descriptor;
 using Drone.Location.Service.Control.Drone.IoC;
-using Drone.Location.Service.Control.Drone.Model;
+using Drone.Location.World.Player.Descriptor;
+using Drone.Location.World.Player.Model;
 using IoC.Attribute;
 using JetBrains.Annotations;
 
-namespace Drone.Location.Service.Control.Drone.Service
+namespace Drone.Location.World.Player.Service
 {
     public class DroneService : IConfigurable
     {
@@ -23,6 +23,8 @@ namespace Drone.Location.Service.Control.Drone.Service
 
         [Inject]
         private InventoryService _inventoryService;
+        
+        public string SelectedDroneId { get; set; }
 
         public void Configure()
         {

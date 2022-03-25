@@ -1,5 +1,5 @@
 ﻿using Drone.Location.Service.Control.Drone.IoC;
-using Drone.Location.Service.Control.Drone.Service;
+using Drone.Location.World.Player.Service;
 using IoC.Api;
 
 namespace Drone.Location.Service.Control.Drone.Module

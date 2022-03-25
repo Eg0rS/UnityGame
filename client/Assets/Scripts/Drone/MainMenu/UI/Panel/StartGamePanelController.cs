@@ -9,6 +9,7 @@ using Drone.Inventory.Service;
 using Drone.LevelMap.UI.DescriptionLevelDialog;
 using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
+using Drone.Location.World.Player.Service;
 using EndlessScroll;
 using IoC.Attribute;
 using RSG;
@@ -28,6 +29,8 @@ namespace Drone.MainMenu.UI.Panel
 
         [Inject]
         private LevelService _levelService;
+        [Inject]
+        private DroneService _droneService;
 
         [Inject]
         private LocationService _locationService;
@@ -76,7 +79,7 @@ namespace Drone.MainMenu.UI.Panel
         {
             string droneId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
             _levelService.SelectedLevelId = _currentLevelDescriptor.Id;
-            _levelService.SelectedDroneId = droneId;
+            _droneService.SelectedDroneId = droneId;
             _locationService.SwitchLocation(_currentLevelDescriptor);
             Debug.Log($"Start level {_currentLevelDescriptor.Id}");
         }

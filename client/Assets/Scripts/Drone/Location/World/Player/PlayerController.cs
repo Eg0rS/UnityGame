@@ -5,6 +5,8 @@ using Drone.Location.Interface;
 using Drone.Location.Model;
 using Drone.Location.Model.Player;
 using Drone.Location.Service.Game.Event;
+using Drone.Location.World.Player.Model;
+using Drone.Location.World.Player.Service;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -18,6 +20,8 @@ namespace Drone.Location.World.Player
 
         [Inject]
         private DroneWorld _gameWorld;
+        [Inject]
+        private DroneService _droneService;
 
         private PlayerTransitionController _transitionController;
         private PlayerAnimatorController _animatorController;
@@ -26,15 +30,14 @@ namespace Drone.Location.World.Player
         private GameObject _mesh;
         private GameObject _prefab;
         private GameObject _particles;
-
-        private Service.Control.Drone.Model.DroneModel _model;
+        
 
         public void Init(PlayerModel model)
         {
             _prefab = gameObject.GetChildren()[0];
             _particles = _prefab.GetChildren().First(x => x.name == "pfParticleWorld");
             ControllerInitialization();
-            _gameWorld.AddListener<InGameEvent>(InGameEvent.SET_DRONE_PARAMETERS, OnSetParameters);
+            SetDroneParameters();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, OnRespawn);
         }
 
@@ -61,11 +64,11 @@ namespace Drone.Location.World.Player
             _transitionController.Configure(_mesh);
         }
 
-        private void OnSetParameters(InGameEvent inGameEvent)
+        private void SetDroneParameters()
         {
-            _model = inGameEvent.DroneModel;
-            _transitionController.Mobility = _model.mobility;
-            CreateDrone(_model.DroneDescriptor.Prefab);
+            DroneModel model = new DroneModel(_droneService.GetDronById(_droneService.SelectedDroneId).DroneDescriptor);
+            _transitionController.Mobility = model.mobility;
+            CreateDrone(model.DroneDescriptor.Prefab);
         }
 
         private void CreateDrone(string droneDescriptorPrefab)

@@ -25,7 +25,7 @@ namespace Drone.Levels.Service
 
         private List<LevelViewModel> _levelsViewModels = new List<LevelViewModel>();
         public string SelectedLevelId { get; set; }
-        public string SelectedDroneId { get; set; }
+        
 
         public void SetLevelProgress(LevelDescriptor levelDescriptor, int countChips)
         {

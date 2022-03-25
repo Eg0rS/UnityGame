@@ -12,6 +12,7 @@ using Drone.Inventory.Model;
 using Drone.Inventory.Service;
 using Drone.Levels.Model;
 using Drone.Levels.Service;
+using Drone.Location.World.Player.Service;
 using EndlessScroll;
 using IoC.Attribute;
 using RSG;
@@ -41,6 +42,9 @@ namespace Drone.LevelMap.UI.DescriptionLevelDialog
         [Inject]
         private LocationService _locationService;
 
+        [Inject]
+        private DroneService _droneService;
+
         [UIComponentBinding("LevelName")]
         private UILabel _title;
 
@@ -53,9 +57,6 @@ namespace Drone.LevelMap.UI.DescriptionLevelDialog
         private EndlessScrollView _endlessScroll;
 
         private LevelViewModel _levelViewModel;
-
-        [UIObjectBinding("TaskList")]
-        private GameObject _taskList;
 
         [UICreated]
         public void Init(LevelViewModel levelViewModel)
@@ -105,9 +106,8 @@ namespace Drone.LevelMap.UI.DescriptionLevelDialog
 
         private void OnStartGameButton()
         {
-            string dronId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
             _levelService.SelectedLevelId = _levelViewModel.LevelDescriptor.Id;
-            _levelService.SelectedDroneId = dronId;
+            _droneService.SelectedDroneId = _endlessScroll.MiddleElement.GetComponent<ViewDronePanel>().ItemId;
             _locationService.SwitchLocation(_levelViewModel.LevelDescriptor);
         }
 
