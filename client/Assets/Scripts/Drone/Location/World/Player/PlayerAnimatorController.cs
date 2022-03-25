@@ -30,6 +30,13 @@ namespace Drone.Location.World.Player
             _gameWorld.AddListener<ObstacleEvent>(ObstacleEvent.OBSTACLE_CONTACT_BEGIN, OnObstacleContactBegin);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, OnStartGame);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, OnRespawn);
+        }
+
+        private void OnRespawn(InGameEvent obj)
+        {
+            _particles.SetActive(true);
+            _prefabMesh.SetActive(true);
         }
 
         private void OnStartGame(InGameEvent obj)

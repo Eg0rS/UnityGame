@@ -19,18 +19,15 @@ namespace Drone.Location.Service
 
         private GameHUD _gameHUD;
 
-        public IPromise LoadGameOverlay()
+        public void LoadGameOverlay()
         {
-            return _uiService.Create<GameHUD>(UiModel.Create<GameHUD>()).Then(Attach);
+            _uiService.Create<GameHUD>(UiModel.Create<GameHUD>()).Then(Attach);
         }
-        
-        private IPromise Attach(GameHUD arg)
+
+        private void Attach(GameHUD arg)
         {
-            Promise promise = new Promise();
             _gameHUD = arg;
             _screenStructureManager.AttachToSafeArea(_gameHUD.gameObject);
-            promise.Resolve();
-            return promise;
         }
     }
 }

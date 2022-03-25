@@ -7,6 +7,7 @@ using Drone.Location.Service.Control.Drone.Event;
 using Drone.Location.Service.Game;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.World;
+using Drone.Location.World.CutScene;
 using IoC.Attribute;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -40,7 +41,7 @@ namespace Drone.Location.Service.Control
         public void Init()
         {
             _width = Screen.width;
-            _gameWorld.AddListener(WorldEvent.CREATED, OnWorldCreated);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CUTSCENE_END, OnStartCutSceneEnd);
             _gameWorld.AddListener(InGameEvent.END_GAME, OnEndGame);
             _gameWorld.AddListener(InGameEvent.RESPAWN, OnRespawn);
             _inputControl = new InputControl();
@@ -58,8 +59,11 @@ namespace Drone.Location.Service.Control
             _inputControl.Disable();
         }
 
-        private void OnWorldCreated(GameEvent obj)
+        private void OnStartCutSceneEnd(InGameEvent obj)
         {
+            if (obj.CutSceneType != CutSceneType.START) {
+                return;
+            }
             _inputControl.Enable();
             _inputControl.Player.Touch.performed += ctx => OnTouch(ctx.ReadValue<TouchState>());
             _inputControl.Player.Tap.started += ctx => OnTap(ctx);

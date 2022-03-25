@@ -5,19 +5,19 @@ using AgkCommons.CodeStyle;
 using Drone.Location.Model;
 using Drone.Location.Model.BaseModel;
 using Drone.Location.Model.ChipModel;
+using Drone.Location.Model.CutScene;
 using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
-using Drone.Location.Model.Spawner;
 using Drone.Location.Model.Spline;
 using Drone.Location.Model.StartPlatform;
 using Drone.Location.Model.WorldGeomertyRotation;
 using Drone.Location.World;
 using Drone.Location.World.Chip;
+using Drone.Location.World.CutScene;
 using Drone.Location.World.Finish;
 using Drone.Location.World.Obstacle;
 using Drone.Location.World.Player;
-using Drone.Location.World.Spawner;
 using Drone.Location.World.Spline;
 using Drone.Location.World.StartPlatform;
 using Drone.Location.World.WorldGeomertyRotation;
@@ -47,8 +47,8 @@ namespace Drone.Location.Service
                     new ControllerData(typeof(SplineWalkerController), InitController<SplineWalkerController, SplineWalkerModel>);
             _controllers[GEOMETRY_ROTATION] = new ControllerData(typeof(WorldGeometryRotationController),
                                                                  InitController<WorldGeometryRotationController, WorldGeometryRotationModel>);
-            _controllers[SPAWNER] = new ControllerData(typeof(SpawnerController), InitController<SpawnerController, SpawnerModel>);
             _controllers[CHIP] = new ControllerData(typeof(ChipController), InitController<ChipController, ChipModel>);
+            _controllers[CUT_SCENES] = new ControllerData(typeof(CutScenesController), InitController<CutScenesController, CutScenesModel>);
         }
 
         public Component AttachController(PrefabModel model)

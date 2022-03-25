@@ -30,15 +30,36 @@ namespace Drone.Location.World.Player
         private GameObject _mesh;
         private GameObject _prefab;
         private GameObject _particles;
-        
 
         public void Init(PlayerModel model)
         {
+            gameObject.SetActive(false);
             _prefab = gameObject.GetChildren()[0];
             _particles = _prefab.GetChildren().First(x => x.name == "pfParticleWorld");
             ControllerInitialization();
             SetDroneParameters();
             _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, OnRespawn);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CUTSCENE_BEGIN, OnBeginCutScene);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CUTSCENE_END, OnEndCutScene);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
+        
+        }
+
+        private void OnEndGame(InGameEvent obj)
+        {
+            if (obj.EndGameReason == EndGameReasons.VICTORY) {
+                gameObject.SetActive(false);
+            }
+        }
+
+        private void OnEndCutScene(InGameEvent obj)
+        {
+            gameObject.SetActive(true);
+        }
+
+        private void OnBeginCutScene(InGameEvent obj)
+        {
+            gameObject.SetActive(false);
         }
 
         private void OnRespawn(InGameEvent obj)

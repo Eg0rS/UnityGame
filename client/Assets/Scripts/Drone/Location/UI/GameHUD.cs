@@ -9,6 +9,7 @@ using IoC.Attribute;
 using UnityEngine;
 using DG.Tweening;
 using Drone.Location.World;
+using Drone.Location.World.CutScene;
 using UnityEngine.UI;
 
 namespace Drone.Location.UI
@@ -52,14 +53,21 @@ namespace Drone.Location.UI
         [UICreated]
         private void Init()
         {
+            gameObject.SetActive(false);
             _pause.onClick.AddListener(OnPauseButton);
             _timer.text = "0,00";
             _gameWorld.AddListener<InGameEvent>(InGameEvent.START_GAME, StartGame);
-
             _gameWorld.AddListener<ControllEvent>(ControllEvent.MOVEMENT, OnMovement);
-
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CUTSCENE_END, EndStartCutScene);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, EndGame);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.RESPAWN, Respawn);
+        }
+
+        private void EndStartCutScene(InGameEvent obj)
+        {
+            if (obj.CutSceneType == CutSceneType.START) {
+                gameObject.SetActive(true);
+            }
         }
 
         private void Respawn(InGameEvent obj)

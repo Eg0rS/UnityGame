@@ -9,6 +9,7 @@ using Drone.LevelDifficult.Descriptor;
 using Drone.Levels.Descriptor;
 using Drone.Location.Event;
 using Drone.Location.Model.BaseModel;
+using Drone.Location.Model.CutScene;
 using Drone.Location.Model.Finish;
 using Drone.Location.Model.Obstacle;
 using Drone.Location.Model.Player;
@@ -30,6 +31,8 @@ namespace Drone.Location.Service.Builder
 
         #region Const
 
+        private const string START_CUTSCENE_PATH = "AssetObjects/CutScenes/pfCutSceneStart1@embeded";
+        private const string FINISH_CUTSCENE_PATH = "AssetObjects/CutScenes/pfCutSceneFinish1@embeded";
         private const string PLAYER_CONTAINER_PATH = "World/pfPlayerContainer@embeded";
         private const string WORLD_NAME = "location";
         private const string GAME_WORLD = "GameWorld";
@@ -37,6 +40,7 @@ namespace Drone.Location.Service.Builder
         private const string PLAYER = "Player";
         private const string LEVEL = "Level";
         private const string CHIPS = "Chips";
+        private const string CUT_SCENES = "CutScenes";
 
         #endregion
 
@@ -54,8 +58,8 @@ namespace Drone.Location.Service.Builder
         private GameObject _spline;
         private GameObject _player;
         private GameObject _level;
-        private GameObject _path;
         private GameObject _chips;
+        private GameObject _cutScenes;
 
         #endregion
 
@@ -120,6 +124,7 @@ namespace Drone.Location.Service.Builder
         {
             LoadPlayer()
                     .Then(LoadTiles)
+                    .Then(LoadCutScenes)
                     .Then(CreateLevelTiles)
                     .Then(CreateLevelSpline)
                     .Then(ConfigureTiles)
@@ -155,6 +160,16 @@ namespace Drone.Location.Service.Builder
             return _loadObjectService.LoadLevelTiles(_levelDescriptor).Then(tiles => { _tiles = tiles; });
         }
 
+        private IPromise LoadCutScenes()
+        {
+            return _loadObjectService.LoadResources<GameObject>(new[] {START_CUTSCENE_PATH, FINISH_CUTSCENE_PATH})
+                                     .Then(cutScenes => {
+                                         foreach (GameObject cutScene in cutScenes) {
+                                             Object.Instantiate(cutScene, _cutScenes.transform);
+                                         }
+                                     });
+        }
+
         #endregion
 
         #region СreationMethods
@@ -175,6 +190,7 @@ namespace Drone.Location.Service.Builder
             _spline = CreateContainer<SplineModel>(SPLINE, _droneWorld.transform);
             _level = CreateContainer<SplineWalkerModel>(LEVEL, _droneWorld.transform);
             _chips = CreateContainer<ChipsLineCreator>(CHIPS, _level.transform);
+            _cutScenes = CreateContainer<CutScenesModel>(CUT_SCENES, _droneWorld.transform);
         }
 
         private void CreateLevelSpline()

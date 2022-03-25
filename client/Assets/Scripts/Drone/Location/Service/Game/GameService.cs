@@ -11,6 +11,7 @@ using Drone.Levels.Descriptor;
 using Drone.Levels.Service;
 using Drone.Location.Service.Game.Event;
 using Drone.Location.World;
+using Drone.Location.World.CutScene;
 using IoC.Attribute;
 using UnityEngine;
 
@@ -45,7 +46,15 @@ namespace Drone.Location.Service.Game
             _countChips = 0;
             _gameWorld.AddListener<InGameEvent>(InGameEvent.END_GAME, OnEndGame);
             _gameWorld.AddListener<InGameEvent>(InGameEvent.CHIP_UP, OnChipUp);
+            _gameWorld.AddListener<InGameEvent>(InGameEvent.CUTSCENE_END, OnFinishCutSceneEnd);
             _overlayManager.HideLoadingOverlay(true);
+        }
+
+        private void OnFinishCutSceneEnd(InGameEvent obj)
+        {
+            if (obj.CutSceneType == CutSceneType.FINISH) {
+                _dialogManager.ShowModal<LevelFinishedDialog>();
+            }
         }
 
         private void OnChipUp(InGameEvent obj)
@@ -96,7 +105,6 @@ namespace Drone.Location.Service.Game
         private void Victory()
         {
             SetStatsInProgress(true);
-            _dialogManager.ShowModal<LevelFinishedDialog>();
         }
 
         private void OnDestroy()
